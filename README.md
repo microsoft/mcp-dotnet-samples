@@ -20,7 +20,7 @@ This repository contains .NET samples ranging from building your own MCP impleme
 
 | Sample Name | Description |
 |-------------|-------------|
-| *Coming soon!* | |
+| [YouTube Subtitles Extractor](./youtube-subtitles-extractor/) | An Azure Functions remote MCP server that can extract subtitles from any given YouTube video's URL. |
 
 ## 🛠️ Getting Started
 

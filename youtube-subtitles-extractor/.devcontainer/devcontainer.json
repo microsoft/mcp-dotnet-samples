@@ -1,0 +1,56 @@
+{
+  "name": "MCP: YouTube Subtitles Extractor",
+
+  "image": "mcr.microsoft.com/devcontainers/dotnet:8.0-noble",
+
+  "features": {
+    "ghcr.io/azure/azure-dev/azd:latest": {},
+    "ghcr.io/devcontainers/features/common-utils:latest": {},
+    "ghcr.io/devcontainers/features/dotnet:latest": {
+      "version": "9.0"
+    },
+    "ghcr.io/devcontainers/features/azure-cli:latest": {
+      "extensions": "account,containerapp,deploy-to-azure,subscription"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:latest": {},
+    "ghcr.io/devcontainers/features/github-cli:latest": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:latest": {},
+    "ghcr.io/devcontainers/features/node:latest": {},
+    "ghcr.io/prom3theu5/aspirational-manifests/aspirate:latest": {}
+  },
+
+  "overrideFeatureInstallOrder": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "GitHub.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        "ms-azuretools.azure-dev",
+        "ms-azuretools.vscode-bicep",
+        "ms-azuretools.vscode-docker",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-vscode.vscode-node-azure-pack",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "chat.agent.enabled": true
+      }
+    }
+  },
+
+  "remoteUser": "vscode",
+
+  "onCreateCommand": "./.devcontainer/on-create.sh > ~/on-create.log",
+
+  "hostRequirements": {
+    "memory": "8gb"
+  }
+}
