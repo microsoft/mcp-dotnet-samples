@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpYouTubeSubtitlesExtractor.SseApp", "src\McpYouTubeSubtitlesExtractor.SseApp\McpYouTubeSubtitlesExtractor.SseApp.csproj", "{94064462-2AF4-4B5B-8E8F-9C4C3EADE2AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpYouTubeSubtitlesExtractor.ContainerApp", "src\McpYouTubeSubtitlesExtractor.ContainerApp\McpYouTubeSubtitlesExtractor.ContainerApp.csproj", "{94064462-2AF4-4B5B-8E8F-9C4C3EADE2AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

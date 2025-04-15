@@ -5,7 +5,7 @@ using Aliencube.YouTubeSubtitlesExtractor.Abstractions;
 
 using ModelContextProtocol.Server;
 
-namespace McpYouTubeSubtitlesExtractor.SseApp.Tools;
+namespace McpYouTubeSubtitlesExtractor.ContainerApp.Tools;
 
 [McpServerToolType]
 public class YouTubeSubtitleExtractorTool(IYouTubeVideo video, ILogger<YouTubeSubtitleExtractorTool> logger)

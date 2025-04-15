@@ -8,8 +8,8 @@
       "location": {
         "value": "${AZURE_LOCATION}"
       },
-      "mcpOnAcaSseAppExists": {
-        "value": "${SERVICE_MCP_ON_ACA_SSEAPP_RESOURCE_EXISTS=false}"
+      "mcpOnAcaExists": {
+        "value": "${SERVICE_MCP_ON_ACA_RESOURCE_EXISTS=false}"
       },
       "principalId": {
         "value": "${AZURE_PRINCIPAL_ID}"

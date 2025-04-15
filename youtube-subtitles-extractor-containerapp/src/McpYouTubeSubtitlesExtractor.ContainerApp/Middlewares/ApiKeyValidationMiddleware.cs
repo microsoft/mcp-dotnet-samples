@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace McpYouTubeSubtitlesExtractor.SseApp.Middlewares;
+namespace McpYouTubeSubtitlesExtractor.ContainerApp.Middlewares;
 
 public class ApiKeyValidationMiddleware(RequestDelegate next, IConfiguration config)
 {

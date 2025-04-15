@@ -1,0 +1,41 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "acaapp-server-fqdn",
+      "description": "Azure Container Apps FQDN"
+    },
+    {
+      "type": "promptString",
+      "id": "acaapp-server-access-key",
+      "description": "MCP server access key for Azure Container Apps",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "acaapp-container-access-key",
+      "description": "MCP server access key for local container",
+      "password": true
+    }
+  ],
+  "servers": {
+    "mcp-youtube-subtitles-extractor-aca-local": {
+      "type": "sse",
+      "url": "http://0.0.0.0:5202/sse"
+    },
+    "mcp-youtube-subtitles-extractor-aca-container": {
+      "type": "sse",
+      "url": "http://0.0.0.0:8080/sse",
+      "headers": {
+        "x-api-key": "${input:acaapp-container-access-key}"
+      }
+    },
+    "mcp-youtube-subtitles-extractor-aca-remote": {
+      "type": "sse",
+      "url": "https://${input:acaapp-server-fqdn}/sse",
+      "headers": {
+        "x-api-key": "${input:acaapp-server-access-key}"
+      }
+    }
+  }
+}

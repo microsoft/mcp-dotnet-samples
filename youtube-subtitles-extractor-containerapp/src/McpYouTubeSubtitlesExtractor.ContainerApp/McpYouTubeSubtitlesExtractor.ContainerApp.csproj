@@ -7,8 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-    <AssemblyName>McpYouTubeSubtitlesExtractor.SseApp</AssemblyName>
-    <RootNamespace>McpYouTubeSubtitlesExtractor.SseApp</RootNamespace>
+    <AssemblyName>McpYouTubeSubtitlesExtractor.ContainerApp</AssemblyName>
+    <RootNamespace>McpYouTubeSubtitlesExtractor.ContainerApp</RootNamespace>
 
     <UserSecretsId>f8c81ccd-efc1-442e-bd84-e803deeabb9d</UserSecretsId>
   </PropertyGroup>

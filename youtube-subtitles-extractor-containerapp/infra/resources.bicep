@@ -4,7 +4,7 @@ param location string = resourceGroup().location
 @description('Tags that will be applied to all resources')
 param tags object = {}
 
-param mcpOnAcaSseAppExists bool
+param mcpOnAcaExists bool
 
 @description('Id of the user or app to assign application roles')
 param principalId string
@@ -35,7 +35,7 @@ module containerRegistry 'br/public:avm/res/container-registry/registry:0.1.1' =
     publicNetworkAccess: 'Enabled'
     roleAssignments:[
       {
-        principalId: mcpOnAcaSseAppIdentity.outputs.principalId
+        principalId: mcpOnAcaIdentity.outputs.principalId
         principalType: 'ServicePrincipal'
         // ACR pull role
         roleDefinitionIdOrName: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
@@ -56,25 +56,25 @@ module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.4.5
 }
 
 // User assigned identity
-module mcpOnAcaSseAppIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
-  name: 'mcpOnAcaSseAppIdentity'
+module mcpOnAcaIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
+  name: 'mcpOnAcaIdentity'
   params: {
-    name: '${abbrs.managedIdentityUserAssignedIdentities}mcpOnAcaSseApp-${resourceToken}'
+    name: '${abbrs.managedIdentityUserAssignedIdentities}mcponaca-${resourceToken}'
     location: location
   }
 }
 
 // Azure Container Apps
-module mcpOnAcaSseAppFetchLatestImage './modules/fetch-container-image.bicep' = {
-  name: 'mcpOnAcaSseApp-fetch-image'
+module mcpOnAcaFetchLatestImage './modules/fetch-container-image.bicep' = {
+  name: 'mcpOnAca-fetch-image'
   params: {
-    exists: mcpOnAcaSseAppExists
+    exists: mcpOnAcaExists
     name: 'mcp-on-aca'
   }
 }
 
-module mcpOnAcaSseApp 'br/public:avm/res/app/container-app:0.8.0' = {
-  name: 'mcpOnAcaSseApp'
+module mcpOnAca 'br/public:avm/res/app/container-app:0.8.0' = {
+  name: 'mcpOnAca'
   params: {
     name: 'mcp-on-aca'
     ingressTargetPort: 8080
@@ -86,7 +86,7 @@ module mcpOnAcaSseApp 'br/public:avm/res/app/container-app:0.8.0' = {
     }
     containers: [
       {
-        image: mcpOnAcaSseAppFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+        image: mcpOnAcaFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
         name: 'main'
         resources: {
           cpu: json('0.5')
@@ -99,7 +99,7 @@ module mcpOnAcaSseApp 'br/public:avm/res/app/container-app:0.8.0' = {
           }
           {
             name: 'AZURE_CLIENT_ID'
-            value: mcpOnAcaSseAppIdentity.outputs.clientId
+            value: mcpOnAcaIdentity.outputs.clientId
           }
           {
             name: 'PORT'
@@ -114,12 +114,14 @@ module mcpOnAcaSseApp 'br/public:avm/res/app/container-app:0.8.0' = {
     ]
     managedIdentities:{
       systemAssigned: false
-      userAssignedResourceIds: [mcpOnAcaSseAppIdentity.outputs.resourceId]
+      userAssignedResourceIds: [
+        mcpOnAcaIdentity.outputs.resourceId
+      ]
     }
     registries:[
       {
         server: containerRegistry.outputs.loginServer
-        identity: mcpOnAcaSseAppIdentity.outputs.resourceId
+        identity: mcpOnAcaIdentity.outputs.resourceId
       }
     ]
     environmentResourceId: containerAppsEnvironment.outputs.resourceId
@@ -129,5 +131,5 @@ module mcpOnAcaSseApp 'br/public:avm/res/app/container-app:0.8.0' = {
 }
 
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.outputs.loginServer
-output AZURE_RESOURCE_MCP_ON_ACA_SSEAPP_ID string = mcpOnAcaSseApp.outputs.resourceId
-output AZURE_RESOURCE_MCP_ON_ACA_SSEAPP_FQDN string = mcpOnAcaSseApp.outputs.fqdn
+output AZURE_RESOURCE_MCP_ON_ACA_ID string = mcpOnAca.outputs.resourceId
+output AZURE_RESOURCE_MCP_ON_ACA_FQDN string = mcpOnAca.outputs.fqdn

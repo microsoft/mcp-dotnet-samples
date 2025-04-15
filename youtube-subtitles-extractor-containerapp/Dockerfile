@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 
 COPY . /source
 
-WORKDIR /source/src/McpYouTubeSubtitlesExtractor.SseApp
+WORKDIR /source/src/McpYouTubeSubtitlesExtractor.ContainerApp
 
 RUN dotnet publish -c Release -o /app
 
@@ -16,4 +16,4 @@ COPY --from=build /app .
 
 USER $APP_UID
 
-ENTRYPOINT ["dotnet", "McpYouTubeSubtitlesExtractor.SseApp.dll"]
+ENTRYPOINT ["dotnet", "McpYouTubeSubtitlesExtractor.ContainerApp.dll"]

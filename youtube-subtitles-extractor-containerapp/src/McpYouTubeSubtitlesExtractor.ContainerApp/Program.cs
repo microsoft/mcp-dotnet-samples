@@ -1,7 +1,7 @@
 using Aliencube.YouTubeSubtitlesExtractor;
 using Aliencube.YouTubeSubtitlesExtractor.Abstractions;
 
-using McpYouTubeSubtitlesExtractor.SseApp.Middlewares;
+using McpYouTubeSubtitlesExtractor.ContainerApp.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 

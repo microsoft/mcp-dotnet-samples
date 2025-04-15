@@ -9,7 +9,7 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-param mcpOnAcaSseAppExists bool
+param mcpOnAcaExists bool
 
 @description('Id of the user or app to assign application roles')
 param principalId string
@@ -37,10 +37,10 @@ module resources 'resources.bicep' = {
     location: location
     tags: tags
     principalId: principalId
-    mcpOnAcaSseAppExists: mcpOnAcaSseAppExists
+    mcpOnAcaExists: mcpOnAcaExists
   }
 }
 
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
-output AZURE_RESOURCE_MCP_ON_ACA_SSEAPP_ID string = resources.outputs.AZURE_RESOURCE_MCP_ON_ACA_SSEAPP_ID
-output AZURE_RESOURCE_MCP_ON_ACA_SSEAPP_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_ON_ACA_SSEAPP_FQDN
+output AZURE_RESOURCE_MCP_ON_ACA_ID string = resources.outputs.AZURE_RESOURCE_MCP_ON_ACA_ID
+output AZURE_RESOURCE_MCP_ON_ACA_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_ON_ACA_FQDN
