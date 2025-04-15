@@ -1,6 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
     <AssemblyName>McpYouTubeSubtitlesExtractor.SseApp</AssemblyName>
     <RootNamespace>McpYouTubeSubtitlesExtractor.SseApp</RootNamespace>
 
