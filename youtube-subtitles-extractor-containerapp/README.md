@@ -19,8 +19,9 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 - [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
   - [VS Code + Agent Mode + Local MCP server](#vs-code--agent-mode--local-mcp-server)
   - [VS Code + Agent Mode + Local MCP server in a container](#vs-code--agent-mode--local-mcp-server-in-a-container)
-  - [MCP Inspector + Local MCP server](#mcp-inspector--local-mcp-server)
   - [VS Code + Agent Mode + Remote MCP server](#vs-code--agent-mode--remote-mcp-server)
+  - [MCP Inspector + Local MCP server](#mcp-inspector--local-mcp-server)
+  - [MCP Inspector + Local MCP server in a container](#mcp-inspector--local-mcp-server-in-a-container)
   - [MCP Inspector + Remote MCP server](#mcp-inspector--remote-mcp-server)
 
 ### Run ASP.NET Core MCP server locally
