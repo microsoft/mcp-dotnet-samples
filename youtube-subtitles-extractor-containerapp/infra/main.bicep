@@ -43,4 +43,5 @@ module resources 'resources.bicep' = {
 
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
 output AZURE_RESOURCE_MCP_ON_ACA_ID string = resources.outputs.AZURE_RESOURCE_MCP_ON_ACA_ID
+output AZURE_RESOURCE_MCP_ON_ACA_NAME string = resources.outputs.AZURE_RESOURCE_MCP_ON_ACA_NAME
 output AZURE_RESOURCE_MCP_ON_ACA_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_ON_ACA_FQDN

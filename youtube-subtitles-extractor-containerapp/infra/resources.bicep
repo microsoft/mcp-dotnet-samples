@@ -132,4 +132,5 @@ module mcpOnAca 'br/public:avm/res/app/container-app:0.8.0' = {
 
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.outputs.loginServer
 output AZURE_RESOURCE_MCP_ON_ACA_ID string = mcpOnAca.outputs.resourceId
+output AZURE_RESOURCE_MCP_ON_ACA_NAME string = mcpOnAca.outputs.name
 output AZURE_RESOURCE_MCP_ON_ACA_FQDN string = mcpOnAca.outputs.fqdn

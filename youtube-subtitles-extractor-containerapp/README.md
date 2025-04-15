@@ -1,6 +1,6 @@
-# MCP Server: Youtube Subtitles Extractor
+# MCP Server: Youtube Subtitles Extractor on ACA
 
-This is an MCP server that extracts subtitles from a given YouTube link.
+This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.com/azure/container-apps/overview), that extracts subtitles from a given YouTube link.
 
 ## Prerequisites
 
@@ -13,17 +13,19 @@ This is an MCP server that extracts subtitles from a given YouTube link.
 
 ## Getting Started
 
-- [Run ASP.NET Core MCP server locally](#run-azure-functions-mcp-server-locally)
-- [Run ASP.NET Core MCP server remotely](#run-azure-functions-mcp-server-remotely)
+- [Run ASP.NET Core MCP server locally](#run-aspnet-core-mcp-server-locally)
+- [Run ASP.NET Core MCP server locally in a container](#run-aspnet-core-mcp-server-locally-in-a-container)
+- [Run ASP.NET Core MCP server remotely](#run-aspnet-core-mcp-server-remotely)
 - [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
   - [VS Code + Agent Mode + Local MCP server](#vs-code--agent-mode--local-mcp-server)
+  - [VS Code + Agent Mode + Local MCP server in a container](#vs-code--agent-mode--local-mcp-server-in-a-container)
   - [MCP Inspector + Local MCP server](#mcp-inspector--local-mcp-server)
   - [VS Code + Agent Mode + Remote MCP server](#vs-code--agent-mode--remote-mcp-server)
   - [MCP Inspector + Remote MCP server](#mcp-inspector--remote-mcp-server)
 
 ### Run ASP.NET Core MCP server locally
 
-1. Get the repository root
+1. Get the repository root.
 
     ```bash
     # bash/zsh
@@ -35,11 +37,50 @@ This is an MCP server that extracts subtitles from a given YouTube link.
     $REPOSITORY_ROOT = git rev-parse --show-toplevel
     ```
 
-1. Run the MCP server app
+1. Run the MCP server app.
 
     ```bash
-    cd $REPOSITORY_ROOT/youtube-subtitles-extractor-sseapp
-    dotnet run --project ./src/McpYouTubeSubtitlesExtractor.SseApp
+    cd $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp
+    dotnet run --project ./src/McpYouTubeSubtitlesExtractor.ContainerApp
+    ```
+
+### Run ASP.NET Core MCP server locally in a container
+
+1. Get the repository root.
+
+    ```bash
+    # bash/zsh
+    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
+    ```
+
+    ```powershell
+    # PowerShell
+    $REPOSITORY_ROOT = git rev-parse --show-toplevel
+    ```
+
+1. Build the MCP server app as a container image.
+
+    ```bash
+    cd $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp
+    docker build -t mcp-on-aca:latest .
+    ```
+
+1. Generate a random GUID. This GUID value will be the access key of the MCP server in the container.
+
+    ```bash
+    # bash/zsh
+    GUID=$(uuidgen)
+    ```
+    
+    ```powershell
+    # PowerShell
+    $GUID = $(New-Guid).Guid
+    ```
+
+1. Run the MCP server app in a container
+
+    ```bash
+    docker run -d -p 8080:8080 -e Mcp__ApiKey=$GUID --name mcp-on-aca mcp-on-aca:latest
     ```
 
 ### Run ASP.NET Core MCP server remotely
@@ -64,36 +105,117 @@ This is an MCP server that extracts subtitles from a given YouTube link.
 
 1. After the deployment is complete, get the information by running the following commands:
 
-   - function app name:
+   - Azure Container Apps FQDN:
 
      ```bash
-     azd env get-value AZURE_FUNCTION_NAME
+     azd env get-value AZURE_RESOURCE_MCP_ON_ACA_FQDN
      ```
 
    - MCP server access key:
 
      ```bash
      # bash/zsh
-     az functionapp keys list \
+     az containerapp revision list \
          -g rg-$(azd env get-value AZURE_ENV_NAME) \
-         -n $(azd env get-value AZURE_FUNCTION_NAME) \
-         --query "systemKeys.mcp_extension" -o tsv
+         -n $(azd env get-value AZURE_RESOURCE_MCP_ON_ACA_NAME) \
+         --query "[0].properties.template.containers[0].env[?name=='Mcp__ApiKey'].value" -o tsv
      ```
 
-     ```bash
+     ```powershell
      # PowerShell
-     az functionapp keys list `
+     az containerapp revision list `
          -g rg-$(azd env get-value AZURE_ENV_NAME) `
-         -n $(azd env get-value AZURE_FUNCTION_NAME) `
-         --query "systemKeys.mcp_extension" -o tsv
+         -n $(azd env get-value AZURE_RESOURCE_MCP_ON_ACA_NAME) `
+         --query "[0].properties.template.containers[0].env[?name=='Mcp__ApiKey'].value" -o tsv
      ```
 
 ### Connect MCP server to an MCP host/client
 
 #### VS Code + Agent Mode + Local MCP server
 
+1. Get the repository root.
+
+    ```bash
+    # bash/zsh
+    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
+    ```
+
+    ```powershell
+    # PowerShell
+    $REPOSITORY_ROOT = git rev-parse --show-toplevel
+    ```
+
+1. Copy `mcp.json` to the repository root.
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp/.vscode/mcp.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp/.vscode/mcp.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-youtube-subtitles-extractor-function-local` then click `Start Server`.
+1. Choose `mcp-youtube-subtitles-extractor-aca-local` then click `Start Server`.
+1. Enter prompt like:
+
+    ```text
+    Summarise this YouTube video link in 5 bullet points: https://youtu.be/XwnEtZxaokg?si=V39ta45iMni_Uc_m
+    ```
+
+1. It will ask you to run `get_available_languages` followed by `get_subtitle`. You might be asked to choose language for the subtitle.
+1. Confirm the summary of the video.
+
+#### VS Code + Agent Mode + Local MCP server in a container
+
+1. Get the repository root.
+
+    ```bash
+    # bash/zsh
+    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
+    ```
+
+    ```powershell
+    # PowerShell
+    $REPOSITORY_ROOT = git rev-parse --show-toplevel
+    ```
+
+1. Copy `mcp.json` to the repository root.
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp/.vscode/mcp.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp/.vscode/mcp.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
+1. Choose `mcp-youtube-subtitles-extractor-aca-container` then click `Start Server`.
+1. Enter the MCP server access key for local container. This value has been generated in the [previous step](#run-aspnet-core-mcp-server-locally-in-a-container).
+1. Enter prompt like:
+
+    ```text
+    Summarise this YouTube video link in 5 bullet points: https://youtu.be/XwnEtZxaokg?si=V39ta45iMni_Uc_m
+    ```
+
+1. It will ask you to run `get_available_languages` followed by `get_subtitle`. You might be asked to choose language for the subtitle.
+1. Confirm the summary of the video.
+
+#### VS Code + Agent Mode + Remote MCP server
+
+1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
+1. Choose `mcp-youtube-subtitles-extractor-aca-remote` then click `Start Server`.
+1. Enter the Azure Container Apps FQDN.
+1. Enter the MCP server access key for Azure Container Apps.
 1. Enter prompt like:
 
     ```text
@@ -105,53 +227,61 @@ This is an MCP server that extracts subtitles from a given YouTube link.
 
 #### MCP Inspector + Local MCP server
 
-1. Run MCP Inspector
+1. Run MCP Inspector.
 
     ```bash
     npx @modelcontextprotocol/inspector node build/index.js
     ```
 
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:5173)
+1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
 1. Set the transport type to `SSE` 
 1. Set the URL to your running Function app's SSE endpoint and **Connect**:
 
     ```text
-    http://0.0.0.0:7071/runtime/webhooks/mcp/sse
+    http://0.0.0.0:5202/sse
     ```
 
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with a YouTube link and language code like `en` or `ko`.
 
-#### VS Code + Agent Mode + Remote MCP server
+#### MCP Inspector + Local MCP server in a container
 
-1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-youtube-subtitles-extractor-function-remote` then click `Start Server`.
-1. Enter the function app name.
-1. Enter the MCP server access key.
-1. Enter prompt like:
-
-    ```text
-    Summarise this YouTube video link in 5 bullet points: https://youtu.be/XwnEtZxaokg?si=V39ta45iMni_Uc_m
-    ```
-
-1. It will ask you to run `get_available_languages` followed by `get_subtitle`. You might be asked to choose language for the subtitle.
-1. Confirm the summary of the video.
-
-#### MCP Inspector + Remote MCP server
-
-1. Run MCP Inspector
+1. Run MCP Inspector.
 
     ```bash
     npx @modelcontextprotocol/inspector node build/index.js
     ```
 
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:5173)
+1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
 1. Set the transport type to `SSE` 
 1. Set the URL to your running Function app's SSE endpoint and **Connect**:
 
     ```text
-    https://<functionapp-name>.azurewebsites.net/runtime/webhooks/mcp/sse?code=<functions-mcp-extension-system-key>
+    http://0.0.0.0:8080/sse?code=<acaapp-container-access-key>
     ```
+
+   > The `acaapp-container-access-key` value has been generated in the [previous step](#run-aspnet-core-mcp-server-locally-in-a-container).
+
+1. Click **List Tools**.
+1. Click on a tool and **Run Tool** with a YouTube link and language code like `en` or `ko`.
+
+#### MCP Inspector + Remote MCP server
+
+1. Run MCP Inspector.
+
+    ```bash
+    npx @modelcontextprotocol/inspector node build/index.js
+    ```
+
+1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:6274)
+1. Set the transport type to `SSE` 
+1. Set the URL to your running Function app's SSE endpoint and **Connect**:
+
+    ```text
+    https://<acaapp-server-fqdn>/sse?code=<acaapp-server-access-key>
+    ```
+
+   > Both `acaapp-server-fqdn` and `acaapp-server-access-key` values have been generated in the [previous step](#run-aspnet-core-mcp-server-remotely).
 
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with a YouTube link and language code like `en` or `ko`.
