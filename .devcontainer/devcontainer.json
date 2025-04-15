@@ -1,5 +1,5 @@
 {
-  "name": "MCP: YouTube Subtitles Extractor",
+  "name": "MCP: .NET Samples",
 
   "image": "mcr.microsoft.com/devcontainers/dotnet:8.0-noble",
 
