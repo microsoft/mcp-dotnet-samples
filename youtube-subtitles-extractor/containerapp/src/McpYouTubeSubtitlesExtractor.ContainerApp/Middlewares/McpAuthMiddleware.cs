@@ -2,7 +2,7 @@ using System.Net;
 
 namespace McpYouTubeSubtitlesExtractor.ContainerApp.Middlewares;
 
-public class ApiKeyValidationMiddleware(RequestDelegate next, IConfiguration config)
+public class McpAuthMiddleware(RequestDelegate next, IConfiguration config)
 {
     private const string ApiKeyHeaderName = "x-api-key";
     private const string ApiKeyQueryParameterName = "code";
@@ -15,6 +15,12 @@ public class ApiKeyValidationMiddleware(RequestDelegate next, IConfiguration con
         // Bypass localhost requests
         var localhost = IsLocalhost(context.Connection);
         if (localhost == true)
+        {
+            await this._next(context);
+            return;
+        }
+
+        if (context.Request.Method != HttpMethods.Get)
         {
             await this._next(context);
             return;
@@ -72,13 +78,13 @@ public class ApiKeyValidationMiddleware(RequestDelegate next, IConfiguration con
     }
 }
 
-public static class ApiKeyValidationMiddlewareExtensions
+public static class McpAuthMiddlewareExtensions
 {
-    public static IApplicationBuilder UseApiKeyValidation(this IApplicationBuilder app)
+    public static IApplicationBuilder UseMcpAuth(this IApplicationBuilder app)
     {
         ArgumentNullException.ThrowIfNull(app);
-
-        app.UseMiddleware<ApiKeyValidationMiddleware>();
+        
+        app.UseMiddleware<McpAuthMiddleware>();
 
         return app;
     }

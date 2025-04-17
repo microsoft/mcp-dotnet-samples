@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text;
 
 using Aliencube.YouTubeSubtitlesExtractor.Abstractions;
+using Aliencube.YouTubeSubtitlesExtractor.Models;
 
 using ModelContextProtocol.Server;
 
@@ -17,7 +18,17 @@ public class YouTubeSubtitleExtractorTool(IYouTubeVideo video, ILogger<YouTubeSu
         [Description("The two-letter language code.")] string languageCode
     )
     {
-        var subtitle = await video.ExtractSubtitleAsync(videoUrl, languageCode).ConfigureAwait(false);
+        var subtitle = default(Subtitle);
+        try
+        {
+            subtitle = await video.ExtractSubtitleAsync(videoUrl, languageCode).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error extracting subtitle for video URL: {videoUrl} and language code: {languageCode}", videoUrl, languageCode);
+            return "Error extracting subtitle.";
+        }
+
         if (subtitle == null)
         {
             logger.LogError("Subtitle not found for video URL: {videoUrl} and language code: {languageCode}", videoUrl, languageCode);
@@ -47,7 +58,17 @@ public class YouTubeSubtitleExtractorTool(IYouTubeVideo video, ILogger<YouTubeSu
         [Description("The YouTube video URL.")] string videoUrl
     )
     {
-        var details = await video.ExtractVideoDetailsAsync(videoUrl).ConfigureAwait(false);
+        var details = default(VideoDetails);
+        try
+        {
+            details = await video.ExtractVideoDetailsAsync(videoUrl).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error extracting video details for video URL: {videoUrl}", videoUrl);
+            return [];
+        }
+        
         if (details == null)
         {
             logger.LogError("No video details found for video URL: {videoUrl}", videoUrl);

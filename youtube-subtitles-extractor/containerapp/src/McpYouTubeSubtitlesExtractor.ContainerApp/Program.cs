@@ -11,6 +11,7 @@ builder.Services.AddHttpClient<IYouTubeVideo, YouTubeVideo>();
 
 // Add MCP server.
 builder.Services.AddMcpServer()
+                .WithHttpTransport()
                 .WithToolsFromAssembly();
 
 var app = builder.Build();
@@ -19,9 +20,8 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 // Enable API key validation.
-app.UseApiKeyValidation();
+app.UseMcpAuth();
 
-app.MapGet("/", () => "Hello, this is the MCP Server that extracts subtitles from a YouTube video!");
 app.MapMcp();
 
 app.Run();
