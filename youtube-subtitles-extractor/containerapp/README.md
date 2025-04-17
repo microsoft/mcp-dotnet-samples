@@ -41,7 +41,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 1. Run the MCP server app.
 
     ```bash
-    cd $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp
+    cd $REPOSITORY_ROOT/youtube-subtitles-extractor/containerapp
     dotnet run --project ./src/McpYouTubeSubtitlesExtractor.ContainerApp
     ```
 
@@ -62,7 +62,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 1. Build the MCP server app as a container image.
 
     ```bash
-    cd $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp
+    cd $REPOSITORY_ROOT/youtube-subtitles-extractor/containerapp
     docker build -t mcp-on-aca:latest .
     ```
 
@@ -150,13 +150,13 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp/.vscode/mcp.json \
+    cp $REPOSITORY_ROOT/youtube-subtitles-extractor/containerapp/.vscode/mcp.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp/.vscode/mcp.json `
+    Copy-Item -Path $REPOSITORY_ROOT/youtube-subtitles-extractor/containerapp/.vscode/mcp.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -189,13 +189,13 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp/.vscode/mcp.json \
+    cp $REPOSITORY_ROOT/youtube-subtitles-extractor/containerapp/.vscode/mcp.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/youtube-subtitles-extractor-containerapp/.vscode/mcp.json `
+    Copy-Item -Path $REPOSITORY_ROOT/youtube-subtitles-extractor/containerapp/.vscode/mcp.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 

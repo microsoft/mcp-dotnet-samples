@@ -40,7 +40,7 @@ This is an MCP server, hosted on [Azure Functions](https://learn.microsoft.com/a
 1. Run the function app
 
     ```bash
-    cd $REPOSITORY_ROOT/youtube-subtitles-extractor-functionapp/src/McpYouTubeSubtitlesExtractor.FunctionApp
+    cd $REPOSITORY_ROOT/youtube-subtitles-extractor/functionapp/src/McpYouTubeSubtitlesExtractor.FunctionApp
     func start
     ```
 
@@ -110,13 +110,13 @@ This is an MCP server, hosted on [Azure Functions](https://learn.microsoft.com/a
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/youtube-subtitles-extractor-functionapp/.vscode/mcp.json \
+    cp $REPOSITORY_ROOT/youtube-subtitles-extractor/functionapp/.vscode/mcp.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/youtube-subtitles-extractor-functionapp/.vscode/mcp.json `
+    Copy-Item -Path $REPOSITORY_ROOT/youtube-subtitles-extractor/functionapp/.vscode/mcp.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
