@@ -15,14 +15,13 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 
 - [Run ASP.NET Core MCP server locally](#run-aspnet-core-mcp-server-locally)
 - [Run ASP.NET Core MCP server locally in a container](#run-aspnet-core-mcp-server-locally-in-a-container)
-- [Run ASP.NET Core MCP server remotely](#run-aspnet-core-mcp-server-remotely)
 - [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
   - [VS Code + Agent Mode + Local MCP server](#vs-code--agent-mode--local-mcp-server)
   - [VS Code + Agent Mode + Local MCP server in a container](#vs-code--agent-mode--local-mcp-server-in-a-container)
-  - [VS Code + Agent Mode + Remote MCP server](#vs-code--agent-mode--remote-mcp-server)
   - [MCP Inspector + Local MCP server](#mcp-inspector--local-mcp-server)
   - [MCP Inspector + Local MCP server in a container](#mcp-inspector--local-mcp-server-in-a-container)
-  - [MCP Inspector + Remote MCP server](#mcp-inspector--remote-mcp-server)
+
+> **NOTE**: Due to the limitation of the [Aliencube.YouTubeSubtitlesExtractor](https://www.nuget.org/packages/Aliencube.YouTubeSubtitlesExtractor) used in this sample app, it doesn't support the remote server deployed on Azure.
 
 ### Run ASP.NET Core MCP server locally
 
@@ -83,52 +82,6 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     ```bash
     docker run -d -p 8080:8080 -e Mcp__ApiKey=$GUID --name mcp-on-aca mcp-on-aca:latest
     ```
-
-### Run ASP.NET Core MCP server remotely
-
-1. Login to Azure
-
-    ```bash
-    # Login with Azure CLI
-    az login
-    
-    # Login with Azure Developer CLI
-    azd auth login
-    ```
-
-1. Deploy the MCP server app to Azure
-
-    ```bash
-    azd up
-    ```
-
-   While provisioning and deploying, you'll be asked to provide subscription ID, location, environment name.
-
-1. After the deployment is complete, get the information by running the following commands:
-
-   - Azure Container Apps FQDN:
-
-     ```bash
-     azd env get-value AZURE_RESOURCE_MCP_ON_ACA_FQDN
-     ```
-
-   - MCP server access key:
-
-     ```bash
-     # bash/zsh
-     az containerapp revision list \
-         -g rg-$(azd env get-value AZURE_ENV_NAME) \
-         -n $(azd env get-value AZURE_RESOURCE_MCP_ON_ACA_NAME) \
-         --query "[0].properties.template.containers[0].env[?name=='Mcp__ApiKey'].value" -o tsv
-     ```
-
-     ```powershell
-     # PowerShell
-     az containerapp revision list `
-         -g rg-$(azd env get-value AZURE_ENV_NAME) `
-         -n $(azd env get-value AZURE_RESOURCE_MCP_ON_ACA_NAME) `
-         --query "[0].properties.template.containers[0].env[?name=='Mcp__ApiKey'].value" -o tsv
-     ```
 
 ### Connect MCP server to an MCP host/client
 
@@ -211,21 +164,6 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 1. It will ask you to run `get_available_languages` followed by `get_subtitle`. You might be asked to choose language for the subtitle.
 1. Confirm the summary of the video.
 
-#### VS Code + Agent Mode + Remote MCP server
-
-1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-youtube-subtitles-extractor-aca-remote` then click `Start Server`.
-1. Enter the Azure Container Apps FQDN.
-1. Enter the MCP server access key for Azure Container Apps.
-1. Enter prompt like:
-
-    ```text
-    Summarise this YouTube video link in 5 bullet points: https://youtu.be/XwnEtZxaokg?si=V39ta45iMni_Uc_m
-    ```
-
-1. It will ask you to run `get_available_languages` followed by `get_subtitle`. You might be asked to choose language for the subtitle.
-1. Confirm the summary of the video.
-
 #### MCP Inspector + Local MCP server
 
 1. Run MCP Inspector.
@@ -262,27 +200,6 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     ```
 
    > The `acaapp-container-access-key` value has been generated in the [previous step](#run-aspnet-core-mcp-server-locally-in-a-container).
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with a YouTube link and language code like `en` or `ko`.
-
-#### MCP Inspector + Remote MCP server
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:6274)
-1. Set the transport type to `SSE` 
-1. Set the URL to your running Function app's SSE endpoint and **Connect**:
-
-    ```text
-    https://<acaapp-server-fqdn>/sse?code=<acaapp-server-access-key>
-    ```
-
-   > Both `acaapp-server-fqdn` and `acaapp-server-access-key` values have been generated in the [previous step](#run-aspnet-core-mcp-server-remotely).
 
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with a YouTube link and language code like `en` or `ko`.

@@ -19,7 +19,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
 
-    <PackageReference Include="Aliencube.YouTubeSubtitlesExtractor" Version="3.*" />
+    <PackageReference Include="Aliencube.YouTubeSubtitlesExtractor" Version="4.*" />
     <!-- Application Insights isn't enabled by default. See https://aka.ms/AAt8mw4. -->
     <!-- <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.*" /> -->
     <!-- <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.*" /> -->
