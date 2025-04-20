@@ -1,0 +1,6 @@
+@RandomWeather.ContainerApp_HostAddress = http://localhost:5056
+
+GET {{RandomWeather.ContainerApp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
