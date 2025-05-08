@@ -1,0 +1,23 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "acaapp-server-fqdn",
+      "description": "Azure Container Apps FQDN"
+    }
+  ],
+  "servers": {
+    "mcp-todo-list-aca-local": {
+      "type": "sse",
+      "url": "http://0.0.0.0:5242/sse"
+    },
+    "mcp-todo-list-aca-container": {
+      "type": "sse",
+      "url": "http://0.0.0.0:8080/sse"
+    },
+    "mcp-todo-list-aca-remote": {
+      "type": "sse",
+      "url": "https://${input:acaapp-server-fqdn}/sse"
+    }
+  }
+}
