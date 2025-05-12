@@ -37,7 +37,14 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     $REPOSITORY_ROOT = git rev-parse --show-toplevel
     ```
 
-1. Run the MCP server app.
+1. Comment out the `UseMcpAuth()` line in [Program.cs](./src/McpYouTubeSubtitlesExtractor.ContainerApp/Program.cs) to disable API key validation for local development.
+
+    ```bash
+    # In Program.cs, comment out this line:
+    # app.UseMcpAuth();
+    ```
+
+2. Run the MCP server app.
 
     ```bash
     cd $REPOSITORY_ROOT/youtube-subtitles-extractor/containerapp
