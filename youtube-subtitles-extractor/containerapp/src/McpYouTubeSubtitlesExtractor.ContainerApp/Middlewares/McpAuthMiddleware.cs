@@ -8,7 +8,7 @@ public class McpAuthMiddleware(RequestDelegate next, IConfiguration config)
     private const string ApiKeyQueryParameterName = "code";
 
     private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
-    private readonly string _expectedApiKey = config["Mcp:ApiKey"] ?? throw new ArgumentNullException(nameof(config), "API key not found in configuration.");
+    private readonly string _expectedApiKey = config["Mcp:ApiKey"] ?? string.Empty;
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -22,6 +22,14 @@ public class McpAuthMiddleware(RequestDelegate next, IConfiguration config)
 
         if (context.Request.Method != HttpMethods.Get)
         {
+            await this._next(context);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(this._expectedApiKey) == true)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsync("API key not set.");
             await this._next(context);
             return;
         }

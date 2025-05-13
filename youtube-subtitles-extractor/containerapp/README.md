@@ -62,7 +62,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 
     ```bash
     cd $REPOSITORY_ROOT/youtube-subtitles-extractor/containerapp
-    docker build -t mcp-on-aca:latest .
+    docker build -t mcp-youtube-subtitles-extractor:latest .
     ```
 
 1. Generate a random GUID. This GUID value will be the access key of the MCP server in the container.
@@ -80,7 +80,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 1. Run the MCP server app in a container
 
     ```bash
-    docker run -d -p 8080:8080 -e Mcp__ApiKey=$GUID --name mcp-on-aca mcp-on-aca:latest
+    docker run -d -p 8080:8080 -e Mcp__ApiKey=$GUID --name mcp-youtube-subtitles-extractor mcp-youtube-subtitles-extractor:latest
     ```
 
 ### Connect MCP server to an MCP host/client
@@ -114,7 +114,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-youtube-subtitles-extractor-aca-local` then click `Start Server`.
+1. Choose `mcp-youtube-subtitles-extractor-local` then click `Start Server`.
 1. Enter prompt like:
 
     ```text
@@ -153,7 +153,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-youtube-subtitles-extractor-aca-container` then click `Start Server`.
+1. Choose `mcp-youtube-subtitles-extractor-container` then click `Start Server`.
 1. Enter the MCP server access key for local container. This value has been generated in the [previous step](#run-aspnet-core-mcp-server-locally-in-a-container).
 1. Enter prompt like:
 
