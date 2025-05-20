@@ -167,13 +167,13 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.stdio.local.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.stdio.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -206,13 +206,13 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.stdio.container.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.stdio.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -244,13 +244,13 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.sse.local.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.sse.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -282,13 +282,13 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.sse.container.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.sse.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -320,13 +320,13 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.sse.remote.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.remote.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.sse.remote.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.remote.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
