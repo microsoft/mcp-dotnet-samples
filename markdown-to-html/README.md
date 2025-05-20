@@ -391,13 +391,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Set the arguments that pointing to the console app project and **Connect**:
 
     ```text
-    # Windows
     run -i --rm mcp-md2html-stdio:latest
-    ```
-
-    ```text
-    # MacOS/Linux/WSL
-    run -it --rm mcp-md2html-stdio:latest
     ```
 
 1. Click **List Tools**.

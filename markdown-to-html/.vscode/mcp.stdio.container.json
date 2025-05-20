@@ -5,7 +5,7 @@
       "command": "docker",
       "args": [
         "run",
-        "-it",
+        "-i",
         "--rm",
         "mcp-md2html-stdio:latest",
         "-tc",
