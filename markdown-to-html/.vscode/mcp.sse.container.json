@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "mcp-md2html-sse-container": {
+      "type": "sse",
+      "url": "http://0.0.0.0:8080/sse"
+    }
+  }
+}

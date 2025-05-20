@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<HtmlSettings>(_ =>
         {
             var settings = AppSettings.Parse(config, args);
+
             return settings.Html;
         });
 

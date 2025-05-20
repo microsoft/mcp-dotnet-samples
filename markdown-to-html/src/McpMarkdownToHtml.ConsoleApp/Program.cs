@@ -10,8 +10,9 @@ using Microsoft.Extensions.Logging;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+var filepath = $"{AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar)}{Path.DirectorySeparatorChar}appsettings.json";
 builder.Configuration
-       .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+       .AddJsonFile(filepath, optional: false, reloadOnChange: true)
        .AddEnvironmentVariables();
 
 builder.Logging.AddConsole(options =>
@@ -26,7 +27,3 @@ builder.Services.AddMcpServer()
                 .WithToolsFromAssembly(Assembly.GetAssembly(typeof(AppSettings)) ?? Assembly.GetExecutingAssembly());
 
 await builder.Build().RunAsync();
-
-
-
-

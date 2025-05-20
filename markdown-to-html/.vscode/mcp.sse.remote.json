@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "acaapp-server-fqdn",
+      "description": "Azure Container Apps FQDN"
+    }
+  ],
+  "servers": {
+    "mcp-md2html-sse-remote": {
+      "type": "sse",
+      "url": "https://${input:acaapp-server-fqdn}/sse"
+    }
+  }
+}
