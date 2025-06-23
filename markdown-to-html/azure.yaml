@@ -11,6 +11,6 @@ services:
     host: containerapp
     language: dotnet
     docker:
-      path: ../../Dockerfile.sse
+      path: ../../Dockerfile.streamable-http
       context: ../../
       remoteBuild: true
