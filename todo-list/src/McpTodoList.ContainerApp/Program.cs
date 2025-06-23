@@ -16,7 +16,7 @@ builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlite(connec
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 
 builder.Services.AddMcpServer()
-                .WithHttpTransport()
+                .WithStreamableHttpTransport()
                 .WithToolsFromAssembly();
 
 var app = builder.Build();

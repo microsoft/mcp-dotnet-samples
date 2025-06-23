@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAppSettings(builder.Configuration, args);
 
 builder.Services.AddMcpServer()
-                .WithHttpTransport()
+                .WithStreamableHttpTransport()
                 .WithToolsFromAssembly(Assembly.GetAssembly(typeof(AppSettings)) ?? Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
