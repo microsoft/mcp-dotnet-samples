@@ -10,6 +10,7 @@ public interface ITodoRepository
     Task<TodoItem> AddTodoItemAsync(TodoItem todoItem);
     Task<IEnumerable<TodoItem>> GetAllTodoItemsAsync();
     Task<TodoItem> UpdateTodoItemAsync(TodoItem todoItem);
+    Task<TodoItem> CompleteTodoItemAsync(TodoItem todoItem);
     Task<TodoItem> DeleteTodoItemAsync(int id);
 }
 
@@ -40,11 +41,29 @@ public class TodoRepository(TodoDbContext db) : ITodoRepository
         }
 
         record.Text = todoItem.Text;
+
+        await db.TodoItems.Where(p => p.Id == todoItem.Id)
+                          .ExecuteUpdateAsync(p => p.SetProperty(x => x.Text, todoItem.Text))
+                          .ConfigureAwait(false);
+
+        await db.SaveChangesAsync().ConfigureAwait(false);
+
+        return record;
+    }
+
+    public async Task<TodoItem> CompleteTodoItemAsync(TodoItem todoItem)
+    {
+        var record = await db.TodoItems.SingleOrDefaultAsync(p => p.Id == todoItem.Id)
+                                       .ConfigureAwait(false);
+        if (record is null)
+        {
+            return default!;
+        }
+
         record.IsCompleted = todoItem.IsCompleted;
 
         await db.TodoItems.Where(p => p.Id == todoItem.Id)
-                          .ExecuteUpdateAsync(p => p.SetProperty(x => x.Text, todoItem.Text)
-                                                    .SetProperty(x => x.IsCompleted, todoItem.IsCompleted))
+                          .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsCompleted, todoItem.IsCompleted))
                           .ConfigureAwait(false);
 
         await db.SaveChangesAsync().ConfigureAwait(false);

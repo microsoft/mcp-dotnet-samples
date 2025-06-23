@@ -65,7 +65,7 @@ public class TodoTool(ITodoRepository todo, ILogger<TodoTool> logger)
     )
     {
         var todoItem = new TodoItem() { Id = id, IsCompleted = true };
-        var completed = await todo.UpdateTodoItemAsync(todoItem).ConfigureAwait(false);
+        var completed = await todo.CompleteTodoItemAsync(todoItem).ConfigureAwait(false);
         if (completed is null)
         {
             logger.LogWarning("Todo item with ID '{id}' not found.", id);
