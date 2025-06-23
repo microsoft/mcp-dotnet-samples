@@ -206,8 +206,8 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `SSE` 
-1. Set the URL to your running Function app's SSE endpoint and **Connect**:
+1. Set the transport type to `Streamable HTTP` 
+1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
     http://0.0.0.0:5242/sse
@@ -225,8 +225,8 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `SSE` 
-1. Set the URL to your running Function app's SSE endpoint and **Connect**:
+1. Set the transport type to `Streamable HTTP` 
+1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
     http://0.0.0.0:8080/sse
@@ -244,8 +244,8 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:6274)
-1. Set the transport type to `SSE` 
-1. Set the URL to your running Function app's SSE endpoint and **Connect**:
+1. Set the transport type to `Streamable HTTP` 
+1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
     https://<acaapp-server-fqdn>/sse
