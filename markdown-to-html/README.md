@@ -14,20 +14,20 @@ This is an MCP server that converts markdown text to HTML.
 ## Getting Started
 
 - [Build ASP.NET Core MCP server (STDIO) locally in a container](#build-aspnet-core-mcp-server-stdio-locally-in-a-container)
-- [Run ASP.NET Core MCP server (SSE) locally](#run-aspnet-core-mcp-server-sse-locally)
-- [Run ASP.NET Core MCP server (SSE) locally in a container](#run-aspnet-core-mcp-server-sse-locally-in-a-container)
-- [Run ASP.NET Core MCP server (SSE) remotely](#run-aspnet-core-mcp-server-sse-remotely)
+- [Run ASP.NET Core MCP server (Streamable HTTP) locally](#run-aspnet-core-mcp-server-streamable-http-locally)
+- [Run ASP.NET Core MCP server (Streamable HTTP) locally in a container](#run-aspnet-core-mcp-server-streamable-http-locally-in-a-container)
+- [Run ASP.NET Core MCP server (Streamable HTTP) remotely](#run-aspnet-core-mcp-server-streamable-http-remotely)
 - [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
   - [VS Code + Agent Mode + Local MCP server (STDIO)](#vs-code--agent-mode--local-mcp-server-stdio)
   - [VS Code + Agent Mode + Local MCP server (STDIO) in a container](#vs-code--agent-mode--local-mcp-server-stdio-in-a-container)
-  - [VS Code + Agent Mode + Local MCP server (SSE)](#vs-code--agent-mode--local-mcp-server-sse)
-  - [VS Code + Agent Mode + Local MCP server (SSE) in a container](#vs-code--agent-mode--local-mcp-server-sse-in-a-container)
-  - [VS Code + Agent Mode + Remote MCP server (SSE)](#vs-code--agent-mode--remote-mcp-server-sse)
+  - [VS Code + Agent Mode + Local MCP server (Streamable HTTP)](#vs-code--agent-mode--local-mcp-server-streamable-http)
+  - [VS Code + Agent Mode + Local MCP server (Streamable HTTP) in a container](#vs-code--agent-mode--local-mcp-server-streamable-http-in-a-container)
+  - [VS Code + Agent Mode + Remote MCP server (Streamable HTTP)](#vs-code--agent-mode--remote-mcp-server-streamable-http)
   - [MCP Inspector + Local MCP server (STDIO)](#mcp-inspector--local-mcp-server-stdio)
   - [MCP Inspector + Local MCP server (STDIO) in a container](#mcp-inspector--local-mcp-server-stdio-in-a-container)
-  - [MCP Inspector + Local MCP server (SSE)](#mcp-inspector--local-mcp-server-sse)
-  - [MCP Inspector + Local MCP server (SSE) in a container](#mcp-inspector--local-mcp-server-sse-in-a-container)
-  - [MCP Inspector + Remote MCP server (SSE)](#mcp-inspector--remote-mcp-server-sse)
+  - [MCP Inspector + Local MCP server (Streamable HTTP)](#mcp-inspector--local-mcp-server-streamable-http)
+  - [MCP Inspector + Local MCP server (Streamable HTTP) in a container](#mcp-inspector--local-mcp-server-streamable-http-in-a-container)
+  - [MCP Inspector + Remote MCP server (Streamable HTTP)](#mcp-inspector--remote-mcp-server-streamable-http)
 
 ### Build ASP.NET Core MCP server (STDIO) locally in a container
 
@@ -50,7 +50,7 @@ This is an MCP server that converts markdown text to HTML.
     docker build -f Dockerfile.stdio -t mcp-md2html-stdio:latest .
     ```
 
-### Run ASP.NET Core MCP server (SSE) locally
+### Run ASP.NET Core MCP server (Streamable HTTP) locally
 
 1. Get the repository root.
 
@@ -83,7 +83,7 @@ This is an MCP server that converts markdown text to HTML.
    > dotnet run --project ./src/McpMarkdownToHtml.ContainerApp -- -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
    > ```
 
-### Run ASP.NET Core MCP server (SSE) locally in a container
+### Run ASP.NET Core MCP server (Streamable HTTP) locally in a container
 
 1. Get the repository root.
 
@@ -101,13 +101,13 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     cd $REPOSITORY_ROOT/markdown-to-html
-    docker build -f Dockerfile.sse -t mcp-md2html-sse:latest .
+    docker build -f Dockerfile.streamable-http -t mcp-md2html-streamable-http:latest .
     ```
 
 1. Run the MCP server app in a container
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-md2html-sse mcp-md2html-sse:latest
+    docker run -d -p 8080:8080 --name mcp-md2html-streamable-http mcp-md2html-streamable-http:latest
     ```
 
    > **NOTE**: If you're converting the markdown text for [Microsoft Tech Community](https://techcommunity.microsoft.com/), the following parameters are helpful to pass.
@@ -119,10 +119,10 @@ This is an MCP server that converts markdown text to HTML.
    > With these parameters, you can run the MCP server like:
    >
    > ```bash
-   > docker run -d -p 8080:8080 --name mcp-md2html-sse mcp-md2html-sse:latest -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   > docker run -d -p 8080:8080 --name mcp-md2html-streamable-http mcp-md2html-streamable-http:latest -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
    > ```
 
-### Run ASP.NET Core MCP server (SSE) remotely
+### Run ASP.NET Core MCP server (Streamable HTTP) remotely
 
 1. Login to Azure
 
@@ -226,7 +226,7 @@ This is an MCP server that converts markdown text to HTML.
 
 1. Confirm the result.
 
-#### VS Code + Agent Mode + Local MCP server (SSE)
+#### VS Code + Agent Mode + Local MCP server (Streamable HTTP)
 
 1. Get the repository root.
 
@@ -244,18 +244,18 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.local.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-sse-local` then click `Start Server`.
+1. Choose `mcp-md2html-streamable-http-local` then click `Start Server`.
 1. Enter prompt like:
 
     ```text
@@ -264,7 +264,7 @@ This is an MCP server that converts markdown text to HTML.
 
 1. Confirm the result.
 
-#### VS Code + Agent Mode + Local MCP server (SSE) in a container
+#### VS Code + Agent Mode + Local MCP server (Streamable HTTP) in a container
 
 1. Get the repository root.
 
@@ -282,18 +282,18 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.container.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-sse-container` then click `Start Server`.
+1. Choose `mcp-md2html-streamable-http-container` then click `Start Server`.
 1. Enter prompt like:
 
     ```text
@@ -302,7 +302,7 @@ This is an MCP server that converts markdown text to HTML.
 
 1. Confirm the result.
 
-#### VS Code + Agent Mode + Remote MCP server (SSE)
+#### VS Code + Agent Mode + Remote MCP server (Streamable HTTP)
 
 1. Get the repository root.
 
@@ -320,18 +320,18 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.remote.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.remote.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.sse.remote.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.remote.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-sse-remote` then click `Start Server`.
+1. Choose `mcp-md2html-streamable-http-remote` then click `Start Server`.
 1. Enter the Azure Container Apps FQDN.
 1. Enter prompt like:
 
@@ -397,7 +397,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with appropriate values.
 
-#### MCP Inspector + Local MCP server (SSE)
+#### MCP Inspector + Local MCP server (Streamable HTTP)
 
 1. Run MCP Inspector.
 
@@ -406,8 +406,8 @@ This is an MCP server that converts markdown text to HTML.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `SSE` 
-1. Set the URL to your running Function app's SSE endpoint and **Connect**:
+1. Set the transport type to `Streamable HTTP` 
+1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
     http://0.0.0.0:5280/sse
@@ -416,7 +416,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with appropriate values.
 
-#### MCP Inspector + Local MCP server (SSE) in a container
+#### MCP Inspector + Local MCP server (Streamable HTTP) in a container
 
 1. Run MCP Inspector.
 
@@ -425,8 +425,8 @@ This is an MCP server that converts markdown text to HTML.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `SSE` 
-1. Set the URL to your running Function app's SSE endpoint and **Connect**:
+1. Set the transport type to `Streamable HTTP` 
+1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
     http://0.0.0.0:8080/sse
@@ -435,7 +435,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with appropriate values.
 
-#### MCP Inspector + Remote MCP server (SSE)
+#### MCP Inspector + Remote MCP server (Streamable HTTP)
 
 1. Run MCP Inspector.
 
@@ -444,8 +444,8 @@ This is an MCP server that converts markdown text to HTML.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:6274)
-1. Set the transport type to `SSE` 
-1. Set the URL to your running Function app's SSE endpoint and **Connect**:
+1. Set the transport type to `Streamable HTTP` 
+1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
     https://<acaapp-server-fqdn>/sse
