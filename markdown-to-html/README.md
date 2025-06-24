@@ -101,13 +101,13 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     cd $REPOSITORY_ROOT/markdown-to-html
-    docker build -f Dockerfile.streamable-http -t mcp-md2html-streamable-http:latest .
+    docker build -f Dockerfile.http -t mcp-md2html-http:latest .
     ```
 
 1. Run the MCP server app in a container
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-md2html-streamable-http mcp-md2html-streamable-http:latest
+    docker run -d -p 8080:8080 --name mcp-md2html-http mcp-md2html-http:latest
     ```
 
    > **NOTE**: If you're converting the markdown text for [Microsoft Tech Community](https://techcommunity.microsoft.com/), the following parameters are helpful to pass.
@@ -119,7 +119,7 @@ This is an MCP server that converts markdown text to HTML.
    > With these parameters, you can run the MCP server like:
    >
    > ```bash
-   > docker run -d -p 8080:8080 --name mcp-md2html-streamable-http mcp-md2html-streamable-http:latest -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   > docker run -d -p 8080:8080 --name mcp-md2html-http mcp-md2html-http:latest -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
    > ```
 
 ### Run ASP.NET Core MCP server (Streamable HTTP) remotely
@@ -244,18 +244,18 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.local.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-streamable-http-local` then click `Start Server`.
+1. Choose `mcp-md2html-http-local` then click `Start Server`.
 1. Enter prompt like:
 
     ```text
@@ -282,18 +282,18 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.container.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-streamable-http-container` then click `Start Server`.
+1. Choose `mcp-md2html-http-container` then click `Start Server`.
 1. Enter prompt like:
 
     ```text
@@ -320,18 +320,18 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.remote.json \
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.remote.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.streamable-http.remote.json `
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.remote.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-streamable-http-remote` then click `Start Server`.
+1. Choose `mcp-md2html-http-remote` then click `Start Server`.
 1. Enter the Azure Container Apps FQDN.
 1. Enter prompt like:
 
@@ -410,7 +410,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
-    http://0.0.0.0:5280/sse
+    http://0.0.0.0:5280/mcp
     ```
 
 1. Click **List Tools**.
@@ -429,7 +429,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
-    http://0.0.0.0:8080/sse
+    http://0.0.0.0:8080/mcp
     ```
 
 1. Click **List Tools**.
@@ -448,7 +448,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
-    https://<acaapp-server-fqdn>/sse
+    https://<acaapp-server-fqdn>/mcp
     ```
 
 1. Click **List Tools**.

@@ -8,16 +8,16 @@
   ],
   "servers": {
     "mcp-todo-list-aca-local": {
-      "type": "streamable-http",
-      "url": "http://0.0.0.0:5242/sse"
+      "type": "http",
+      "url": "http://0.0.0.0:5242/mcp"
     },
     "mcp-todo-list-aca-container": {
-      "type": "streamable-http",
-      "url": "http://0.0.0.0:8080/sse"
+      "type": "http",
+      "url": "http://0.0.0.0:8080/mcp"
     },
     "mcp-todo-list-aca-remote": {
-      "type": "streamable-http",
-      "url": "https://${input:acaapp-server-fqdn}/sse"
+      "type": "http",
+      "url": "https://${input:acaapp-server-fqdn}/mcp"
     }
   }
 }

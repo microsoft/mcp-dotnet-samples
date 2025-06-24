@@ -210,7 +210,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
-    http://0.0.0.0:5242/sse
+    http://0.0.0.0:5242/mcp
     ```
 
 1. Click **List Tools**.
@@ -229,7 +229,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
-    http://0.0.0.0:8080/sse
+    http://0.0.0.0:8080/mcp
     ```
 
 1. Click **List Tools**.
@@ -248,7 +248,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
-    https://<acaapp-server-fqdn>/sse
+    https://<acaapp-server-fqdn>/mcp
     ```
 
 1. Click **List Tools**.

@@ -1,8 +1,0 @@
-{
-  "servers": {
-    "mcp-md2html-streamable-http-container": {
-      "type": "streamable-http",
-      "url": "http://0.0.0.0:8080/sse"
-    }
-  }
-}

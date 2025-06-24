@@ -16,7 +16,7 @@ builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlite(connec
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 
 builder.Services.AddMcpServer()
-                .WithStreamableHttpTransport()
+                .WithHttpTransport(o => o.Stateless = true)
                 .WithToolsFromAssembly();
 
 var app = builder.Build();
@@ -31,6 +31,6 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 
-app.MapMcp();
+app.MapMcp("/mcp");
 
 app.Run();

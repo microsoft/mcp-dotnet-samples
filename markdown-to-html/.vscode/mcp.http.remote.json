@@ -7,9 +7,9 @@
     }
   ],
   "servers": {
-    "mcp-md2html-streamable-http-remote": {
-      "type": "streamable-http",
-      "url": "https://${input:acaapp-server-fqdn}/sse"
+    "mcp-md2html-http-remote": {
+      "type": "http",
+      "url": "https://${input:acaapp-server-fqdn}/mcp"
     }
   }
 }

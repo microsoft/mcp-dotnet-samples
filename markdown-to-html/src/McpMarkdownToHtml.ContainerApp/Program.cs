@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAppSettings(builder.Configuration, args);
 
 builder.Services.AddMcpServer()
-                .WithStreamableHttpTransport()
+                .WithHttpTransport(o => o.Stateless = true)
                 .WithToolsFromAssembly(Assembly.GetAssembly(typeof(AppSettings)) ?? Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
@@ -17,6 +17,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 
-app.MapMcp();
+app.MapMcp("/mcp");
 
 app.Run();
