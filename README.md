@@ -9,6 +9,7 @@ Welcome to the Model Context Protocol (MCP) .NET Samples repository! This collec
 MCP is an open protocol that standardizes how applications provide context to Large Language Models (LLMs). Think of MCP like a USB-C port for AI applications - it provides a standardized way to connect AI models to different data sources and tools.
 
 With MCP, you can:
+
 - Utilize pre-built integrations that your LLM can directly plug into
 - Flexibly switch between LLM providers and vendors
 - Follow best practices for securing your data within your infrastructure
@@ -22,7 +23,6 @@ This repository contains .NET samples ranging from building your own MCP impleme
 |-------------|-------------|
 | [Markdown to HTML](./markdown-to-html/) | A remote MCP server that converts markdown text to HTML. |
 | [To-do List](./todo-list/) | A remote MCP server that manages to-do list items. |
-| [YouTube Subtitles Extractor](./youtube-subtitles-extractor/) | A remote MCP server that extracts subtitles from any given YouTube video's URL. |
 
 ## 🛠️ Getting Started
 

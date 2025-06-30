@@ -1,8 +1,0 @@
-{
-  "servers": {
-    "mcp-youtube-subtitles-extractor-function-local": {
-      "type": "sse",
-      "url": "http://0.0.0.0:7071/runtime/webhooks/mcp/sse"
-    }
-  }
-}
