@@ -1,6 +1,6 @@
-# MCP Server: Markdown to HTML
+# MCP Server: Assembly Analyzer
 
-This is an MCP server that converts markdown text to HTML.
+This is an MCP server that analyzes a given .dll to find out what's inside.
 
 ## Prerequisites
 

@@ -21,6 +21,7 @@ This repository contains .NET samples ranging from building your own MCP impleme
 
 | Sample Name | Description |
 |-------------|-------------|
+| [Assembly Analyzer](./assembly-analyzer/) | A remote MCP server that analyzes a given .dll file to find out what's inside. |
 | [Markdown to HTML](./markdown-to-html/) | A remote MCP server that converts markdown text to HTML. |
 | [To-do List](./todo-list/) | A remote MCP server that manages to-do list items. |
 
