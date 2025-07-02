@@ -6,17 +6,13 @@ namespace McpAssemblyAnalyzer.Common.Helpers;
 
 public static class EnumHelper
 {
-    public static List<EnumInfo> GetEnumInformation(Assembly assembly)
+    public static List<EnumDetails> GetEnumDetails(Assembly assembly)
     {
-        var enums = new List<EnumInfo>();
+        var enums = new List<EnumDetails>();
 
-        var definedTypes = assembly.DefinedTypes;
-        var exportedTypes = assembly.ExportedTypes;
-        var referencedAssemblies = assembly.GetReferencedAssemblies();
-        // var types = assembly.GetTypes();
-        foreach (Type type in definedTypes.Where(t => t.IsEnum && t.IsPublic))
+        foreach (Type type in assembly.GetTypes().Where(t => t.IsEnum && t.IsPublic))
         {
-            var enumInfo = new EnumInfo
+            var enumInfo = new EnumDetails
             {
                 Namespace = type.Namespace,
                 Name = type.Name,

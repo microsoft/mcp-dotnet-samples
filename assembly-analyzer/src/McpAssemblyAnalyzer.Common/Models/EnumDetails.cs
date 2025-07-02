@@ -1,6 +1,6 @@
 namespace McpAssemblyAnalyzer.Common.Models;
 
-public class EnumInfo
+public class EnumDetails
 {
     public string? Namespace { get; set; }
     public string? Name { get; set; }

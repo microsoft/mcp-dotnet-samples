@@ -6,17 +6,13 @@ namespace McpAssemblyAnalyzer.Common.Helpers;
 
 public static class ClassHelper
 {
-    public static List<ClassInfo> GetClassInformation(Assembly assembly)
+    public static List<ClassDetails> GetClassDetails(Assembly assembly)
     {
-        var classes = new List<ClassInfo>();
+        var classes = new List<ClassDetails>();
 
-        var definedTypes = assembly.DefinedTypes;
-        var exportedTypes = assembly.ExportedTypes;
-        var referencedAssemblies = assembly.GetReferencedAssemblies();
-        // var types = assembly.GetTypes();
-        foreach (Type type in definedTypes.Where(t => t.IsEnum && t.IsPublic))
+        foreach (Type type in assembly.GetTypes().Where(t => t.IsClass && t.IsPublic))
         {
-            var classInfo = new ClassInfo
+            var classInfo = new ClassDetails
             {
                 Namespace = type.Namespace,
                 Name = type.Name,
@@ -25,11 +21,11 @@ public static class ClassHelper
                 IsSealed = type.IsSealed,
                 IsGeneric = type.IsGenericType,
                 BaseType = type.BaseType?.Name,
-                Interfaces = GetInterfaceInfo(type),
-                Constructors = GetConstructorInfo(type),
-                Properties = GetPropertyInfo(type),
-                Methods = GetMethodInfo(type),
-                Fields = GetFieldInfo(type)
+                Interfaces = GetInterfaceDetails(type),
+                Constructors = GetConstructorDetails(type),
+                Properties = GetPropertyDetails(type),
+                Methods = GetMethodDetails(type),
+                Fields = GetFieldDetails(type)
             };
 
             classes.Add(classInfo);
@@ -38,47 +34,96 @@ public static class ClassHelper
         return classes;
     }
 
-    private static List<InterfaceInfo> GetInterfaceInfo(Type type)
+    private static List<InterfaceDetails> GetInterfaceDetails(Type type)
     {
         var interfaces = type.GetInterfaces()
-                             .Select(i => new InterfaceInfo
+                             .Select(i => new InterfaceDetails
                              {
                                  Namespace = i.Namespace,
                                  Name = i.Name,
                                  FullName = i.FullName,
                                  IsGeneric = i.IsGenericType,
                                  BaseType = i.BaseType?.Name,
-                                 Methods = GetMethodInfo(i),
-                                 Properties = GetPropertyInfo(i)
+                                 Methods = GetMethodDetails(i),
+                                 Properties = GetPropertyDetails(i)
                              })
                              .ToList();
         return interfaces;
     }
 
-    private static List<ConstructorInfo> GetConstructorInfo(Type type)
+    private static List<ConstructorDetails> GetConstructorDetails(Type type)
     {
         var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
+                               .Select(c => new ConstructorDetails
+                               {
+                                   Name = c.Name,
+                                   Parameters = GetParameterDetails(c)
+                               })
                                .ToList();
         return constructors;
     }
 
-    private static List<PropertyInfo> GetPropertyInfo(Type type)
+    private static List<PropertyDetails> GetPropertyDetails(Type type)
     {
         var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+                             .Select(p => new PropertyDetails
+                             {
+                                 Name = p.Name,
+                                 PropertyType = p.PropertyType.Name
+                             })
                              .ToList();
         return properties;
     }
 
-    private static List<MethodInfo> GetMethodInfo(Type type)
+    private static List<MethodDetails> GetMethodDetails(Type type)
     {
         var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+                          .Select(m => new MethodDetails
+                          {
+                              Name = m.Name,
+                              ReturnType = m.ReturnType.Name,
+                              Parameters = GetParameterDetails(m)
+                          })
                           .ToList();
         return methods;
     }
 
-    private static List<FieldInfo> GetFieldInfo(Type type)
+    private static List<ParameterDetails> GetParameterDetails(ConstructorInfo constructor)
+    {
+        var parameters = constructor.GetParameters()
+                                    .Select(p => new ParameterDetails
+                                    {
+                                        Name = p.Name,
+                                        ParameterType = p.ParameterType.Name,
+                                        IsOptional = p.IsOptional,
+                                        DefaultValue = p.DefaultValue
+                                    })
+                                    .ToList();
+        return parameters;
+    }
+
+    private static List<ParameterDetails> GetParameterDetails(MethodInfo method)
+    {
+        var parameters = method.GetParameters()
+                               .Select(p => new ParameterDetails
+                               {
+                                   Name = p.Name,
+                                   ParameterType = p.ParameterType.Name,
+                                   IsOptional = p.IsOptional,
+                                   DefaultValue = p.DefaultValue
+                               })
+                               .ToList();
+        return parameters;
+    }
+
+    private static List<FieldDetails> GetFieldDetails(Type type)
     {
         var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+                         .Select(f => new FieldDetails
+                         {
+                             Name = f.Name,
+                             FieldType = f.FieldType.Name
+                         })
                          .ToList();
         return fields;
     }
