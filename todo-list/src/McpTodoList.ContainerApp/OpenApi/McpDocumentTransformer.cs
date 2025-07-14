@@ -13,7 +13,7 @@ public class McpDocumentTransformer(IHttpContextAccessor accessor) : IOpenApiDoc
         {
             Title = "MCP Todo Management",
             Version = "1.0.0",
-            Description = "A simple MCP server for managing a todo list items."
+            Description = "A simple MCP server for managing todo list items."
         };
         document.Servers =
         [
