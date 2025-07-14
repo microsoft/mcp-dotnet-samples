@@ -263,7 +263,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     https://<acaapp-server-fqdn>/swagger.json
     ```
 
-   Alternatively, you've got `swagger.json` on this app built on your local machine.
+   Alternatively, you've got `swagger.json` on this app built at your project root directory on your local machine.
 
 1. Create a custom connector with this Swagger document on either [Power Automate](https://make.powerautomate.com) or [Power Apps](https://make.powerapps.com).
 1. Go to [Copilot Studio](https://copilotstudio.microsoft.com) and create a new agent.
