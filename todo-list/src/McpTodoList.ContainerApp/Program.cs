@@ -1,4 +1,5 @@
 using McpTodoList.ContainerApp.Data;
+using McpTodoList.ContainerApp.OpenApi;
 using McpTodoList.ContainerApp.Repositories;
 
 using Microsoft.Data.Sqlite;
@@ -19,6 +20,13 @@ builder.Services.AddMcpServer()
                 .WithHttpTransport(o => o.Stateless = true)
                 .WithToolsFromAssembly();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddOpenApi(o =>
+{
+    o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+    o.AddDocumentTransformer<McpDocumentTransformer>();
+});
+
 var app = builder.Build();
 
 // Initialise the database
@@ -30,6 +38,8 @@ using (var scope = app.Services.CreateScope())
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
+
+app.MapOpenApi("/swagger.json");
 
 app.MapMcp("/mcp");
 

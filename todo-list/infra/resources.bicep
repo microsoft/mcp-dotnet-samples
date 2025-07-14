@@ -119,6 +119,16 @@ module mcpTodoList 'br/public:avm/res/app/container-app:0.8.0' = {
         identity: mcpTodoListIdentity.outputs.resourceId
       }
     ]
+    corsPolicy: {
+      allowedOrigins: [
+        'https://make.preview.powerautomate.com'
+        'https://make.preview.powerapps.com'
+        'https://copilotstudio.preview.microsoft.com'
+        'https://make.powerautomate.com'
+        'https://make.powerapps.com'
+        'https://copilotstudio.microsoft.com'
+      ]
+    }
     environmentResourceId: containerAppsEnvironment.outputs.resourceId
     location: location
     tags: union(tags, { 'azd-service-name': 'mcp-todo-list' })

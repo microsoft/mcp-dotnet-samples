@@ -23,6 +23,7 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
   - [MCP Inspector + Local MCP server](#mcp-inspector--local-mcp-server)
   - [MCP Inspector + Local MCP server in a container](#mcp-inspector--local-mcp-server-in-a-container)
   - [MCP Inspector + Remote MCP server](#mcp-inspector--remote-mcp-server)
+  - [Copilot Studio + Remote MCP server](#copilot-studio--remote-mcp-server)
 
 ### Run ASP.NET Core MCP server locally
 
@@ -253,3 +254,18 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with appropriate values.
+
+#### Copilot Studio + Remote MCP server
+
+1. The remote MCP server renders a Swagger document at
+
+    ```text
+    https://<acaapp-server-fqdn>/swagger.json
+    ```
+
+   Alternatively, you've got `swagger.json` on this app built on your local machine.
+
+1. Create a custom connector with this Swagger document on either [Power Automate](https://make.powerautomate.com) or [Power Apps](https://make.powerapps.com).
+1. Go to [Copilot Studio](https://copilotstudio.microsoft.com) and create a new agent.
+1. Add MCP connector to the agent.
+1. Run the agent with appropriate values.
