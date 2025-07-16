@@ -30,47 +30,47 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker - markdown-to-html
-        id: meta-md2html
+        id: meta-markdown-to-html
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/md2html
+          images: ${{ env.REGISTRY }}/markdown-to-html
 
       - name: Build and push Docker image - markdown-to-html
-        id: push-md2html
+        id: push-markdown-to-html
         uses: docker/build-push-action@v6
         with:
           push: true
           context: ${{ github.workspace }}/markdown-to-html
           file: ${{ github.workspace }}/markdown-to-html/Dockerfile.http
-          tags: '${{ steps.meta-md2html.outputs.tags }},${{ env.REGISTRY }}/md2html:latest'
-          labels: ${{ steps.meta-md2html.outputs.labels }}
+          tags: '${{ steps.meta-markdown-to-html.outputs.tags }},${{ env.REGISTRY }}/markdown-to-html:latest'
+          labels: ${{ steps.meta-markdown-to-html.outputs.labels }}
 
       - name: Generate artifact attestation - markdown-to-html
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: ${{ env.REGISTRY }}/md2html
-          subject-digest: ${{ steps.push-md2html.outputs.digest }}
+          subject-name: ${{ env.REGISTRY }}/markdown-to-html
+          subject-digest: ${{ steps.push-markdown-to-html.outputs.digest }}
           push-to-registry: true
 
       - name: Extract metadata (tags, labels) for Docker - todo-list
-        id: meta-todolist
+        id: meta-todo-list
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/todolist
+          images: ${{ env.REGISTRY }}/todo-list
 
       - name: Build and push Docker image - todo-list
-        id: push-todolist
+        id: push-todo-list
         uses: docker/build-push-action@v6
         with:
           push: true
           context: ${{ github.workspace }}/todo-list
           file: ${{ github.workspace }}/todo-list/Dockerfile
-          tags: '${{ steps.meta-todolist.outputs.tags }},${{ env.REGISTRY }}/todolist:latest'
-          labels: ${{ steps.meta-todolist.outputs.labels }}
+          tags: '${{ steps.meta-todo-list.outputs.tags }},${{ env.REGISTRY }}/todo-list:latest'
+          labels: ${{ steps.meta-todo-list.outputs.labels }}
 
       - name: Generate artifact attestation - todo-list
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: ${{ env.REGISTRY }}/todolist
-          subject-digest: ${{ steps.push-todolist.outputs.digest }}
+          subject-name: ${{ env.REGISTRY }}/todo-list
+          subject-digest: ${{ steps.push-todo-list.outputs.digest }}
           push-to-registry: true
