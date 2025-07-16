@@ -1,0 +1,76 @@
+name: Build MCP Servers
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker - markdown-to-html
+        id: meta-md2html
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/md2html
+
+      - name: Build and push Docker image - markdown-to-html
+        id: push-md2html
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ${{ github.workspace }}/markdown-to-html
+          file: ${{ github.workspace }}/markdown-to-html/Dockerfile.http
+          tags: '${{ steps.meta-md2html.outputs.tags }},latest'
+          labels: ${{ steps.meta-md2html.outputs.labels }}
+
+      - name: Generate artifact attestation - markdown-to-html
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/md2html
+          subject-digest: ${{ steps.push-md2html.outputs.digest }}
+          push-to-registry: true
+
+      - name: Extract metadata (tags, labels) for Docker - todo-list
+        id: meta-todolist
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/todolist
+
+      - name: Build and push Docker image - todo-list
+        id: push-todolist
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ${{ github.workspace }}/todo-list
+          file: ${{ github.workspace }}/todo-list/Dockerfile
+          tags: '${{ steps.meta-todolist.outputs.tags }},latest'
+          labels: ${{ steps.meta-todolist.outputs.labels }}
+
+      - name: Generate artifact attestation - todo-list
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/todolist
+          subject-digest: ${{ steps.push-todolist.outputs.digest }}
+          push-to-registry: true
