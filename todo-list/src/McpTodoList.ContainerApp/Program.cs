@@ -21,9 +21,14 @@ builder.Services.AddMcpServer()
                 .WithToolsFromAssembly();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddOpenApi(o =>
+builder.Services.AddOpenApi("swagger", o =>
 {
     o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+    o.AddDocumentTransformer<McpDocumentTransformer>();
+});
+builder.Services.AddOpenApi("openapi", o =>
+{
+    o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
     o.AddDocumentTransformer<McpDocumentTransformer>();
 });
 
@@ -39,7 +44,7 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 
-app.MapOpenApi("/swagger.json");
+app.MapOpenApi("/{documentName}.json");
 
 app.MapMcp("/mcp");
 
