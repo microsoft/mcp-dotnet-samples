@@ -42,7 +42,7 @@ jobs:
           push: true
           context: ${{ github.workspace }}/markdown-to-html
           file: ${{ github.workspace }}/markdown-to-html/Dockerfile.http
-          tags: '${{ steps.meta-md2html.outputs.tags }},latest'
+          tags: '${{ steps.meta-md2html.outputs.tags }},${{ env.REGISTRY }}/md2html:latest'
           labels: ${{ steps.meta-md2html.outputs.labels }}
 
       - name: Generate artifact attestation - markdown-to-html
