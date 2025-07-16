@@ -65,7 +65,7 @@ jobs:
           push: true
           context: ${{ github.workspace }}/todo-list
           file: ${{ github.workspace }}/todo-list/Dockerfile
-          tags: '${{ steps.meta-todolist.outputs.tags }},latest'
+          tags: '${{ steps.meta-todolist.outputs.tags }},${{ env.REGISTRY }}/todolist:latest'
           labels: ${{ steps.meta-todolist.outputs.labels }}
 
       - name: Generate artifact attestation - todo-list
