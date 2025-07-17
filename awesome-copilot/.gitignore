@@ -1,0 +1,4 @@
+src/awesome-copilot/
+
+!.vscode/mcp.json
+.azure
