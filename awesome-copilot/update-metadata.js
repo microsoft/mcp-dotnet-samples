@@ -28,7 +28,21 @@ const directories = {
   prompts: path.join(__dirname, 'src', 'awesome-copilot', 'prompts')
 };
 
-// Simple YAML parser for frontmatter
+/**
+ * Parses a simple YAML frontmatter string into a JavaScript object.
+ * 
+ * This function handles key-value pairs, multi-line values, arrays, and special cases
+ * like the `applyTo` key, which is processed into an array of strings. It also removes
+ * comments and trims unnecessary whitespace.
+ * 
+ * @param {string} yamlContent - The YAML frontmatter content as a string.
+ *                               Each line should represent a key-value pair, an array item,
+ *                               or a comment (starting with `#`).
+ * @returns {Object} A JavaScript object representing the parsed YAML content.
+ *                   Keys are strings, and values can be strings, arrays, or objects.
+ *                   Special handling is applied to the `applyTo` key, converting
+ *                   comma-separated strings into arrays.
+ */
 function parseSimpleYaml(yamlContent) {
   const result = {};
   const lines = yamlContent.split('\n');
