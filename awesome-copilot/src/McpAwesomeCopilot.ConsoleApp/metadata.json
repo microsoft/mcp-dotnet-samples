@@ -812,218 +812,348 @@
     {
       "filename": "angular.instructions.md",
       "description": "Angular-specific coding standards and best practices",
-      "applyTo": "**/*.ts, **/*.html, **/*.scss, **/*.css"
+      "applyTo": [
+        "**/*.ts",
+        "**/*.html",
+        "**/*.scss",
+        "**/*.css"
+      ]
     },
     {
       "filename": "aspnet-rest-apis.instructions.md",
       "description": "Guidelines for building REST APIs with ASP.NET",
-      "applyTo": "**/*.cs, **/*.json"
+      "applyTo": [
+        "**/*.cs",
+        "**/*.json"
+      ]
     },
     {
       "filename": "azure-functions-typescript.instructions.md",
       "description": "TypeScript patterns for Azure Functions",
-      "applyTo": "**/*.ts, **/*.js, **/*.json"
+      "applyTo": [
+        "**/*.ts",
+        "**/*.js",
+        "**/*.json"
+      ]
     },
     {
       "filename": "bicep-code-best-practices.instructions.md",
       "description": "Infrastructure as Code with Bicep",
-      "applyTo": "**/*.bicep"
+      "applyTo": [
+        "**/*.bicep"
+      ]
     },
     {
       "filename": "blazor.instructions.md",
       "description": "Blazor component and application patterns",
-      "applyTo": "**/*.razor, **/*.razor.cs, **/*.razor.css"
+      "applyTo": [
+        "**/*.razor",
+        "**/*.razor.cs",
+        "**/*.razor.css"
+      ]
     },
     {
       "filename": "cmake-vcpkg.instructions.md",
       "description": "C++ project configuration and package management",
-      "applyTo": "**/*.cmake, **/CMakeLists.txt, **/*.cpp, **/*.h, **/*.hpp"
+      "applyTo": [
+        "**/*.cmake",
+        "**/CMakeLists.txt",
+        "**/*.cpp",
+        "**/*.h",
+        "**/*.hpp"
+      ]
     },
     {
       "filename": "containerization-docker-best-practices.instructions.md",
-      "applyTo": "*",
+      "applyTo": [
+        "*"
+      ],
       "description": "Comprehensive best practices for creating optimized, secure, and efficient Docker images and managing containers. Covers multi-stage builds, image layer optimization, security scanning, and runtime best practices."
     },
     {
       "filename": "copilot-thought-logging.instructions.md",
-      "applyTo": "**",
+      "applyTo": [
+        "**"
+      ],
       "description": "See process Copilot is following where you can edit this to reshape the interaction or save when follow up may be needed"
     },
     {
       "filename": "csharp.instructions.md",
       "description": "Guidelines for building C# applications",
-      "applyTo": "**/*.cs"
+      "applyTo": [
+        "**/*.cs"
+      ]
     },
     {
       "filename": "devops-core-principles.instructions.md",
-      "applyTo": "*",
+      "applyTo": [
+        "*"
+      ],
       "description": "Foundational instructions covering core DevOps principles, culture (CALMS), and key metrics (DORA) to guide GitHub Copilot in understanding and promoting effective software delivery."
     },
     {
       "filename": "dotnet-architecture-good-practices.instructions.md",
       "description": "\"DDD and .NET architecture guidelines'",
-      "applyTo": "**/*.cs,**/*.csproj,**/Program.cs,**/*.razor"
+      "applyTo": [
+        "**/*.cs",
+        "**/*.csproj",
+        "**/Program.cs",
+        "**/*.razor"
+      ]
     },
     {
       "filename": "dotnet-maui.instructions.md",
       "description": ".NET MAUI component and application patterns",
-      "applyTo": "**/*.xaml, **/*.cs"
+      "applyTo": [
+        "**/*.xaml",
+        "**/*.cs"
+      ]
     },
     {
       "filename": "genaiscript.instructions.md",
       "description": "AI-powered script generation guidelines",
-      "applyTo": "**/*.genai.*"
+      "applyTo": [
+        "**/*.genai.*"
+      ]
     },
     {
       "filename": "generate-modern-terraform-code-for-azure.instructions.md",
       "description": "Guidelines for generating modern Terraform code for Azure",
-      "applyTo": "**/*.tf"
+      "applyTo": [
+        "**/*.tf"
+      ]
     },
     {
       "filename": "gilfoyle-code-review.instructions.md",
-      "applyTo": "**",
+      "applyTo": [
+        "**"
+      ],
       "description": "Gilfoyle-style code review instructions that channel the sardonic technical supremacy of Silicon Valley''s most arrogant systems architect."
     },
     {
       "filename": "github-actions-ci-cd-best-practices.instructions.md",
-      "applyTo": ".github/workflows/*.yml",
+      "applyTo": [
+        ".github/workflows/*.yml"
+      ],
       "description": "Comprehensive guide for building robust, secure, and efficient CI/CD pipelines using GitHub Actions. Covers workflow structure, jobs, steps, environment variables, secret management, caching, matrix strategies, testing, and deployment strategies."
     },
     {
       "filename": "go.instructions.md",
       "description": "Instructions for writing Go code following idiomatic Go practices and community standards",
-      "applyTo": "**/*.go,**/go.mod,**/go.sum"
+      "applyTo": [
+        "**/*.go",
+        "**/go.mod",
+        "**/go.sum"
+      ]
     },
     {
       "filename": "java.instructions.md",
       "description": "Guidelines for building Java base applications",
-      "applyTo": "**/*.java"
+      "applyTo": [
+        "**/*.java"
+      ]
     },
     {
       "filename": "joyride-user-project.instructions.md",
       "description": "Expert assistance for Joyride User Script projects - REPL-driven ClojureScript and user space automation of VS Code",
-      "applyTo": "scripts/**/*.cljs,src/**/*.cljs,deps.edn,.joyride/**/*.cljs"
+      "applyTo": [
+        "scripts/**/*.cljs",
+        "src/**/*.cljs",
+        "deps.edn",
+        ".joyride/**/*.cljs"
+      ]
     },
     {
       "filename": "joyride-workspace-automation.instructions.md",
       "description": "Expert assistance for Joyride Workspace automation - REPL-driven and user space ClojureScript automation within specific VS Code workspaces",
-      "applyTo": ".joyride/**/*.*"
+      "applyTo": [
+        ".joyride/**/*.*"
+      ]
     },
     {
       "filename": "kubernetes-deployment-best-practices.instructions.md",
-      "applyTo": "*",
+      "applyTo": [
+        "*"
+      ],
       "description": "Comprehensive best practices for deploying and managing applications on Kubernetes. Covers Pods, Deployments, Services, Ingress, ConfigMaps, Secrets, health checks, resource limits, scaling, and security contexts."
     },
     {
       "filename": "localization.instructions.md",
       "description": "Guidelines for localizing markdown documents",
-      "applyTo": "**/*.md"
+      "applyTo": [
+        "**/*.md"
+      ]
     },
     {
       "filename": "markdown.instructions.md",
       "description": "Documentation and content creation standards",
-      "applyTo": "**/*.md"
+      "applyTo": [
+        "**/*.md"
+      ]
     },
     {
       "filename": "memory-bank.instructions.md",
-      "applyTo": "**",
+      "applyTo": [
+        "**"
+      ],
       "description": "No description provided"
     },
     {
       "filename": "ms-sql-dba.instructions.md",
-      "applyTo": "**",
+      "applyTo": [
+        "**"
+      ],
       "description": "Instructions for customizing GitHub Copilot behavior for MS-SQL DBA chat mode."
     },
     {
       "filename": "nextjs-tailwind.instructions.md",
       "description": "Next.js + Tailwind development standards and instructions",
-      "applyTo": "**/*.tsx, **/*.ts, **/*.jsx, **/*.js, **/*.css"
+      "applyTo": [
+        "**/*.tsx",
+        "**/*.ts",
+        "**/*.jsx",
+        "**/*.js",
+        "**/*.css"
+      ]
     },
     {
       "filename": "nodejs-javascript-vitest.instructions.md",
       "description": "Guidelines for writing Node.js and JavaScript code with Vitest testing",
-      "applyTo": "**/*.js, **/*.mjs, **/*.cjs"
+      "applyTo": [
+        "**/*.js",
+        "**/*.mjs",
+        "**/*.cjs"
+      ]
     },
     {
       "filename": "performance-optimization.instructions.md",
-      "applyTo": "*",
+      "applyTo": [
+        "*"
+      ],
       "description": "The most comprehensive, practical, and engineer-authored performance optimization instructions for all languages, frameworks, and stacks. Covers frontend, backend, and database best practices with actionable guidance, scenario-based checklists, troubleshooting, and pro tips."
     },
     {
       "filename": "playwright-typescript.instructions.md",
       "description": "Playwright test generation instructions",
-      "applyTo": "**"
+      "applyTo": [
+        "**"
+      ]
     },
     {
       "filename": "power-platform-connector.instructions.md",
       "title": "Power Platform Connectors Schema Development Instructions",
       "description": "Comprehensive development guidelines for Power Platform Custom Connectors using JSON Schema definitions. Covers API definitions (Swagger 2.0), API properties, and settings configuration with Microsoft extensions.",
-      "applyTo": "**/*.{json,md}"
+      "applyTo": [
+        "**/*.{json",
+        "md}"
+      ]
     },
     {
       "filename": "powershell.instructions.md",
-      "applyTo": "**/*.ps1,**/*.psm1",
+      "applyTo": [
+        "**/*.ps1",
+        "**/*.psm1"
+      ],
       "description": "PowerShell cmdlet and scripting best practices based on Microsoft guidelines"
     },
     {
       "filename": "python.instructions.md",
       "description": "Python coding conventions and guidelines",
-      "applyTo": "**/*.py"
+      "applyTo": [
+        "**/*.py"
+      ]
     },
     {
       "filename": "quarkus-mcp-server-sse.instructions.md",
-      "applyTo": "*",
+      "applyTo": [
+        "*"
+      ],
       "description": "Quarkus and MCP Server with HTTP SSE transport development standards and instructions"
     },
     {
       "filename": "quarkus.instructions.md",
-      "applyTo": "*",
+      "applyTo": [
+        "*"
+      ],
       "description": "Quarkus development standards and instructions"
     },
     {
       "filename": "reactjs.instructions.md",
       "description": "ReactJS development standards and best practices",
-      "applyTo": "**/*.jsx, **/*.tsx, **/*.js, **/*.ts, **/*.css, **/*.scss"
+      "applyTo": [
+        "**/*.jsx",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.ts",
+        "**/*.css",
+        "**/*.scss"
+      ]
     },
     {
       "filename": "ruby-on-rails.instructions.md",
       "description": "Ruby on Rails coding conventions and guidelines",
-      "applyTo": "**/*.rb"
+      "applyTo": [
+        "**/*.rb"
+      ]
     },
     {
       "filename": "security-and-owasp.instructions.md",
-      "applyTo": "*",
+      "applyTo": [
+        "*"
+      ],
       "description": "Comprehensive secure coding instructions for all languages and frameworks, based on OWASP Top 10 and industry best practices."
     },
     {
       "filename": "self-explanatory-code-commenting.instructions.md",
       "description": "Guidelines for GitHub Copilot to write comments to achieve self-explanatory code with less comments. Examples are in JavaScript but it should work on any language that has comments.",
-      "applyTo": "**"
+      "applyTo": [
+        "**"
+      ]
     },
     {
       "filename": "springboot.instructions.md",
       "description": "Guidelines for building Spring Boot base applications",
-      "applyTo": "**/*.java, **/*.kt"
+      "applyTo": [
+        "**/*.java",
+        "**/*.kt"
+      ]
     },
     {
       "filename": "sql-sp-generation.instructions.md",
       "description": "Guidelines for generating SQL statements and stored procedures",
-      "applyTo": "**/*.sql"
+      "applyTo": [
+        "**/*.sql"
+      ]
     },
     {
       "filename": "taming-copilot.instructions.md",
-      "applyTo": "**",
+      "applyTo": [
+        "**"
+      ],
       "description": "Prevent Copilot from wreaking havoc across your codebase, keeping it under control."
     },
     {
       "filename": "tanstack-start-shadcn-tailwind.instructions.md",
       "description": "Guidelines for building TanStack Start applications",
-      "applyTo": "**/*.ts, **/*.tsx, **/*.js, **/*.jsx, **/*.css, **/*.scss, **/*.json"
+      "applyTo": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.css",
+        "**/*.scss",
+        "**/*.json"
+      ]
     },
     {
       "filename": "vuejs3.instructions.md",
       "description": "VueJS 3 development standards and best practices with Composition API and TypeScript",
-      "applyTo": "**/*.vue, **/*.ts, **/*.js, **/*.scss"
+      "applyTo": [
+        "**/*.vue",
+        "**/*.ts",
+        "**/*.js",
+        "**/*.scss"
+      ]
     }
   ],
   "prompts": [

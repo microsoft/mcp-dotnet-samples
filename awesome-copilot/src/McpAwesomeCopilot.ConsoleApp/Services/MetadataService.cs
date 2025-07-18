@@ -2,18 +2,18 @@ using System.Text.Json;
 
 using McpAwesomeCopilot.ConsoleApp.Models;
 
+using Microsoft.Extensions.Logging;
+
 namespace McpAwesomeCopilot.ConsoleApp.Services;
 
 /// <summary>
 /// Service for loading and managing metadata configuration
 /// </summary>
-public class MetadataService(HttpClient http, JsonSerializerOptions options) : IMetadataService
+public class MetadataService(HttpClient http, JsonSerializerOptions options, ILogger<MetadataService> logger) : IMetadataService
 {
     private const string MetadataFileName = "metadata.json";
     private const string AwesomeCopilotFileUrl = "https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/{mode}/{filename}";
 
-    private readonly HttpClient _http = http;
-    private readonly JsonSerializerOptions _options = options;
     private readonly string _metadataFilePath = Path.Combine(AppContext.BaseDirectory, MetadataFileName);
     private Metadata? _cachedMetadata;
 
@@ -35,6 +35,8 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options) : I
                                   .Select(term => term.Trim().ToLowerInvariant())
                                   .Where(term => string.IsNullOrEmpty(term) != true)
                                   .ToArray();
+
+        logger.LogInformation("Search terms: {terms}", string.Join(", ", searchTerms));
 
         var result = new Metadata
         {
@@ -73,10 +75,12 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options) : I
         var url = AwesomeCopilotFileUrl.Replace("{mode}", mode).Replace("{filename}", filename);
         try
         {
-            var response = await _http.GetAsync(url, cancellationToken).ConfigureAwait(false);
+            var response = await http.GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+            logger.LogInformation("Loaded content from {url}", url);
 
             return content;
         }
@@ -99,7 +103,7 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options) : I
         }
 
         var json = await File.ReadAllTextAsync(_metadataFilePath, cancellationToken).ConfigureAwait(false);
-        _cachedMetadata = JsonSerializer.Deserialize<Metadata>(json, _options)
+        _cachedMetadata = JsonSerializer.Deserialize<Metadata>(json, options)
                           ?? throw new InvalidOperationException("Failed to deserialize metadata");
 
         return _cachedMetadata;
@@ -112,8 +116,7 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options) : I
             return false;
         }
 
-        var lowerDescription = description.ToLowerInvariant();
-        var result = searchTerms.Any(term => lowerDescription.Contains(term));
+        var result = searchTerms.Any(term => description.Contains(term, StringComparison.InvariantCultureIgnoreCase) == true);
 
         return result;
     }

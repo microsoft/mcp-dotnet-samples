@@ -39,7 +39,19 @@ function parseSimpleYaml(yamlContent) {
           arrayItems = [];
           inArray = false;
         } else {
-          result[currentKey] = currentValue.trim();
+          let trimmedValue = currentValue.trim();
+          // Handle comma-separated strings for specific fields that should be arrays
+          if (currentKey === 'applyTo') {
+            if (trimmedValue.includes(',')) {
+              result[currentKey] = trimmedValue.split(',').map(item => item.trim()).filter(item => item.length > 0);
+            } else if (trimmedValue.length > 0) {
+              result[currentKey] = [trimmedValue];
+            } else {
+              result[currentKey] = [];
+            }
+          } else {
+            result[currentKey] = trimmedValue;
+          }
         }
       }
 
@@ -110,7 +122,19 @@ function parseSimpleYaml(yamlContent) {
           (finalValue.startsWith("'") && finalValue.endsWith("'"))) {
         finalValue = finalValue.slice(1, -1);
       }
-      result[currentKey] = finalValue;
+      
+      // Handle comma-separated strings for specific fields that should be arrays
+      if (currentKey === 'applyTo') {
+        if (finalValue.includes(',')) {
+          result[currentKey] = finalValue.split(',').map(item => item.trim()).filter(item => item.length > 0);
+        } else if (finalValue.length > 0) {
+          result[currentKey] = [finalValue];
+        } else {
+          result[currentKey] = [];
+        }
+      } else {
+        result[currentKey] = finalValue;
+      }
     }
   }
 

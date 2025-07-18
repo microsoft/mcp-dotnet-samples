@@ -27,7 +27,7 @@ public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger
         {
             var metadata = await _service.SearchAsync(keywords).ConfigureAwait(false);
 
-            _logger.LogInformation("Search completed successfully with keyword {Keywords}.", keywords);
+            _logger.LogInformation("Search completed successfully with keyword '{Keywords}'.", keywords);
 
             result.Metadata = metadata;
 
@@ -35,7 +35,7 @@ public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while searching instructions with keyword {Keywords}.", keywords);
+            _logger.LogError(ex, "Error occurred while searching instructions with keyword '{Keywords}'.", keywords);
 
             result.ErrorMessage = ex.Message;
 
