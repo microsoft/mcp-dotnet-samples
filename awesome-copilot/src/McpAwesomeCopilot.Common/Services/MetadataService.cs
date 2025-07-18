@@ -1,10 +1,10 @@
 using System.Text.Json;
 
-using McpAwesomeCopilot.ConsoleApp.Models;
+using McpAwesomeCopilot.Common.Models;
 
 using Microsoft.Extensions.Logging;
 
-namespace McpAwesomeCopilot.ConsoleApp.Services;
+namespace McpAwesomeCopilot.Common.Services;
 
 /// <summary>
 /// Service for loading and managing metadata configuration

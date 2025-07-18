@@ -1,6 +1,6 @@
-# MCP Server: Markdown to HTML
+# MCP Server: Awesome Copilot
 
-This is an MCP server that converts markdown text to HTML.
+This is an MCP server that retrieves GitHub Copilot customizations from the [awesome-copilot](https://github.com/github/awesome-copilot) repository.
 
 ## Prerequisites
 
@@ -28,6 +28,7 @@ This is an MCP server that converts markdown text to HTML.
   - [MCP Inspector + Local MCP server (Streamable HTTP)](#mcp-inspector--local-mcp-server-streamable-http)
   - [MCP Inspector + Local MCP server (Streamable HTTP) in a container](#mcp-inspector--local-mcp-server-streamable-http-in-a-container)
   - [MCP Inspector + Remote MCP server (Streamable HTTP)](#mcp-inspector--remote-mcp-server-streamable-http)
+  - [Copilot Studio + Remote MCP server](#copilot-studio--remote-mcp-server)
 
 ### Build ASP.NET Core MCP server (STDIO) locally in a container
 
@@ -46,8 +47,8 @@ This is an MCP server that converts markdown text to HTML.
 1. Build the MCP server app as a container image.
 
     ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
-    docker build -f Dockerfile.stdio -t mcp-md2html-stdio:latest .
+    cd $REPOSITORY_ROOT/awesome-copilot
+    docker build -f Dockerfile.stdio -t mcp-awesome-copilot-stdio:latest .
     ```
 
 ### Run ASP.NET Core MCP server (Streamable HTTP) locally
@@ -67,21 +68,9 @@ This is an MCP server that converts markdown text to HTML.
 1. Run the MCP server app.
 
     ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
-    dotnet run --project ./src/McpMarkdownToHtml.ContainerApp
+    cd $REPOSITORY_ROOT/awesome-copilot
+    dotnet run --project ./src/McpAwesomeCopilot.ContainerApp
     ```
-
-   > **NOTE**: If you're converting the markdown text for [Microsoft Tech Community](https://techcommunity.microsoft.com/), the following parameters are helpful to pass.
-   >
-   > - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   > - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   > - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
-   >
-   > With these parameters, you can run the MCP server like:
-   >
-   > ```bash
-   > dotnet run --project ./src/McpMarkdownToHtml.ContainerApp -- -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   > ```
 
 ### Run ASP.NET Core MCP server (Streamable HTTP) locally in a container
 
@@ -100,39 +89,21 @@ This is an MCP server that converts markdown text to HTML.
 1. Build the MCP server app as a container image.
 
     ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
-    docker build -f Dockerfile.http -t mcp-md2html-http:latest .
+    cd $REPOSITORY_ROOT/awesome-copilot
+    docker build -f Dockerfile.http -t mcp-awesome-copilot-http:latest .
     ```
 
 1. Run the MCP server app in a container
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-md2html-http mcp-md2html-http:latest
+    docker run -d -p 8080:8080 --name mcp-awesome-copilot-http mcp-awesome-copilot-http:latest
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-md2html-http ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:http
+    docker run -d -p 8080:8080 --name mcp-awesome-copilot-http ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:http
     ```
-
-   > **NOTE**: If you're converting the markdown text for [Microsoft Tech Community](https://techcommunity.microsoft.com/), the following parameters are helpful to pass.
-   >
-   > - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   > - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   > - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
-   >
-   > With these parameters, you can run the MCP server like:
-   >
-   > ```bash
-   > # use local container image
-   > docker run -d -p 8080:8080 --name mcp-md2html-http mcp-md2html-http:latest -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   > ```
-   >
-   > ```bash
-   > # use container image from the container registry
-   > docker run -d -p 8080:8080 --name mcp-md2html-http ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   > ```
 
 ### Run ASP.NET Core MCP server (Streamable HTTP) remotely
 
@@ -156,7 +127,7 @@ This is an MCP server that converts markdown text to HTML.
    - Azure Container Apps FQDN:
 
      ```bash
-     azd env get-value AZURE_RESOURCE_MCP_MD2HTML_FQDN
+     azd env get-value AZURE_RESOURCE_MCP_AWESOME_COPILOT_FQDN
      ```
 
 ### Connect MCP server to an MCP host/client
@@ -179,23 +150,24 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.local.json \
+    cp $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.stdio.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.stdio.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-stdio-local` then click `Start Server`.
-1. When prompted, enter the absolute directory of the `McpMarkdownToHtml.ConsoleApp` project.
+1. Choose `mcp-awesome-copilot-stdio-local` then click `Start Server`.
+1. When prompted, enter the absolute directory of the `McpAwesomeCopilot.ConsoleApp` project.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
+    Show me the list of copilot instructions about react.
+    Save the react instruction to .github/copilot-instructions.md
     ```
 
 1. Confirm the result.
@@ -218,24 +190,25 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json \
+    cp $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.stdio.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.stdio.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-   > **NOTE**: If you want to use the container image from the container registry, replace `mcp-md2html-stdio:latest` with `ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:stdio` in the `.vscode/mcp.json` file
+   > **NOTE**: If you want to use the container image from the container registry, replace `mcp-awesome-copilot-stdio:latest` with `ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:stdio` in the `.vscode/mcp.json` file
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-stdio-container` then click `Start Server`.
+1. Choose `mcp-awesome-copilot-stdio-container` then click `Start Server`.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
+    Show me the list of copilot instructions about react.
+    Save the react instruction to .github/copilot-instructions.md
     ```
 
 1. Confirm the result.
@@ -258,22 +231,23 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.local.json \
+    cp $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.http.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.http.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-http-local` then click `Start Server`.
+1. Choose `mcp-awesome-copilot-http-local` then click `Start Server`.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
+    Show me the list of copilot instructions about react.
+    Save the react instruction to .github/copilot-instructions.md
     ```
 
 1. Confirm the result.
@@ -296,22 +270,23 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.container.json \
+    cp $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.http.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.http.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-http-container` then click `Start Server`.
+1. Choose `mcp-awesome-copilot-http-container` then click `Start Server`.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
+    Show me the list of copilot instructions about react.
+    Save the react instruction to .github/copilot-instructions.md
     ```
 
 1. Confirm the result.
@@ -334,23 +309,24 @@ This is an MCP server that converts markdown text to HTML.
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.remote.json \
+    cp $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.http.remote.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.remote.json `
+    Copy-Item -Path $REPOSITORY_ROOT/awesome-copilot/.vscode/mcp.http.remote.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-http-remote` then click `Start Server`.
+1. Choose `mcp-awesome-copilot-http-remote` then click `Start Server`.
 1. Enter the Azure Container Apps FQDN.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
+    Show me the list of copilot instructions about react.
+    Save the react instruction to .github/copilot-instructions.md
     ```
 
 1. Confirm the result.
@@ -369,24 +345,8 @@ This is an MCP server that converts markdown text to HTML.
 1. Set the arguments that pointing to the console app project and **Connect**:
 
     ```text
-    run --project {{absolute/path/to/markdown-to-html}}/src/McpMarkdownToHtml.ConsoleApp
+    run --project {{absolute/path/to/awesome-copilot}}/src/McpAwesomeCopilot.ConsoleApp
     ```
-
-   > **NOTE**:
-   >
-   > 1. If you're converting the markdown text for [Microsoft Tech Community](https://techcommunity.microsoft.com/), the following parameters are helpful to pass.
-   >
-   >    - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   >    - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   >    - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
-   >
-   >    With these parameters, the arguments value can be:
-   >
-   >     ```bash
-   >     run --project {{absolute/path/to/markdown-to-html}}/src/McpMarkdownToHtml.ConsoleApp -- -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   >     ```
-   >
-   > 1. The project path MUST be the absolute path.
 
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with appropriate values.
@@ -405,7 +365,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Set the arguments that pointing to the console app project and **Connect**:
 
     ```text
-    run -i --rm mcp-md2html-stdio:latest
+    run -i --rm mcp-awesome-copilot-stdio:latest
     ```
 
 1. Click **List Tools**.
@@ -420,7 +380,7 @@ This is an MCP server that converts markdown text to HTML.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `Streamable HTTP` 
+1. Set the transport type to `Streamable HTTP`.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
@@ -439,7 +399,7 @@ This is an MCP server that converts markdown text to HTML.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `Streamable HTTP` 
+1. Set the transport type to `Streamable HTTP`.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
@@ -458,7 +418,7 @@ This is an MCP server that converts markdown text to HTML.
     ```
 
 1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:6274)
-1. Set the transport type to `Streamable HTTP` 
+1. Set the transport type to `Streamable HTTP`.
 1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
 
     ```text
@@ -467,3 +427,18 @@ This is an MCP server that converts markdown text to HTML.
 
 1. Click **List Tools**.
 1. Click on a tool and **Run Tool** with appropriate values.
+
+#### Copilot Studio + Remote MCP server
+
+1. The remote MCP server renders a Swagger document at
+
+    ```text
+    https://<acaapp-server-fqdn>/swagger.json
+    ```
+
+   Alternatively, you've got `swagger.json` on this app built at your project root directory on your local machine.
+
+1. Create a custom connector with this Swagger document on either [Power Automate](https://make.powerautomate.com) or [Power Apps](https://make.powerapps.com).
+1. Go to [Copilot Studio](https://copilotstudio.microsoft.com) and create a new agent.
+1. Add MCP connector to the agent.
+1. Run the agent with appropriate values.

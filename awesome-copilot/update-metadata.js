@@ -222,7 +222,7 @@ const metadata = {
 };
 
 // Write the metadata.json file
-const outputPath = path.join(__dirname, 'src', 'McpAwesomeCopilot.ConsoleApp', 'metadata.json');
+const outputPath = path.join(__dirname, 'src', 'McpAwesomeCopilot.Common', 'metadata.json');
 fs.writeFileSync(outputPath, JSON.stringify(metadata, null, 2));
 
 console.log(`Extracted frontmatter from ${metadata.chatmodes.length} chatmode files`);

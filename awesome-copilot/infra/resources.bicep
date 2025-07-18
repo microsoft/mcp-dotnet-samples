@@ -120,6 +120,16 @@ module mcpAwesomeCopilot 'br/public:avm/res/app/container-app:0.8.0' = {
       }
     ]
     environmentResourceId: containerAppsEnvironment.outputs.resourceId
+    corsPolicy: {
+      allowedOrigins: [
+        'https://make.preview.powerapps.com'
+        'https://make.powerapps.com'
+        'https://make.preview.powerautomate.com'
+        'https://make.powerautomate.com'
+        'https://copilotstudio.preview.microsoft.com'
+        'https://copilotstudio.microsoft.com'
+      ]
+    }
     location: location
     tags: union(tags, { 'azd-service-name': 'mcp-awesome-copilot' })
   }

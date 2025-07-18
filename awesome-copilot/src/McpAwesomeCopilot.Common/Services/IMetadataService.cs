@@ -1,6 +1,6 @@
-using McpAwesomeCopilot.ConsoleApp.Models;
+using McpAwesomeCopilot.Common.Models;
 
-namespace McpAwesomeCopilot.ConsoleApp.Services;
+namespace McpAwesomeCopilot.Common.Services;
 
 /// <summary>
 /// Interface for metadata service operations

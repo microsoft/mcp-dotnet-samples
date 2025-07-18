@@ -1,4 +1,4 @@
-namespace McpAwesomeCopilot.ConsoleApp.Models;
+namespace McpAwesomeCopilot.Common.Models;
 
 /// <summary>
 /// This represents the result entity to retrieve metadata.

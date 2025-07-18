@@ -1,13 +1,13 @@
 using System.ComponentModel;
 
-using McpAwesomeCopilot.ConsoleApp.Models;
-using McpAwesomeCopilot.ConsoleApp.Services;
+using McpAwesomeCopilot.Common.Models;
+using McpAwesomeCopilot.Common.Services;
 
 using Microsoft.Extensions.Logging;
 
 using ModelContextProtocol.Server;
 
-namespace McpAwesomeCopilot.ConsoleApp.Tools;
+namespace McpAwesomeCopilot.Common.Tools;
 
 /// <summary>
 /// This represents the tools entity for metadata of Awesome Copilot repository.

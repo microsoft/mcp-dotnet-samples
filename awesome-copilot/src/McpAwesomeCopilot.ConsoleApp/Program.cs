@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
+using System.Text.Json;
 
-using McpAwesomeCopilot.ConsoleApp.Services;
+using McpAwesomeCopilot.Common.Services;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +27,6 @@ builder.Services.AddHttpClient<IMetadataService, MetadataService>();
 
 builder.Services.AddMcpServer()
                 .WithStdioServerTransport()
-                .WithToolsFromAssembly();
+                .WithToolsFromAssembly(Assembly.GetAssembly(typeof(MetadataService)) ?? Assembly.GetExecutingAssembly());
 
 await builder.Build().RunAsync();

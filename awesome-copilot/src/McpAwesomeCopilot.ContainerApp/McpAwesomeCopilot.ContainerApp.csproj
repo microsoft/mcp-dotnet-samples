@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <AssemblyName>McpAwesomeCopilot.ContainerApp</AssemblyName>
+    <RootNamespace>McpAwesomeCopilot.ContainerApp</RootNamespace>
+
+    <UserSecretsId>3b9db7fd-b2cb-4b92-81b7-f3865823ef0a</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.*" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.*-*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\McpAwesomeCopilot.Common\McpAwesomeCopilot.Common.csproj" />
+  </ItemGroup>
+
+</Project>

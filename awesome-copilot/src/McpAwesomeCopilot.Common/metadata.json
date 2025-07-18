@@ -665,6 +665,33 @@
       ]
     },
     {
+      "filename": "software-engineer-agent-v1.chatmode.md",
+      "description": "Expert-level software engineering agent. Deliver production-ready, maintainable code. Execute systematically and specification-driven. Document comprehensively. Operate autonomously and adaptively.",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runTasks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "github"
+      ]
+    },
+    {
       "filename": "specification.chatmode.md",
       "description": "Generate or update specification documents for new or existing functionality.",
       "tools": [
@@ -1106,6 +1133,13 @@
     {
       "filename": "self-explanatory-code-commenting.instructions.md",
       "description": "Guidelines for GitHub Copilot to write comments to achieve self-explanatory code with less comments. Examples are in JavaScript but it should work on any language that has comments.",
+      "applyTo": [
+        "**"
+      ]
+    },
+    {
+      "filename": "spec-driven-workflow-v1.instructions.md",
+      "description": "Specification-Driven Workflow v1 provides a structured approach to software development, ensuring that requirements are clearly defined, designs are meticulously planned, and implementations are thoroughly documented and validated.",
       "applyTo": [
         "**"
       ]
