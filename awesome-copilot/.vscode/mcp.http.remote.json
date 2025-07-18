@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "acaapp-server-fqdn",
+      "description": "Azure Container Apps FQDN"
+    }
+  ],
+  "servers": {
+    "mcp-awesome-copilot-http-remote": {
+      "type": "http",
+      "url": "https://${input:acaapp-server-fqdn}/mcp"
+    }
+  }
+}

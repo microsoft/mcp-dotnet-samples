@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "consoleapp-project-path",
+      "description": "The absolute path to the console app project Directory"
+    }
+  ],
+  "servers": {
+    "mcp-awesome-copilot-stdio-local": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${input:consoleapp-project-path}"
+      ]
+    }
+  }
+}

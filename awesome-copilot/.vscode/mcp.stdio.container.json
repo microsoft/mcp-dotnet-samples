@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "mcp-awesome-copilot-stdio-container": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "mcp-awesome-copilot-stdio:latest",
+        "-tc",
+        "-p"
+      ]
+    }
+  }
+}
