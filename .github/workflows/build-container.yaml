@@ -57,9 +57,9 @@ jobs:
         shell: bash
         run: |
           if [ ! -f "${{ github.workspace }}/${{ inputs.image_name }}/Dockerfile.${{ inputs.extension }}" ]; then
-            echo "exists=false" >> $GITHUB_ENV
+            echo "exists=false" >> $GITHUB_OUTPUT
           else
-            echo "exists=true" >> $GITHUB_ENV
+            echo "exists=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Log in to the Container registry

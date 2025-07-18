@@ -3,6 +3,20 @@
 const fs = require('fs');
 const path = require('path');
 
+// Constants
+const APPLY_TO_KEY = 'applyTo';
+
+// Helper function to process applyTo field values
+function processApplyToField(value) {
+  if (value.includes(',')) {
+    return value.split(',').map(item => item.trim()).filter(item => item.length > 0);
+  } else if (value.length > 0) {
+    return [value];
+  } else {
+    return [];
+  }
+}
+
 // Read the JSON schema to understand the structure
 const schemaPath = path.join(__dirname, 'frontmatter-schema.json');
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
@@ -23,8 +37,7 @@ function parseSimpleYaml(yamlContent) {
   let inArray = false;
   let arrayItems = [];
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+  for (const line of lines) {
     const trimmed = line.trim();
 
     if (!trimmed || trimmed.startsWith('#')) continue;
@@ -41,14 +54,8 @@ function parseSimpleYaml(yamlContent) {
         } else {
           let trimmedValue = currentValue.trim();
           // Handle comma-separated strings for specific fields that should be arrays
-          if (currentKey === 'applyTo') {
-            if (trimmedValue.includes(',')) {
-              result[currentKey] = trimmedValue.split(',').map(item => item.trim()).filter(item => item.length > 0);
-            } else if (trimmedValue.length > 0) {
-              result[currentKey] = [trimmedValue];
-            } else {
-              result[currentKey] = [];
-            }
+          if (currentKey === APPLY_TO_KEY) {
+            result[currentKey] = processApplyToField(trimmedValue);
           } else {
             result[currentKey] = trimmedValue;
           }
@@ -124,14 +131,8 @@ function parseSimpleYaml(yamlContent) {
       }
       
       // Handle comma-separated strings for specific fields that should be arrays
-      if (currentKey === 'applyTo') {
-        if (finalValue.includes(',')) {
-          result[currentKey] = finalValue.split(',').map(item => item.trim()).filter(item => item.length > 0);
-        } else if (finalValue.length > 0) {
-          result[currentKey] = [finalValue];
-        } else {
-          result[currentKey] = [];
-        }
+      if (currentKey === APPLY_TO_KEY) {
+        result[currentKey] = processApplyToField(finalValue);
       } else {
         result[currentKey] = finalValue;
       }
