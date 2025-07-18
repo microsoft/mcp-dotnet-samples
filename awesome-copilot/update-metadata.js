@@ -51,7 +51,8 @@ function parseSimpleYaml(yamlContent) {
   let inArray = false;
   let arrayItems = [];
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const trimmed = line.trim();
 
     if (!trimmed || trimmed.startsWith('#')) continue;
