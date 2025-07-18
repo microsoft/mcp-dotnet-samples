@@ -1,0 +1,97 @@
+name: Build Container
+
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        required: true
+        type: string
+      extension:
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  REPOSITORY: ${{ github.repository }}
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout repository - Awesome Copilot
+        if: ${{ inputs.image_name == 'awesome-copilot' }}
+        uses: actions/checkout@v4
+        with:
+          repository: microsoft/awesome-copilot
+          path: awesome-copilot/src/awesome-copilot
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        if: ${{ inputs.image_name == 'awesome-copilot' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Update metadata.json
+        if: ${{ inputs.image_name == 'awesome-copilot' }}
+        shell: bash
+        run: |
+          pushd awesome-copilot
+
+          node update-metadata.js
+
+          popd
+
+      - name: Check if Dockerfile exists
+        id: check-dockerfile
+        shell: bash
+        run: |
+          if [ ! -f "${{ github.workspace }}/${{ inputs.image_name }}/Dockerfile.${{ inputs.extension }}" ]; then
+            echo "exists=false" >> $GITHUB_ENV
+          else
+            echo "exists=true" >> $GITHUB_ENV
+          fi
+
+      - name: Log in to the Container registry
+        if: ${{ steps.check-dockerfile.outputs.exists }} == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        if: ${{ steps.check-dockerfile.outputs.exists }} == 'true'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
+
+      - name: Build and push Docker image
+        if: ${{ steps.check-dockerfile.outputs.exists }} == 'true'
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ${{ github.workspace }}/${{ inputs.image_name }}
+          file: ${{ github.workspace }}/${{ inputs.image_name }}/Dockerfile.${{ inputs.extension }}
+          tags: '${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}:${{ inputs.extension }}'
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Generate artifact attestation
+        if: ${{ steps.check-dockerfile.outputs.exists }} == 'true'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
