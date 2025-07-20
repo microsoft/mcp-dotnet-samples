@@ -32,7 +32,7 @@ Details on how to set up and run the samples will be provided in each sample's d
 ## 📚 Learning Resources
 
 - [MCP Official Documentation](https://modelcontextprotocol.io/)
-- [MCP GitHub Repository](https://github.com/anthropics/model-context-protocol)
+- [MCP GitHub Repository](https://github.com/modelcontextprotocol/modelcontextprotocol)
 
 ## 🚶‍♀️ Next Steps
 
