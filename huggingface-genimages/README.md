@@ -54,7 +54,7 @@ This is the .NET Aspire Blazor App running:
 
 ## �️ Sample Solutions
 
-### 1. Console Apps ([src/HFMCP.GenImage.sln])
+### 1. [Console Apps](./src/HFMCP.GenImage.sln)
 
 This solution contains two console applications:
 
@@ -160,7 +160,7 @@ Generating an Image:
    ```
 ---
 
-### 2. .NET Aspire Blazor WebApp ([src/HFMCP.GenImage.sln])
+### 2. [.NET Aspire Blazor WebApp](./src/HFMCP.GenImage.sln)
 
 This solution is a modern .NET Aspire application that brings AI-powered image generation to your browser. It is designed for extensibility, security, and a great developer experience.
 
