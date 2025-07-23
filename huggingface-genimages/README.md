@@ -1,4 +1,17 @@
+
 # Hugging Face MCP Server Samples: AI Image Generation with C#
+
+## Table of Contents
+
+- [Overview](#-overview)
+- [Requirements](#-requirements)
+  - [General Prerequisites](#general-prerequisites)
+  - [Getting a GitHub Token](#getting-a-github-token)
+  - [Getting a Hugging Face Access Token](#getting-a-hugging-face-access-token)
+- [Sample Solutions](#️-sample-solutions)
+  - [Console Apps](#1-console-apps-src-hfmcpgenimagesln)
+  - [.NET Aspire Blazor WebApp](#2-net-aspire-blazor-webapp-src-hfmcpgenimagesln)
+- [References & Resources](#-references--resources)
 
 This folder contains samples demonstrating how to connect to and use the tools from the [Hugging Face MCP Server](https://huggingface.co/settings/mcp). The main scenario covered is generating images using the MCP Server, leveraging both cloud-hosted and local models.
 
@@ -11,7 +24,31 @@ You will find two main types of samples:
 - **Console Apps**: Demonstrate how to connect to the Hugging Face MCP Server and generate images using C#.
 - **.NET Aspire Blazor WebApp**: A modern web application for generating images using GitHub Models or Azure AI Foundry Models, with a user-friendly interface and extensible architecture.
 
+This is the .NET Aspire Blazor App running:
+![Hugging Face MCP Server Blazor App](./images/HFMCP-Demo01.gif)    
+
 ---
+
+## 🛠️ Requirements
+
+### General Prerequisites
+
+- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- Hugging Face MCP Server access
+- (Optional) Ollama for local model inference
+- (Optional) GitHub Token or Azure AI Foundry credentials
+
+### Getting a GitHub Token
+
+1. Go to [GitHub Personal Access Tokens](https://github.com/settings/personal-access-tokens/new)
+2. Create a new token with Models API access
+3. Copy the token and paste it in the Settings page
+
+### Getting a Hugging Face Access Token
+
+1. Go to [Hugging Face Access Tokens](https://huggingface.co/settings/tokens)
+2. Create a new token
+3. Copy the token and paste it in the Settings page
 
 ## �️ Sample Solutions
 
@@ -33,35 +70,29 @@ These apps:
 
 ##### Quick Start
 
-**Prerequisites:**
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- Hugging Face MCP Server access
-- (Optional) Ollama for local model inference
-- (Optional) GitHub Token or Azure AI Foundry credentials
-
 **Setup:**
 
-    ```bash
-    git clone https://github.com/microsoft/mcp-dotnet-samples.git
-    cd mcp-dotnet-samples/huggingface-genimages/src/MCP-01-HuggingFace/
-    ```
+   ```bash
+   git clone https://github.com/microsoft/mcp-dotnet-samples.git
+   cd mcp-dotnet-samples/huggingface-genimages/src/MCP-01-HuggingFace/
+   ```
 
 **Configure Secrets:**
 
-    ```bash
-    # Example for User Secrets
-    dotnet user-secrets set "HF_API_KEY" "<your_hf_token>"
-    dotnet user-secrets set "GITHUB_TOKEN" "<your_github_token>"
-    # For Azure AI Foundry, set endpoint, apikey, and deploymentName as needed
-    ```
+   ```bash
+   # Example for User Secrets
+   dotnet user-secrets set "HF_API_KEY" "<your_hf_token>"
+   dotnet user-secrets set "GITHUB_TOKEN" "<your_github_token>"
+   # For Azure AI Foundry, set endpoint, apikey, and deploymentName as needed
+   ```
 
 **Run the Sample:**
 
 - Using GitHub or Azure AI Foundry Models:
 
-    ```bash
-    dotnet run --project ./src/MCP-01-HuggingFace
-    ```
+   ```bash
+   dotnet run --project ./src/MCP-01-HuggingFace
+   ```
 
 - Using a Local Model with Ollama:
   Start Ollama locally, then run:
@@ -86,44 +117,44 @@ Sample output image:
 
 Connecting to the Hugging Face MCP Server:
 
-    ```csharp
-    var hfHeaders = new Dictionary<string, string>
-    {
-    	{ "Authorization", $"Bearer {config[\"HF_API_KEY\"]}" }
-    };
-    var clientTransport = new SseClientTransport(
-    	new()
-    	{
-    		Name = "HF Server",
-    		Endpoint = new Uri("https://huggingface.co/mcp"),
-    		AdditionalHeaders = hfHeaders
-    	});
-    await using var mcpClient = await McpClientFactory.CreateAsync(clientTransport);
-    ```
+   ```csharp
+   var hfHeaders = new Dictionary<string, string>
+   {
+   	{ "Authorization", $"Bearer {config[\"HF_API_KEY\"]}" }
+   };
+   var clientTransport = new SseClientTransport(
+   	new()
+   	{
+   		Name = "HF Server",
+   		Endpoint = new Uri("https://huggingface.co/mcp"),
+   		AdditionalHeaders = hfHeaders
+   	});
+   await using var mcpClient = await McpClientFactory.CreateAsync(clientTransport);
+   ```
 
 Listing Available Tools:
 
-    ```csharp
-    var tools = await mcpClient.ListToolsAsync();
-    foreach (var tool in tools)
-    {
-    	Console.WriteLine($"Connected to server with tools: {tool.Name}");
-    }
-    ```
+   ```csharp
+   var tools = await mcpClient.ListToolsAsync();
+   foreach (var tool in tools)
+   {
+   	Console.WriteLine($"Connected to server with tools: {tool.Name}");
+   }
+   ```
 
 Generating an Image:
 
-    ```csharp
-    IChatClient client = GetChatClient();
-    var chatOptions = new ChatOptions
-    {
-    	Tools = [.. tools],
-    	ModelId = deploymentName
-    };
-    var query = "Create an image of a pixelated beaver.";
-    var result = await client.GetResponseAsync(query, chatOptions);
-    Console.Write($"AI response: {result}");
-    ```
+   ```csharp
+   IChatClient client = GetChatClient();
+   var chatOptions = new ChatOptions
+   {
+   	Tools = [.. tools],
+   	ModelId = deploymentName
+   };
+   var query = "Create an image of a pixelated beaver.";
+   var result = await client.GetResponseAsync(query, chatOptions);
+   Console.Write($"AI response: {result}");
+   ```
 ---
 
 ### 2. .NET Aspire Blazor WebApp ([src/HFMCP.GenImage.sln])
@@ -137,13 +168,6 @@ This solution is a modern .NET Aspire application that brings AI-powered image g
 - **HFMCP.GenImage.ServiceDefaults**: Shared configuration and service defaults for the solution.
 - **HFMCP.GenImage.Web**: Blazor web application providing the AI chat interface and settings UI.
 
-#### Requirements
-
-- [.NET 9.0 or newer](https://dotnet.microsoft.com/download/)
-- GitHub Personal Access Token with Models API access
-- [Hugging Face Access Token](https://huggingface.co/docs/mcp) (optional for image generation)
-- Visual Studio 2022 or VS Code with C# extension
-
 #### Setup
 
 1. **Clone the repository**
@@ -153,33 +177,22 @@ This solution is a modern .NET Aspire application that brings AI-powered image g
    cd huggingface-genimages/src/HFMCP.GenImage.AppHost
    ```
 
-2. **Build the solution**
+1. **Build and run the solution**
 
-       ```bash
-       dotnet build
-       ```
-
-3. **Run the application**
-
-       ```bash
-       dotnet run
-       ```
+   ```bash
+   dotnet build
+   dotnet run
+   ```
 
    The Aspire dashboard and web application will be available at the URLs shown in the console output (e.g., `https://localhost:17147`).
 
-4. **Configure AI Services**
+1. **Configure AI Services**
 
    - Open the web application and go to the Settings page.
    - Enter your Hugging Face Access Token.
    - Enter your GitHub Personal Access Token.
    - Select your preferred AI model (default: gpt-4-1-mini).
    - Save the configuration.
-
-##### Getting a GitHub Token
-
-1. Go to [GitHub Personal Access Tokens](https://github.com/settings/personal-access-tokens/new)
-2. Create a new token with Models API access
-3. Copy the token and paste it in the Settings page
 
 #### Usage
 
