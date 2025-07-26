@@ -1,0 +1,125 @@
+/* AI Chat Styles */
+.chat-container {
+    padding-right: 10px;
+}
+
+.user-message {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ai-message {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    word-wrap: break-word;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: #6c757d;
+    border-radius: 50%;
+    display: inline-block;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) { 
+    animation-delay: -0.32s; 
+}
+
+.typing-indicator span:nth-child(2) { 
+    animation-delay: -0.16s; 
+}
+
+@keyframes typing {
+    0%, 80%, 100% { 
+        transform: scale(0.8); 
+        opacity: 0.5; 
+    }
+    40% { 
+        transform: scale(1); 
+        opacity: 1; 
+    }
+}
+
+.message-content {
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+.image-gallery img {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.image-gallery img:hover {
+    transform: scale(1.05);
+}
+
+/* Suggestion buttons */
+.suggestions-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.suggestion-btn {
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.suggestion-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Settings page improvements */
+.card-header.bg-light {
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.form-text a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.form-text a:hover {
+    color: #495057;
+    text-decoration: underline;
+}
+
+/* Configuration status badges */
+.badge {
+    font-size: 0.75em;
+}
+
+/* Loading states */
+.btn:disabled {
+    opacity: 0.6;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .message-bubble {
+        max-width: 95% !important;
+    }
+    
+    .container-fluid {
+        padding: 10px;
+    }
+    
+    .suggestion-btn {
+        font-size: 0.9em;
+        padding: 0.5rem 1rem;
+    }
+}

@@ -24,6 +24,7 @@ This repository contains .NET samples ranging from building your own MCP impleme
 | [Awesome Copilot](./awesome-copilot/) | MCP servers that retrieve GitHub Copilot customization files from [awesome-copilot](https://github.com/github/awesome-copilot). |
 | [Markdown to HTML](./markdown-to-html/) | MCP servers that convert markdown text to HTML. |
 | [To-do List](./todo-list/) | MCP servers that manage to-do list items. |
+| [Hugging Face GenImages](./huggingface-genimages/) | Console apps that connect to the Hugging Face MCP Server and generate AI images using C#. |
 
 ## 🛠️ Getting Started
 

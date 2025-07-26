@@ -1,0 +1,305 @@
+@page "/settings"
+@using System.ComponentModel.DataAnnotations
+@inject IAIConfigurationService ConfigurationService
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Settings - HFMCP.GenImage</PageTitle>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-gear"></i> AI Configuration Settings
+                    </h3>
+                    <small>Configure your AI service connections</small>
+                </div>
+
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(statusMessage))
+                    {
+                        <div class="alert @(isSuccess ? "alert-success" : "alert-danger") alert-dismissible fade show"
+                            role="alert">
+                            <i class="bi @(isSuccess ? "bi-check-circle" : "bi-exclamation-triangle")"></i>
+                            @statusMessage
+                            <button type="button" class="btn-close" @onclick="ClearStatus"></button>
+                        </div>
+                    }
+
+                    <EditForm Model="configuration" OnValidSubmit="SaveConfiguration">
+                        <DataAnnotationsValidator />
+
+                        <!-- Hugging Face Configuration (Required) -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-0">
+                                        <i class="bi bi-robot"></i> Hugging Face (Required)
+                                    </h5>
+                                    <small class="text-muted">For image generation via MCP server</small>
+                                </div>
+                                @if (!string.IsNullOrEmpty(configuration.HuggingFaceToken))
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Configured
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> Required
+                                    </span>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="hfToken" class="form-label">
+                                        Hugging Face Access Token *
+                                        <i class="bi bi-info-circle" data-bs-toggle="tooltip"
+                                            title="Required for image generation features"></i>
+                                    </label>
+                                    <div class="input-group">
+                                        <InputText @bind-Value="configuration.HuggingFaceToken" class="form-control"
+                                            id="hfToken" type="@(showHFToken ? "text" : "password")"
+                                            placeholder="hf_xxxxxxxxxxxxxxxxxxxx" />
+                                        <button class="btn btn-outline-secondary" type="button"
+                                            @onclick="ToggleHFTokenVisibility">
+                                            <i class="bi @(showHFToken ? "bi-eye-slash" : "bi-eye")"></i>
+                                        </button>
+                                    </div>
+                                    <ValidationMessage For="@(() => configuration.HuggingFaceToken)"
+                                        class="text-danger" />
+                                    <div class="form-text">
+                                        <a href="https://huggingface.co/settings/tokens" target="_blank"
+                                            class="text-decoration-none">
+                                            <i class="bi bi-external-link"></i> Create Hugging Face Token
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="hfMCPServer" class="form-label">
+                                        Hugging Face MCP Server
+                                        <i class="bi bi-info-circle" data-bs-toggle="tooltip"
+                                            title="The Model Context Protocol server endpoint for Hugging Face"></i>
+                                    </label>
+                                    <InputText @bind-Value="configuration.HuggingFaceMCPServer" class="form-control"
+                                        id="hfMCPServer" placeholder="https://huggingface.co/mcp" />
+                                    <div class="form-text">MCP server endpoint for Hugging Face tools (default:
+                                        https://huggingface.co/mcp)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Model Name Configuration -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-cpu"></i> Model Configuration
+                                </h5>
+                                <small class="text-muted">Specify the AI model to use</small>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="modelName" class="form-label">Model Name</label>
+                                    <InputText @bind-Value="configuration.ModelName" class="form-control" id="modelName"
+                                        placeholder="gpt-4.1-mini" />
+                                    <div class="form-text">Enter the model name you want to use (default: gpt-4.1-mini)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GitHub Models Configuration -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-0">
+                                        <i class="bi bi-github"></i> GitHub Models (Optional)
+                                    </h5>
+                                    <small class="text-muted">Configure GitHub Models API access</small>
+                                </div>
+                                @if (!string.IsNullOrEmpty(configuration.GitHubToken))
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Configured
+                                    </span>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="githubToken" class="form-label">
+                                        GitHub Personal Access Token
+                                        <i class="bi bi-info-circle" data-bs-toggle="tooltip"
+                                            title="Get your token from GitHub Settings > Developer settings > Personal access tokens"></i>
+                                    </label>
+                                    <div class="input-group">
+                                        <InputText @bind-Value="configuration.GitHubToken" class="form-control"
+                                            id="githubToken" type="@(showGitHubToken ? "text" : "password")"
+                                            placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+                                        <button class="btn btn-outline-secondary" type="button"
+                                            @onclick="ToggleGitHubTokenVisibility">
+                                            <i class="bi @(showGitHubToken ? "bi-eye-slash" : "bi-eye")"></i>
+                                        </button>
+                                    </div>
+                                    <ValidationMessage For="@(() => configuration.GitHubToken)" class="text-danger" />
+                                    <div class="form-text">
+                                        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank"
+                                            class="text-decoration-none">
+                                            <i class="bi bi-external-link"></i> Create GitHub Token
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Azure OpenAI Configuration (Optional) -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-0">
+                                        <i class="bi bi-cloud"></i> Azure OpenAI (Optional)
+                                        <span class="badge bg-secondary ms-2">Future Feature</span>
+                                    </h5>
+                                    <small class="text-muted">Alternative AI provider</small>
+                                </div>
+                                @if (!string.IsNullOrEmpty(configuration.AzureOpenAIEndpoint) &&
+                                                                !string.IsNullOrEmpty(configuration.AzureOpenAIApiKey))
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Configured
+                                    </span>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="azureEndpoint" class="form-label">Azure OpenAI Endpoint</label>
+                                    <InputText @bind-Value="configuration.AzureOpenAIEndpoint" class="form-control"
+                                        id="azureEndpoint" placeholder="https://your-resource.openai.azure.com/" />
+                                    <div class="form-text">Your Azure OpenAI service endpoint URL</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="azureApiKey" class="form-label">Azure OpenAI API Key</label>
+                                    <div class="input-group">
+                                        <InputText @bind-Value="configuration.AzureOpenAIApiKey" class="form-control"
+                                            id="azureApiKey" type="@(showAzureKey ? "text" : "password")"
+                                            placeholder="********************************" />
+                                        <button class="btn btn-outline-secondary" type="button"
+                                            @onclick="ToggleAzureKeyVisibility">
+                                            <i class="bi @(showAzureKey ? "bi-eye-slash" : "bi-eye")"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" disabled="@isSaving">
+                                @if (isSaving)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    <text>Saving...</text>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-save"></i>
+                                    <text>Save Configuration</text>
+                                }
+                            </button>
+                        </div>
+                    </EditForm>
+
+                    <!-- Quick Setup Buttons -->
+                    <div class="mt-4 pt-4 border-top">
+                        <h6>Quick Setup</h6>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <a href="https://github.com/settings/personal-access-tokens/new" target="_blank"
+                                    class="btn btn-outline-dark w-100">
+                                    <i class="bi bi-github"></i> GitHub Token
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="https://huggingface.co/settings/tokens" target="_blank"
+                                    class="btn btn-outline-warning w-100">
+                                    <i class="bi bi-robot"></i> HF Token
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="https://portal.azure.com/" target="_blank"
+                                    class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-cloud"></i> Azure Portal
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private AIConfiguration configuration = new();
+    private string statusMessage = string.Empty;
+    private bool isSuccess = false;
+    private bool isSaving = false;
+
+    private bool showGitHubToken = false;
+    private bool showHFToken = false;
+    private bool showAzureKey = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        configuration = await ConfigurationService.GetConfigurationAsync();
+    }
+
+    private async Task SaveConfiguration()
+    {
+        isSaving = true;
+        statusMessage = string.Empty;
+
+        try
+        {
+            await ConfigurationService.SaveConfigurationAsync(configuration);
+            statusMessage = "Configuration saved successfully!";
+            isSuccess = true;
+
+            // Auto-hide success message after 3 seconds
+            _ = Task.Delay(3000).ContinueWith(_ =>
+            {
+                statusMessage = string.Empty;
+                InvokeAsync(StateHasChanged);
+            });
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error saving configuration: {ex.Message}";
+            isSuccess = false;
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void ToggleGitHubTokenVisibility() => showGitHubToken = !showGitHubToken;
+    private void ToggleHFTokenVisibility() => showHFToken = !showHFToken;
+    private void ToggleAzureKeyVisibility() => showAzureKey = !showAzureKey;
+
+    private void ClearStatus() => statusMessage = string.Empty;
+}
+
+<script>
+    // Initialize Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
