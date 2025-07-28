@@ -101,11 +101,16 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
 
+      - name: Set up Docker Buildx
+        if: steps.check-dockerfile.outputs.exists == 'true'
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker image
         if: steps.check-dockerfile.outputs.exists == 'true'
         id: push
         uses: docker/build-push-action@v6
         with:
+          platforms: linux/amd64,linux/arm64
           push: true
           context: ${{ github.workspace }}/${{ inputs.image_name }}
           file: ${{ github.workspace }}/${{ inputs.image_name }}/Dockerfile.${{ inputs.extension }}
