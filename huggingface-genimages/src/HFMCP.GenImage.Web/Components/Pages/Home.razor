@@ -1,0 +1,374 @@
+﻿@page "/"
+@using ModelContextProtocol.Client
+@inject IAIService AIService
+@inject IMCPService MCPService
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<PageTitle>HF MCP AI Chat</PageTitle>
+
+<link href="~/ai-chat.css" rel="stylesheet" />
+
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <div class="col-12">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-robot"></i> AI Assistant
+                    </h3>
+                    <small>Powered by Hugging Face MCP Server, GitHub Models or Azure AI Foundry models</small>
+                </div>
+
+                <div class="card-body d-flex flex-column" style="height: calc(100vh - 200px);">
+
+                    <!-- MCP Tools Panel (Only show when Hugging Face is configured) -->
+                    @if (isHuggingFaceConfigured && mcpTools.Any())
+                    {
+                        <div class="card mb-3 mcp-tools-panel">
+                            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center"
+                                @onclick="ToggleMCPPanel" style="cursor: pointer;">
+                                <div>
+                                    <i class="bi bi-robot"></i>
+                                    <strong>Hugging Face MCP Tools (@mcpTools.Count available)</strong>
+                                </div>
+                                <i class="bi @(mcpPanelCollapsed ? "bi-chevron-down" : "bi-chevron-up")"></i>
+                            </div>
+                            @if (!mcpPanelCollapsed)
+                            {
+                                <div class="card-body bg-light">
+                                    <small class="text-muted mb-2 d-block">Available tools from Hugging Face MCP server:</small>
+                                    <div class="row g-2">
+                                        @foreach (var tool in mcpTools)
+                                        {
+                                            <div class="col-md-6">
+                                                <div class="border rounded p-2 bg-white">
+                                                    <strong class="text-primary">@tool.Name</strong>
+                                                    <br />
+                                                    <small class="text-muted">@tool.Description</small>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Chat Messages -->
+                    <div class="chat-container flex-grow-1 overflow-auto mb-3" id="chatContainer">
+                        @if (!chatMessages.Any())
+                        {
+                            <div class="text-center text-muted mt-4">
+                                <i class="bi bi-chat-dots" style="font-size: 3rem;"></i>
+                                <p class="mt-3">Start a conversation with the AI assistant!</p>
+
+                                <!-- Predefined Suggestions -->
+                                <div class="suggestions-container mt-4">
+                                    <p class="mb-3"><strong>Try these suggestions:</strong></p>
+                                    <div class="row g-2 justify-content-center">
+                                        <div class="col-auto">
+                                            <button class="btn btn-outline-primary suggestion-btn"
+                                                @onclick="@(() => UseSuggestion("who am I"))">
+                                                <i class="bi bi-person-circle me-2"></i>who am I
+                                            </button>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button class="btn btn-outline-secondary suggestion-btn"
+                                                @onclick="@(() => UseSuggestion("create a pixelated image of a beaver"))">
+                                                <i class="bi bi-image me-2"></i>create a pixelated image of a beaver
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var message in chatMessages)
+                            {
+                                <div class="message-wrapper mb-3 @(message.IsUser ? "user-message" : "ai-message")">
+                                    <div class="message-bubble @(message.IsUser ? "bg-primary text-white ms-auto" : "bg-light") p-3 rounded-3"
+                                        style="max-width: 80%;">
+                                        <div class="d-flex align-items-start">
+                                            @if (!message.IsUser)
+                                            {
+                                                <i class="bi bi-robot me-2 text-primary"></i>
+                                            }
+                                            <div class="flex-grow-1">
+                                                @if (message.IsError)
+                                                {
+                                                    <div class="alert alert-danger mb-0">
+                                                        <i class="bi bi-exclamation-triangle"></i>
+                                                        @message.Content
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="message-content">
+                                                        @((MarkupString)FormatMessage(message.Content, message.ImageUrls))
+                                                    </div>
+
+                                                    @if (message.ImageUrls.Any())
+                                                    {
+                                                        <div class="image-gallery mt-2">
+                                                            @foreach (var imageUrl in message.ImageUrls)
+                                                            {
+                                                                <div class="image-container mb-2">
+                                                                    <img src="@imageUrl" class="img-fluid rounded generated-image"
+                                                                        style="max-width: 400px; max-height: 400px; object-fit: contain;"
+                                                                        alt="Generated image" />
+                                                                    <div class="image-actions mt-1">
+                                                                        <a href="@imageUrl" target="_blank"
+                                                                            class="btn btn-sm btn-outline-primary me-1">
+                                                                            <i class="bi bi-eye"></i> View Full Size
+                                                                        </a>
+                                                                        <button class="btn btn-sm btn-outline-secondary"
+                                                                            @onclick="@(() => CopyToClipboard(imageUrl))">
+                                                                            <i class="bi bi-clipboard"></i> Copy URL
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                }
+                                                <small class="text-muted d-block mt-1">
+                                                    @message.Timestamp.ToString("HH:mm")
+                                                </small>
+                                            </div>
+                                            @if (message.IsUser)
+                                            {
+                                                <i class="bi bi-person-circle ms-2"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                        @if (isLoading)
+                        {
+                            <div class="message-wrapper mb-3 ai-message">
+                                <div class="message-bubble bg-light p-3 rounded-3" style="max-width: 80%;">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-robot me-2 text-primary"></i>
+                                        <div class="typing-indicator">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="input-area">
+                        @if (!isConfigured)
+                        {
+                            <div class="alert alert-warning">
+                                <i class="bi bi-gear"></i>
+                                AI is not configured. Please go to <a href="/settings" class="alert-link">Settings</a> to
+                                configure your Hugging Face token and either GitHub Models or Azure OpenAI credentials.
+                            </div>
+                        }
+
+                        <div class="input-group">
+                            <input @bind="currentMessage" @onkeypress="HandleKeyPress"
+                                class="form-control form-control-lg" placeholder="Type your message here..."
+                                disabled="@(isLoading || !isConfigured)" />
+                            <button class="btn btn-primary btn-lg px-4" @onclick="SendMessage"
+                                disabled="@(isLoading || !isConfigured || string.IsNullOrWhiteSpace(currentMessage))">
+                                @if (isLoading)
+                                {
+                                    <i class="bi bi-hourglass-split"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-send"></i>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private List<ChatMessage> chatMessages = new();
+    private string currentMessage = string.Empty;
+    private bool isLoading = false;
+    private bool isConfigured = false;
+    private bool isHuggingFaceConfigured = false;
+    private bool mcpPanelCollapsed = false;
+    private IList<McpClientTool> mcpTools = new List<McpClientTool>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        isConfigured = await AIService.IsConfiguredAsync();
+        isHuggingFaceConfigured = await MCPService.IsHuggingFaceConfiguredAsync();
+
+        if (isHuggingFaceConfigured)
+        {
+            try
+            {
+                mcpTools = await MCPService.GetHuggingFaceToolsAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't break the page
+                Console.WriteLine($"Error loading MCP tools: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(currentMessage) || isLoading)
+            return;
+
+        var userMessage = new ChatMessage
+        {
+            Content = currentMessage,
+            IsUser = true,
+            Timestamp = DateTime.Now
+        };
+
+        chatMessages.Add(userMessage);
+        var messageToSend = currentMessage;
+        currentMessage = string.Empty;
+        isLoading = true;
+
+        StateHasChanged();
+        await ScrollToBottom();
+
+        try
+        {
+            var response = await AIService.SendMessageAsync(messageToSend);
+
+            var aiMessage = new ChatMessage
+            {
+                Content = response.TextContent ?? "No response received",
+                IsUser = false,
+                Timestamp = DateTime.Now,
+                ImageUrls = response.ImageUrls,
+                IsError = response.IsError
+            };
+
+            if (response.IsError)
+            {
+                aiMessage.Content = response.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            chatMessages.Add(aiMessage);
+        }
+        catch (Exception ex)
+        {
+            chatMessages.Add(new ChatMessage
+            {
+                Content = $"Error: {ex.Message}",
+                IsUser = false,
+                Timestamp = DateTime.Now,
+                IsError = true
+            });
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+            await ScrollToBottom();
+        }
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey)
+        {
+            await SendMessage();
+        }
+    }
+
+    private void UseSuggestion(string suggestion)
+    {
+        currentMessage = suggestion;
+        StateHasChanged();
+    }
+
+    private async Task ScrollToBottom()
+    {
+        await Task.Delay(50); // Small delay to ensure DOM is updated
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", "chatContainer");
+    }
+
+    private string FormatMessage(string content, List<string>? imageUrls = null)
+    {
+        if (string.IsNullOrEmpty(content))
+            return string.Empty;
+
+        // If there are image URLs, remove markdown image syntax from the text since we're displaying images separately
+        if (imageUrls != null && imageUrls.Any())
+        {
+            // Remove markdown image syntax: ![alt text](url)
+            content = System.Text.RegularExpressions.Regex.Replace(content, @"!\[.*?\]\([^\)]+\)", "");
+
+            // Clean up any extra whitespace left behind
+            content = System.Text.RegularExpressions.Regex.Replace(content, @"\n\s*\n", "\n\n");
+            content = content.Trim();
+        }
+
+        // Basic markdown-like formatting
+        content = content.Replace("\n", "<br>");
+
+        // Bold
+        content = System.Text.RegularExpressions.Regex.Replace(content, @"\*\*(.*?)\*\*", "<strong>$1</strong>");
+
+        // Italic
+        content = System.Text.RegularExpressions.Regex.Replace(content, @"\*(.*?)\*", "<em>$1</em>");
+
+        // Code blocks
+        content = System.Text.RegularExpressions.Regex.Replace(content, @"`(.*?)`", "<code>$1</code>");
+
+        return content;
+    }
+
+    private void ToggleMCPPanel()
+    {
+        mcpPanelCollapsed = !mcpPanelCollapsed;
+    }
+
+    private async Task CopyToClipboard(string text)
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
+        }
+        catch
+        {
+            // Fallback for older browsers
+            await JSRuntime.InvokeVoidAsync("copyToClipboardFallback", text);
+        }
+    }
+}
+
+<script>
+    window.scrollToBottom = (elementId) => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.scrollTop = element.scrollHeight;
+        }
+    };
+
+    window.copyToClipboardFallback = (text) => {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    };
+</script>
