@@ -7,7 +7,8 @@ namespace McpMarkdownToHtml.Common.Configurations;
 public class AppSettings
 {
     public HtmlSettings Html { get; set; } = new HtmlSettings();
-    public bool UseHttp { get; set; } = false;
+
+    public bool UseHttp { get; set; }
 
     public bool Help { get; set; }
 
@@ -32,6 +33,10 @@ public class AppSettings
             var arg = args[i];
             switch (arg)
             {
+                case "--http":
+                    settings.UseHttp = true;
+                    break;
+
                 case "--tech-community":
                 case "-tc":
                     settings.Html.TechCommunity = true;
@@ -46,13 +51,6 @@ public class AppSettings
                     if (i < args.Length - 1)
                     {
                         settings.Html.Tags = args[++i];
-                    }
-                    break;
-
-                case "--http":
-                    if (i < args.Length - 1)
-                    {
-                        settings.UseHttp = true;
                     }
                     break;
 

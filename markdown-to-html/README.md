@@ -93,12 +93,12 @@ This is an MCP server that converts markdown text to HTML.
 
    ```bash
    # use local container image
-   docker run -i --rm -p 8080:8080 markdown-to-html:http --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   docker run -i --rm -p 8080:8080 markdown-to-html:latest --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
    ```
 
    ```bash
    # use container image from the container registry
-   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:http --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
    ```
 
 #### On Azure
@@ -216,7 +216,7 @@ This is an MCP server that converts markdown text to HTML.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
+    Convert the highlighted markdown text to HTML and save it to `converted.html`.
     ```
 
 1. Confirm the result.

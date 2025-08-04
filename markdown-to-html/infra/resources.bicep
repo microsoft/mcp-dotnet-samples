@@ -72,14 +72,14 @@ module mcpMd2HtmlFetchLatestImage './modules/fetch-container-image.bicep' = {
   name: 'mcpMd2Html-fetch-image'
   params: {
     exists: mcpMd2HtmlExists
-    name: 'mcp-md2html'
+    name: 'markdown-to-html'
   }
 }
 
 module mcpMd2Html 'br/public:avm/res/app/container-app:0.8.0' = {
   name: 'mcpMd2Html'
   params: {
-    name: 'mcp-md2html'
+    name: 'markdown-to-html'
     ingressTargetPort: 8080
     scaleMinReplicas: 1
     scaleMaxReplicas: 10
@@ -95,6 +95,9 @@ module mcpMd2Html 'br/public:avm/res/app/container-app:0.8.0' = {
           cpu: json('0.5')
           memory: '1.0Gi'
         }
+        args: [
+          '--http'
+        ]
         env: [
           {
             name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -137,7 +140,7 @@ module mcpMd2Html 'br/public:avm/res/app/container-app:0.8.0' = {
     ]
     environmentResourceId: containerAppsEnvironment.outputs.resourceId
     location: location
-    tags: union(tags, { 'azd-service-name': 'mcp-md2html' })
+    tags: union(tags, { 'azd-service-name': 'markdown-to-html' })
   }
 }
 

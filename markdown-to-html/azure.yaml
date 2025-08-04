@@ -6,11 +6,11 @@ metadata:
   template: azd-init@1.14.0
 
 services:
-  mcp-md2html:
+  markdown-to-html:
     project: src/McpMarkdownToHtml.HybridApp
     host: containerapp
     language: dotnet
     docker:
-      path: ../../Dockerfile
+      path: ../../Dockerfile.azure
       context: ../../
       remoteBuild: true
