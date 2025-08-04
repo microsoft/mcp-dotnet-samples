@@ -7,7 +7,7 @@
     }
   ],
   "servers": {
-    "mcp-md2html-stdio-local": {
+    "markdown-to-html": {
       "type": "stdio",
       "command": "dotnet",
       "args": [

@@ -13,23 +13,15 @@ This is an MCP server that converts markdown text to HTML.
 
 ## Getting Started
 
-- [Build ASP.NET Core MCP server (STDIO) locally in a container](#build-aspnet-core-mcp-server-stdio-locally-in-a-container)
-- [Run ASP.NET Core MCP server (Streamable HTTP) locally](#run-aspnet-core-mcp-server-streamable-http-locally)
-- [Run ASP.NET Core MCP server (Streamable HTTP) locally in a container](#run-aspnet-core-mcp-server-streamable-http-locally-in-a-container)
-- [Run ASP.NET Core MCP server (Streamable HTTP) remotely](#run-aspnet-core-mcp-server-streamable-http-remotely)
+- [Getting repository root](#getting-repository-root)
+- [Running MCP server](#running-mcp-server)
+  - [On a local machine](#on-a-local-machine)
+  - [In a container](#in-a-container)
+  - [On Azure](#on-azure)
 - [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
-  - [VS Code + Agent Mode + Local MCP server (STDIO)](#vs-code--agent-mode--local-mcp-server-stdio)
-  - [VS Code + Agent Mode + Local MCP server (STDIO) in a container](#vs-code--agent-mode--local-mcp-server-stdio-in-a-container)
-  - [VS Code + Agent Mode + Local MCP server (Streamable HTTP)](#vs-code--agent-mode--local-mcp-server-streamable-http)
-  - [VS Code + Agent Mode + Local MCP server (Streamable HTTP) in a container](#vs-code--agent-mode--local-mcp-server-streamable-http-in-a-container)
-  - [VS Code + Agent Mode + Remote MCP server (Streamable HTTP)](#vs-code--agent-mode--remote-mcp-server-streamable-http)
-  - [MCP Inspector + Local MCP server (STDIO)](#mcp-inspector--local-mcp-server-stdio)
-  - [MCP Inspector + Local MCP server (STDIO) in a container](#mcp-inspector--local-mcp-server-stdio-in-a-container)
-  - [MCP Inspector + Local MCP server (Streamable HTTP)](#mcp-inspector--local-mcp-server-streamable-http)
-  - [MCP Inspector + Local MCP server (Streamable HTTP) in a container](#mcp-inspector--local-mcp-server-streamable-http-in-a-container)
-  - [MCP Inspector + Remote MCP server (Streamable HTTP)](#mcp-inspector--remote-mcp-server-streamable-http)
+  - [VS Code + Agent Mode + Local MCP server](#vs-code--agent-mode--local-mcp-server)
 
-### Build ASP.NET Core MCP server (STDIO) locally in a container
+### Getting repository root
 
 1. Get the repository root.
 
@@ -43,107 +35,88 @@ This is an MCP server that converts markdown text to HTML.
     $REPOSITORY_ROOT = git rev-parse --show-toplevel
     ```
 
-1. Build the MCP server app as a container image.
+### Running MCP server
 
-    ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
-    docker build -f Dockerfile.stdio -t mcp-md2html-stdio:latest .
-    ```
-
-### Run ASP.NET Core MCP server (Streamable HTTP) locally
-
-1. Get the repository root.
-
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
-
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
+#### On a local machine
 
 1. Run the MCP server app.
 
     ```bash
     cd $REPOSITORY_ROOT/markdown-to-html
-    dotnet run --project ./src/McpMarkdownToHtml.ContainerApp
+    dotnet run --project ./src/McpMarkdownToHtml.HybridApp
     ```
 
-   > **NOTE**: If you're converting the markdown text for [Microsoft Tech Community](https://techcommunity.microsoft.com/), the following parameters are helpful to pass.
-   >
-   > - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   > - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   > - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
-   >
-   > With these parameters, you can run the MCP server like:
-   >
-   > ```bash
-   > dotnet run --project ./src/McpMarkdownToHtml.ContainerApp -- -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   > ```
+   > Make sure take note the absolute directory of the `McpMarkdownToHtml.HybridApp` project.
 
-### Run ASP.NET Core MCP server (Streamable HTTP) locally in a container
+   **Parameters**:
 
-1. Get the repository root.
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5280`.
+   - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
+   - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
+   - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
 
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
+   With these parameters, you can run the MCP server like:
 
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
+   ```bash
+   dotnet run --project ./src/McpMarkdownToHtml.HybridApp -- --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   ```
+
+#### In a container
 
 1. Build the MCP server app as a container image.
 
     ```bash
     cd $REPOSITORY_ROOT/markdown-to-html
-    docker build -f Dockerfile.http -t mcp-md2html-http:latest .
+    docker build -f Dockerfile -t markdown-to-html:latest .
     ```
 
-1. Run the MCP server app in a container
+1. Run the MCP server app in a container.
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-md2html-http mcp-md2html-http:latest
+    docker run -i --rm -p 8080:8080 markdown-to-html:latest
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-md2html-http ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:http
+    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest
     ```
 
-   > **NOTE**: If you're converting the markdown text for [Microsoft Tech Community](https://techcommunity.microsoft.com/), the following parameters are helpful to pass.
-   >
-   > - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   > - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   > - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
-   >
-   > With these parameters, you can run the MCP server like:
-   >
-   > ```bash
-   > # use local container image
-   > docker run -d -p 8080:8080 --name mcp-md2html-http mcp-md2html-http:latest -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   > ```
-   >
-   > ```bash
-   > # use container image from the container registry
-   > docker run -d -p 8080:8080 --name mcp-md2html-http ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   > ```
+   **Parameters**:
 
-### Run ASP.NET Core MCP server (Streamable HTTP) remotely
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:8080`.
+   - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
+   - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
+   - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
 
-1. Login to Azure
+   With these parameters, you can run the MCP server like:
+
+   ```bash
+   # use local container image
+   docker run -i --rm -p 8080:8080 markdown-to-html:http --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   ```
+
+   ```bash
+   # use container image from the container registry
+   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:http --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   ```
+
+#### On Azure
+
+1. Navigate to the directory.
+
+    ```bash
+    cd $REPOSITORY_ROOT/markdown-to-html
+    ```
+
+1. Login to Azure.
 
     ```bash
     # Login with Azure Developer CLI
     azd auth login
     ```
 
-1. Deploy the MCP server app to Azure
+1. Deploy the MCP server app to Azure.
 
     ```bash
     azd up
@@ -161,21 +134,11 @@ This is an MCP server that converts markdown text to HTML.
 
 ### Connect MCP server to an MCP host/client
 
-#### VS Code + Agent Mode + Local MCP server (STDIO)
-
-1. Get the repository root.
-
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
-
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
+#### VS Code + Agent Mode + Local MCP server
 
 1. Copy `mcp.json` to the repository root.
+
+   **For locally running MCP server (STDIO):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
@@ -189,72 +152,7 @@ This is an MCP server that converts markdown text to HTML.
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-stdio-local` then click `Start Server`.
-1. When prompted, enter the absolute directory of the `McpMarkdownToHtml.ConsoleApp` project.
-1. Enter prompt like:
-
-    ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
-    ```
-
-1. Confirm the result.
-
-#### VS Code + Agent Mode + Local MCP server (STDIO) in a container
-
-1. Get the repository root.
-
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
-
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
-
-1. Copy `mcp.json` to the repository root.
-
-    ```bash
-    mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json \
-       $REPOSITORY_ROOT/.vscode/mcp.json
-    ```
-
-    ```powershell
-    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json `
-              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
-    ```
-
-   > **NOTE**: If you want to use the container image from the container registry, replace `mcp-md2html-stdio:latest` with `ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:stdio` in the `.vscode/mcp.json` file
-
-1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-stdio-container` then click `Start Server`.
-1. Enter prompt like:
-
-    ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
-    ```
-
-1. Confirm the result.
-
-#### VS Code + Agent Mode + Local MCP server (Streamable HTTP)
-
-1. Get the repository root.
-
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
-
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
-
-1. Copy `mcp.json` to the repository root.
+   **For locally running MCP server (HTTP):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
@@ -268,31 +166,21 @@ This is an MCP server that converts markdown text to HTML.
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-http-local` then click `Start Server`.
-1. Enter prompt like:
-
-    ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
-    ```
-
-1. Confirm the result.
-
-#### VS Code + Agent Mode + Local MCP server (Streamable HTTP) in a container
-
-1. Get the repository root.
+   **For locally running MCP server in a container (STDIO):**
 
     ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-1. Copy `mcp.json` to the repository root.
+   **For locally running MCP server in a container (HTTP):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
@@ -306,31 +194,7 @@ This is an MCP server that converts markdown text to HTML.
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-http-container` then click `Start Server`.
-1. Enter prompt like:
-
-    ```text
-    Convert the highlighted markdown text to HTML and save it to converted.html
-    ```
-
-1. Confirm the result.
-
-#### VS Code + Agent Mode + Remote MCP server (Streamable HTTP)
-
-1. Get the repository root.
-
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
-
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
-
-1. Copy `mcp.json` to the repository root.
+   **For remotely running MCP server in a container (HTTP):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
@@ -345,8 +209,10 @@ This is an MCP server that converts markdown text to HTML.
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-md2html-http-remote` then click `Start Server`.
-1. Enter the Azure Container Apps FQDN.
+1. Choose `markdown-to-html` then click `Start Server`.
+1. When prompted, enter one of the following values:
+   - The absolute directory of the `McpMarkdownToHtml.HybridApp` project
+   - The FQDN of Azure Container Apps.
 1. Enter prompt like:
 
     ```text
@@ -354,116 +220,3 @@ This is an MCP server that converts markdown text to HTML.
     ```
 
 1. Confirm the result.
-
-#### MCP Inspector + Local MCP server (STDIO)
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `STDIO`
-1. Set the command to `dotnet`
-1. Set the arguments that pointing to the console app project and **Connect**:
-
-    ```text
-    run --project {{absolute/path/to/markdown-to-html}}/src/McpMarkdownToHtml.ConsoleApp
-    ```
-
-   > **NOTE**:
-   >
-   > 1. If you're converting the markdown text for [Microsoft Tech Community](https://techcommunity.microsoft.com/), the following parameters are helpful to pass.
-   >
-   >    - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   >    - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   >    - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
-   >
-   >    With these parameters, the arguments value can be:
-   >
-   >     ```bash
-   >     run --project {{absolute/path/to/markdown-to-html}}/src/McpMarkdownToHtml.ConsoleApp -- -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   >     ```
-   >
-   > 1. The project path MUST be the absolute path.
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with appropriate values.
-
-#### MCP Inspector + Local MCP server (STDIO) in a container
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `STDIO`
-1. Set the command to `docker`
-1. Set the arguments that pointing to the console app project and **Connect**:
-
-    ```text
-    run -i --rm mcp-md2html-stdio:latest
-    ```
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with appropriate values.
-
-#### MCP Inspector + Local MCP server (Streamable HTTP)
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `Streamable HTTP` 
-1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
-
-    ```text
-    http://0.0.0.0:5280/mcp
-    ```
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with appropriate values.
-
-#### MCP Inspector + Local MCP server (Streamable HTTP) in a container
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `Streamable HTTP` 
-1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
-
-    ```text
-    http://0.0.0.0:8080/mcp
-    ```
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with appropriate values.
-
-#### MCP Inspector + Remote MCP server (Streamable HTTP)
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:6274)
-1. Set the transport type to `Streamable HTTP` 
-1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
-
-    ```text
-    https://<acaapp-server-fqdn>/mcp
-    ```
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with appropriate values.

@@ -7,6 +7,7 @@ namespace McpMarkdownToHtml.Common.Configurations;
 public class AppSettings
 {
     public HtmlSettings Html { get; set; } = new HtmlSettings();
+    public bool UseHttp { get; set; } = false;
 
     public bool Help { get; set; }
 
@@ -48,6 +49,13 @@ public class AppSettings
                     }
                     break;
 
+                case "--http":
+                    if (i < args.Length - 1)
+                    {
+                        settings.UseHttp = true;
+                    }
+                    break;
+
                 case "--help":
                 default:
                     settings.Help = true;
@@ -56,6 +64,18 @@ public class AppSettings
         }
 
         return settings;
+    }
+
+    public static bool UseStreamableHttp(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            return false;
+        }
+
+        var useHttp = args.Contains("--http", StringComparer.InvariantCultureIgnoreCase);
+
+        return useHttp;
     }
 }
 

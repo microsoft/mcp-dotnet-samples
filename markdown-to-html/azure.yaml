@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 
-name: md2html-containerapp
+name: markdown-to-html
 
 metadata:
   template: azd-init@1.14.0
 
 services:
   mcp-md2html:
-    project: src/McpMarkdownToHtml.ContainerApp
+    project: src/McpMarkdownToHtml.HybridApp
     host: containerapp
     language: dotnet
     docker:
-      path: ../../Dockerfile.http
+      path: ../../Dockerfile
       context: ../../
       remoteBuild: true

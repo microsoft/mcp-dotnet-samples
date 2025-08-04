@@ -1,13 +1,13 @@
 {
   "servers": {
-    "mcp-md2html-stdio-container": {
+    "markdown-to-html": {
       "type": "stdio",
       "command": "docker",
       "args": [
         "run",
         "-i",
         "--rm",
-        "mcp-md2html-stdio:latest",
+        "ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest",
         "-tc",
         "-p"
       ]

@@ -7,7 +7,7 @@
     }
   ],
   "servers": {
-    "mcp-md2html-http-remote": {
+    "markdown-to-html": {
       "type": "http",
       "url": "https://${input:acaapp-server-fqdn}/mcp"
     }
