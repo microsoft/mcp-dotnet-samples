@@ -19,11 +19,11 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
 
 Awesome Copilot MCP server includes:
 
-| Building Block | Name                  | Description                                                           |
-|----------------|-----------------------|-----------------------------------------------------------------------|
-| Tools          | `search_instructions` | Searches custom instructions based on keywords in their descriptions. |
-| Tools          | `load_instruction`    | Loads a custom instruction from the repository.                       |
-| Prompts        | `get_search_prompt`   | Get a prompt for searching copilot instructions.                      |
+| Building Block | Name                  | Description                                                           | Usage                                    |
+|----------------|-----------------------|-----------------------------------------------------------------------|------------------------------------------|
+| Tools          | `search_instructions` | Searches custom instructions based on keywords in their descriptions. | `#search_instructions`                   |
+| Tools          | `load_instruction`    | Loads a custom instruction from the repository.                       | `#load_instruction`                      |
+| Prompts        | `get_search_prompt`   | Get a prompt for searching copilot instructions.                      | `/mcp.awesome-copilot.get_search_prompt` |
 
 ## Getting Started
 
