@@ -12,7 +12,7 @@ namespace McpAwesomeCopilot.Common.Services;
 public class MetadataService(HttpClient http, JsonSerializerOptions options, ILogger<MetadataService> logger) : IMetadataService
 {
     private const string MetadataFileName = "metadata.json";
-    private const string AwesomeCopilotFileUrl = "https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/{mode}/{filename}";
+    private const string AwesomeCopilotFileUrl = "https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/{directory}/{filename}";
 
     private readonly string _metadataFilePath = Path.Combine(AppContext.BaseDirectory, MetadataFileName);
     private Metadata? _cachedMetadata;
@@ -51,11 +51,11 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
     }
 
     /// <inheritdoc />
-    public async Task<string> LoadAsync(string mode, string filename, CancellationToken cancellationToken = default)
+    public async Task<string> LoadAsync(string directory, string filename, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(mode) == true)
+        if (string.IsNullOrWhiteSpace(directory) == true)
         {
-            throw new ArgumentException("Mode cannot be null or empty", nameof(mode));
+            throw new ArgumentException("Directory cannot be null or empty", nameof(directory));
         }
 
         if (string.IsNullOrWhiteSpace(filename) == true)
@@ -63,7 +63,7 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
             throw new ArgumentException("Filename cannot be null or empty", nameof(filename));
         }
 
-        var url = AwesomeCopilotFileUrl.Replace("{mode}", mode).Replace("{filename}", filename);
+        var url = AwesomeCopilotFileUrl.Replace("{directory}", directory).Replace("{filename}", filename);
         try
         {
             var response = await http.GetAsync(url, cancellationToken).ConfigureAwait(false);
@@ -77,7 +77,7 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
         }
         catch (HttpRequestException ex)
         {
-            throw new InvalidOperationException($"Failed to load file '{filename}' from mode '{mode}': {ex.Message}", ex);
+            throw new InvalidOperationException($"Failed to load file '{filename}' from directory '{directory}': {ex.Message}", ex);
         }
     }
 

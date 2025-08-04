@@ -18,9 +18,9 @@ public interface IMetadataService
     /// <summary>
     /// Loads file contents from the awesome-copilot repository
     /// </summary>
-    /// <param name="mode">The mode directory (chatmodes, instructions, or prompts)</param>
+    /// <param name="directory">The mode directory (chatmodes, instructions, or prompts)</param>
     /// <param name="filename">The filename to load</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The file contents as a string</returns>
-    Task<string> LoadAsync(string mode, string filename, CancellationToken cancellationToken = default);
+    Task<string> LoadAsync(string directory, string filename, CancellationToken cancellationToken = default);
 }
