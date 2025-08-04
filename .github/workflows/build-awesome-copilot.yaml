@@ -23,6 +23,7 @@ jobs:
     with:
       image_name: ${{ matrix.image_name }}
       extension: ${{ matrix.extension }}
+      force: false
     secrets: inherit
 
   build-and-push-image-http:
@@ -44,4 +45,5 @@ jobs:
     with:
       image_name: ${{ matrix.image_name }}
       extension: ${{ matrix.extension }}
+      force: false
     secrets: inherit

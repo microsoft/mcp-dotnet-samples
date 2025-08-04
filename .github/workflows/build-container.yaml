@@ -9,6 +9,10 @@ on:
       extension:
         required: true
         type: string
+      force:
+        required: false
+        type: boolean
+        default: false
 
 env:
   REGISTRY: ghcr.io
@@ -91,7 +95,7 @@ jobs:
           fi
 
       - name: Check if Dockerfile exists
-        if: env.BUILD_IMAGE == 'true'
+        if: env.BUILD_IMAGE == 'true' || inputs.force == true
         id: check-dockerfile
         shell: bash
         run: |
@@ -103,7 +107,7 @@ jobs:
 
       - name: Log in to the Container registry
         if: |
-          env.BUILD_IMAGE == 'true' &&
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
           steps.check-dockerfile.outputs.exists == 'true'
         uses: docker/login-action@v3
         with:
@@ -113,7 +117,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         if: |
-          env.BUILD_IMAGE == 'true' &&
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
           steps.check-dockerfile.outputs.exists == 'true'
         id: meta
         uses: docker/metadata-action@v5
@@ -122,13 +126,13 @@ jobs:
 
       - name: Set up Docker Buildx
         if: |
-          env.BUILD_IMAGE == 'true' &&
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
           steps.check-dockerfile.outputs.exists == 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push Docker image - multi-platform
         if: |
-          env.BUILD_IMAGE == 'true' &&
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
           steps.check-dockerfile.outputs.exists == 'true' &&
           steps.platform.outputs.supports_multiplatform == 'true'
         id: push-multiplatform
@@ -143,7 +147,7 @@ jobs:
 
       - name: Generate artifact attestation - multi-platform
         if: |
-          env.BUILD_IMAGE == 'true' &&
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
           steps.check-dockerfile.outputs.exists == 'true' &&
           steps.platform.outputs.supports_multiplatform == 'true'
         uses: actions/attest-build-provenance@v2
@@ -154,7 +158,7 @@ jobs:
 
       - name: Build and push Docker image - amd64 only
         if: |
-          env.BUILD_IMAGE == 'true' &&
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
           steps.check-dockerfile.outputs.exists == 'true' &&
           steps.platform.outputs.supports_multiplatform == 'false'
         id: push-amd64
@@ -169,7 +173,7 @@ jobs:
 
       - name: Generate artifact attestation - amd64 only
         if: |
-          env.BUILD_IMAGE == 'true' &&
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
           steps.check-dockerfile.outputs.exists == 'true' &&
           steps.platform.outputs.supports_multiplatform == 'false'
         uses: actions/attest-build-provenance@v2

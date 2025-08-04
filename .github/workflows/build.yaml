@@ -23,6 +23,7 @@ jobs:
     with:
       image_name: ${{ matrix.image_name }}
       extension: ${{ matrix.extension }}
+      force: true
     secrets: inherit
 
   build-and-push-image-awesome-copilot-stdio:
@@ -44,6 +45,7 @@ jobs:
     with:
       image_name: ${{ matrix.image_name }}
       extension: ${{ matrix.extension }}
+      force: true
     secrets: inherit
 
   build-and-push-image-awesome-copilot-http:
@@ -65,4 +67,5 @@ jobs:
     with:
       image_name: ${{ matrix.image_name }}
       extension: ${{ matrix.extension }}
+      force: true
     secrets: inherit
