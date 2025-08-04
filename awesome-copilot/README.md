@@ -11,6 +11,16 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
 - [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
 - [Docker Desktop](https://docs.docker.com/get-started/get-docker/)
 
+## What's Included
+
+Awesome Copilot MCP server includes:
+
+| Building Block | Name                  | Description                                                           |
+|----------------|-----------------------|-----------------------------------------------------------------------|
+| Tools          | `search_instructions` | Searches custom instructions based on keywords in their descriptions. |
+| Tools          | `load_instruction`    | Loads a custom instruction from the repository.                       |
+| Prompts        | `get_search_prompt`   | Get a prompt for searching copilot instructions.                      |
+
 ## Getting Started
 
 - [Build ASP.NET Core MCP server (STDIO) locally in a container](#build-aspnet-core-mcp-server-stdio-locally-in-a-container)
@@ -48,7 +58,7 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
 
     ```bash
     cd $REPOSITORY_ROOT/awesome-copilot
-    docker build -f Dockerfile.stdio -t mcp-awesome-copilot-stdio:latest .
+    docker build -f Dockerfile.stdio -t awesome-copilot:stdio .
     ```
 
 ### Run ASP.NET Core MCP server (Streamable HTTP) locally
@@ -90,19 +100,19 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
 
     ```bash
     cd $REPOSITORY_ROOT/awesome-copilot
-    docker build -f Dockerfile.http -t mcp-awesome-copilot-http:latest .
+    docker build -f Dockerfile.http -t awesome-copilot:http .
     ```
 
 1. Run the MCP server app in a container
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-awesome-copilot-http mcp-awesome-copilot-http:latest
+    docker run -i --rm -p 8080:8080 awesome-copilot:http
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-awesome-copilot-http ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:http
+    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:http
     ```
 
 ### Run ASP.NET Core MCP server (Streamable HTTP) remotely
@@ -161,13 +171,31 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-awesome-copilot-stdio-local` then click `Start Server`.
+1. Choose `awesome-copilot` then click `Start Server`.
 1. When prompted, enter the absolute directory of the `McpAwesomeCopilot.ConsoleApp` project.
-1. Enter prompt like:
+1. Use a prompt by typing `/mcp.awesome-copilot.get_search_prompt` and enter keywords to search. You'll get a prompt like:
 
     ```text
-    Show me the list of copilot instructions about react.
-    Save the react instruction to .github/copilot-instructions.md
+    Please search all the chatmodes, instructions and prompts that are related to the search keyword, `{keyword}`.
+
+    Here's the process to follow:
+
+    1. Use the `awesome-copilot` MCP server.
+    1. Search all chatmodes, instructions, and prompts for the keyword provided.
+    1. Scan local chatmodes, instructions, and prompts markdown files in `.github/chatmodes`, `.github/instructions`, and `.github/prompts` directories respectively.
+    1. Compare existing chatmodes, instructions, and prompts with the search results.
+    1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions or prompts), filename, title and description of each item found. Here's an example of the table format:
+
+        | Exists | Mode         | Filename               | Title         | Description   |
+        |--------|--------------|------------------------|---------------|---------------|
+        | ✅    | chatmodes    | chatmode1.json         | ChatMode 1    | Description 1 |
+        | ❌    | instructions | instruction1.json      | Instruction 1 | Description 1 |
+        | ✅    | prompts      | prompt1.json           | Prompt 1      | Description 1 |
+
+        ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
+
+    1. If any item doesn't exist in the repository, ask which item the user wants to save.
+    1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, or `.github/prompts`) using the mode and filename, with NO modification.
     ```
 
 1. Confirm the result.
@@ -200,15 +228,31 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-   > **NOTE**: If you want to use the container image from the container registry, replace `mcp-awesome-copilot-stdio:latest` with `ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:stdio` in the `.vscode/mcp.json` file
-
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-awesome-copilot-stdio-container` then click `Start Server`.
-1. Enter prompt like:
+1. Choose `awesome-copilot` then click `Start Server`.
+1. Use a prompt by typing `/mcp.awesome-copilot.get_search_prompt` and enter keywords to search. You'll get a prompt like:
 
     ```text
-    Show me the list of copilot instructions about react.
-    Save the react instruction to .github/copilot-instructions.md
+    Please search all the chatmodes, instructions and prompts that are related to the search keyword, `{keyword}`.
+
+    Here's the process to follow:
+
+    1. Use the `awesome-copilot` MCP server.
+    1. Search all chatmodes, instructions, and prompts for the keyword provided.
+    1. Scan local chatmodes, instructions, and prompts markdown files in `.github/chatmodes`, `.github/instructions`, and `.github/prompts` directories respectively.
+    1. Compare existing chatmodes, instructions, and prompts with the search results.
+    1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions or prompts), filename, title and description of each item found. Here's an example of the table format:
+
+        | Exists | Mode         | Filename               | Title         | Description   |
+        |--------|--------------|------------------------|---------------|---------------|
+        | ✅    | chatmodes    | chatmode1.json         | ChatMode 1    | Description 1 |
+        | ❌    | instructions | instruction1.json      | Instruction 1 | Description 1 |
+        | ✅    | prompts      | prompt1.json           | Prompt 1      | Description 1 |
+
+        ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
+
+    1. If any item doesn't exist in the repository, ask which item the user wants to save.
+    1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, or `.github/prompts`) using the mode and filename, with NO modification.
     ```
 
 1. Confirm the result.
@@ -242,12 +286,30 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-awesome-copilot-http-local` then click `Start Server`.
-1. Enter prompt like:
+1. Choose `awesome-copilot` then click `Start Server`.
+1. Use a prompt by typing `/mcp.awesome-copilot.get_search_prompt` and enter keywords to search. You'll get a prompt like:
 
     ```text
-    Show me the list of copilot instructions about react.
-    Save the react instruction to .github/copilot-instructions.md
+    Please search all the chatmodes, instructions and prompts that are related to the search keyword, `{keyword}`.
+
+    Here's the process to follow:
+
+    1. Use the `awesome-copilot` MCP server.
+    1. Search all chatmodes, instructions, and prompts for the keyword provided.
+    1. Scan local chatmodes, instructions, and prompts markdown files in `.github/chatmodes`, `.github/instructions`, and `.github/prompts` directories respectively.
+    1. Compare existing chatmodes, instructions, and prompts with the search results.
+    1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions or prompts), filename, title and description of each item found. Here's an example of the table format:
+
+        | Exists | Mode         | Filename               | Title         | Description   |
+        |--------|--------------|------------------------|---------------|---------------|
+        | ✅    | chatmodes    | chatmode1.json         | ChatMode 1    | Description 1 |
+        | ❌    | instructions | instruction1.json      | Instruction 1 | Description 1 |
+        | ✅    | prompts      | prompt1.json           | Prompt 1      | Description 1 |
+
+        ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
+
+    1. If any item doesn't exist in the repository, ask which item the user wants to save.
+    1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, or `.github/prompts`) using the mode and filename, with NO modification.
     ```
 
 1. Confirm the result.
@@ -281,12 +343,30 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-awesome-copilot-http-container` then click `Start Server`.
-1. Enter prompt like:
+1. Choose `awesome-copilot` then click `Start Server`.
+1. Use a prompt by typing `/mcp.awesome-copilot.get_search_prompt` and enter keywords to search. You'll get a prompt like:
 
     ```text
-    Show me the list of copilot instructions about react.
-    Save the react instruction to .github/copilot-instructions.md
+    Please search all the chatmodes, instructions and prompts that are related to the search keyword, `{keyword}`.
+
+    Here's the process to follow:
+
+    1. Use the `awesome-copilot` MCP server.
+    1. Search all chatmodes, instructions, and prompts for the keyword provided.
+    1. Scan local chatmodes, instructions, and prompts markdown files in `.github/chatmodes`, `.github/instructions`, and `.github/prompts` directories respectively.
+    1. Compare existing chatmodes, instructions, and prompts with the search results.
+    1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions or prompts), filename, title and description of each item found. Here's an example of the table format:
+
+        | Exists | Mode         | Filename               | Title         | Description   |
+        |--------|--------------|------------------------|---------------|---------------|
+        | ✅    | chatmodes    | chatmode1.json         | ChatMode 1    | Description 1 |
+        | ❌    | instructions | instruction1.json      | Instruction 1 | Description 1 |
+        | ✅    | prompts      | prompt1.json           | Prompt 1      | Description 1 |
+
+        ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
+
+    1. If any item doesn't exist in the repository, ask which item the user wants to save.
+    1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, or `.github/prompts`) using the mode and filename, with NO modification.
     ```
 
 1. Confirm the result.
@@ -320,13 +400,31 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-awesome-copilot-http-remote` then click `Start Server`.
+1. Choose `awesome-copilot` then click `Start Server`.
 1. Enter the Azure Container Apps FQDN.
-1. Enter prompt like:
+1. Use a prompt by typing `/mcp.awesome-copilot.get_search_prompt` and enter keywords to search. You'll get a prompt like:
 
     ```text
-    Show me the list of copilot instructions about react.
-    Save the react instruction to .github/copilot-instructions.md
+    Please search all the chatmodes, instructions and prompts that are related to the search keyword, `{keyword}`.
+
+    Here's the process to follow:
+
+    1. Use the `awesome-copilot` MCP server.
+    1. Search all chatmodes, instructions, and prompts for the keyword provided.
+    1. Scan local chatmodes, instructions, and prompts markdown files in `.github/chatmodes`, `.github/instructions`, and `.github/prompts` directories respectively.
+    1. Compare existing chatmodes, instructions, and prompts with the search results.
+    1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions or prompts), filename, title and description of each item found. Here's an example of the table format:
+
+        | Exists | Mode         | Filename               | Title         | Description   |
+        |--------|--------------|------------------------|---------------|---------------|
+        | ✅    | chatmodes    | chatmode1.json         | ChatMode 1    | Description 1 |
+        | ❌    | instructions | instruction1.json      | Instruction 1 | Description 1 |
+        | ✅    | prompts      | prompt1.json           | Prompt 1      | Description 1 |
+
+        ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
+
+    1. If any item doesn't exist in the repository, ask which item the user wants to save.
+    1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, or `.github/prompts`) using the mode and filename, with NO modification.
     ```
 
 1. Confirm the result.

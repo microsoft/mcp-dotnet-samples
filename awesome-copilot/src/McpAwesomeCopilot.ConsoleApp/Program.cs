@@ -27,6 +27,7 @@ builder.Services.AddHttpClient<IMetadataService, MetadataService>();
 
 builder.Services.AddMcpServer()
                 .WithStdioServerTransport()
-                .WithToolsFromAssembly(Assembly.GetAssembly(typeof(MetadataService)) ?? Assembly.GetExecutingAssembly());
+                .WithToolsFromAssembly(Assembly.GetAssembly(typeof(MetadataService)) ?? Assembly.GetExecutingAssembly())
+                .WithPromptsFromAssembly(Assembly.GetAssembly(typeof(MetadataService)) ?? Assembly.GetExecutingAssembly());
 
 await builder.Build().RunAsync();

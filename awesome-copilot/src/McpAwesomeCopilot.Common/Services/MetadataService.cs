@@ -17,12 +17,7 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
     private readonly string _metadataFilePath = Path.Combine(AppContext.BaseDirectory, MetadataFileName);
     private Metadata? _cachedMetadata;
 
-    /// <summary>
-    /// Searches for relevant data in chatmodes, instructions, and prompts based on keywords in their description fields
-    /// </summary>
-    /// <param name="keywords">The keywords to search for</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>A Metadata object containing all matching search results</returns>
+    /// <inheritdoc />
     public async Task<Metadata> SearchAsync(string keywords, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(keywords) == true)
@@ -33,7 +28,7 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
         var metadata = await GetMetadataAsync(cancellationToken).ConfigureAwait(false);
         var searchTerms = keywords.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                                   .Select(term => term.Trim().ToLowerInvariant())
-                                  .Where(term => string.IsNullOrEmpty(term) != true)
+                                  .Where(term => string.IsNullOrWhiteSpace(term) != true)
                                   .ToArray();
 
         logger.LogInformation("Search terms: {terms}", string.Join(", ", searchTerms));
@@ -41,10 +36,12 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
         var result = new Metadata
         {
             // Search in ChatModes
-            ChatModes = [.. metadata.ChatModes.Where(cm => ContainsAnyKeyword(cm.Description, searchTerms) == true)],
+            ChatModes = [.. metadata.ChatModes.Where(cm => ContainsAnyKeyword(cm.Title, searchTerms) == true ||
+                                                           ContainsAnyKeyword(cm.Description, searchTerms) == true)],
 
             // Search in Instructions
-            Instructions = [.. metadata.Instructions.Where(inst => ContainsAnyKeyword(inst.Description, searchTerms) == true)],
+            Instructions = [.. metadata.Instructions.Where(inst => ContainsAnyKeyword(inst.Title, searchTerms) == true ||
+                                                                   ContainsAnyKeyword(inst.Description, searchTerms) == true)],
 
             // Search in Prompts
             Prompts = [.. metadata.Prompts.Where(prompt => ContainsAnyKeyword(prompt.Description, searchTerms) == true)]
@@ -53,13 +50,7 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
         return result;
     }
 
-    /// <summary>
-    /// Loads file contents from the awesome-copilot repository
-    /// </summary>
-    /// <param name="mode">The mode directory (chatmodes, instructions, or prompts)</param>
-    /// <param name="filename">The filename to load</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The file contents as a string</returns>
+    /// <inheritdoc />
     public async Task<string> LoadAsync(string mode, string filename, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(mode) == true)
@@ -109,14 +100,14 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
         return _cachedMetadata;
     }
 
-    private static bool ContainsAnyKeyword(string description, string[] searchTerms)
+    private static bool ContainsAnyKeyword(string? text, string[] searchTerms)
     {
-        if (string.IsNullOrEmpty(description))
+        if (string.IsNullOrWhiteSpace(text))
         {
             return false;
         }
 
-        var result = searchTerms.Any(term => description.Contains(term, StringComparison.InvariantCultureIgnoreCase) == true);
+        var result = searchTerms.Any(term => text.Contains(term, StringComparison.InvariantCultureIgnoreCase) == true);
 
         return result;
     }

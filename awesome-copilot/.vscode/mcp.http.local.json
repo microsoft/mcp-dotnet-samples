@@ -1,6 +1,6 @@
 {
   "servers": {
-    "mcp-awesome-copilot-http-local": {
+    "awesome-copilot": {
       "type": "http",
       "url": "http://0.0.0.0:5250/mcp"
     }

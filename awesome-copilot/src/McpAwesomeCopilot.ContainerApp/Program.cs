@@ -32,7 +32,8 @@ builder.Services.AddHttpClient<IMetadataService, MetadataService>();
 
 builder.Services.AddMcpServer()
                 .WithHttpTransport(o => o.Stateless = true)
-                .WithToolsFromAssembly(Assembly.GetAssembly(typeof(IMetadataService)) ?? Assembly.GetExecutingAssembly());
+                .WithToolsFromAssembly(Assembly.GetAssembly(typeof(MetadataService)) ?? Assembly.GetExecutingAssembly())
+                .WithPromptsFromAssembly(Assembly.GetAssembly(typeof(MetadataService)) ?? Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

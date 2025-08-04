@@ -7,7 +7,7 @@
     }
   ],
   "servers": {
-    "mcp-awesome-copilot-stdio-local": {
+    "awesome-copilot": {
       "type": "stdio",
       "command": "dotnet",
       "args": [

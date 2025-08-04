@@ -20,7 +20,8 @@ public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger
 
     [McpServerTool(Name = "search_instructions", Title = "Searches custom instructions")]
     [Description("Searches custom instructions based on keywords in their descriptions.")]
-    public async Task<MetadataResult> SearchAsync([Description("The keyword to search for")] string keywords)
+    public async Task<MetadataResult> SearchAsync(
+        [Description("The keyword to search for")] string keywords)
     {
         var result = new MetadataResult();
         try
@@ -46,12 +47,17 @@ public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger
     [McpServerTool(Name = "load_instruction", Title = "Loads a custom instruction")]
     [Description("Loads a custom instruction from the repository.")]
     public async Task<string> LoadAsync(
-        [Description("The instruction mode")] string mode,
+        [Description("The instruction mode")] InstructionMode mode,
         [Description("The filename of the instruction")] string filename)
     {
         try
         {
-            var result = await _service.LoadAsync(mode, filename).ConfigureAwait(false);
+            if (mode == InstructionMode.Undefined)
+            {
+                throw new ArgumentException("Instruction mode must be defined.", nameof(mode));
+            }
+
+            var result = await _service.LoadAsync(mode.ToString().ToLowerInvariant(), filename).ConfigureAwait(false);
 
             _logger.LogInformation("Load completed successfully with mode {Mode} and filename {Filename}.", mode, filename);
 

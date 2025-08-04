@@ -1,13 +1,13 @@
 {
   "servers": {
-    "mcp-awesome-copilot-stdio-container": {
+    "awesome-copilot": {
       "type": "stdio",
       "command": "docker",
       "args": [
         "run",
         "-i",
         "--rm",
-        "mcp-awesome-copilot-stdio:latest"
+        "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:stdio"
       ]
     }
   }

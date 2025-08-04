@@ -7,7 +7,7 @@
     }
   ],
   "servers": {
-    "mcp-awesome-copilot-http-remote": {
+    "awesome-copilot": {
       "type": "http",
       "url": "https://${input:acaapp-server-fqdn}/mcp"
     }
