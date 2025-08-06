@@ -1,0 +1,20 @@
+# syntax=docker/dockerfile:1
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
+
+COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
+COPY ./markdown-to-html/src/McpSamples.MarkdownToHtml.HybridApp /source/markdown-to-html/src/McpSamples.MarkdownToHtml.HybridApp
+
+WORKDIR /source/markdown-to-html/src/McpSamples.MarkdownToHtml.HybridApp
+
+RUN dotnet publish -c Release -o /app --self-contained false
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
+
+WORKDIR /app
+
+COPY --from=build /app .
+
+USER $APP_UID
+
+ENTRYPOINT ["dotnet", "McpSamples.MarkdownToHtml.HybridApp.dll"]

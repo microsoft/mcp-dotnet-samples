@@ -2,10 +2,10 @@
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 
-COPY ./src/McpMarkdownToHtml.Common /source/McpMarkdownToHtml.Common
-COPY ./src/McpMarkdownToHtml.HybridApp /source/McpMarkdownToHtml.HybridApp
+COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
+COPY ./markdown-to-html/src/McpSamples.MarkdownToHtml.HybridApp /source/markdown-to-html/src/McpSamples.MarkdownToHtml.HybridApp
 
-WORKDIR /source/McpMarkdownToHtml.HybridApp
+WORKDIR /source/markdown-to-html/src/McpSamples.MarkdownToHtml.HybridApp
 
 ARG TARGETARCH
 RUN case "$TARGETARCH" in \
@@ -23,4 +23,4 @@ COPY --from=build /app .
 
 USER $APP_UID
 
-ENTRYPOINT ["dotnet", "McpMarkdownToHtml.HybridApp.dll"]
+ENTRYPOINT ["dotnet", "McpSamples.MarkdownToHtml.HybridApp.dll"]

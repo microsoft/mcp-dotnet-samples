@@ -7,18 +7,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <AssemblyName>McpMarkdownToHtml.HybridApp</AssemblyName>
-    <RootNamespace>McpMarkdownToHtml.HybridApp</RootNamespace>
+    <AssemblyName>McpSamples.MarkdownToHtml.HybridApp</AssemblyName>
+    <RootNamespace>McpSamples.MarkdownToHtml.HybridApp</RootNamespace>
 
     <UserSecretsId>a83833d7-84f2-4942-9620-8c162e8ef2ee</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.*-*" />
+    <PackageReference Include="Markdig" Version="0.*" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\McpMarkdownToHtml.Common\McpMarkdownToHtml.Common.csproj" />
+    <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace McpSamples.TodoList.HybridApp.Repositories;
 
 /// <summary>
-/// This provides interface for the to-do database.
+/// This provides interfaces for the to-do database.
 /// </summary>
 public interface ITodoRepository
 {

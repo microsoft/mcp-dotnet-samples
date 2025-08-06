@@ -1,6 +1,6 @@
-using McpMarkdownToHtml.Common.Configurations;
-using McpMarkdownToHtml.Common.Extensions;
-using McpMarkdownToHtml.HybridApp.Extensions;
+using McpSamples.MarkdownToHtml.HybridApp.Extensions;
+using McpSamples.Shared.Configurations;
+using McpSamples.Shared.Extensions;
 
 var useStreamableHttp = AppSettings.UseStreamableHttp(args);
 

@@ -7,10 +7,10 @@ metadata:
 
 services:
   markdown-to-html:
-    project: src/McpMarkdownToHtml.HybridApp
+    project: src/McpSamples.MarkdownToHtml.HybridApp
     host: containerapp
     language: dotnet
     docker:
-      path: ../../Dockerfile.azure
-      context: ../../
+      path: ../../../Dockerfile.markdown-to-html-azure
+      context: ../../../
       remoteBuild: true
