@@ -58,7 +58,7 @@ module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.4.5
 module mcpTodoListIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
   name: 'mcpTodoListIdentity'
   params: {
-    name: '${abbrs.managedIdentityUserAssignedIdentities}mcponaca-${resourceToken}'
+    name: '${abbrs.managedIdentityUserAssignedIdentities}mcptodolist-${resourceToken}'
     location: location
   }
 }
@@ -68,14 +68,14 @@ module mcpTodoListFetchLatestImage './modules/fetch-container-image.bicep' = {
   name: 'mcpTodoList-fetch-image'
   params: {
     exists: mcpTodoListExists
-    name: 'mcp-todo-list'
+    name: 'todo-list'
   }
 }
 
 module mcpTodoList 'br/public:avm/res/app/container-app:0.8.0' = {
   name: 'mcpTodoList'
   params: {
-    name: 'mcp-todo-list'
+    name: 'todo-list'
     ingressTargetPort: 8080
     scaleMinReplicas: 1
     scaleMaxReplicas: 10
@@ -105,6 +105,9 @@ module mcpTodoList 'br/public:avm/res/app/container-app:0.8.0' = {
             value: '8080'
           }
         ]
+        args: [
+          '--http'
+        ]
       }
     ]
     managedIdentities: {
@@ -131,7 +134,7 @@ module mcpTodoList 'br/public:avm/res/app/container-app:0.8.0' = {
     }
     environmentResourceId: containerAppsEnvironment.outputs.resourceId
     location: location
-    tags: union(tags, { 'azd-service-name': 'mcp-todo-list' })
+    tags: union(tags, { 'azd-service-name': 'todo-list' })
   }
 }
 
