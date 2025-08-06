@@ -12,11 +12,11 @@ public static class HostApplicationBuilderExtensions
 {
     public static IHost BuildApp(this IHostApplicationBuilder builder, bool useStreamableHttp)
     {
-        if (useStreamableHttp)
+        if (useStreamableHttp == true)
         {
             builder.Services.AddMcpServer()
                             .WithHttpTransport(o => o.Stateless = true)
-                            .WithToolsFromAssembly(Assembly.GetAssembly(typeof(AppSettings)) ?? Assembly.GetExecutingAssembly());
+                            .WithToolsFromAssembly(Assembly.GetEntryAssembly());
 
             var webApp = (builder as WebApplicationBuilder)!.Build();
 
@@ -30,7 +30,7 @@ public static class HostApplicationBuilderExtensions
 
         builder.Services.AddMcpServer()
                         .WithStdioServerTransport()
-                        .WithToolsFromAssembly(Assembly.GetAssembly(typeof(AppSettings)) ?? Assembly.GetExecutingAssembly());
+                            .WithToolsFromAssembly(Assembly.GetEntryAssembly());
 
         var consoleApp = (builder as HostApplicationBuilder)!.Build();
 

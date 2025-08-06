@@ -1,6 +1,8 @@
+using McpSamples.Shared.Configurations;
+
 using Microsoft.OpenApi.Models;
 
-namespace McpSamples.Shared.Configurations;
+namespace McpSamples.TodoList.HybridApp.Configurations;
 
 /// <summary>
 /// This represents the base class for application settings.

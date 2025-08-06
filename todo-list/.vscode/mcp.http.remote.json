@@ -7,15 +7,7 @@
     }
   ],
   "servers": {
-    "mcp-todo-list-aca-local": {
-      "type": "http",
-      "url": "http://0.0.0.0:5242/mcp"
-    },
-    "mcp-todo-list-aca-container": {
-      "type": "http",
-      "url": "http://0.0.0.0:8080/mcp"
-    },
-    "mcp-todo-list-aca-remote": {
+    "todo-list": {
       "type": "http",
       "url": "https://${input:acaapp-server-fqdn}/mcp"
     }

@@ -1,14 +1,18 @@
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 using McpSamples.Shared.OpenApi;
-
+using McpSamples.TodoList.HybridApp.Configurations;
 using McpSamples.TodoList.HybridApp.Data;
 using McpSamples.TodoList.HybridApp.Repositories;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+var useStreamableHttp = AppSettings.UseStreamableHttp(args);
+
+IHostApplicationBuilder builder = useStreamableHttp
+                                ? WebApplication.CreateBuilder(args)
+                                : Host.CreateApplicationBuilder(args);
 
 // Add services to the container.
 builder.Services.AddAppSettings<TodoListAppSettings>(builder.Configuration, args);
@@ -21,23 +25,22 @@ builder.Services.AddSingleton(connection);
 builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlite(connection));
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 
-builder.Services.AddMcpServer()
-                .WithHttpTransport(o => o.Stateless = true)
-                .WithToolsFromAssembly();
-
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddOpenApi("swagger", o =>
+if (useStreamableHttp == true)
 {
-    o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
-    o.AddDocumentTransformer<McpDocumentTransformer<TodoListAppSettings>>();
-});
-builder.Services.AddOpenApi("openapi", o =>
-{
-    o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
-    o.AddDocumentTransformer<McpDocumentTransformer<TodoListAppSettings>>();
-});
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddOpenApi("swagger", o =>
+    {
+        o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+        o.AddDocumentTransformer<McpDocumentTransformer<TodoListAppSettings>>();
+    });
+    builder.Services.AddOpenApi("openapi", o =>
+    {
+        o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
+        o.AddDocumentTransformer<McpDocumentTransformer<TodoListAppSettings>>();
+    });
+}
 
-var app = builder.Build();
+IHost app = builder.BuildApp(useStreamableHttp);
 
 // Initialise the database
 using (var scope = app.Services.CreateScope())
@@ -46,11 +49,9 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.EnsureCreated();
 }
 
-// Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
+if (useStreamableHttp == true)
+{
+    (app as WebApplication)!.MapOpenApi("/{documentName}.json");
+}
 
-app.MapOpenApi("/{documentName}.json");
-
-app.MapMcp("/mcp");
-
-app.Run();
+await app.RunAsync();

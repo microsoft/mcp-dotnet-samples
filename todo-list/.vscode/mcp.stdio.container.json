@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "todo-list": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/microsoft/mcp-dotnet-samples/todo-list:latest"
+      ]
+    }
+  }
+}

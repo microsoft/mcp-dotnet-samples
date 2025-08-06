@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "todo-list": {
+      "type": "http",
+      "url": "http://0.0.0.0:5242/mcp"
+    }
+  }
+}
