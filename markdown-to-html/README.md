@@ -46,7 +46,7 @@ This is an MCP server that converts markdown text to HTML.
     dotnet run --project ./src/McpMarkdownToHtml.HybridApp
     ```
 
-   > Make sure take note the absolute directory of the `McpMarkdownToHtml.HybridApp` project.
+   > Make sure take note the absolute directory path of the `McpMarkdownToHtml.HybridApp` project.
 
    **Parameters**:
 
@@ -66,8 +66,8 @@ This is an MCP server that converts markdown text to HTML.
 1. Build the MCP server app as a container image.
 
     ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
-    docker build -f Dockerfile -t markdown-to-html:latest .
+    cd $REPOSITORY_ROOT
+    docker build -f Dockerfile.markdown-to-html -t markdown-to-html:latest .
     ```
 
 1. Run the MCP server app in a container.
@@ -211,12 +211,12 @@ This is an MCP server that converts markdown text to HTML.
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
 1. Choose `markdown-to-html` then click `Start Server`.
 1. When prompted, enter one of the following values:
-   - The absolute directory of the `McpMarkdownToHtml.HybridApp` project
+   - The absolute directory path of the `McpMarkdownToHtml.HybridApp` project
    - The FQDN of Azure Container Apps.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to `converted.html`.
+    Convert the highlighted markdown text to HTML and save it to `converted.html` at the repository root. DO NOT alter the converted HTML.
     ```
 
 1. Confirm the result.

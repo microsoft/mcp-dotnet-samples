@@ -1,6 +1,6 @@
-# MCP Server: Todo List on ACA
+# MCP Server: Todo List
 
-This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.com/azure/container-apps/overview), that manages to-do lists.
+This is an MCP server that manages to-do lists.
 
 ## Prerequisites
 
@@ -13,19 +13,15 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
 
 ## Getting Started
 
-- [Run ASP.NET Core MCP server locally](#run-aspnet-core-mcp-server-locally)
-- [Run ASP.NET Core MCP server locally in a container](#run-aspnet-core-mcp-server-locally-in-a-container)
-- [Run ASP.NET Core MCP server remotely](#run-aspnet-core-mcp-server-remotely)
+- [Getting repository root](#getting-repository-root)
+- [Running MCP server](#running-mcp-server)
+  - [On a local machine](#on-a-local-machine)
+  - [In a container](#in-a-container)
+  - [On Azure](#on-azure)
 - [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
   - [VS Code + Agent Mode + Local MCP server](#vs-code--agent-mode--local-mcp-server)
-  - [VS Code + Agent Mode + Local MCP server in a container](#vs-code--agent-mode--local-mcp-server-in-a-container)
-  - [VS Code + Agent Mode + Remote MCP server](#vs-code--agent-mode--remote-mcp-server)
-  - [MCP Inspector + Local MCP server](#mcp-inspector--local-mcp-server)
-  - [MCP Inspector + Local MCP server in a container](#mcp-inspector--local-mcp-server-in-a-container)
-  - [MCP Inspector + Remote MCP server](#mcp-inspector--remote-mcp-server)
-  - [Copilot Studio + Remote MCP server](#copilot-studio--remote-mcp-server)
 
-### Run ASP.NET Core MCP server locally
+### Getting repository root
 
 1. Get the repository root.
 
@@ -38,57 +34,83 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     # PowerShell
     $REPOSITORY_ROOT = git rev-parse --show-toplevel
     ```
+
+### Running MCP server
+
+#### On a local machine
 
 1. Run the MCP server app.
 
     ```bash
     cd $REPOSITORY_ROOT/todo-list
-    dotnet run --project ./src/McpTodoList.ContainerApp
+    dotnet run --project ./src/McpSamples.TodoList.HybridApp
     ```
 
-### Run ASP.NET Core MCP server locally in a container
+   > Make sure take note the absolute directory path of the `McpSamples.TodoList.HybridApp` project.
 
-1. Get the repository root.
+   **Parameters**:
 
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5242`.
 
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
+   With this parameter, you can run the MCP server like:
+
+   ```bash
+   dotnet run --project ./src/McpSamples.TodoList.HybridApp -- --http
+   ```
+
+#### In a container
 
 1. Build the MCP server app as a container image.
 
     ```bash
-    cd $REPOSITORY_ROOT/todo-list
-    docker build -t mcp-todo-list:latest .
+    cd $REPOSITORY_ROOT
+    docker build -f Dockerfile.todo-list -t todo-list:latest .
     ```
 
-1. Run the MCP server app in a container
+1. Run the MCP server app in a container.
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-todo-list mcp-todo-list:latest
+    docker run -i --rm -p 8080:8080 todo-list:latest
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -d -p 8080:8080 --name mcp-todo-list ghcr.io/microsoft/mcp-dotnet-samples/todo-list:http
+    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/todo-list:latest
     ```
 
-### Run ASP.NET Core MCP server remotely
+   **Parameters**:
 
-1. Login to Azure
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:8080`.
+
+   With this parameter, you can run the MCP server like:
+
+   ```bash
+   # use local container image
+   docker run -i --rm -p 8080:8080 todo-list:latest --http
+   ```
+
+   ```bash
+   # use container image from the container registry
+   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/todo-list:latest --http
+   ```
+
+#### On Azure
+
+1. Navigate to the directory.
+
+    ```bash
+    cd $REPOSITORY_ROOT/todo-list
+    ```
+
+1. Login to Azure.
 
     ```bash
     # Login with Azure Developer CLI
     azd auth login
     ```
 
-1. Deploy the MCP server app to Azure
+1. Deploy the MCP server app to Azure.
 
     ```bash
     azd up
@@ -101,82 +123,90 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
    - Azure Container Apps FQDN:
 
      ```bash
-     azd env get-value AZURE_RESOURCE_MCP_TODO_LIST_FQDN
+     azd env get-value AZURE_RESOURCE_MCP_MD2HTML_FQDN
      ```
 
 ### Connect MCP server to an MCP host/client
 
 #### VS Code + Agent Mode + Local MCP server
 
-1. Get the repository root.
-
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
-
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
-
 1. Copy `mcp.json` to the repository root.
+
+   **For locally running MCP server (STDIO):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.json \
+    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.stdio.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.json `
+    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.stdio.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-todo-list-aca-local` then click `Start Server`.
-1. Enter prompts. These are just examples:
-
-    ```text
-    - Show me the list to do
-    - Add "meeting at 11am"
-    - Complete the to-do item #1
-    - Delete the to-do item #2
-    ```
-
-1. Confirm the result.
-
-#### VS Code + Agent Mode + Local MCP server in a container
-
-1. Get the repository root.
-
-    ```bash
-    # bash/zsh
-    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
-    ```
-
-    ```powershell
-    # PowerShell
-    $REPOSITORY_ROOT = git rev-parse --show-toplevel
-    ```
-
-1. Copy `mcp.json` to the repository root.
+   **For locally running MCP server (HTTP):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.json \
+    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.http.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.json `
+    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.http.local.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For locally running MCP server in a container (STDIO):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.stdio.container.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.stdio.container.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For locally running MCP server in a container (HTTP):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.http.container.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.http.container.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For remotely running MCP server in a container (HTTP):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/todo-list/.vscode/mcp.http.remote.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/todo-list/.vscode/mcp.http.remote.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-todo-list-aca-container` then click `Start Server`.
+1. Choose `todo-list` then click `Start Server`.
+1. When prompted, enter one of the following values:
+   - The absolute directory path of the `McpSamples.TodoList.HybridApp` project
+   - The FQDN of Azure Container Apps.
 1. Enter prompts. These are just examples:
 
     ```text
@@ -187,91 +217,3 @@ This is an MCP server, hosted on [Azure Container Apps](https://learn.microsoft.
     ```
 
 1. Confirm the result.
-
-#### VS Code + Agent Mode + Remote MCP server
-
-1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `mcp-todo-list-aca-remote` then click `Start Server`.
-1. Enter the Azure Container Apps FQDN.
-1. Enter prompts. These are just examples:
-
-    ```text
-    - Show me the list to do
-    - Add "meeting at 11am"
-    - Complete the to-do item #1
-    - Delete the to-do item #2
-    ```
-
-1. Confirm the result.
-
-#### MCP Inspector + Local MCP server
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `Streamable HTTP` 
-1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
-
-    ```text
-    http://0.0.0.0:5242/mcp
-    ```
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with appropriate values.
-
-#### MCP Inspector + Local MCP server in a container
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://localhost:6274)
-1. Set the transport type to `Streamable HTTP` 
-1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
-
-    ```text
-    http://0.0.0.0:8080/mcp
-    ```
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with appropriate values.
-
-#### MCP Inspector + Remote MCP server
-
-1. Run MCP Inspector.
-
-    ```bash
-    npx @modelcontextprotocol/inspector node build/index.js
-    ```
-
-1. Open a web browser and navigate to the MCP Inspector web app from the URL displayed by the app (e.g. http://0.0.0.0:6274)
-1. Set the transport type to `Streamable HTTP` 
-1. Set the URL to your running Function app's Streamable HTTP endpoint and **Connect**:
-
-    ```text
-    https://<acaapp-server-fqdn>/mcp
-    ```
-
-1. Click **List Tools**.
-1. Click on a tool and **Run Tool** with appropriate values.
-
-#### Copilot Studio + Remote MCP server
-
-1. The remote MCP server renders a Swagger document at
-
-    ```text
-    https://<acaapp-server-fqdn>/swagger.json
-    ```
-
-   Alternatively, you've got `swagger.json` on this app built at your project root directory on your local machine.
-
-1. Create a custom connector with this Swagger document on either [Power Automate](https://make.powerautomate.com) or [Power Apps](https://make.powerapps.com).
-1. Go to [Copilot Studio](https://copilotstudio.microsoft.com) and create a new agent.
-1. Add MCP connector to the agent.
-1. Run the agent with appropriate values.
