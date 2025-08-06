@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Models;
 namespace McpSamples.TodoList.HybridApp.Configurations;
 
 /// <summary>
-/// This represents the base class for application settings.
+/// This represents the application settings for todo-list app.
 /// </summary>
 public class TodoListAppSettings : AppSettings
 {

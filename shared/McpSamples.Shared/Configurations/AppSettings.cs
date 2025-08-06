@@ -28,12 +28,23 @@ public abstract class AppSettings
     /// </summary>
     /// <param name="config"><see cref="IConfiguration"/> instance</param>
     /// <param name="args">List of arguments passed from the command line.</param>
-    /// <typeparam name="T">Type that inherits <see cref="AppSettings"/>.</typeparam>
+    /// <typeparam name="T">Type inheriting <see cref="AppSettings"/>.</typeparam>
     /// <returns>Returns an instance of <typeparamref name="T"/>.</returns>
     protected virtual T ParseMore<T>(IConfiguration config, string[] args) where T : AppSettings, new()
     {
         var settings = new T();
         config.Bind(settings);
+
+        if (args.Length == 0)
+        {
+            return settings;
+        }
+
+        if (args.Length == 1)
+        {
+            settings.Help = true;
+            return settings;
+        }
 
         return settings;
     }
@@ -43,7 +54,7 @@ public abstract class AppSettings
     /// </summary>
     /// <param name="config"><see cref="IConfiguration"/> instance</param>
     /// <param name="args">List of arguments passed from the command line.</param>
-    /// <typeparam name="T">Type that inherits <see cref="AppSettings"/>.</typeparam>
+    /// <typeparam name="T">Type inheriting <see cref="AppSettings"/>.</typeparam>
     /// <returns>Returns an instance of <typeparamref name="T"/>.</returns>
     public static T Parse<T>(IConfiguration config, string[] args) where T : AppSettings, new()
     {

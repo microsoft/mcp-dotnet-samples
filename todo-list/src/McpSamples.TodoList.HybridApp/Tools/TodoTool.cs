@@ -7,9 +7,19 @@ using ModelContextProtocol.Server;
 
 namespace McpSamples.TodoList.HybridApp.Tools;
 
+/// <summary>
+/// This represents the tool entity for managing to-do items.
+/// </summary>
+/// <param name="todo"><see cref="ITodoRepository"/> instance.</param>
+/// <param name="logger"><see cref="ILogger{TCategoryName}"/> instance.</param>
 [McpServerToolType]
 public class TodoTool(ITodoRepository todo, ILogger<TodoTool> logger)
 {
+    /// <summary>
+    /// Adds a new to-do item.
+    /// </summary>
+    /// <param name="todoItemText">To-do item text.</param>
+    /// <returns>Returns the result of adding the to-do item.</returns>
     [McpServerTool(Name = "add_todo_item", Title = "Add a to-do item")]
     [Description("Adds a to-do item to database.")]
     public async Task<string> AddTodoItemAsync(
@@ -24,6 +34,10 @@ public class TodoTool(ITodoRepository todo, ILogger<TodoTool> logger)
         return $"Todo item added: '{todoItemText}' (ID: {todoItem.Id})";
     }
 
+    /// <summary>
+    /// Gets a list of to-do items.
+    /// </summary>
+    /// <returns>Returns a list of to-do items.</returns>
     [McpServerTool(Name = "get_todo_items", Title = "Get a list of to-do items")]
     [Description("Gets a list of to-do items from database.")]
     public async Task<IEnumerable<string>> GetTodoItemsAsync()
@@ -37,6 +51,12 @@ public class TodoTool(ITodoRepository todo, ILogger<TodoTool> logger)
                : [ "No todo items found." ];
     }
 
+    /// <summary>
+    /// Updates a to-do item.
+    /// </summary>
+    /// <param name="id">The to-do item ID.</param>
+    /// <param name="todoItemText">The to-do item text.</param>
+    /// <returns>Returns the result of updating the to-do item.</returns>
     [McpServerTool(Name = "update_todo_item", Title = "Update a to-do item")]
     [Description("Updates a to-do item in the database.")]
     public async Task<string> UpdateTodoItemAsync(
@@ -58,6 +78,11 @@ public class TodoTool(ITodoRepository todo, ILogger<TodoTool> logger)
         return $"Todo item updated: '{id}' with text: '{todoItem}'";
     }
 
+    /// <summary>
+    /// Completes a to-do item.
+    /// </summary>
+    /// <param name="id">The to-do item ID.</param>
+    /// <returns>Returns the result of completing the to-do item.</returns>
     [McpServerTool(Name = "complete_todo_item", Title = "Complete a to-do item")]
     [Description("Completes a to-do item in the database.")]
     public async Task<string> CompleteTodoItemAsync(
@@ -78,6 +103,11 @@ public class TodoTool(ITodoRepository todo, ILogger<TodoTool> logger)
         return $"Todo item completed: '{id}'";
     }
 
+    /// <summary>
+    /// Deletes a to-do item.
+    /// </summary>
+    /// <param name="id">The to-do item ID.</param>
+    /// <returns>Returns the result of deleting the to-do item.</returns>
     [McpServerTool(Name = "delete_todo_item", Title = "Delete a to-do item")]
     [Description("Deletes a to-do item from the database.")]
     public async Task<string> DeleteTodoItemAsync(
