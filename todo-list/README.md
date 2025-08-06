@@ -50,7 +50,7 @@ This is an MCP server that manages to-do lists.
 
    **Parameters**:
 
-   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5242`.
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5240`.
 
    With this parameter, you can run the MCP server like:
 
