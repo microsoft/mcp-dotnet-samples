@@ -2,7 +2,7 @@
   "servers": {
     "markdown-to-html": {
       "type": "http",
-      "url": "http://0.0.0.0:8080/mcp"
+      "url": "http://localhost:8080/mcp"
     }
   }
 }
