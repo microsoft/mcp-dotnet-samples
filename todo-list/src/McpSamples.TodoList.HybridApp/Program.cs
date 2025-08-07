@@ -14,7 +14,6 @@ IHostApplicationBuilder builder = useStreamableHttp
                                 ? WebApplication.CreateBuilder(args)
                                 : Host.CreateApplicationBuilder(args);
 
-// Add services to the container.
 builder.Services.AddAppSettings<TodoListAppSettings>(builder.Configuration, args);
 
 var connection = new SqliteConnection("Filename=:memory:");
@@ -42,7 +41,6 @@ if (useStreamableHttp == true)
 
 IHost app = builder.BuildApp(useStreamableHttp);
 
-// Initialise the database
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<TodoDbContext>();

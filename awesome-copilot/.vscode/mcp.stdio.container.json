@@ -7,7 +7,7 @@
         "run",
         "-i",
         "--rm",
-        "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:stdio"
+        "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"
       ]
     }
   }

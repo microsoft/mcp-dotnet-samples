@@ -68,14 +68,14 @@ module mcpAwesomeCopilotFetchLatestImage './modules/fetch-container-image.bicep'
   name: 'mcpAwesomeCopilot-fetch-image'
   params: {
     exists: mcpAwesomeCopilotExists
-    name: 'mcp-awesome-copilot'
+    name: 'awesome-copilot'
   }
 }
 
 module mcpAwesomeCopilot 'br/public:avm/res/app/container-app:0.8.0' = {
   name: 'mcpAwesomeCopilot'
   params: {
-    name: 'mcp-awesome-copilot'
+    name: 'awesome-copilot'
     ingressTargetPort: 8080
     scaleMinReplicas: 1
     scaleMaxReplicas: 10
@@ -105,6 +105,9 @@ module mcpAwesomeCopilot 'br/public:avm/res/app/container-app:0.8.0' = {
             value: '8080'
           }
         ]
+        args: [
+          '--http'
+        ]
       }
     ]
     managedIdentities: {
@@ -131,7 +134,7 @@ module mcpAwesomeCopilot 'br/public:avm/res/app/container-app:0.8.0' = {
       ]
     }
     location: location
-    tags: union(tags, { 'azd-service-name': 'mcp-awesome-copilot' })
+    tags: union(tags, { 'azd-service-name': 'awesome-copilot' })
   }
 }
 

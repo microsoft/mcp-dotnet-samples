@@ -23,6 +23,8 @@ public static class HostApplicationBuilderExtensions
         {
             builder.Services.AddMcpServer()
                             .WithHttpTransport(o => o.Stateless = true)
+                            .WithPromptsFromAssembly(Assembly.GetEntryAssembly())
+                            .WithResourcesFromAssembly(Assembly.GetEntryAssembly())
                             .WithToolsFromAssembly(Assembly.GetEntryAssembly());
 
             var webApp = (builder as WebApplicationBuilder)!.Build();
@@ -37,6 +39,8 @@ public static class HostApplicationBuilderExtensions
 
         builder.Services.AddMcpServer()
                         .WithStdioServerTransport()
+                        .WithPromptsFromAssembly(Assembly.GetEntryAssembly())
+                        .WithResourcesFromAssembly(Assembly.GetEntryAssembly())
                         .WithToolsFromAssembly(Assembly.GetEntryAssembly());
 
         var consoleApp = (builder as HostApplicationBuilder)!.Build();
