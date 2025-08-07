@@ -6,9 +6,6 @@ on:
       image_name:
         required: true
         type: string
-      extension:
-        required: true
-        type: string
       force:
         required: false
         type: boolean
@@ -34,16 +31,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Identify multi-platform support
-        id: platform
-        shell: bash
-        run: |
-          if [ "${{ inputs.image_name }}" = "todo-list" ]; then
-            echo "supports_multiplatform=false" >> $GITHUB_OUTPUT
-          else
-            echo "supports_multiplatform=true" >> $GITHUB_OUTPUT
-          fi
 
       - name: Pull the latest metadata.json
         if: inputs.image_name == 'awesome-copilot'
@@ -84,7 +71,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-          git add awesome-copilot/src/McpAwesomeCopilot.Common/metadata.json
+          git add awesome-copilot/src/McpSamples.AwesomeCopilot.HybridApp/metadata.json
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -99,7 +86,7 @@ jobs:
         id: check-dockerfile
         shell: bash
         run: |
-          if [ -f "${{ github.workspace }}/${{ inputs.image_name }}/Dockerfile.${{ inputs.extension }}" ]; then
+          if [ -f "${{ github.workspace }}/Dockerfile.${{ inputs.image_name }}" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
@@ -133,51 +120,23 @@ jobs:
       - name: Build and push Docker image - multi-platform
         if: |
           (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
-          steps.check-dockerfile.outputs.exists == 'true' &&
-          steps.platform.outputs.supports_multiplatform == 'true'
+          steps.check-dockerfile.outputs.exists == 'true'
         id: push-multiplatform
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
           push: true
           context: ${{ github.workspace }}/${{ inputs.image_name }}
-          file: ${{ github.workspace }}/${{ inputs.image_name }}/Dockerfile.${{ inputs.extension }}
-          tags: '${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}:${{ inputs.extension }}'
+          file: ${{ github.workspace }}/Dockerfile.${{ inputs.image_name }}
+          tags: '${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}:latest'
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Generate artifact attestation - multi-platform
         if: |
           (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
-          steps.check-dockerfile.outputs.exists == 'true' &&
-          steps.platform.outputs.supports_multiplatform == 'true'
+          steps.check-dockerfile.outputs.exists == 'true'
         uses: actions/attest-build-provenance@v2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
           subject-digest: ${{ steps.push-multiplatform.outputs.digest }}
-          push-to-registry: true
-
-      - name: Build and push Docker image - amd64 only
-        if: |
-          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
-          steps.check-dockerfile.outputs.exists == 'true' &&
-          steps.platform.outputs.supports_multiplatform == 'false'
-        id: push-amd64
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/amd64
-          push: true
-          context: ${{ github.workspace }}/${{ inputs.image_name }}
-          file: ${{ github.workspace }}/${{ inputs.image_name }}/Dockerfile.${{ inputs.extension }}
-          tags: '${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}:${{ inputs.extension }}'
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Generate artifact attestation - amd64 only
-        if: |
-          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
-          steps.check-dockerfile.outputs.exists == 'true' &&
-          steps.platform.outputs.supports_multiplatform == 'false'
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
-          subject-digest: ${{ steps.push-amd64.outputs.digest }}
           push-to-registry: true

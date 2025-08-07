@@ -12,7 +12,6 @@ jobs:
     strategy:
       matrix:
         image_name: [ 'awesome-copilot' ]
-        extension: [ 'stdio' ]
 
     permissions:
       contents: write
@@ -22,28 +21,5 @@ jobs:
 
     with:
       image_name: ${{ matrix.image_name }}
-      extension: ${{ matrix.extension }}
-      force: false
-    secrets: inherit
-
-  build-and-push-image-http:
-    uses: ./.github/workflows/build-container.yaml
-
-    needs: build-and-push-image-stdio
-
-    strategy:
-      matrix:
-        image_name: [ 'awesome-copilot' ]
-        extension: [ 'http' ]
-
-    permissions:
-      contents: write
-      packages: write
-      attestations: write
-      id-token: write
-
-    with:
-      image_name: ${{ matrix.image_name }}
-      extension: ${{ matrix.extension }}
       force: false
     secrets: inherit
