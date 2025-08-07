@@ -36,7 +36,7 @@ public class McpDocumentTransformer<T>(T appsettings, IHttpContextAccessor acces
         var pathItem = new OpenApiPathItem();
         pathItem.AddOperation(OperationType.Post, new OpenApiOperation
         {
-            Summary = "Todo List",
+            Summary = "Invoke operation",
             Extensions = new Dictionary<string, IOpenApiExtension>
             {
                 ["x-ms-agentic-protocol"] = new OpenApiString("mcp-streamable-1.0")

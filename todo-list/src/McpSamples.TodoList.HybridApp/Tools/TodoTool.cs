@@ -8,7 +8,7 @@ using ModelContextProtocol.Server;
 namespace McpSamples.TodoList.HybridApp.Tools;
 
 /// <summary>
-/// This provides interfaces for the markdown to HTML tool.
+/// This provides interfaces for the todo tool.
 /// </summary>
 public interface ITodoTool
 {
