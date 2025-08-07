@@ -445,7 +445,8 @@
       "filename": "microsoft-study-mode.chatmode.md",
       "description": "Activate your personal Microsoft/Azure tutor - learn through guided discovery, not just answers.",
       "tools": [
-        "microsoft_docs_search"
+        "microsoft_docs_search",
+        "microsoft_docs_fetch"
       ]
     },
     {
@@ -759,6 +760,66 @@
       ]
     },
     {
+      "filename": "task-planner.chatmode.md",
+      "description": "Task planner for creating actionable implementation plans - Brought to you by microsoft/edge-ai",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runNotebooks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "terraform",
+        "Microsoft Docs",
+        "azure_get_schema_for_Bicep",
+        "context7"
+      ]
+    },
+    {
+      "filename": "task-researcher.chatmode.md",
+      "description": "Task research specialist for comprehensive project analysis - Brought to you by microsoft/edge-ai",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runNotebooks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "terraform",
+        "Microsoft Docs",
+        "azure_get_schema_for_Bicep",
+        "context7"
+      ]
+    },
+    {
       "filename": "tdd-green.chatmode.md",
       "description": "Implement minimal code to satisfy GitHub issue requirements and make failing tests pass without over-engineering.",
       "tools": [
@@ -954,6 +1015,19 @@
       ]
     },
     {
+      "filename": "azure-verified-modules-terraform.instructions.md",
+      "description": "Azure Verified Modules (AVM) and Terraform",
+      "applyTo": [
+        "**/*.terraform",
+        "**/*.tf",
+        "**/*.tfvars",
+        "**/*.tfstate",
+        "**/*.tflint.hcl",
+        "**/*.tf.json",
+        "**/*.tfvars.json"
+      ]
+    },
+    {
       "filename": "bicep-code-best-practices.instructions.md",
       "description": "Infrastructure as Code with Bicep",
       "applyTo": [
@@ -999,6 +1073,13 @@
       "description": "Guidelines for building C# applications",
       "applyTo": [
         "**/*.cs"
+      ]
+    },
+    {
+      "filename": "devbox-image-definition.instructions.md",
+      "description": "Authoring recommendations for creating YAML based image definition files for use with Microsoft Dev Box Team Customizations",
+      "applyTo": [
+        "**/*.yaml"
       ]
     },
     {
@@ -1193,6 +1274,13 @@
       "description": "The most comprehensive, practical, and engineer-authored performance optimization instructions for all languages, frameworks, and stacks. Covers frontend, backend, and database best practices with actionable guidance, scenario-based checklists, troubleshooting, and pro tips."
     },
     {
+      "filename": "playwright-python.instructions.md",
+      "description": "Playwright Python AI test generation instructions based on official documentation.",
+      "applyTo": [
+        "**"
+      ]
+    },
+    {
       "filename": "playwright-typescript.instructions.md",
       "description": "Playwright test generation instructions",
       "applyTo": [
@@ -1320,6 +1408,13 @@
       ]
     },
     {
+      "filename": "task-implementation.instructions.md",
+      "applyTo": [
+        "**/.copilot-tracking/changes/*.md"
+      ],
+      "description": "Instructions for implementing task plans with progressive tracking and change record - Brought to you by microsoft/edge-ai"
+    },
+    {
       "filename": "terraform.instructions.md",
       "description": "Terraform Conventions and Guidelines",
       "applyTo": [
@@ -1404,6 +1499,26 @@
     {
       "filename": "comment-code-generate-a-tutorial.prompt.md",
       "description": "Transform this Python script into a polished, beginner-friendly project by refactoring the code, adding clear instructional comments, and generating a complete markdown tutorial."
+    },
+    {
+      "filename": "containerize-aspnet-framework.prompt.md",
+      "mode": "agent",
+      "tools": [
+        "codebase",
+        "editFiles",
+        "terminalCommand"
+      ],
+      "description": "Containerize an ASP.NET .NET Framework project by creating Dockerfile and .dockerfile files customized for the project."
+    },
+    {
+      "filename": "containerize-aspnetcore.prompt.md",
+      "mode": "agent",
+      "tools": [
+        "codebase",
+        "editFiles",
+        "terminalCommand"
+      ],
+      "description": "Containerize an ASP.NET Core project by creating Dockerfile and .dockerfile files customized for the project."
     },
     {
       "filename": "copilot-instructions-blueprint-generator.prompt.md",
@@ -1796,6 +1911,26 @@
         "search"
       ],
       "description": "Get best practices for developing applications with Spring Boot and Kotlin."
+    },
+    {
+      "filename": "mkdocs-translations.prompt.md",
+      "mode": "agent",
+      "description": "Generate a language translation for a mkdocs documentation stack.",
+      "tools": [
+        "codebase",
+        "usages",
+        "problems",
+        "changes",
+        "terminalSelection",
+        "terminalLastCommand",
+        "searchResults",
+        "extensions",
+        "editFiles",
+        "search",
+        "runCommands",
+        "runTasks"
+      ],
+      "model": "Claude Sonnet 4"
     },
     {
       "filename": "multi-stage-dockerfile.prompt.md",
