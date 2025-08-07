@@ -2,6 +2,10 @@
 
 This is an MCP server that manages to-do lists.
 
+## Install
+
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%7B%22name%22%3A%22todo-list%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Ftodo-list%3Alatest%22%5D%7D) [![Install in VS Code](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%7B%22name%22%3A%22todo-list%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Ftodo-list%3Alatest%22%5D%7D)
+
 ## Prerequisites
 
 - [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
@@ -10,6 +14,18 @@ This is an MCP server that manages to-do lists.
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
 - [Docker Desktop](https://docs.docker.com/get-started/get-docker/)
+
+## What's Included
+
+To-do List MCP server includes:
+
+| Building Block | Name                 | Description                 | Usage                 |
+|----------------|----------------------|-----------------------------|-----------------------|
+| Tools          | `add_todo_item`      | Adds a to-do item.          | `#add_todo_item`      |
+| Tools          | `get_todo_items`     | Gets a list of to-do items. | `#get_todo_items`     |
+| Tools          | `update_todo_item`   | Updates a to-do item.       | `#update_todo_item`   |
+| Tools          | `complete_todo_item` | Completes a to-do item.     | `#complete_todo_item` |
+| Tools          | `delete_todo_item`   | Deletes a to-do item.       | `#delete_todo_item`   |
 
 ## Getting Started
 
@@ -123,7 +139,7 @@ This is an MCP server that manages to-do lists.
    - Azure Container Apps FQDN:
 
      ```bash
-     azd env get-value AZURE_RESOURCE_MCP_MD2HTML_FQDN
+     azd env get-value AZURE_RESOURCE_MCP_TODO_LIST_FQDN
      ```
 
 ### Connect MCP server to an MCP host/client
