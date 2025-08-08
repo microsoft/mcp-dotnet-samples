@@ -2,7 +2,7 @@ using McpSamples.MarkdownToHtml.HybridApp.Extensions;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 
-var useStreamableHttp = AppSettings.UseStreamableHttp(args);
+var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
 IHostApplicationBuilder builder = useStreamableHttp
                                 ? WebApplication.CreateBuilder(args)

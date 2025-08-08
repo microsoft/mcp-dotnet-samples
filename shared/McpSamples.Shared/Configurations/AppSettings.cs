@@ -1,3 +1,5 @@
+using System.Collections;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 
@@ -93,14 +95,22 @@ public abstract class AppSettings
         return settings;
     }
 
-    public static bool UseStreamableHttp(string[] args)
+    /// <summary>
+    /// Checks whether to use streamable HTTP or not.
+    /// </summary>
+    /// <param name="env"><see cref="IDictionary"/> instance representing environment variables.</param>
+    /// <param name="args">List of arguments passed from the command line.</param>
+    /// <returns>Returns <c>True</c> if streamable HTTP is enabled; otherwise, <c>False</c>.</returns>
+    public static bool UseStreamableHttp(IDictionary env, string[] args)
     {
+        var useHttp = env.Contains("UseHttp") &&
+                      bool.TryParse(env["UseHttp"]?.ToString()?.ToLowerInvariant(), out var result) && result;
         if (args.Length == 0)
         {
-            return false;
+            return useHttp;
         }
 
-        var useHttp = args.Contains("--http", StringComparer.InvariantCultureIgnoreCase);
+        useHttp = args.Contains("--http", StringComparer.InvariantCultureIgnoreCase);
 
         return useHttp;
     }

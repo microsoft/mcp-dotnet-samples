@@ -6,7 +6,7 @@ using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 using McpSamples.Shared.OpenApi;
 
-var useStreamableHttp = AppSettings.UseStreamableHttp(args);
+var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
 IHostApplicationBuilder builder = useStreamableHttp
                                 ? WebApplication.CreateBuilder(args)

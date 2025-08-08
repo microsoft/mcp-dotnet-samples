@@ -8,7 +8,7 @@ using McpSamples.TodoList.HybridApp.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-var useStreamableHttp = AppSettings.UseStreamableHttp(args);
+var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
 IHostApplicationBuilder builder = useStreamableHttp
                                 ? WebApplication.CreateBuilder(args)
