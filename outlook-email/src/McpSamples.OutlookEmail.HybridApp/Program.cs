@@ -1,4 +1,4 @@
-using McpSamples.MarkdownToHtml.HybridApp.Configurations;
+using McpSamples.OutlookEmail.HybridApp.Configurations;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 
@@ -8,7 +8,7 @@ IHostApplicationBuilder builder = useStreamableHttp
                                 ? WebApplication.CreateBuilder(args)
                                 : Host.CreateApplicationBuilder(args);
 
-builder.Services.AddAppSettings<MarkdownToHtmlAppSettings>(builder.Configuration, args);
+builder.Services.AddAppSettings<OutlookEmailAppSettings>(builder.Configuration, args);
 
 IHost app = builder.BuildApp(useStreamableHttp);
 

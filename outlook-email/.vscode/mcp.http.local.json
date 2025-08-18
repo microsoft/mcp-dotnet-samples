@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "outlook-email": {
+      "type": "http",
+      "url": "http://localhost:5260/mcp"
+    }
+  }
+}
