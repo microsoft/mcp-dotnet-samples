@@ -14,6 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.*" />
+    <PackageReference Include="Microsoft.Graph" Version="5.*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
   </ItemGroup>
 
