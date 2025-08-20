@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "AzureWebJobsFeatureFlags": "DisableDiagnosticEventLogging",
+
+    "UseHttp": "true",
+
+    "EntraId__TenantId": "{{TENANT_ID}}",
+    "EntraId__ClientId": "{{CLIENT_ID}}",
+    "EntraId__ClientSecret": "{{CLIENT_SECRET}}",
+    "EntraId__UseManagedIdentity": false
+  }
+}

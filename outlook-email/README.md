@@ -1,10 +1,10 @@
-# MCP Server: Markdown to HTML
+# MCP Server: Outlook Email
 
-This is an MCP server that converts markdown text to HTML.
+This is an MCP server that sends an email through Outlook.
 
 ## Install
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%7B%22name%22%3A%22markdown-to-html%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Fmarkdown-to-html%3Alatest%22%5D%7D) [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%7B%22name%22%3A%22markdown-to-html%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Fmarkdown-to-html%3Alatest%22%5D%7D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%7B%22name%22%3A%22outlook-email%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Foutlook-email%3Alatest%22%5D%7D) [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%7B%22name%22%3A%22outlook-email%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Foutlook-email%3Alatest%22%5D%7D)
 
 ## Prerequisites
 
@@ -19,19 +19,31 @@ This is an MCP server that converts markdown text to HTML.
 
 Markdown to HTML MCP server includes:
 
-| Building Block | Name                       | Description                         | Usage                       |
-|----------------|----------------------------|-------------------------------------|-----------------------------|
-| Tools          | `convert_markdown_to_html` | Converts markdown document to HTML. | `#convert_markdown_to_html` |
+| Building Block | Name         | Description                   | Usage         |
+|----------------|--------------|-------------------------------|---------------|
+| Tools          | `send_email` | Send an Email to recipients". | `#send_email` |
 
 ## Getting Started
 
+- [Registering an app on Entra ID](#registering-an-app-on-entra-id)
 - [Getting repository root](#getting-repository-root)
 - [Running MCP server](#running-mcp-server)
   - [On a local machine](#on-a-local-machine)
+  - [On a local machine as a Function app](#on-a-local-machine-as-a-function-app)
   - [In a container](#in-a-container)
   - [On Azure](#on-azure)
 - [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
   - [VS Code + Agent Mode + Local MCP server](#vs-code--agent-mode--local-mcp-server)
+
+### Registering an app on Entra ID
+
+> This section is for running the MCP server on your local machine or in a local container. If you deploy this MCP server to Azure, you can skip this section.
+
+1. Register an app by following this document: [Register an application in Microsoft Entra ID](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app).
+1. Set up redirect URL as an SPA by following this document: [How to add a redirect URI to your application](https://learn.microsoft.com/entra/identity-platform/how-to-add-redirect-uri).
+1. Add a client secret by following this document: [Add and manage application credentials in Microsoft Entra ID](https://learn.microsoft.com/entra/identity-platform/how-to-add-credentials?tabs=client-secret).
+1. Grant API permissions on Microsoft Graph 👉 Application Permission 👉 `Mail.Send`. Make sure to run "Grant admin consent to the permission"
+1. Take notes for tenant ID, client ID and client secret values.
 
 ### Getting repository root
 
@@ -54,24 +66,74 @@ Markdown to HTML MCP server includes:
 1. Run the MCP server app.
 
     ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
-    dotnet run --project ./src/McpMarkdownToHtml.HybridApp
+    cd $REPOSITORY_ROOT/outlook-email
+    dotnet run --project ./src/McpSamples.OutlookEmail.HybridApp
     ```
 
-   > Make sure take note the absolute directory path of the `McpMarkdownToHtml.HybridApp` project.
+   > Make sure take note the absolute directory path of the `McpSamples.OutlookEmail.HybridApp` project.
 
    **Parameters**:
 
-   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5280`.
-   - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5260`.
+   - `--tenant-id`/`-t`: The tenant ID for sign-in.
+   - `--client-id`/`-c`: The client ID for sign-in.
+   - `--client-secret`/`-s`: The client secret for sign-in.
 
    With these parameters, you can run the MCP server like:
 
-   ```bash
-   dotnet run --project ./src/McpMarkdownToHtml.HybridApp -- --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
-   ```
+    ```bash
+    dotnet run --project ./src/McpSamples.OutlookEmail.HybridApp -- --http -t "{{TENANT_ID}}" -c "{{CLIENT_ID}}" -s "{{CLIENT_SECRET}}"
+    ```
+
+   Instead of providing those tenant ID, client ID and client secret values through the command-line, they can be stored as the user secrets.
+
+    ```bash
+    dotnet user-secrets --project ./src/McpSamples.OutlookEmail.HybridApp set EntraId:TenantId "{{TENANT_ID}}"
+    dotnet user-secrets --project ./src/McpSamples.OutlookEmail.HybridApp set EntraId:ClientId "{{CLIENT_ID}}"
+    dotnet user-secrets --project ./src/McpSamples.OutlookEmail.HybridApp set EntraId:ClientSecret "{{CLIENT_SECRET}}"
+    ```
+
+#### On a local machine as a Function app
+
+1. Rename `local.settings.sample.json` to `local.settings.json`.
+
+    ```bash
+    # bash/zsh
+    cp $REPOSITORY_ROOT/outlook-email/src/McpSamples.OutlookEmail.HybridApp/local.settings.sample.json \
+       $REPOSITORY_ROOT/outlook-email/src/McpSamples.OutlookEmail.HybridApp/local.settings.json
+    ```
+
+    ```powershell
+    # PowerShell
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/src/McpSamples.OutlookEmail.HybridApp/local.settings.sample.json `
+              -Destination $REPOSITORY_ROOT/outlook-email/src/McpSamples.OutlookEmail.HybridApp/local.settings.json -Force
+    ```
+
+1. Open `local.settings.json` and replace `{{TENANT_ID}}`, `{{CLIENT_ID}}` and `{{CLIENT_SECRET}}` with the tenant ID, client ID and client secret values respectively.
+
+    ```jsonc
+    {
+      "IsEncrypted": false,
+      "Values": {
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+        "AzureWebJobsFeatureFlags": "DisableDiagnosticEventLogging",
+    
+        "UseHttp": "true",
+    
+        "EntraId__TenantId": "{{TENANT_ID}}",
+        "EntraId__ClientId": "{{CLIENT_ID}}",
+        "EntraId__ClientSecret": "{{CLIENT_SECRET}}",
+        "EntraId__UseManagedIdentity": false
+      }
+    }
+    ```
+
+1. Run the MCP server app.
+
+    ```bash
+    cd $REPOSITORY_ROOT/outlook-email/src/McpSamples.OutlookEmail.HybridApp
+    func start
+    ```
 
 #### In a container
 
@@ -79,38 +141,38 @@ Markdown to HTML MCP server includes:
 
     ```bash
     cd $REPOSITORY_ROOT
-    docker build -f Dockerfile.markdown-to-html -t markdown-to-html:latest .
+    docker build -f Dockerfile.outlook-email -t outlook-email:latest .
     ```
 
 1. Run the MCP server app in a container.
 
     ```bash
-    docker run -i --rm -p 8080:8080 markdown-to-html:latest
+    docker run -i --rm -p 8080:8080 outlook-email:latest
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest
+    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/outlook-email:latest
     ```
 
    **Parameters**:
 
    - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:8080`.
-   - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
+   - `--tenant-id`/`-t`: The tenant ID for sign-in.
+   - `--client-id`/`-c`: The client ID for sign-in.
+   - `--client-secret`/`-s`: The client secret for sign-in.
 
    With these parameters, you can run the MCP server like:
 
    ```bash
    # use local container image
-   docker run -i --rm -p 8080:8080 markdown-to-html:latest --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   docker run -i --rm -p 8080:8080 outlook-email:latest --http -t "{{TENANT_ID}}" -c "{{CLIENT_ID}}" -s "{{CLIENT_SECRET}}"
    ```
 
    ```bash
    # use container image from the container registry
-   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/outlook-email:latest --http -t "{{TENANT_ID}}" -c "{{CLIENT_ID}}" -s "{{CLIENT_SECRET}}"
    ```
 
 #### On Azure
@@ -118,7 +180,7 @@ Markdown to HTML MCP server includes:
 1. Navigate to the directory.
 
     ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
+    cd $REPOSITORY_ROOT/outlook-email
     ```
 
 1. Login to Azure.
@@ -126,6 +188,12 @@ Markdown to HTML MCP server includes:
     ```bash
     # Login with Azure Developer CLI
     azd auth login
+    ```
+
+1. As a default, the MCP server will be deployed as an Azure Functions. If you want to deploy this MCP server to Azure Container Apps, add an environment variable, `USE_ACA`.
+
+    ```bash
+    azd env set USE_ACA true
     ```
 
 1. Deploy the MCP server app to Azure.
@@ -138,10 +206,16 @@ Markdown to HTML MCP server includes:
 
 1. After the deployment is complete, get the information by running the following commands:
 
+   - Azure Functions Apps FQDN:
+
+     ```bash
+     azd env get-value AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_FUNC_FQDN
+     ```
+
    - Azure Container Apps FQDN:
 
      ```bash
-     azd env get-value AZURE_RESOURCE_MCP_MD2HTML_FQDN
+     azd env get-value AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_ACA_FQDN
      ```
 
 ### Connect MCP server to an MCP host/client
@@ -154,13 +228,13 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.local.json \
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.stdio.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.stdio.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -168,13 +242,27 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.local.json \
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.local.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For locally running MCP server (HTTP) as Function app:**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.func.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.func.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -182,13 +270,13 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json \
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.stdio.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.stdio.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -196,13 +284,13 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.container.json \
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -210,25 +298,57 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.remote.json \
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.remote.json `
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For remotely running MCP server in a container (HTTP) as Function app:**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote-func.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote-func.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For remotely running MCP server in a container (HTTP) via API Management:**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote-apim.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote-apim.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `markdown-to-html` then click `Start Server`.
-1. When prompted, enter one of the following values:
-   - The absolute directory path of the `McpMarkdownToHtml.HybridApp` project
+1. Choose `outlook-email` then click `Start Server`.
+1. When prompted, enter the following values:
+   - The absolute directory path of the `McpSamples.OutlookEmail.HybridApp` project.
    - The FQDN of Azure Container Apps.
+   - The FQDN of Azure Functions Apps.
+   - Tenant ID.
+   - Client ID.
+   - Client secret.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to `converted.html` at the repository root. DO NOT alter the converted HTML.
+    Send an email to abc@contoso.com from xyz@contoso.com with the subject of "lorem ipsum" and body of "hello world".
     ```
 
 1. Confirm the result.

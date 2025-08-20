@@ -33,8 +33,8 @@ public interface IOutlookEmailTool
 public class OutlookEmailTool(IOutlookEmailService service, ILogger<OutlookEmailTool> logger) : IOutlookEmailTool
 {
     /// <inheritdoc />
-    [McpServerTool(Name = "send_email", Title = "Send Email")]
-    [Description("Sends an email.")]
+    [McpServerTool(Name = "send_email", Title = "Send an Email")]
+    [Description("Sends an email to recipients.")]
     public async Task<OutlookEmailResult> SendEmailAsync(
         [Description("The email title")] string title,
         [Description("The email body")] string body,
