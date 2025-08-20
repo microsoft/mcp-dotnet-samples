@@ -1921,6 +1921,16 @@
       "description": "Get best practices for XUnit unit testing, including data-driven tests"
     },
     {
+      "filename": "documentation-writer.prompt.md",
+      "mode": "agent",
+      "tools": [
+        "editFiles",
+        "search",
+        "fetch"
+      ],
+      "description": "Diátaxis Documentation Expert. An expert technical writer specializing in creating high-quality software documentation, guided by the principles and structure of the Diátaxis technical documentation authoring framework."
+    },
+    {
       "filename": "dotnet-best-practices.prompt.md",
       "mode": "agent",
       "description": "Ensure .NET/C# code meets best practices for the solution/project."
