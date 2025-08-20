@@ -1,6 +1,6 @@
 # MCP Server: Outlook Email
 
-This is an MCP server that sends an email through Outlook.
+This is an MCP server that sends an email through Outlook. It also covers **authentication** scenarios.
 
 ## Install
 
@@ -17,11 +17,15 @@ This is an MCP server that sends an email through Outlook.
 
 ## What's Included
 
-Markdown to HTML MCP server includes:
+- Outlook Email MCP server runs in the following scenarios:
+  - **OAuth authentication with Azure API Management** as a remote MCP server
+  - **API key authentication with Azure Functions** as a remote MCP server
+  - No authentication as a locally running MCP server
+- Outlook Email MCP server includes:
 
-| Building Block | Name         | Description                   | Usage         |
-|----------------|--------------|-------------------------------|---------------|
-| Tools          | `send_email` | Send an Email to recipients". | `#send_email` |
+  | Building Block | Name         | Description                  | Usage         |
+  |----------------|--------------|------------------------------|---------------|
+  | Tools          | `send_email` | Send an Email to recipients. | `#send_email` |
 
 ## Getting Started
 
