@@ -6,10 +6,26 @@ targetScope = 'subscription'
 param environmentName string
 
 @minLength(1)
-@description('Primary location for all resources')
+@description('Primary location for all resources & Flex Consumption Function App')
+@allowed([
+  'australiaeast'
+  'brazilsouth'
+  'eastus'
+  'southeastasia'
+  'westeurope'
+  'southafricanorth'
+  'uaenorth'
+])
+@metadata({
+  azd: {
+    type: 'location'
+  }
+})
 param location string
 
 param mcpOutlookEmailExists bool
+
+param vnetEnabled bool = true // Enable VNet by default
 
 @description('Id of the user or app to assign application roles')
 param principalId string
@@ -38,10 +54,15 @@ module resources 'resources.bicep' = {
     tags: tags
     principalId: principalId
     mcpOutlookEmailExists: mcpOutlookEmailExists
+    azdServiceName: 'outlook-email'
+    vnetEnabled: vnetEnabled
   }
 }
 
-output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
+// output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
 output AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_ID string = resources.outputs.AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_ID
 output AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_NAME string = resources.outputs.AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_NAME
 output AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_FQDN
+output AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_GATEWAY_ID string = resources.outputs.AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_GATEWAY_ID
+output AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_GATEWAY_NAME string = resources.outputs.AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_GATEWAY_NAME
+output AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_GATEWAY_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_GATEWAY_FQDN
