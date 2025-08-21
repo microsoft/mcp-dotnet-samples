@@ -1,58 +1,62 @@
-# GitHub Copilot Instructions for MCP .NET Samples
+# Copilot Instructions for mcp-dotnet-samples
 
-## Project Overview
+Purpose: Enable AI coding agents to work productively in this multi-sample .NET 9 MCP (Model Context Protocol) repository. Keep answers grounded in these concrete patterns; avoid inventing undocumented conventions.
 
-This repository contains Model Context Protocol (MCP) .NET sample implementations showcasing how to build MCP servers using .NET 9.0. The project includes three main samples: Awesome Copilot (GitHub integration), Markdown to HTML converter, and Todo List management.
+## 1. Big Picture Architecture
+- Mono-repo containing independent MCP server samples: `awesome-copilot/`, `markdown-to-html/`, `todo-list/`, (plus emerging samples like `outlook-email/`).
+- Each sample follows the same "Hybrid" pattern: a console (STDIO) MCP server that can also run as an HTTP (stateless) endpoint when `--http` is passed ("streamable HTTP").
+- Shared cross-cutting code lives in `shared/McpSamples.Shared/` (hosting, DI extensions, OpenAPI transformer, base `AppSettings`). Samples reference this project.
+- Runtime selection logic: `AppSettings.UseStreamableHttp(env, args)` chooses between `Host.CreateApplicationBuilder` (STDIO) and `WebApplication.CreateBuilder` (HTTP). The extension `BuildApp(useStreamableHttp)` wires up MCP server transports:
+  - STDIO: `.WithStdioServerTransport()`
+  - HTTP: `.WithHttpTransport(o => o.Stateless = true)` + maps `/mcp` and (optionally) OpenAPI docs when sample adds OpenAPI services.
+- Discovery pattern: Prompts, Resources, Tools are auto-registered via `.WithPromptsFromAssembly(...).WithResourcesFromAssembly(...).WithToolsFromAssembly(...)` scanning the entry assembly.
+- HTTP mode adds OpenAPI documents (`swagger`=2.0 + `openapi`=3.0) with a custom `McpDocumentTransformer<T>` to surface MCP over a single POST `/mcp` endpoint including `x-ms-agentic-protocol: mcp-streamable-1.0`.
+- `todo-list` adds an in-memory SQLite (single connection, `:memory:`) + EF Core context + repository abstraction; schema created at startup.
+- `awesome-copilot` integrates external GitHub content through `IMetadataService` (HTTP client) and exposes search/load tools around large `metadata.json` (contains chatmodes/instructions/prompts metadata).
 
-## Coding Standards and Practices
+## 2. Key Directories & Files
+- Root Dockerfiles: per sample (`Dockerfile.awesome-copilot`, etc.) build minimal container images.
+- Infrastructure-as-code per sample in `*/infra/` with `main.bicep` + `azure.yaml` enabling `azd up` deploy to Azure Container Apps.
+- VS Code MCP connection templates: `*/.vscode/mcp.*.json` provide STDIO vs HTTP vs container vs remote variants; copy one to repo root `.vscode/mcp.json` for activation.
+- Shared abstractions:
+  - `shared/.../Configurations/AppSettings.cs`: parses args (`--http`, `--help`) & environment variable `UseHttp`.
+  - `shared/.../Extensions/HostApplicationBuilderExtensions.cs`: core hosting bootstrap.
+  - `shared/.../OpenApi/McpDocumentTransformer.cs`: injects protocol metadata.
 
-### .NET Development Standards
-- **Target Framework**: Use .NET 9.0 as specified in Directory.Build.props
-- **Language Version**: Use latest C# language features
-- **Nullability**: Enable nullable reference types (`<Nullable>enable</Nullable>`)
-- **Implicit Usings**: Leverage implicit global usings (`<ImplicitUsings>enable</ImplicitUsings>`)
-- **Async/Await**: Prefer async/await patterns for I/O operations, especially for MCP server implementations
+## 3. Execution & Developer Workflows
+- Local STDIO run (example markdown-to-html):
+  `dotnet run --project ./markdown-to-html/src/McpSamples.MarkdownToHtml.HybridApp`
+- Local HTTP run (adds OpenAPI + /mcp):
+  `dotnet run --project ./todo-list/src/McpSamples.TodoList.HybridApp -- --http`
+- Container build & run (pattern—swap Dockerfile/sample name):
+  `docker build -f Dockerfile.todo-list -t todo-list:latest .` then `docker run -i --rm -p 8080:8080 todo-list:latest [--http]`
+- Azure deploy from sample folder:
+  `azd auth login` then `azd up` (reads that folder's `azure.yaml` + `infra/main.bicep`). After deploy, fetch FQDN via `azd env get-value AZURE_RESOURCE_<...>_FQDN` (name differs per sample).
+- Attach in VS Code Agent Mode: copy appropriate `mcp.*.<variant>.json` to `.vscode/mcp.json`, then run "MCP: List Servers".
+- Passing extra sample-specific switches: markdown-to-html adds `-tc` (Tech Community), `-p` (extra paragraphs), `--tags`.
 
-### Project Structure Conventions
-- Each sample should be self-contained with its own solution file (`.sln`)
-- Use the naming pattern: `McpSamples.{SampleName}.{ComponentType}`
-- Organize projects with `src/` directories containing the main implementation
-- Include `infra/` directories for Azure deployment (Bicep files)
-- Provide Docker support with appropriate Dockerfiles
+## 4. .NET Development Standards & Conventions
+- **Target Framework**: .NET 9.0 as specified in Directory.Build.props
+- **Language Features**: Use latest C# features including nullable reference types (`<Nullable>enable</Nullable>`) and implicit global usings (`<ImplicitUsings>enable</ImplicitUsings>`)
+- **Async Patterns**: Prefer async/await for I/O operations, especially for MCP server implementations
+- **Command line argument delimiter**: arguments after `--` are parsed by custom settings (e.g., `-- --http -tc -p`). Always preserve the `--` when appending custom flags in `mcp.*.json` STDIO configs.
+- **JSON serialization options**: enforce camelCase & case-insensitive property names where used.
+- **All sample app entry points**: named `Program.cs` inside `src/<ProjectName>.HybridApp/` with suffix `.HybridApp` signaling dual-mode hosting.
+- **Repositories**: (only in todo-list) use EF Core async APIs + idempotent updates via `ExecuteUpdateAsync` / `ExecuteDeleteAsync` for efficiency instead of tracking then saving changes.
+- **In-memory SQLite lifetime**: a single opened `SqliteConnection` registered singleton to keep the in-memory DB alive for the process.
+- **Environment override**: `UseHttp=true` env var triggers HTTP mode without passing `--http`.
 
-### MCP Server Implementation Guidelines
-- Implement MCP servers using the shared `McpSamples.Shared` library
-- Use proper dependency injection patterns
-- Follow the MCP protocol specifications for tools, prompts, and resources
-- Implement proper error handling and logging
-- Use descriptive attributes for MCP server components:
-  - `[McpServerPromptType]` for prompt classes
+## 5. MCP Server Implementation Patterns
+- Implement MCP servers using the shared `McpSamples.Shared` library with proper dependency injection patterns
+- Follow MCP protocol specifications for tools, prompts, and resources with proper error handling and logging
+- Use descriptive attributes for MCP server components and ensure they are public and in the entry assembly for automatic discovery:
+  - `[McpServerTool]` for tool classes  
   - `[McpServerPrompt]` for prompt methods
   - `[Description]` attributes for parameters and methods
+- **OpenAPI documents**: only added in samples that explicitly configure them (todo-list, awesome-copilot). Markdown-to-html currently skips OpenAPI.
+- **Large metadata scanning**: (awesome-copilot/metadata.json) should avoid loading entire file into memory repeatedly—reuse injected services / streaming where possible (follow existing `IMetadataService`).
 
-### Code Style Guidelines
-- Follow Microsoft C# coding conventions
-- Use meaningful variable and method names
-- Implement comprehensive XML documentation comments
-- Use readonly fields where appropriate
-- Prefer record types for immutable data models
-- Use required properties for essential data
-
-### Azure Integration Standards
-- Use Bicep for Infrastructure as Code
-- Follow Azure naming conventions with abbreviations
-- Implement proper Azure identity and security practices
-- Use Azure Container Apps for deployment
-- Configure Application Insights for monitoring
-
-### Testing Requirements
-- Write unit tests for all business logic
-- Use descriptive test method names following Given_When_Then pattern
-- Mock external dependencies appropriately
-- Test MCP server functionality including tools and prompts
-- Ensure tests cover error scenarios
-
-## Code Review Guidelines
+## 6. Code Quality & Security Guidelines
 
 ### Security Checklist
 - [ ] Verify no hardcoded secrets or connection strings
@@ -68,13 +72,20 @@ This repository contains Model Context Protocol (MCP) .NET sample implementation
 - [ ] Ensure proper caching where appropriate
 - [ ] Validate container resource requirements
 
-### MCP Protocol Compliance
-- [ ] Verify correct MCP server registration and initialization
-- [ ] Check tool and prompt implementations follow MCP specifications
-- [ ] Ensure proper error handling and response formatting
-- [ ] Validate resource management and cleanup
+### Code Style
+- Follow Microsoft C# coding conventions
+- Use meaningful variable and method names
+- Implement comprehensive XML documentation comments
+- Use readonly fields where appropriate
+- Prefer record types for immutable data models
 
-## Pull Request Guidelines
+## 7. Testing & Pull Request Guidelines
+
+### Testing Requirements
+- Write unit tests for all business logic using descriptive test method names following Given_When_Then pattern
+- Mock external dependencies appropriately
+- Test MCP server functionality including tools and prompts
+- Ensure tests cover error scenarios
 
 ### Commit Message Format
 Use conventional commit format:
@@ -83,66 +94,57 @@ Use conventional commit format:
 - `docs: update README with deployment instructions`
 - `refactor: optimize MCP message handling`
 
-### PR Description Template
-Include the following in your PR description:
-1. **Summary**: Brief description of changes
-2. **Changes**: List of specific modifications
-3. **Testing**: How the changes were tested
-4. **Azure**: Any infrastructure changes
-5. **Breaking Changes**: List any breaking changes
-6. **Screenshots**: For UI changes (if applicable)
-
-### Required Checks
+### Required PR Checks
 - [ ] Code builds successfully for .NET 9.0
 - [ ] All existing tests pass
 - [ ] New features include appropriate tests
 - [ ] Documentation is updated
-- [ ] Azure deployment scripts are validated
-- [ ] Docker images build successfully
 - [ ] MCP server functionality is verified
+- [ ] Azure deployment scripts are validated (if applicable)
+- [ ] Docker images build successfully
 
-## Preferred Technologies and Libraries
+## 8. Adding a New Sample (Keep Consistency)
+1. Create `<sample-name>/` with `azure.yaml`, `infra/` (copy from an existing sample), `src/<PascalName>.HybridApp/` project referencing `McpSamples.Shared`.
+2. Implement `Program.cs` mirroring pattern: parse `useStreamableHttp`, register `AddAppSettings<YourAppSettings>()`, add any HTTP/OpenAPI extras only if needed, then `BuildApp(useStreamableHttp)`.
+3. Add `Dockerfile.<sample-name>` at repo root (follow others: multi-stage build with dotnet publish + runtime). Ensure final image exposes port 8080.
+4. Provide `.vscode/mcp.*.json` variants (copy & rename from existing sample, adjust URL/args/project path token).
+5. Update root `README.md` samples table (install badges reflect GHCR image tag `<sample-name>:latest`).
 
-### Core Technologies
-- **.NET 9.0** - Primary target framework
-- **C# Latest** - Use latest language features
+## 9. Safe Change Guidelines for Agents
+- Do NOT refactor shared bootstrapping signatures (`BuildApp`, `AddAppSettings`) without updating all samples simultaneously.
+- When adding new tool/prompt/resource classes, ensure they are public and in the entry assembly so automatic discovery picks them up—no manual registration needed.
+- Preserve `:memory:` pattern for ephemeral examples; if introducing persistence, isolate it to that sample and do not leak dependencies into `shared/` unless truly cross-cutting.
+- Keep Dockerfiles minimal & consistent; if adding libraries, prefer adding via the `dotnet publish` stage rather than ad-hoc runtime installs.
+
+## 10. Common Pitfalls
+- Forgetting `--` before custom args results in flags ignored by `AppSettings.Parse`.
+- Omitting singleton open SQLite connection causes in-memory DB loss (new connection => empty DB).
+- Adding OpenAPI without `AddHttpContextAccessor()` or mapping `/{documentName}.json` yields missing docs.
+- Copying `mcp.*.json` but leaving wrong server name or port leads to silent connection failures in VS Code.
+
+## 11. Quick Reference Ports (Local Default)
+- awesome-copilot HTTP: 5250
+- todo-list HTTP: 5240
+- markdown-to-html HTTP: 5280
+- Container runs map internal 8080 -> host 8080 (override only if needed).
+
+## 12. Preferred Technologies
+- **.NET 9.0** - Primary target framework with latest C# language features
 - **ASP.NET Core** - For HTTP-based MCP servers
 - **System.Text.Json** - Preferred JSON serialization
-- **Microsoft.Extensions.*** - Use built-in dependency injection and configuration
-
-### Azure Services
+- **Microsoft.Extensions.*** - Built-in dependency injection and configuration
 - **Azure Container Apps** - Primary deployment target
-- **Azure Container Registry** - For container images
-- **Application Insights** - For monitoring and telemetry
-- **Azure Identity** - For authentication
+- **Azure CLI & azd** - For Azure operations and deployment automation
+- **Visual Studio Code** - Recommended IDE with MCP integration
 
-### Development Tools
-- **Visual Studio Code** - Recommended IDE
-- **Docker Desktop** - For local container development
-- **Azure CLI** - For Azure operations
-- **Azure Developer CLI (azd)** - For deployment automation
+## 13. Example: Modify todo-list Tool
+To add a new tool (e.g., filter completed items):
+- Create a public class with appropriate MCP Tool attribute (follow existing tool patterns in project—scan for existing Tool classes) inside the todo-list HybridApp assembly.
+- Query `TodoDbContext` via injected repository; return concise results DTO.
+- No extra registration needed—automatic assembly scan picks it up.
 
-## Sample-Specific Guidelines
+## 14. When Unsure
+Prefer inspecting analogous implementation in another sample (diff minimal surface area) before introducing new abstractions. Ask for clarification if a change would alter cross-sample contracts.
 
-### Awesome Copilot Sample
-- Focus on GitHub integration and file system operations
-- Implement proper metadata handling for Copilot instructions
-- Use structured search and filtering capabilities
-
-### Markdown to HTML Sample
-- Ensure proper HTML sanitization and security
-- Support various markdown extensions
-- Implement configurable HTML output options
-
-### Todo List Sample
-- Use proper data persistence patterns
-- Implement CRUD operations efficiently
-- Follow RESTful API principles for HTTP endpoints
-
-## Additional Notes
-
-- Always test MCP server functionality with VS Code MCP integration
-- Ensure compatibility with both local and containerized deployments
-- Follow Microsoft Open Source guidelines and code of conduct
-- Update documentation when adding new features or changing existing behavior
-- Consider backward compatibility when making changes to MCP interfaces
+---
+Feedback welcome: Identify unclear sections (e.g., new sample onboarding, tool discovery details) so we can refine.
