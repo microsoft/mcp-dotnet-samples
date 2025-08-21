@@ -194,11 +194,11 @@ This is an MCP server that sends an email through Outlook. It also covers **auth
     azd auth login
     ```
 
-1. As a default, the MCP server will be deployed as an Azure Functions. If you want to deploy this MCP server to Azure Container Apps, add an environment variable, `USE_ACA`.
+<!-- 1. As a default, the MCP server will be deployed as an Azure Functions. If you want to deploy this MCP server to Azure Container Apps, add an environment variable, `USE_ACA`.
 
     ```bash
     azd env set USE_ACA true
-    ```
+    ``` -->
 
 1. Deploy the MCP server app to Azure.
 
@@ -213,13 +213,19 @@ This is an MCP server that sends an email through Outlook. It also covers **auth
    - Azure Functions Apps FQDN:
 
      ```bash
-     azd env get-value AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_FUNC_FQDN
+     azd env get-value AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_FQDN
      ```
 
-   - Azure Container Apps FQDN:
+   <!-- - Azure Container Apps FQDN:
 
      ```bash
      azd env get-value AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_ACA_FQDN
+     ``` -->
+
+   - Azure API Management FQDN:
+
+     ```bash
+     azd env get-value AZURE_RESOURCE_MCP_OUTLOOK_EMAIL_GATEWAY_FQDN
      ```
 
 ### Connect MCP server to an MCP host/client
@@ -256,17 +262,17 @@ This is an MCP server that sends an email through Outlook. It also covers **auth
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-   **For locally running MCP server (HTTP) as Function app:**
+   **For locally running MCP server as Function app (HTTP):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.func.json \
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.local-func.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.func.json `
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.local-func.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -298,21 +304,7 @@ This is an MCP server that sends an email through Outlook. It also covers **auth
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-   **For remotely running MCP server in a container (HTTP):**
-
-    ```bash
-    mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote.json \
-       $REPOSITORY_ROOT/.vscode/mcp.json
-    ```
-
-    ```powershell
-    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote.json `
-              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
-    ```
-
-   **For remotely running MCP server in a container (HTTP) as Function app:**
+   **For remotely running MCP server as Function app (HTTP):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
@@ -326,7 +318,21 @@ This is an MCP server that sends an email through Outlook. It also covers **auth
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-   **For remotely running MCP server in a container (HTTP) via API Management:**
+   <!-- **For remotely running MCP server as a container app (HTTP):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/outlook-email/.vscode/mcp.http.remote.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ``` -->
+
+   **For remotely running MCP server via API Management (HTTP):**
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
