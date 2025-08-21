@@ -181,6 +181,10 @@ This is an MCP server that sends an email through Outlook. It also covers **auth
 
 #### On Azure
 
+1. **IMPORTANT** Check whether you have the necessary permissions:
+   - Your Azure account must have the `Microsoft.Authorization/roleAssignments/write` permission, such as [Role Based Access Control Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/privileged#role-based-access-control-administrator), [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/privileged#user-access-administrator), or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/privileged#owner) at the subscription level.
+   - Your Azure account must also have the `Microsoft.Resources/deployments/write` permission at the subscription level.
+
 1. Navigate to the directory.
 
     ```bash
