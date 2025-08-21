@@ -1959,6 +1959,11 @@
       "description": "Get best practices for Entity Framework Core"
     },
     {
+      "filename": "first-ask.prompt.md",
+      "description": "Interactive, input-tool powered, task refinement workflow: interrogates scope, deliverables, constraints before carrying out the task; Requires the Joyride extension.",
+      "mode": "agent"
+    },
+    {
       "filename": "folder-structure-blueprint-generator.prompt.md",
       "description": "Comprehensive technology-agnostic prompt for analyzing and documenting project folder structures. Auto-detects project types (.NET, Java, React, Angular, Python, Node.js, Flutter), generates detailed blueprints with visualization options, naming conventions, file placement patterns, and extension templates for maintaining consistent code organization across diverse technology stacks.",
       "mode": "agent"
