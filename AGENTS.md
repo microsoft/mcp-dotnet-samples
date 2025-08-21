@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-The Model Context Protocol (MCP) .NET Samples repository demonstrates how to build MCP servers using .NET 9.0. This repository contains three comprehensive sample implementations that showcase different aspects of MCP server development, from GitHub integration to web services and data management.
+The Model Context Protocol (MCP) .NET Samples repository demonstrates how to build MCP servers using .NET 9.0. This repository contains four comprehensive sample implementations that showcase different aspects of MCP server development, from GitHub integration to web services, data management, and email communications.
 
 ## Project Structure and Architecture
 
@@ -22,6 +22,10 @@ mcp-dotnet-samples/
 │   └── .vscode/              # VS Code MCP configuration
 ├── markdown-to-html/          # Markdown conversion sample
 │   ├── src/McpSamples.MarkdownToHtml.HybridApp/
+│   ├── infra/                 # Azure Bicep templates
+│   └── .vscode/              # VS Code MCP configuration
+├── outlook-email/             # Email communication sample
+│   ├── src/McpSamples.OutlookEmail.HybridApp/
 │   ├── infra/                 # Azure Bicep templates
 │   └── .vscode/              # VS Code MCP configuration
 ├── todo-list/                 # Todo management sample
@@ -51,7 +55,17 @@ mcp-dotnet-samples/
   - Azure integration for scalable processing
 - **Technologies**: Markdown processing, HTML generation, web services
 
-#### 3. Todo List Sample
+#### 3. Outlook Email Sample
+- **Purpose**: Sends emails through Outlook with comprehensive authentication scenarios
+- **Key Features**:
+  - Email sending capabilities via Microsoft Graph API
+  - OAuth authentication with Azure API Management
+  - API key authentication with Azure Functions
+  - No-authentication local development mode
+  - Azure Functions and Container Apps deployment support
+- **Technologies**: Microsoft Graph, OAuth, Azure Functions, API Management
+
+#### 4. Todo List Sample
 - **Purpose**: Manages todo items with full CRUD operations
 - **Key Features**:
   - Create, read, update, delete operations
@@ -287,6 +301,11 @@ Each sample includes pre-configured VS Code settings for MCP integration:
 - `.vscode/mcp.stdio.local.json` - Local STDIO communication
 - `.vscode/mcp.http.local.json` - Local HTTP communication
 - `.vscode/mcp.stdio.container.json` - Container-based STDIO
+
+The outlook-email sample includes additional configurations for:
+- `.vscode/mcp.http.local-func.json` - Local Azure Functions
+- `.vscode/mcp.http.remote-func.json` - Remote Azure Functions
+- `.vscode/mcp.http.remote-apim.json` - Azure API Management integration
 
 ## Deployment and Operations
 
