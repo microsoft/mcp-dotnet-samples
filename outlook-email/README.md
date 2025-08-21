@@ -39,16 +39,6 @@ This is an MCP server that sends an email through Outlook. It also covers **auth
 - [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
   - [VS Code + Agent Mode + Local MCP server](#vs-code--agent-mode--local-mcp-server)
 
-### Registering an app on Entra ID
-
-> This section is for running the MCP server on your local machine or in a local container. If you deploy this MCP server to Azure, you can skip this section.
-
-1. Register an app by following this document: [Register an application in Microsoft Entra ID](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app).
-1. Set up redirect URL as an SPA by following this document: [How to add a redirect URI to your application](https://learn.microsoft.com/entra/identity-platform/how-to-add-redirect-uri).
-1. Add a client secret by following this document: [Add and manage application credentials in Microsoft Entra ID](https://learn.microsoft.com/entra/identity-platform/how-to-add-credentials?tabs=client-secret).
-1. Grant API permissions on Microsoft Graph 👉 Application Permission 👉 `Mail.Send`. Make sure to run "Grant admin consent to the permission"
-1. Take notes for tenant ID, client ID and client secret values.
-
 ### Getting repository root
 
 1. Get the repository root.
@@ -62,6 +52,26 @@ This is an MCP server that sends an email through Outlook. It also covers **auth
     # PowerShell
     $REPOSITORY_ROOT = git rev-parse --show-toplevel
     ```
+
+### Registering an app on Entra ID
+
+> This section is for running the MCP server on your local machine or in a local container. If you deploy this MCP server to Azure, you can skip this section.
+
+1. Run the following script.
+
+    ```bash
+    # bash/zsh
+    cd $REPOSITORY_ROOT/outlook-email
+    ./register-app.sh
+    ```
+
+    ```powershell
+    # PowerShell
+    cd $REPOSITORY_ROOT/outlook-email
+    ./Register-App.ps1
+    ```
+
+1. Take notes for tenant ID, client ID and client secret values.
 
 ### Running MCP server
 

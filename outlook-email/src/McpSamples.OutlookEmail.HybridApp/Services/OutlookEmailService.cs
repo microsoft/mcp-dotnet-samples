@@ -34,10 +34,7 @@ public class OutlookEmailService(GraphServiceClient graph, ILogger<OutlookEmailS
         ArgumentException.ThrowIfNullOrWhiteSpace(body, nameof(body));
         ArgumentException.ThrowIfNullOrWhiteSpace(sender, nameof(sender));
         ArgumentException.ThrowIfNullOrWhiteSpace(recipients, nameof(recipients));
-        var recipientList = (recipients ?? string.Empty)
-                            .Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                            .Distinct(StringComparer.OrdinalIgnoreCase)
-                            .ToArray();
+        var recipientList = recipients.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (recipientList.Length == 0)
         {
             throw new ArgumentException("At least one recipient is required", nameof(recipients));
@@ -61,7 +58,7 @@ public class OutlookEmailService(GraphServiceClient graph, ILogger<OutlookEmailS
         return req;
     }
 
-    private static SendMailPostRequestBody BuildMailRequest(string title, string body, string[] recipients)
+    private static SendMailPostRequestBody BuildMailRequest(string title, string body, IEnumerable<string> recipients)
     {
         var message = new Message
         {
