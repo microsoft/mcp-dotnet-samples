@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: outlook-email
+
+metadata:
+  template: azd-init@1.14.0
+
+services:
+  # outlook-email:
+  #   project: src/McpSamples.OutlookEmail.HybridApp
+  #   host: containerapp
+  #   language: dotnet
+  #   docker:
+  #     path: ../../../Dockerfile.outlook-email-azure
+  #     context: ../../../
+  #     remoteBuild: true
+  outlook-email:
+    project: src/McpSamples.OutlookEmail.HybridApp
+    host: function
+    language: csharp

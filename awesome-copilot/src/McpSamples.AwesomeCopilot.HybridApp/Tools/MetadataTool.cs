@@ -48,17 +48,15 @@ public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger
             logger.LogInformation("Search completed successfully with keyword '{Keywords}'.", keywords);
 
             result.Metadata = metadata;
-
-            return result;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error occurred while searching instructions with keyword '{Keywords}'.", keywords);
 
             result.ErrorMessage = ex.Message;
-
-            return result;
         }
+
+        return result;
     }
 
     /// <inheritdoc />

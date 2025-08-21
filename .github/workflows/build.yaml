@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        image_name: [ 'awesome-copilot', 'markdown-to-html', 'todo-list' ]
+        image_name: [ 'awesome-copilot', 'markdown-to-html', 'outlook-email', 'todo-list' ]
 
     permissions:
       contents: write

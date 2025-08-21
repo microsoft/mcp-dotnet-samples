@@ -1,0 +1,11 @@
+{
+  "chat.tools.autoApprove": true,
+  "chat.agent.maxRequests": 100,
+
+  "azureFunctions.deploySubpath": "outlook-email/src/McpSamples.OutlookEmail.HybridApp/bin/Release/net9.0/publish",
+  "azureFunctions.preDeployTask": "publish (functions)",
+  "azureFunctions.projectSubpath": "outlook-email/src/McpSamples.OutlookEmail.HybridApp",
+  "azureFunctions.projectLanguage": "C#",
+  "azureFunctions.projectRuntime": "~4",
+  "debug.internalConsoleOptions": "neverOpen"
+}

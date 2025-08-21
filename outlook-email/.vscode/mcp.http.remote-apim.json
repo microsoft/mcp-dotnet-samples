@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "apim-fqdn",
+      "description": "Azure API Management FQDN"
+    }
+  ],
+  "servers": {
+    "outlook-email": {
+      "type": "http",
+      "url": "https://${input:apim-fqdn}/mcp"
+    }
+  }
+}

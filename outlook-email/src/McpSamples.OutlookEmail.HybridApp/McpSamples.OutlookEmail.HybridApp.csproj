@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <AssemblyName>McpSamples.OutlookEmail.HybridApp</AssemblyName>
+    <RootNamespace>McpSamples.OutlookEmail.HybridApp</RootNamespace>
+
+    <UserSecretsId>2e1c39d8-6dfa-4f21-bfea-13b1f8459542</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.*" />
+    <PackageReference Include="Microsoft.Graph" Version="5.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include=".azurefunctions\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,4 @@
-using McpSamples.MarkdownToHtml.HybridApp.Extensions;
+using McpSamples.MarkdownToHtml.HybridApp.Configurations;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 
@@ -8,7 +8,7 @@ IHostApplicationBuilder builder = useStreamableHttp
                                 ? WebApplication.CreateBuilder(args)
                                 : Host.CreateApplicationBuilder(args);
 
-builder.Services.AddAppSettings(builder.Configuration, args);
+builder.Services.AddAppSettings<MarkdownToHtmlAppSettings>(builder.Configuration, args);
 
 IHost app = builder.BuildApp(useStreamableHttp);
 

@@ -45,6 +45,11 @@
       "title": "Accessibility mode"
     },
     {
+      "filename": "address-comments.chatmode.md",
+      "description": "Address PR comments",
+      "tools": "[ \"changes\", \"codebase\", \"editFiles\", \"extensions\", \"fetch\", \"findTestFiles\", \"githubRepo\", \"new\", \"openSimpleBrowser\", \"problems\", \"runCommands\", \"runTasks\", \"runTests\", \"search\", \"searchResults\", \"terminalLastCommand\", \"terminalSelection\", \"testFailure\", \"usages\", \"vscodeAPI\", \"microsoft.docs.mcp\", \"github\", ]"
+    },
+    {
       "filename": "api-architect.chatmode.md",
       "description": "Your role is that of an API architect. Help mentor the engineer by providing guidance, support, and working code."
     },
@@ -173,7 +178,7 @@
     {
       "filename": "blueprint-mode.chatmode.md",
       "model": "GPT-4.1",
-      "description": "Blueprint Mode drives autonomous engineering through strict specification-first development, requiring rigorous planning, comprehensive documentation, proactive issue resolution, and resource optimization to deliver robust, high-quality solutions without placeholders."
+      "description": "Follows strict workflows (Debug, Express, Main, Loop) to analyze requirements, plan before coding and verify against edge cases. Self-corrects and favors simple, maintainable solutions."
     },
     {
       "filename": "clojure-interactive-programming.chatmode.md",
@@ -401,6 +406,11 @@
         "microsoft.docs.mcp",
         "github"
       ]
+    },
+    {
+      "filename": "kusto-assistant.chatmode.md",
+      "description": "Expert KQL assistant for live Azure Data Explorer analysis via Azure MCP server",
+      "tools": "[ \"changes\", \"codebase\", \"editFiles\", \"extensions\", \"fetch\", \"findTestFiles\", \"githubRepo\", \"new\", \"openSimpleBrowser\", \"problems\", \"runCommands\", \"runTasks\", \"runTests\", \"search\", \"searchResults\", \"terminalLastCommand\", \"terminalSelection\", \"testFailure\", \"usages\", \"vscodeAPI\", ]"
     },
     {
       "filename": "mentor.chatmode.md",
@@ -1096,6 +1106,16 @@
         "**/docker-compose*.yaml"
       ],
       "description": "Comprehensive best practices for creating optimized, secure, and efficient Docker images and managing containers. Covers multi-stage builds, image layer optimization, security scanning, and runtime best practices."
+    },
+    {
+      "filename": "convert-jpa-to-spring-data-cosmos.instructions.md",
+      "description": "Step-by-step guide for converting Spring Boot JPA applications to use Azure Cosmos DB with Spring Data Cosmos",
+      "applyTo": [
+        "**/*.java",
+        "**/pom.xml",
+        "**/build.gradle",
+        "**/application*.properties"
+      ]
     },
     {
       "filename": "copilot-thought-logging.instructions.md",
@@ -1901,6 +1921,16 @@
       "description": "Get best practices for XUnit unit testing, including data-driven tests"
     },
     {
+      "filename": "documentation-writer.prompt.md",
+      "mode": "agent",
+      "tools": [
+        "editFiles",
+        "search",
+        "fetch"
+      ],
+      "description": "Diátaxis Documentation Expert. An expert technical writer specializing in creating high-quality software documentation, guided by the principles and structure of the Diátaxis technical documentation authoring framework."
+    },
+    {
       "filename": "dotnet-best-practices.prompt.md",
       "mode": "agent",
       "description": "Ensure .NET/C# code meets best practices for the solution/project."
@@ -1927,6 +1957,11 @@
         "runCommands"
       ],
       "description": "Get best practices for Entity Framework Core"
+    },
+    {
+      "filename": "first-ask.prompt.md",
+      "description": "Interactive, input-tool powered, task refinement workflow: interrogates scope, deliverables, constraints before carrying out the task; Requires the Joyride extension.",
+      "mode": "agent"
     },
     {
       "filename": "folder-structure-blueprint-generator.prompt.md",

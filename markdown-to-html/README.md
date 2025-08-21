@@ -55,10 +55,10 @@ Markdown to HTML MCP server includes:
 
     ```bash
     cd $REPOSITORY_ROOT/markdown-to-html
-    dotnet run --project ./src/McpMarkdownToHtml.HybridApp
+    dotnet run --project ./src/McpSamples.MarkdownToHtml.HybridApp
     ```
 
-   > Make sure take note the absolute directory path of the `McpMarkdownToHtml.HybridApp` project.
+   > Make sure take note the absolute directory path of the `McpSamples.MarkdownToHtml.HybridApp` project.
 
    **Parameters**:
 
@@ -70,7 +70,7 @@ Markdown to HTML MCP server includes:
    With these parameters, you can run the MCP server like:
 
    ```bash
-   dotnet run --project ./src/McpMarkdownToHtml.HybridApp -- --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   dotnet run --project ./src/McpSamples.MarkdownToHtml.HybridApp -- --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
    ```
 
 #### In a container
@@ -223,7 +223,7 @@ Markdown to HTML MCP server includes:
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
 1. Choose `markdown-to-html` then click `Start Server`.
 1. When prompted, enter one of the following values:
-   - The absolute directory path of the `McpMarkdownToHtml.HybridApp` project
+   - The absolute directory path of the `McpSamples.MarkdownToHtml.HybridApp` project
    - The FQDN of Azure Container Apps.
 1. Enter prompt like:
 
