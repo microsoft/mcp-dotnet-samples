@@ -1,4 +1,4 @@
-# Copilot Instructions for mcp-dotnet-samples
+# Copilot Instructions for MCP .NET Samples
 
 Purpose: Enable AI coding agents to work productively in this multi-sample .NET 9 MCP (Model Context Protocol) repository. Keep answers grounded in these concrete patterns; avoid inventing undocumented conventions.
 
