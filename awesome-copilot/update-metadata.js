@@ -51,6 +51,30 @@ function parseSimpleYaml(yamlContent) {
   let inArray = false;
   let arrayItems = [];
 
+  // Helper to parse a bracket-style array string into array items.
+  function parseBracketArrayString(str) {
+    const items = [];
+    const arrayContent = str.slice(1, -1);
+    if (!arrayContent.trim()) return items;
+
+    // Split by comma, but be defensive and trim each item and remove trailing commas/quotes
+    const rawItems = arrayContent.split(',');
+    for (let raw of rawItems) {
+      let item = raw.trim();
+      if (!item) continue;
+      // Remove trailing commas left over (defensive)
+      if (item.endsWith(',')) item = item.slice(0, -1).trim();
+      // Remove surrounding quotes if present
+      if ((item.startsWith('"') && item.endsWith('"')) ||
+          (item.startsWith("'") && item.endsWith("'"))) {
+        item = item.slice(1, -1);
+      }
+      if (item.length > 0) items.push(item);
+    }
+
+    return items;
+  }
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const trimmed = line.trim();
@@ -68,11 +92,17 @@ function parseSimpleYaml(yamlContent) {
           inArray = false;
         } else {
           let trimmedValue = currentValue.trim();
-          // Handle comma-separated strings for specific fields that should be arrays
-          if (currentKey === APPLY_TO_KEY) {
-            result[currentKey] = processApplyToField(trimmedValue);
+
+          // If the accumulated value looks like a bracket array (possibly multiline), parse it
+          if (trimmedValue.startsWith('[') && trimmedValue.endsWith(']')) {
+            result[currentKey] = parseBracketArrayString(trimmedValue);
           } else {
-            result[currentKey] = trimmedValue;
+            // Handle comma-separated strings for specific fields that should be arrays
+            if (currentKey === APPLY_TO_KEY) {
+              result[currentKey] = processApplyToField(trimmedValue);
+            } else {
+              result[currentKey] = trimmedValue;
+            }
           }
         }
       }
@@ -86,22 +116,9 @@ function parseSimpleYaml(yamlContent) {
         currentValue = currentValue.slice(1, -1);
       }
 
-      // Check if this is an array
+      // Check if this is an inline bracket-array
       if (currentValue.startsWith('[') && currentValue.endsWith(']')) {
-        const arrayContent = currentValue.slice(1, -1);
-        if (arrayContent.trim()) {
-          result[currentKey] = arrayContent.split(',').map(item => {
-            item = item.trim();
-            // Remove quotes from array items
-            if ((item.startsWith('"') && item.endsWith('"')) ||
-                (item.startsWith("'") && item.endsWith("'"))) {
-              item = item.slice(1, -1);
-            }
-            return item;
-          });
-        } else {
-          result[currentKey] = [];
-        }
+        result[currentKey] = parseBracketArrayString(currentValue);
         currentKey = null;
         currentValue = '';
       } else if (currentValue === '' || currentValue === '[]') {
@@ -121,7 +138,8 @@ function parseSimpleYaml(yamlContent) {
     } else if (trimmed.startsWith('-') && currentKey && inArray) {
       // Array item
       let item = trimmed.substring(1).trim();
-      // Remove quotes
+      // Remove trailing commas and surrounding quotes
+      if (item.endsWith(',')) item = item.slice(0, -1).trim();
       if ((item.startsWith('"') && item.endsWith('"')) ||
           (item.startsWith("'") && item.endsWith("'"))) {
         item = item.slice(1, -1);
@@ -144,12 +162,17 @@ function parseSimpleYaml(yamlContent) {
           (finalValue.startsWith("'") && finalValue.endsWith("'"))) {
         finalValue = finalValue.slice(1, -1);
       }
-      
-      // Handle comma-separated strings for specific fields that should be arrays
-      if (currentKey === APPLY_TO_KEY) {
-        result[currentKey] = processApplyToField(finalValue);
+
+      // If the final value looks like a bracket array, parse it
+      if (finalValue.startsWith('[') && finalValue.endsWith(']')) {
+        result[currentKey] = parseBracketArrayString(finalValue);
       } else {
-        result[currentKey] = finalValue;
+        // Handle comma-separated strings for specific fields that should be arrays
+        if (currentKey === APPLY_TO_KEY) {
+          result[currentKey] = processApplyToField(finalValue);
+        } else {
+          result[currentKey] = finalValue;
+        }
       }
     }
   }
