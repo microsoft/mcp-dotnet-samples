@@ -1393,10 +1393,7 @@
       "filename": "joyride-user-project.instructions.md",
       "description": "Expert assistance for Joyride User Script projects - REPL-driven ClojureScript and user space automation of VS Code",
       "applyTo": [
-        "scripts/**/*.cljs",
-        "src/**/*.cljs",
-        "deps.edn",
-        ".joyride/**/*.cljs"
+        "**"
       ]
     },
     {
@@ -2006,40 +2003,12 @@
     {
       "filename": "create-spring-boot-java-project.prompt.md",
       "mode": "agent",
-      "tools": [
-        "changes",
-        "codebase",
-        "editFiles",
-        "findTestFiles",
-        "problems",
-        "runCommands",
-        "runTests",
-        "search",
-        "searchResults",
-        "terminalLastCommand",
-        "testFailure",
-        "usages"
-      ],
-      "description": "Create Spring Boot Java project skeleton"
+      "description": "Create Spring Boot Java Project Skeleton"
     },
     {
       "filename": "create-spring-boot-kotlin-project.prompt.md",
       "mode": "agent",
-      "tools": [
-        "changes",
-        "codebase",
-        "editFiles",
-        "findTestFiles",
-        "problems",
-        "runCommands",
-        "runTests",
-        "search",
-        "searchResults",
-        "terminalLastCommand",
-        "testFailure",
-        "usages"
-      ],
-      "description": "Create Spring Boot Kotlin project skeleton"
+      "description": "Create Spring Boot Kotlin Project Skeleton"
     },
     {
       "filename": "csharp-async.prompt.md",
