@@ -243,8 +243,8 @@
     },
     {
       "filename": "blueprint-mode.chatmode.md",
-      "model": "GPT-4.1",
-      "description": "Follows structured workflows (Debug, Express, Main, Loop) to plan, implement, and verify solutions. Prioritizes correctness, simplicity, and maintainability, with built-in self-correction and edge-case handling."
+      "model": "GPT-5 mini (copilot)",
+      "description": "Executes structured workflows (Debug, Express, Main, Loop) with strict correctness and maintainability. Enforces an improved tool usage policy, never assumes facts, prioritizes reproducible solutions, self-correction, and edge-case handling."
     },
     {
       "filename": "clojure-interactive-programming.chatmode.md",
