@@ -746,6 +746,30 @@
       ]
     },
     {
+      "filename": "research-technical-spike.chatmode.md",
+      "description": "Systematically research and validate technical spike documents through exhaustive investigation and controlled experimentation.",
+      "tools": [
+        "runCommands",
+        "runTasks",
+        "edit",
+        "runNotebooks",
+        "search",
+        "extensions",
+        "usages",
+        "vscodeAPI",
+        "think",
+        "problems",
+        "changes",
+        "testFailure",
+        "openSimpleBrowser",
+        "fetch",
+        "githubRepo",
+        "todos",
+        "Microsoft Docs",
+        "search"
+      ]
+    },
+    {
       "filename": "rust-gpt-4.1-beast-mode.chatmode.md",
       "description": "Rust GPT-4.1 Coding Beast Mode for VS Code",
       "model": "GPT-4.1",
@@ -2016,6 +2040,30 @@
       "filename": "create-spring-boot-kotlin-project.prompt.md",
       "mode": "agent",
       "description": "Create Spring Boot Kotlin Project Skeleton"
+    },
+    {
+      "filename": "create-technical-spike.prompt.md",
+      "mode": "agent",
+      "description": "Create time-boxed technical spike documents for researching and resolving critical development decisions before implementation.",
+      "tools": [
+        "runCommands",
+        "runTasks",
+        "edit",
+        "search",
+        "extensions",
+        "usages",
+        "vscodeAPI",
+        "think",
+        "problems",
+        "changes",
+        "testFailure",
+        "openSimpleBrowser",
+        "fetch",
+        "githubRepo",
+        "todos",
+        "Microsoft Docs",
+        "search"
+      ]
     },
     {
       "filename": "csharp-async.prompt.md",
