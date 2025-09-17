@@ -1230,6 +1230,13 @@
       ]
     },
     {
+      "filename": "collections.instructions.md",
+      "description": "Guidelines for creating and managing awesome-copilot collections",
+      "applyTo": [
+        "collections/*.collection.yml"
+      ]
+    },
+    {
       "filename": "containerization-docker-best-practices.instructions.md",
       "applyTo": [
         "**/Dockerfile",
