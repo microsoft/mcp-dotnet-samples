@@ -22,4 +22,10 @@ public class Metadata
     /// Gets or sets the list of <see cref="Prompt"/> objects.
     /// </summary>
     public List<Prompt> Prompts { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets the list of <see cref="Collection"/> objects.
+    /// </summary>
+    [JsonPropertyName("collections")]
+    public List<Collection> Collections { get; set; } = [];
 }
