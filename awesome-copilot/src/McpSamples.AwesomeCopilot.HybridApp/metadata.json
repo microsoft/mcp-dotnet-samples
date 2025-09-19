@@ -77,6 +77,13 @@
       "description": "Your role is that of an API architect. Help mentor the engineer by providing guidance, support, and working code."
     },
     {
+      "filename": "atlassian-requirements-to-jira.chatmode.md",
+      "description": "Transform requirements documents into structured Jira epics and user stories with intelligent duplicate detection, change management, and user-approved creation workflow.",
+      "tools": [
+        "atlassian"
+      ]
+    },
+    {
       "filename": "azure-logic-apps-expert.chatmode.md",
       "description": "Expert guidance for Azure Logic Apps development focusing on workflow design, integration patterns, and JSON-based Workflow Definition Language.",
       "model": "gpt-4",
@@ -1821,6 +1828,12 @@
       "filename": "copilot-instructions-blueprint-generator.prompt.md",
       "description": "Technology-agnostic blueprint generator for creating comprehensive copilot-instructions.md files that guide GitHub Copilot to produce code consistent with project standards, architecture patterns, and exact technology versions by analyzing existing codebase patterns and avoiding assumptions.",
       "mode": "agent"
+    },
+    {
+      "filename": "cosmosdb-datamodeling.prompt.md",
+      "mode": "agent",
+      "description": "Step-by-step guide for capturing key application requirements for NoSQL use-case and produce Azure Cosmos DB Data NoSQL Model design using best practices and common patterns, artifacts_produced: \"cosmosdb_requirements.md\" file and \"cosmosdb_data_model.md\" file",
+      "model": "Claude Sonnet 4"
     },
     {
       "filename": "create-agentsmd.prompt.md",
