@@ -18,12 +18,13 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
     /// <inheritdoc />
     public async Task<Metadata> SearchAsync(string keywords, CancellationToken cancellationToken = default)
     {
+        var metadata = await GetMetadataAsync(cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(keywords) == true)
         {
-            return new Metadata();
+            // Treat empty or whitespace keywords as no filtering
+            return metadata;
         }
 
-        var metadata = await GetMetadataAsync(cancellationToken).ConfigureAwait(false);
         var searchTerms = keywords.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                                   .Select(term => term.Trim().ToLowerInvariant())
                                   .Where(term => string.IsNullOrWhiteSpace(term) != true)
@@ -42,7 +43,13 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
                                                                    ContainsAnyKeyword(inst.Description, searchTerms) == true)],
 
             // Search in Prompts
-            Prompts = [.. metadata.Prompts.Where(prompt => ContainsAnyKeyword(prompt.Description, searchTerms) == true)]
+            Prompts = [.. metadata.Prompts.Where(prompt => ContainsAnyKeyword(prompt.Description, searchTerms) == true)],
+
+            // Search in Collections
+            Collections = [.. metadata.Collections.Where(c =>
+                ContainsAnyKeyword(c.Name, searchTerms) == true ||
+                ContainsAnyKeyword(c.Description, searchTerms) == true ||
+                (c.Tags is not null && c.Tags.Any(tag => searchTerms.Any(term => tag.Contains(term, StringComparison.InvariantCultureIgnoreCase)))))]
         };
 
         return result;
@@ -77,6 +84,21 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
         {
             throw new InvalidOperationException($"Failed to load file '{filename}' from directory '{directory}': {ex.Message}", ex);
         }
+    }
+
+    /// <inheritdoc />
+    public async Task<Collection?> GetCollectionAsync(string id, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            throw new ArgumentException("Collection id cannot be null or empty", nameof(id));
+        }
+
+        var metadata = await GetMetadataAsync(cancellationToken).ConfigureAwait(false);
+
+        var collection = metadata.Collections.FirstOrDefault(c => string.Equals(c.Id, id, StringComparison.InvariantCultureIgnoreCase));
+
+        return collection;
     }
 
     private async Task<Metadata> GetMetadataAsync(CancellationToken cancellationToken)

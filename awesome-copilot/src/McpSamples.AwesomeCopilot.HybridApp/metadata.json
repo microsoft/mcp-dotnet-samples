@@ -2691,5 +2691,495 @@
         "vscodeAPI"
       ]
     }
+  ],
+  "collections": [
+    {
+      "filename": "azure-cloud-development.collection.yml",
+      "id": "azure-cloud-development",
+      "name": "Azure & Cloud Development",
+      "description": "Comprehensive Azure cloud development tools including Infrastructure as Code, serverless functions, architecture patterns, and cost optimization for building scalable cloud applications.",
+      "tags": [
+        "azure",
+        "cloud",
+        "infrastructure",
+        "bicep",
+        "terraform",
+        "serverless",
+        "architecture",
+        "devops"
+      ],
+      "items": [
+        {
+          "path": "chatmodes/azure-principal-architect.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/azure-saas-architect.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/azure-logic-apps-expert.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/azure-verified-modules-bicep.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/azure-verified-modules-terraform.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "instructions/bicep-code-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/terraform.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/azure-verified-modules-terraform.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/azure-functions-typescript.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/azure-logic-apps-power-automate.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/azure-devops-pipelines.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/containerization-docker-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/kubernetes-deployment-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/azure-resource-health-diagnose.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/az-cost-optimize.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "csharp-dotnet-development.collection.yml",
+      "id": "csharp-dotnet-development",
+      "name": "C# .NET Development",
+      "description": "Essential prompts, instructions, and chat modes for C# and .NET development including testing, documentation, and best practices.",
+      "tags": [
+        "csharp",
+        "dotnet",
+        "aspnet",
+        "testing"
+      ],
+      "items": [
+        {
+          "path": "prompts/csharp-async.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/aspnet-minimal-api-openapi.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "instructions/csharp.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dotnet-architecture-good-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "chatmodes/expert-dotnet-software-engineer.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "prompts/csharp-xunit.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/dotnet-best-practices.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "database-data-management.collection.yml",
+      "id": "database-data-management",
+      "name": "Database & Data Management",
+      "description": "Database administration, SQL optimization, and data management tools for PostgreSQL, SQL Server, and general database development best practices.",
+      "tags": [
+        "database",
+        "sql",
+        "postgresql",
+        "sql-server",
+        "dba",
+        "optimization",
+        "queries",
+        "data-management"
+      ],
+      "items": [
+        {
+          "path": "chatmodes/postgresql-dba.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/ms-sql-dba.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "instructions/ms-sql-dba.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/sql-sp-generation.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/sql-optimization.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/sql-code-review.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/postgresql-optimization.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/postgresql-code-review.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "devops-oncall.collection.yml",
+      "id": "devops-oncall",
+      "name": "DevOps On-Call",
+      "description": "A focused set of prompts, instructions, and a chat mode to help triage incidents and respond quickly with DevOps tools and Azure resources.",
+      "tags": [
+        "devops",
+        "incident-response",
+        "oncall",
+        "azure"
+      ],
+      "items": [
+        {
+          "path": "prompts/azure-resource-health-diagnose.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "instructions/devops-core-principles.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/containerization-docker-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "chatmodes/azure-principal-architect.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "prompts/multi-stage-dockerfile.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "frontend-web-dev.collection.yml",
+      "id": "frontend-web-dev",
+      "name": "Frontend Web Development",
+      "description": "Essential prompts, instructions, and chat modes for modern frontend web development including React, Angular, Vue, TypeScript, and CSS frameworks.",
+      "tags": [
+        "frontend",
+        "web",
+        "react",
+        "typescript",
+        "javascript",
+        "css",
+        "html",
+        "angular",
+        "vue"
+      ],
+      "items": [
+        {
+          "path": "chatmodes/expert-react-frontend-engineer.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/electron-angular-native.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "instructions/reactjs.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/angular.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/vuejs3.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/nextjs.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/nextjs-tailwind.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/tanstack-start-shadcn-tailwind.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/nodejs-javascript-vitest.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/playwright-explore-website.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/playwright-generate-test.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "project-planning.collection.yml",
+      "id": "project-planning",
+      "name": "Project Planning & Management",
+      "description": "Tools and guidance for software project planning, feature breakdown, epic management, implementation planning, and task organization for development teams.",
+      "tags": [
+        "planning",
+        "project-management",
+        "epic",
+        "feature",
+        "implementation",
+        "task",
+        "architecture",
+        "technical-spike"
+      ],
+      "items": [
+        {
+          "path": "chatmodes/task-planner.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/task-researcher.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/planner.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/plan.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/prd.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/implementation-plan.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/research-technical-spike.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "instructions/task-implementation.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/spec-driven-workflow-v1.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/breakdown-feature-implementation.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/breakdown-feature-prd.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/breakdown-epic-arch.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/breakdown-epic-pm.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/create-implementation-plan.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/update-implementation-plan.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/create-github-issues-feature-from-implementation-plan.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/create-technical-spike.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "security-best-practices.collection.yml",
+      "id": "security-best-practices",
+      "name": "Security & Code Quality",
+      "description": "Security frameworks, accessibility guidelines, performance optimization, and code quality best practices for building secure, maintainable, and high-performance applications.",
+      "tags": [
+        "security",
+        "accessibility",
+        "performance",
+        "code-quality",
+        "owasp",
+        "a11y",
+        "optimization",
+        "best-practices"
+      ],
+      "items": [
+        {
+          "path": "instructions/security-and-owasp.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/a11y.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/performance-optimization.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/object-calisthenics.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/self-explanatory-code-commenting.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/ai-prompt-engineering-safety-review.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "technical-spike.collection.yml",
+      "id": "technical-spike",
+      "name": "Technical Spike",
+      "description": "Tools for creation, management and research of technical spikes to reduce unknowns and assumptions before proceeding to specification and implementation of solutions.",
+      "tags": [
+        "technical-spike",
+        "assumption-testing",
+        "validation",
+        "research"
+      ],
+      "items": [
+        {
+          "path": "chatmodes/research-technical-spike.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "prompts/create-technical-spike.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "testing-automation.collection.yml",
+      "id": "testing-automation",
+      "name": "Testing & Test Automation",
+      "description": "Comprehensive collection for writing tests, test automation, and test-driven development including unit tests, integration tests, and end-to-end testing strategies.",
+      "tags": [
+        "testing",
+        "tdd",
+        "automation",
+        "unit-tests",
+        "integration",
+        "playwright",
+        "jest",
+        "nunit"
+      ],
+      "items": [
+        {
+          "path": "chatmodes/tdd-red.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/tdd-green.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/tdd-refactor.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/playwright-tester.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "instructions/playwright-typescript.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/playwright-python.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/playwright-explore-website.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/playwright-generate-test.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/csharp-nunit.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/java-junit.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/ai-prompt-engineering-safety-review.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    }
   ]
 }

@@ -55,4 +55,25 @@ public class MetadataPrompt : IMetadataPrompt
            using the mode and filename, with NO modification.
         """;
     }
+
+    /// <summary>
+    /// Gets a prompt to display details about a specific collection.
+    /// </summary>
+    [McpServerPrompt(Name = "get_collection_prompt", Title = "Prompt for showing a collection")]
+    [Description("Get a prompt to show collection details and items.")]
+    public string GetCollectionPrompt([
+        Description("The collection to display")]
+        string collection)
+    {
+        return $"""
+        Please fetch the collection that matches `{collection}` in the ID, description, or tags from the awesome-copilot MCP server collections endpoint.
+
+        Provide a human-friendly summary that includes:
+        - Collection name and description
+        - Tags
+        - A breakdown of items grouped by kind (chat-mode, instruction, prompt) with filenames
+
+        Do NOT automatically install or save any items. Wait for explicit user confirmation.
+        """;
+    }
 }
