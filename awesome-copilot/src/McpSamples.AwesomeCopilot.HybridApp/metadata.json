@@ -1426,6 +1426,27 @@
       ]
     },
     {
+      "filename": "java-11-to-java-17-upgrade.instructions.md",
+      "applyTo": [
+        "*"
+      ],
+      "description": "Comprehensive best practices for adopting new Java 17 features since the release of Java 11."
+    },
+    {
+      "filename": "java-17-to-java-21-upgrade.instructions.md",
+      "applyTo": [
+        "*"
+      ],
+      "description": "Comprehensive best practices for adopting new Java 21 features since the release of Java 17."
+    },
+    {
+      "filename": "java-21-to-java-25-upgrade.instructions.md",
+      "applyTo": [
+        "*"
+      ],
+      "description": "Comprehensive best practices for adopting new Java 25 features since the release of Java 21."
+    },
+    {
       "filename": "java.instructions.md",
       "description": "Guidelines for building Java base applications",
       "applyTo": [
@@ -2987,6 +3008,71 @@
         },
         {
           "path": "prompts/playwright-generate-test.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "java-development.collection.yml",
+      "id": "java-development",
+      "name": "Java Development",
+      "description": "Comprehensive collection of prompts and instructions for Java development including Spring Boot, Quarkus, testing, documentation, and best practices.",
+      "tags": [
+        "java",
+        "springboot",
+        "quarkus",
+        "jpa",
+        "junit",
+        "javadoc"
+      ],
+      "items": [
+        {
+          "path": "instructions/java.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/springboot.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/quarkus.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/quarkus-mcp-server-sse.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/convert-jpa-to-spring-data-cosmos.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/java-11-to-java-17-upgrade.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/java-17-to-java-21-upgrade.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/java-21-to-java-25-upgrade.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/java-docs.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/java-junit.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/java-springboot.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/create-spring-boot-java-project.prompt.md",
           "kind": "prompt"
         }
       ],
