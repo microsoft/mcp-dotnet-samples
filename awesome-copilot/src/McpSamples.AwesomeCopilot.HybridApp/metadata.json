@@ -249,8 +249,13 @@
       ]
     },
     {
+      "filename": "blueprint-mode-codex.chatmode.md",
+      "model": "GPT-5-Codex (Preview) (copilot)",
+      "description": "Executes structured workflows with strict correctness and maintainability. Enforces a minimal tool usage policy, never assumes facts, prioritizes reproducible solutions, self-correction, and edge-case handling."
+    },
+    {
       "filename": "blueprint-mode.chatmode.md",
-      "model": "GPT-5 mini (copilot)",
+      "model": "GPT-5 (copilot)",
       "description": "Executes structured workflows (Debug, Express, Main, Loop) with strict correctness and maintainability. Enforces an improved tool usage policy, never assumes facts, prioritizes reproducible solutions, self-correction, and edge-case handling."
     },
     {
@@ -1060,6 +1065,35 @@
       ]
     },
     {
+      "filename": "terraform-azure-implement.chatmode.md",
+      "description": "Act as an Azure Terraform Infrastructure as Code coding specialist that creates and reviews Terraform for Azure resources.",
+      "tools": [
+        "editFiles",
+        "search",
+        "runCommands",
+        "fetch",
+        "todos",
+        "azureterraformbestpractices",
+        "documentation",
+        "get_bestpractices",
+        "microsoft-docs"
+      ]
+    },
+    {
+      "filename": "terraform-azure-planning.chatmode.md",
+      "description": "Act as implementation planner for your Azure Terraform Infrastructure as Code task.",
+      "tools": [
+        "editFiles",
+        "fetch",
+        "todos",
+        "azureterraformbestpractices",
+        "cloudarchitect",
+        "documentation",
+        "get_bestpractices",
+        "microsoft-docs"
+      ]
+    },
+    {
       "filename": "voidbeast-gpt41enhanced.chatmode.md",
       "description": "'4.1 voidBeast_GPT41Enhanced 1.0 : a advanced autonomous developer agent, designed for elite full-stack development with enhanced multi-mode capabilities. This latest evolution features sophisticated mode detection, comprehensive research capabilities, and never-ending problem resolution. Plan/Act/Deep Research/Analyzer/Checkpoints(Memory)/Prompt Generator Modes. '",
       "tools": [
@@ -1729,6 +1763,19 @@
         "**"
       ],
       "description": "TaskSync V4 - Allows you to give the agent new instructions or feedback after completing a task using terminal while agent is running."
+    },
+    {
+      "filename": "terraform-azure.instructions.md",
+      "description": "Create or modify solutions built using Terraform on Azure.",
+      "applyTo": [
+        "**/*.terraform",
+        "**/*.tf",
+        "**/*.tfvars",
+        "**/*.tflint.hcl",
+        "**/*.tfstate",
+        "**/*.tf.json",
+        "**/*.tfvars.json"
+      ]
     },
     {
       "filename": "terraform.instructions.md",
@@ -2778,11 +2825,23 @@
           "kind": "chat-mode"
         },
         {
+          "path": "chatmodes/terraform-azure-planning.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/terraform-azure-implement.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
           "path": "instructions/bicep-code-best-practices.instructions.md",
           "kind": "instruction"
         },
         {
           "path": "instructions/terraform.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/terraform-azure.instructions.md",
           "kind": "instruction"
         },
         {
