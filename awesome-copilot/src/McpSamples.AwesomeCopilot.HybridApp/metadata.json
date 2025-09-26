@@ -678,6 +678,11 @@
       ]
     },
     {
+      "filename": "power-platform-expert.chatmode.md",
+      "description": "Power Platform expert providing guidance on Code Apps, canvas apps, Dataverse, connectors, and Power Platform best practices",
+      "model": "GPT-4.1"
+    },
+    {
       "filename": "prd.chatmode.md",
       "description": "Generate a comprehensive Product Requirements Document (PRD) in Markdown, detailing user stories, acceptance criteria, technical considerations, and metrics. Optionally create GitHub issues upon user confirmation.",
       "tools": [
@@ -1624,6 +1629,20 @@
       ]
     },
     {
+      "filename": "power-apps-code-apps.instructions.md",
+      "description": "Power Apps Code Apps development standards and best practices for TypeScript, React, and Power Platform integration",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "jsx}",
+        "**/vite.config.*",
+        "**/package.json",
+        "**/tsconfig.json",
+        "**/power.config.json"
+      ]
+    },
+    {
       "filename": "power-platform-connector.instructions.md",
       "title": "Power Platform Connectors Schema Development Instructions",
       "description": "Comprehensive development guidelines for Power Platform Custom Connectors using JSON Schema definitions. Covers API definitions (Swagger 2.0), API properties, and settings configuration with Microsoft extensions.",
@@ -2495,6 +2514,19 @@
       "tested_with": "GitHub Copilot Chat (GPT-4o) - Validated July 20, 2025"
     },
     {
+      "filename": "power-apps-code-app-scaffold.prompt.md",
+      "description": "Scaffold a complete Power Apps Code App project with PAC CLI setup, SDK integration, and connector configuration",
+      "mode": "agent",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "problems",
+        "search"
+      ],
+      "model": "GPT-4.1"
+    },
+    {
       "filename": "project-workflow-analysis-blueprint-generator.prompt.md",
       "description": "Comprehensive technology-agnostic prompt generator for documenting end-to-end application workflows. Automatically detects project architecture patterns, technology stacks, and data flow patterns to generate detailed implementation blueprints covering entry points, service layers, data access, error handling, and testing approaches across multiple technologies including .NET, Java/Spring, React, and microservices architectures.",
       "mode": "agent"
@@ -3133,6 +3165,36 @@
         {
           "path": "prompts/create-spring-boot-java-project.prompt.md",
           "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "power-apps-code-apps.collection.yml",
+      "id": "power-apps-code-apps",
+      "name": "Power Apps Code Apps Development",
+      "description": "Complete toolkit for Power Apps Code Apps development including project scaffolding, development standards, and expert guidance for building code-first applications with Power Platform integration.",
+      "tags": [
+        "power-apps",
+        "power-platform",
+        "typescript",
+        "react",
+        "code-apps",
+        "dataverse",
+        "connectors"
+      ],
+      "items": [
+        {
+          "path": "prompts/power-apps-code-app-scaffold.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "instructions/power-apps-code-apps.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "chatmodes/power-platform-expert.chatmode.md",
+          "kind": "chat-mode"
         }
       ],
       "display": {}
