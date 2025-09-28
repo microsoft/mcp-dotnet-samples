@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 using Markdig;
+using ReverseMarkdown;
 
 using McpSamples.MarkdownToHtml.HybridApp.Configurations;
 using McpSamples.MarkdownToHtml.HybridApp.Extensions;
@@ -21,6 +22,13 @@ public interface IMarkdownToHtmlTool
     /// <param name="markdown">The markdown text.</param>
     /// <returns>The converted HTML text.</returns>
     Task<string> ConvertAsync(string markdown);
+
+    /// <summary>
+    /// Converts HTML text to markdown.
+    /// </summary>
+    /// <param name="html"></param>
+    /// <returns></returns>
+    Task<string> ReverseConvertAsync(string html);
 }
 
 /// <summary>
@@ -76,5 +84,26 @@ public class MarkdownToHtmlTool(MarkdownToHtmlAppSettings settings, Regex regex,
         }
 
         return await Task.FromResult(html);
+    }
+
+
+    [McpServerTool(Name = "convert_html_to_markdown", Title = "Convert HTML to Markdown")]
+    [Description("Converts HTML text to Markdown.")]
+    public async Task<string> ReverseConvertAsync([Description("The HTML text")] string html)
+    {
+        var converter = new Converter();
+        var markdown = default(string);
+
+        try
+        {
+            markdown = converter.Convert(html);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error converting HTML to Markdown");
+            markdown = $"Error: {ex.Message}";
+        }
+
+        return await Task.FromResult(markdown);
     }
 }
