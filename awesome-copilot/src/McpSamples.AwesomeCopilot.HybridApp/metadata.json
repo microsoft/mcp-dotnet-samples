@@ -366,6 +366,34 @@
       ]
     },
     {
+      "filename": "expert-cpp-software-engineer.chatmode.md",
+      "description": "Provide expert C++ software engineering guidance using modern C++ and industry best practices.",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runNotebooks",
+        "runTasks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "microsoft.docs.mcp"
+      ]
+    },
+    {
       "filename": "expert-dotnet-software-engineer.chatmode.md",
       "description": "Provide expert .NET software engineering guidance using modern software design patterns.",
       "tools": [
@@ -1801,6 +1829,13 @@
       "description": "Terraform Conventions and Guidelines",
       "applyTo": [
         "**/*.tf"
+      ]
+    },
+    {
+      "filename": "typescript-5-es2022.instructions.md",
+      "description": "Guidelines for TypeScript Development targeting TypeScript 5.x and ES2022 output",
+      "applyTo": [
+        "**/*.ts"
       ]
     },
     {
