@@ -2346,6 +2346,21 @@
       "mode": "agent"
     },
     {
+      "filename": "github-copilot-starter.prompt.md",
+      "mode": "agent",
+      "model": "Claude Sonnet 4",
+      "tools": [
+        "edit",
+        "githubRepo",
+        "changes",
+        "problems",
+        "search",
+        "runCommands",
+        "fetch"
+      ],
+      "description": "Set up complete GitHub Copilot configuration for a new project based on technology stack"
+    },
+    {
       "filename": "java-docs.prompt.md",
       "mode": "agent",
       "tools": [
