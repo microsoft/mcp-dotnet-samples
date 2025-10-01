@@ -1300,11 +1300,14 @@
       ]
     },
     {
-      "filename": "clojure-memory.instructions.md",
-      "description": "Things agents tend to forget or get wrong when they are working with Clojure projects.",
+      "filename": "clojure.instructions.md",
+      "description": "Clojure-specific coding patterns, inline def usage, code block templates, and namespace handling for Clojure development.",
       "applyTo": [
-        "**/*.clj*",
-        "**/*.bb"
+        "**/*.{clj",
+        "cljs",
+        "cljc",
+        "bb",
+        "edn.mdx?}"
       ]
     },
     {
@@ -1915,11 +1918,6 @@
       "filename": "breakdown-test.prompt.md",
       "mode": "agent",
       "description": "Test Planning and Quality Assurance prompt that generates comprehensive test strategies, task breakdowns, and quality validation plans for GitHub projects."
-    },
-    {
-      "filename": "clojure-add-to-memory.prompt.md",
-      "description": "Have the agent update the clojure-memory.instructions.md file with mistakes it just made, or lessons learned. Also consider installing the default clojure-memory.instructions.md",
-      "title": "Clojure Memory Updater"
     },
     {
       "filename": "code-exemplars-blueprint-generator.prompt.md",
@@ -2598,7 +2596,7 @@
     },
     {
       "filename": "remember-interactive-programming.prompt.md",
-      "description": "Reminds the agent that it is an interactive programmer. Works great in Clojure when Copilot has access to the REPL (probably via Backseat Driver). Will work with any system that has a live REPL that the agent can use. Adapt the prompt with any specific reminders in your workflow and/or workspace.",
+      "description": "A micro-prompt that reminds the agent that it is an interactive programmer. Works great in Clojure when Copilot has access to the REPL (probably via Backseat Driver). Will work with any system that has a live REPL that the agent can use. Adapt the prompt with any specific reminders in your workflow and/or workspace.",
       "title": "Interactive Programming Nudge"
     },
     {
@@ -2956,6 +2954,32 @@
         },
         {
           "path": "prompts/az-cost-optimize.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "clojure-interactive-programming.collection.yml",
+      "id": "clojure-interactive-programming",
+      "name": "Clojure Interactive Programming",
+      "description": "Tools for REPL-first Clojure workflows featuring Clojure instructions, the interactive programming chat mode and supporting guidance.",
+      "tags": [
+        "clojure",
+        "repl",
+        "interactive-programming"
+      ],
+      "items": [
+        {
+          "path": "instructions/clojure.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "chatmodes/clojure-interactive-programming.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "prompts/remember-interactive-programming.prompt.md",
           "kind": "prompt"
         }
       ],
