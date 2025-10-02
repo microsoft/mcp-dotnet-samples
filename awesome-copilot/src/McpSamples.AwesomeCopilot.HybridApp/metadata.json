@@ -468,6 +468,27 @@
       ]
     },
     {
+      "filename": "hlbpa.chatmode.md",
+      "description": "HLBPA: Your perfect AI chat mode for high-level architectural documentation and review. Perfect for targeted updates after a story or researching that legacy system when nobody remembers what it's supposed to be doing.",
+      "model": "Claude-Sonnet-4",
+      "tools": [
+        "codebase",
+        "changes",
+        "editFiles",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "runCommands",
+        "runTests",
+        "search",
+        "searchResults",
+        "testFailure",
+        "usages",
+        "activePullRequest",
+        "copilotCodingAgent"
+      ]
+    },
+    {
       "filename": "implementation-plan.chatmode.md",
       "description": "Generate an implementation plan for new features or refactoring existing code.",
       "tools": [
@@ -1234,6 +1255,14 @@
       ]
     },
     {
+      "filename": "ansible.instructions.md",
+      "description": "Ansible conventions and best practices",
+      "applyTo": [
+        "**/*.yaml",
+        "**/*.yml"
+      ]
+    },
+    {
       "filename": "aspnet-rest-apis.instructions.md",
       "description": "Guidelines for building REST APIs with ASP.NET",
       "applyTo": [
@@ -1850,6 +1879,23 @@
         "**/*.js",
         "**/*.scss"
       ]
+    },
+    {
+      "filename": "wordpress.instructions.md",
+      "applyTo": [
+        "wp-content/plugins/**",
+        "wp-content/themes/**",
+        "**/*.php",
+        "**/*.inc",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.css",
+        "**/*.scss",
+        "**/*.json"
+      ],
+      "description": "Coding, security, and testing rules for WordPress plugins and themes"
     }
   ],
   "prompts": [
