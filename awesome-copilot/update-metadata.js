@@ -323,6 +323,56 @@ function parseCollectionYaml(yamlContent) {
                 }
                 currentKey = null;
                 currentValue = "";
+            } else if (currentValue === "|") {
+                // Handle literal block scalar at root level
+                let blockContent = [];
+                let blockIndent = null;
+                let j = i + 1;
+
+                // Collect all lines that are part of the literal block
+                while (j < lines.length) {
+                    const blockLine = lines[j];
+                    const blockLineIndent = getIndentLevel(blockLine);
+                    const blockTrimmed = blockLine.trim();
+
+                    // If we hit an empty line, include it in the block
+                    if (!blockTrimmed) {
+                        blockContent.push("");
+                        j++;
+                        continue;
+                    }
+
+                    // If we hit a comment, skip it
+                    if (blockTrimmed.startsWith("#")) {
+                        j++;
+                        continue;
+                    }
+
+                    // If this is the first content line, establish the block indentation
+                    if (blockIndent === null) {
+                        blockIndent = blockLineIndent;
+                    }
+
+                    // If the line is properly indented for this block, include it
+                    if (
+                        blockLineIndent >= blockIndent &&
+                        blockLineIndent > lineIndent
+                    ) {
+                        // Remove the base indentation from the content
+                        const contentLine = blockLine.substring(blockIndent);
+                        blockContent.push(contentLine);
+                        j++;
+                    } else {
+                        // We've reached the end of this block
+                        break;
+                    }
+                }
+
+                // Join the block content with newlines
+                result[currentKey] = blockContent.join("\n").trimRight();
+                currentKey = null;
+                currentValue = "";
+                i = j - 1; // Skip the processed lines
             } else {
                 // Regular value
                 result[currentKey] = parseValue(currentValue);
@@ -365,10 +415,65 @@ function parseCollectionYaml(yamlContent) {
                         const nextKey = nextTrimmed
                             .substring(0, nextColonIdx)
                             .trim();
-                        const nextValue = nextTrimmed
+                        let nextValue = nextTrimmed
                             .substring(nextColonIdx + 1)
                             .trim();
-                        currentObject[nextKey] = parseValue(nextValue);
+
+                        // Handle literal block scalar (|)
+                        if (nextValue === "|") {
+                            let blockContent = [];
+                            let blockIndent = null;
+                            let k = j + 1;
+
+                            // Collect all lines that are part of the literal block
+                            while (k < lines.length) {
+                                const blockLine = lines[k];
+                                const blockLineIndent =
+                                    getIndentLevel(blockLine);
+                                const blockTrimmed = blockLine.trim();
+
+                                // If we hit an empty line, include it in the block
+                                if (!blockTrimmed) {
+                                    blockContent.push("");
+                                    k++;
+                                    continue;
+                                }
+
+                                // If we hit a comment, skip it
+                                if (blockTrimmed.startsWith("#")) {
+                                    k++;
+                                    continue;
+                                }
+
+                                // If this is the first content line, establish the block indentation
+                                if (blockIndent === null) {
+                                    blockIndent = blockLineIndent;
+                                }
+
+                                // If the line is properly indented for this block, include it
+                                if (
+                                    blockLineIndent >= blockIndent &&
+                                    blockLineIndent > nextIndent
+                                ) {
+                                    // Remove the base indentation from the content
+                                    const contentLine =
+                                        blockLine.substring(blockIndent);
+                                    blockContent.push(contentLine);
+                                    k++;
+                                } else {
+                                    // We've reached the end of this block
+                                    break;
+                                }
+                            }
+
+                            // Join the block content with newlines
+                            nextValue = blockContent.join("\n").trimRight();
+                            j = k - 1; // Set j to the last processed line
+                        } else {
+                            nextValue = parseValue(nextValue);
+                        }
+
+                        currentObject[nextKey] = nextValue;
                         i = j; // Skip this line in the main loop
                         j++;
                     } else {
