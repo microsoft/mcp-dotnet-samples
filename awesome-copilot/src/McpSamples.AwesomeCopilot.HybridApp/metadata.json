@@ -732,6 +732,11 @@
       "model": "GPT-4.1"
     },
     {
+      "filename": "power-platform-mcp-integration-expert.chatmode.md",
+      "description": "Expert in Power Platform custom connector development with MCP integration for Copilot Studio - comprehensive knowledge of schemas, protocols, and integration patterns",
+      "model": "GPT-4.1"
+    },
+    {
       "filename": "prd.chatmode.md",
       "description": "Generate a comprehensive Product Requirements Document (PRD) in Markdown, detailing user stories, acceptance criteria, technical considerations, and metrics. Optionally create GitHub issues upon user confirmation.",
       "tools": [
@@ -1730,6 +1735,15 @@
       ]
     },
     {
+      "filename": "power-platform-mcp-development.instructions.md",
+      "description": "Instructions for developing Power Platform custom connectors with Model Context Protocol (MCP) integration for Microsoft Copilot Studio",
+      "applyTo": [
+        "**/*.{json",
+        "csx",
+        "md}"
+      ]
+    },
+    {
       "filename": "powershell-pester-5.instructions.md",
       "applyTo": [
         "**/*.Tests.ps1"
@@ -2458,6 +2472,12 @@
       "description": "Get best practices for JUnit 5 unit testing, including data-driven tests"
     },
     {
+      "filename": "java-refactoring-extract-method.prompt.md",
+      "title": "Refactoring Java Methods with Extract Method",
+      "mode": "agent",
+      "description": "Refactoring using Extract Methods in Java Language"
+    },
+    {
       "filename": "java-springboot.prompt.md",
       "mode": "agent",
       "tools": [
@@ -2485,6 +2505,15 @@
         "search"
       ],
       "description": "Get best practices for developing applications with Spring Boot and Kotlin."
+    },
+    {
+      "filename": "mcp-copilot-studio-server-generator.prompt.md",
+      "description": "Generate a complete MCP server implementation optimized for Copilot Studio integration with proper schema constraints and streamable HTTP support",
+      "mode": "agent"
+    },
+    {
+      "filename": "memory-merger.prompt.md",
+      "description": "Merges mature lessons from a domain memory file into its instruction file. Syntax: `/memory-merger >domain [scope]` where scope is `global` (default), `user`, `workspace`, or `ws`."
     },
     {
       "filename": "mkdocs-translations.prompt.md",
@@ -2651,6 +2680,11 @@
       "model": "GPT-4.1"
     },
     {
+      "filename": "power-platform-mcp-connector-suite.prompt.md",
+      "description": "Generate complete Power Platform custom connector with MCP integration for Copilot Studio - includes schema generation, troubleshooting, and validation",
+      "mode": "agent"
+    },
+    {
       "filename": "project-workflow-analysis-blueprint-generator.prompt.md",
       "description": "Comprehensive technology-agnostic prompt generator for documenting end-to-end application workflows. Automatically detects project architecture patterns, technology stacks, and data flow patterns to generate detailed implementation blueprints covering entry points, service layers, data access, error handling, and testing approaches across multiple technologies including .NET, Java/Spring, React, and microservices architectures.",
       "mode": "agent"
@@ -2677,7 +2711,7 @@
     },
     {
       "filename": "remember.prompt.md",
-      "description": "Contemplates repeated mistakes and success patterns, and transforms lessons learned into domain-organized Copilot instructions. Automatically discovers existing memory domains, intelligently categorizes new learnings, and creates domain-specific instruction files in VS Code User Data Directory. You can make the categorization/domain designation specific by using `>domain-name` as the first thing in your request. Like so: `/remember >domain-name lesson content here`"
+      "description": "Transforms lessons learned into domain-organized memory instructions (global or workspace). Syntax: `/remember [>domain [scope]] lesson clue` where scope is `global` (default), `user`, `workspace`, or `ws`."
     },
     {
       "filename": "repo-story-time.prompt.md",
@@ -3375,6 +3409,38 @@
         },
         {
           "path": "chatmodes/power-platform-expert.chatmode.md",
+          "kind": "chat-mode"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "power-platform-mcp-connector-development.collection.yml",
+      "id": "power-platform-mcp-connector-development",
+      "name": "Power Platform MCP Connector Development",
+      "description": "Complete toolkit for developing Power Platform custom connectors with Model Context Protocol integration for Microsoft Copilot Studio",
+      "tags": [
+        "power-platform",
+        "mcp",
+        "copilot-studio",
+        "custom-connector",
+        "json-rpc"
+      ],
+      "items": [
+        {
+          "path": "instructions/power-platform-mcp-development.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/power-platform-mcp-connector-suite.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/mcp-copilot-studio-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/power-platform-mcp-integration-expert.chatmode.md",
           "kind": "chat-mode"
         }
       ],
