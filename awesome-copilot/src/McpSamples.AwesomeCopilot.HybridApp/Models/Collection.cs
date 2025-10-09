@@ -33,4 +33,7 @@ public class Collection
 
     [JsonPropertyName("display")]
     public Dictionary<string, object>? Display { get; set; }
+
+    [JsonPropertyName("usage")]
+    public string? Usage { get; set; }
 }
