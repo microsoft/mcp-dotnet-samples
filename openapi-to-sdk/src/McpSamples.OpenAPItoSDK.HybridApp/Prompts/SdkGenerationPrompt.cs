@@ -10,18 +10,18 @@ public interface ISdkGenerationPrompt
     /// <summary>
     /// Gets a prompt for generating an SDK from an OpenAPI specification, including parsing Kiota options.
     /// </summary>
-    /// <param name="openApi">The location of the OpenAPI description.</param>
+    /// <param name="openApiDocUrl">The location of the OpenAPI description.</param>
     /// <param name="language">The target language for the SDK.</param>
     /// <param name="additionalOptions">Additional user-provided options for Kiota.</param>
     /// <returns>A formatted prompt for SDK generation with parsing instructions.</returns>
-    string GetSdkGenerationPrompt(string openApi, string language, string? additionalOptions = null);
+    string GetSdkGenerationPrompt(string openApiDocUrl, string language, string? additionalOptions = null);
 
     /// <summary>
     /// Gets a prompt for validating an OpenAPI specification.
     /// </summary>
-    /// <param name="openApi">The URL of the OpenAPI specification.</param>
+    /// <param name="openApiDocUrl">The URL of the OpenAPI specification.</param>
     /// <returns>A formatted prompt for validating the OpenAPI spec.</returns>
-    string GetValidationPrompt(string openApi);
+    string GetValidationPrompt(string openApiDocUrl);
 }
 
 /// <summary>
@@ -34,14 +34,14 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
     [McpServerPrompt(Name = "generate_sdk_with_parsing", Title = "Generate SDK from OpenAPI Spec with Kiota Parsing")]
     [Description("Provides a structured prompt for parsing Kiota options and generating an SDK.")]
     public string GetSdkGenerationPrompt(
-        [Description("The Location of the OpenAPI description.")] string openApi,
+        [Description("The Location of the OpenAPI description.")] string openApiDocUrl,
         [Description("The target language for the SDK.")] string language,
         [Description("Additional options for Kiota (e.g., '--namespace-name MyNamespace').")] string? additionalOptions = null)
     {
         return $"""
             Generate an SDK from the provided OpenAPI specification using Kiota.
 
-            OpenAPI Location: {openApi}
+            OpenAPI Location: {openApiDocUrl}
             Language: {language}
             Additional Options: {additionalOptions ?? "None"}
 
@@ -58,12 +58,12 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
     [McpServerPrompt(Name = "validate_openapi_spec", Title = "Validate OpenAPI Specification")]
     [Description("Provides a structured prompt for validating an OpenAPI specification before SDK generation.")]
     public string GetValidationPrompt(
-        [Description("The OpenAPI specification URL.")] string openApi)
+        [Description("The OpenAPI specification URL.")] string openApiDocUrl)
     {
         return $"""
             Validate the provided OpenAPI specification.
 
-            OpenAPI Location: {openApi}
+            OpenAPI Location: {openApiDocUrl}
 
             Instructions:
             - Download and parse the OpenAPI spec.
