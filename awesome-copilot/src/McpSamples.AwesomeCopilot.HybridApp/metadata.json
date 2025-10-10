@@ -1944,6 +1944,16 @@
   ],
   "prompts": [
     {
+      "filename": "add-educational-comments.prompt.md",
+      "mode": "agent",
+      "description": "Add educational comments to the file specified, or prompt asking for file to comment if one is not provided.",
+      "tools": [
+        "edit/editFiles",
+        "fetch",
+        "todos"
+      ]
+    },
+    {
       "filename": "ai-prompt-engineering-safety-review.prompt.md",
       "description": "Comprehensive AI prompt engineering safety review and improvement prompt. Analyzes prompts for safety, bias, security vulnerabilities, and effectiveness while providing detailed improvement recommendations with extensive frameworks, testing methodologies, and educational content.",
       "mode": "agent"
