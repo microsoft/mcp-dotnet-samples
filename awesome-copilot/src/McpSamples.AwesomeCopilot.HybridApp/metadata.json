@@ -1541,6 +1541,13 @@
       ]
     },
     {
+      "filename": "instructions.instructions.md",
+      "description": "Guidelines for creating high-quality custom instruction files for GitHub Copilot",
+      "applyTo": [
+        "**/*.instructions.md"
+      ]
+    },
+    {
       "filename": "java-11-to-java-17-upgrade.instructions.md",
       "applyTo": [
         "*"
