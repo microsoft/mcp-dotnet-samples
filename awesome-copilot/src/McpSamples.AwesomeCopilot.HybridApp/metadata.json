@@ -1766,6 +1766,13 @@
       "description": "PowerShell cmdlet and scripting best practices based on Microsoft guidelines"
     },
     {
+      "filename": "prompt.instructions.md",
+      "description": "Guidelines for creating high-quality prompt files for GitHub Copilot",
+      "applyTo": [
+        "**/*.prompt.md"
+      ]
+    },
+    {
       "filename": "python.instructions.md",
       "description": "Python coding conventions and guidelines",
       "applyTo": [
