@@ -1,4 +1,4 @@
-using DocumentFormat.OpenXml.Packaging;
+using ShapeCrawler;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
 
@@ -33,14 +33,14 @@ public class PPTFontFixService(ILogger<PPTFontFixService> logger) : IPPTFontFixS
 
         try
         {
-            var presentationDocument = PresentationDocument.Open(filePath, false);
-            await Task.CompletedTask;
+            var presentation = new Presentation(filePath);
+            logger.LogInformation("PPT file opened successfully and verified by ShapeCrawler: {FilePath}", filePath);
 
-            logger.LogInformation("PPT file opened successfully: {FilePath}", filePath);
+            await Task.CompletedTask;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to open PPT file: {FilePath}", filePath);
+            logger.LogError(ex, "Failed to open PPT file with ShapeCrawler: {FilePath}", filePath);
             throw;
         }
     }
