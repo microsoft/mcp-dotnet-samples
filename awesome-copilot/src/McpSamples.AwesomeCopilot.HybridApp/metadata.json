@@ -468,6 +468,31 @@
       ]
     },
     {
+      "filename": "gpt-5-beast-mode.chatmode.md",
+      "description": "Beast Mode 2.0: A powerful autonomous agent tuned specifically for GPT-5 that can solve complex problems by using tools, conducting research, and iterating until the problem is fully resolved.",
+      "model": "GPT-5 (copilot)",
+      "tools": [
+        "edit/editFiles",
+        "runNotebooks",
+        "search",
+        "new",
+        "runCommands",
+        "runTasks",
+        "extensions",
+        "usages",
+        "vscodeAPI",
+        "think",
+        "problems",
+        "changes",
+        "testFailure",
+        "openSimpleBrowser",
+        "fetch",
+        "githubRepo",
+        "todos"
+      ],
+      "title": "'GPT 5 Beast Mode"
+    },
+    {
       "filename": "hlbpa.chatmode.md",
       "description": "Your perfect AI chat mode for high-level architectural documentation and review. Perfect for targeted updates after a story or researching that legacy system when nobody remembers what it's supposed to be doing.",
       "model": "claude-sonnet-4",
@@ -724,6 +749,118 @@
         "pgsql_open_script",
         "pgsql_query",
         "pgsql_visualizeSchema"
+      ]
+    },
+    {
+      "filename": "power-bi-data-modeling-expert.chatmode.md",
+      "description": "Expert Power BI data modeling guidance using star schema principles, relationship design, and Microsoft best practices for optimal model performance and usability.",
+      "model": "gpt-4.1",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runTasks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "microsoft.docs.mcp"
+      ]
+    },
+    {
+      "filename": "power-bi-dax-expert.chatmode.md",
+      "description": "Expert Power BI DAX guidance using Microsoft best practices for performance, readability, and maintainability of DAX formulas and calculations.",
+      "model": "gpt-4.1",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runTasks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "microsoft.docs.mcp"
+      ]
+    },
+    {
+      "filename": "power-bi-performance-expert.chatmode.md",
+      "description": "Expert Power BI performance optimization guidance for troubleshooting, monitoring, and improving the performance of Power BI models, reports, and queries.",
+      "model": "gpt-4.1",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runTasks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "microsoft.docs.mcp"
+      ]
+    },
+    {
+      "filename": "power-bi-visualization-expert.chatmode.md",
+      "description": "Expert Power BI report design and visualization guidance using Microsoft best practices for creating effective, performant, and user-friendly reports and dashboards.",
+      "model": "gpt-4.1",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runTasks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "microsoft.docs.mcp"
       ]
     },
     {
@@ -1625,6 +1762,13 @@
       "description": "No description provided"
     },
     {
+      "filename": "mongo-dba.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "Instructions for customizing GitHub Copilot behavior for MONGODB DBA chat mode."
+    },
+    {
       "filename": "ms-sql-dba.instructions.md",
       "applyTo": [
         "**"
@@ -1730,6 +1874,74 @@
         "**/package.json",
         "**/tsconfig.json",
         "**/power.config.json"
+      ]
+    },
+    {
+      "filename": "power-bi-custom-visuals-development.instructions.md",
+      "description": "Comprehensive Power BI custom visuals development guide covering React, D3.js integration, TypeScript patterns, testing frameworks, and advanced visualization techniques.",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "jsx",
+        "json",
+        "less",
+        "css}"
+      ]
+    },
+    {
+      "filename": "power-bi-data-modeling-best-practices.instructions.md",
+      "description": "Comprehensive Power BI data modeling best practices based on Microsoft guidance for creating efficient, scalable, and maintainable semantic models using star schema principles.",
+      "applyTo": [
+        "**/*.{pbix",
+        "md",
+        "json",
+        "txt}"
+      ]
+    },
+    {
+      "filename": "power-bi-dax-best-practices.instructions.md",
+      "description": "Comprehensive Power BI DAX best practices and patterns based on Microsoft guidance for creating efficient, maintainable, and performant DAX formulas.",
+      "applyTo": [
+        "**/*.{pbix",
+        "dax",
+        "md",
+        "txt}"
+      ]
+    },
+    {
+      "filename": "power-bi-devops-alm-best-practices.instructions.md",
+      "description": "Comprehensive guide for Power BI DevOps, Application Lifecycle Management (ALM), CI/CD pipelines, deployment automation, and version control best practices.",
+      "applyTo": [
+        "**/*.{yml",
+        "yaml",
+        "ps1",
+        "json",
+        "pbix",
+        "pbir}"
+      ]
+    },
+    {
+      "filename": "power-bi-report-design-best-practices.instructions.md",
+      "description": "Comprehensive Power BI report design and visualization best practices based on Microsoft guidance for creating effective, accessible, and performant reports and dashboards.",
+      "applyTo": [
+        "**/*.{pbix",
+        "md",
+        "json",
+        "txt}"
+      ]
+    },
+    {
+      "filename": "power-bi-security-rls-best-practices.instructions.md",
+      "description": "Comprehensive Power BI Row-Level Security (RLS) and advanced security patterns implementation guide with dynamic security, best practices, and governance strategies.",
+      "applyTo": [
+        "**/*.{pbix",
+        "dax",
+        "md",
+        "txt",
+        "json",
+        "csharp",
+        "powershell}"
       ]
     },
     {
@@ -2712,6 +2924,42 @@
       "model": "GPT-4.1"
     },
     {
+      "filename": "power-bi-dax-optimization.prompt.md",
+      "mode": "agent",
+      "description": "Comprehensive Power BI DAX formula optimization prompt for improving performance, readability, and maintainability of DAX calculations.",
+      "model": "gpt-4.1",
+      "tools": [
+        "microsoft.docs.mcp"
+      ]
+    },
+    {
+      "filename": "power-bi-model-design-review.prompt.md",
+      "mode": "agent",
+      "description": "Comprehensive Power BI data model design review prompt for evaluating model architecture, relationships, and optimization opportunities.",
+      "model": "gpt-4.1",
+      "tools": [
+        "microsoft.docs.mcp"
+      ]
+    },
+    {
+      "filename": "power-bi-performance-troubleshooting.prompt.md",
+      "mode": "agent",
+      "description": "Systematic Power BI performance troubleshooting prompt for identifying, diagnosing, and resolving performance issues in Power BI models, reports, and queries.",
+      "model": "gpt-4.1",
+      "tools": [
+        "microsoft.docs.mcp"
+      ]
+    },
+    {
+      "filename": "power-bi-report-design-consultation.prompt.md",
+      "mode": "agent",
+      "description": "Power BI report visualization design prompt for creating effective, user-friendly, and accessible reports with optimal chart selection and layout design.",
+      "model": "gpt-4.1",
+      "tools": [
+        "microsoft.docs.mcp"
+      ]
+    },
+    {
       "filename": "power-platform-mcp-connector-suite.prompt.md",
       "description": "Generate complete Power Platform custom connector with MCP integration for Copilot Studio - includes schema generation, troubleshooting, and validation",
       "mode": "agent"
@@ -3452,6 +3700,81 @@
         {
           "path": "chatmodes/power-platform-expert.chatmode.md",
           "kind": "chat-mode"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "power-bi-development.collection.yml",
+      "id": "power-bi-development",
+      "name": "Power BI Development",
+      "description": "Comprehensive Power BI development resources including data modeling, DAX optimization, performance tuning, visualization design, security best practices, and DevOps/ALM guidance for building enterprise-grade Power BI solutions.",
+      "tags": [
+        "power-bi",
+        "dax",
+        "data-modeling",
+        "performance",
+        "visualization",
+        "security",
+        "devops",
+        "business-intelligence"
+      ],
+      "items": [
+        {
+          "path": "chatmodes/power-bi-data-modeling-expert.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/power-bi-dax-expert.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/power-bi-performance-expert.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "chatmodes/power-bi-visualization-expert.chatmode.md",
+          "kind": "chat-mode"
+        },
+        {
+          "path": "instructions/power-bi-custom-visuals-development.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/power-bi-data-modeling-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/power-bi-dax-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/power-bi-devops-alm-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/power-bi-report-design-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/power-bi-security-rls-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/power-bi-dax-optimization.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/power-bi-model-design-review.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/power-bi-performance-troubleshooting.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/power-bi-report-design-consultation.prompt.md",
+          "kind": "prompt"
         }
       ],
       "display": {}
