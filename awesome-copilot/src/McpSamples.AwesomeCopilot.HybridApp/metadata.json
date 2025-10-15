@@ -2430,6 +2430,14 @@
       "description": "Get best practices for Entity Framework Core"
     },
     {
+      "filename": "finalize-agent-prompt.prompt.md",
+      "mode": "agent",
+      "description": "Finalize prompt file using the role of an AI agent to polish the prompt for the end user.",
+      "tools": [
+        "edit/editFiles"
+      ]
+    },
+    {
       "filename": "first-ask.prompt.md",
       "description": "Interactive, input-tool powered, task refinement workflow: interrogates scope, deliverables, constraints before carrying out the task; Requires the Joyride extension."
     },
@@ -2758,6 +2766,16 @@
       "filename": "review-and-refactor.prompt.md",
       "mode": "agent",
       "description": "Review and refactor code in your project according to defined instructions"
+    },
+    {
+      "filename": "shuffle-json-data.prompt.md",
+      "mode": "agent",
+      "description": "Shuffle repetitive JSON objects safely by validating schema consistency before randomising entries.",
+      "tools": [
+        "edit/editFiles",
+        "runInTerminal",
+        "pylanceRunCodeSnippet"
+      ]
     },
     {
       "filename": "sql-code-review.prompt.md",
