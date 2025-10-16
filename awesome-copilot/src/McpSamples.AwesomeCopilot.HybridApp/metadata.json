@@ -23,7 +23,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -90,7 +90,7 @@
       "tools": [
         "codebase",
         "changes",
-        "editFiles",
+        "edit/editFiles",
         "search",
         "runCommands",
         "microsoft.docs.mcp",
@@ -104,7 +104,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -136,7 +136,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -168,7 +168,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -197,7 +197,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -224,7 +224,7 @@
       "filename": "bicep-implement.chatmode.md",
       "description": "Act as an Azure Bicep Infrastructure as Code coding specialist that creates Bicep templates.",
       "tools": [
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "runCommands",
         "terminalLastCommand",
@@ -237,7 +237,7 @@
       "filename": "bicep-plan.chatmode.md",
       "description": "Act as implementation planner for your Azure Bicep Infrastructure as Code task.",
       "tools": [
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "microsoft-docs",
         "azure_design_architecture",
@@ -289,7 +289,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -315,7 +315,7 @@
       "filename": "debug.chatmode.md",
       "description": "Debug your application to find and fix a bug",
       "tools": [
-        "editFiles",
+        "edit/editFiles",
         "search",
         "runCommands",
         "usages",
@@ -371,7 +371,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -399,7 +399,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -427,7 +427,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -499,7 +499,7 @@
       "tools": [
         "codebase",
         "changes",
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "findTestFiles",
         "githubRepo",
@@ -532,7 +532,7 @@
         "searchResults",
         "githubRepo",
         "extensions",
-        "editFiles",
+        "edit/editFiles",
         "runNotebooks",
         "search",
         "new",
@@ -546,7 +546,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -612,7 +612,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -652,7 +652,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "new",
         "openSimpleBrowser",
         "problems",
@@ -666,7 +666,7 @@
       "description": "Work with Microsoft SQL Server databases using the MS SQL extension.",
       "tools": [
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "githubRepo",
         "extensions",
         "runCommands",
@@ -713,7 +713,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "findTestFiles",
         "problems",
@@ -734,7 +734,7 @@
       "description": "Work with PostgreSQL databases using the PostgreSQL extension.",
       "tools": [
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "githubRepo",
         "extensions",
         "runCommands",
@@ -878,7 +878,7 @@
       "description": "Generate a comprehensive Product Requirements Document (PRD) in Markdown, detailing user stories, acceptance criteria, technical considerations, and metrics. Optionally create GitHub issues upon user confirmation.",
       "tools": [
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "findTestFiles",
         "list_issues",
@@ -897,7 +897,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -923,7 +923,7 @@
       "description": "Expert prompt engineering and validation system for creating high-quality prompts - Brought to you by microsoft/edge-ai",
       "tools": [
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "githubRepo",
         "problems",
@@ -994,7 +994,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1023,7 +1023,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1073,7 +1073,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1100,7 +1100,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1128,7 +1128,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1158,7 +1158,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1188,7 +1188,7 @@
       "tools": [
         "github",
         "findTestFiles",
-        "editFiles",
+        "edit/editFiles",
         "runTests",
         "runCommands",
         "codebase",
@@ -1205,7 +1205,7 @@
       "tools": [
         "github",
         "findTestFiles",
-        "editFiles",
+        "edit/editFiles",
         "runTests",
         "runCommands",
         "codebase",
@@ -1222,7 +1222,7 @@
       "tools": [
         "github",
         "findTestFiles",
-        "editFiles",
+        "edit/editFiles",
         "runTests",
         "runCommands",
         "codebase",
@@ -1239,7 +1239,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1264,7 +1264,7 @@
       "filename": "terraform-azure-implement.chatmode.md",
       "description": "Act as an Azure Terraform Infrastructure as Code coding specialist that creates and reviews Terraform for Azure resources.",
       "tools": [
-        "editFiles",
+        "edit/editFiles",
         "search",
         "runCommands",
         "fetch",
@@ -1279,7 +1279,7 @@
       "filename": "terraform-azure-planning.chatmode.md",
       "description": "Act as implementation planner for your Azure Terraform Infrastructure as Code task.",
       "tools": [
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "todos",
         "azureterraformbestpractices",
@@ -1295,7 +1295,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1324,7 +1324,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -1350,7 +1350,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -2195,7 +2195,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems"
       ],
       "description": "Create ASP.NET Minimal API endpoints with proper OpenAPI documentation"
@@ -2260,7 +2260,7 @@
       "mode": "agent",
       "tools": [
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "terminalCommand"
       ],
       "description": "Containerize an ASP.NET .NET Framework project by creating Dockerfile and .dockerfile files customized for the project."
@@ -2270,7 +2270,7 @@
       "mode": "agent",
       "tools": [
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "terminalCommand"
       ],
       "description": "Containerize an ASP.NET Core project by creating Dockerfile and .dockerfile files customized for the project."
@@ -2298,7 +2298,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
@@ -2321,7 +2321,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -2405,7 +2405,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
@@ -2428,7 +2428,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
@@ -2451,7 +2451,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
@@ -2479,7 +2479,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
@@ -2535,7 +2535,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems"
       ],
       "description": "Get best practices for C# async programming"
@@ -2546,7 +2546,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems"
       ],
       "description": "Ensure that C# types are documented with XML comments and follow best practices for documentation."
@@ -2557,7 +2557,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "search"
       ],
@@ -2569,7 +2569,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "search"
       ],
@@ -2581,7 +2581,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "search"
       ],
@@ -2593,7 +2593,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "search"
       ],
@@ -2607,7 +2607,7 @@
       "filename": "documentation-writer.prompt.md",
       "mode": "agent",
       "tools": [
-        "editFiles",
+        "edit/editFiles",
         "search",
         "fetch"
       ],
@@ -2635,7 +2635,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "runCommands"
       ],
@@ -2698,7 +2698,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems"
       ],
       "description": "Ensure that Java types are documented with Javadoc comments and follow best practices for documentation."
@@ -2709,7 +2709,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "search"
       ],
@@ -2727,7 +2727,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "search"
       ],
@@ -2744,7 +2744,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "search"
       ],
@@ -2772,7 +2772,7 @@
         "terminalLastCommand",
         "searchResults",
         "extensions",
-        "editFiles",
+        "edit/editFiles",
         "search",
         "runCommands",
         "runTasks"
@@ -2824,7 +2824,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "findTestFiles",
         "search",
         "writeTest"
@@ -2847,7 +2847,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "findTestFiles",
         "problems",
@@ -2870,7 +2870,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "fetch",
         "findTestFiles",
         "problems",
@@ -2892,7 +2892,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems"
       ],
       "description": "PostgreSQL-specific code review assistant focusing on PostgreSQL best practices, anti-patterns, and unique quality standards. Covers JSONB operations, array usage, custom types, schema design, function optimization, and PostgreSQL-exclusive security features like Row Level Security (RLS).",
@@ -2904,7 +2904,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems"
       ],
       "description": "PostgreSQL-specific development assistant focusing on unique PostgreSQL features, advanced data types, and PostgreSQL-exclusive capabilities. Covers JSONB operations, array types, custom types, range/geometric types, full-text search, window functions, and PostgreSQL extensions ecosystem.",
@@ -2917,7 +2917,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems",
         "search"
       ],
@@ -2974,7 +2974,7 @@
       "mode": "agent",
       "tools": [
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "search"
       ],
       "description": "Guide users through creating high-quality GitHub Copilot prompts with proper structure, tools, and best practices."
@@ -3000,7 +3000,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "githubRepo",
         "runCommands",
         "runTasks",
@@ -3031,7 +3031,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems"
       ],
       "description": "Universal SQL code review assistant that performs comprehensive security, maintainability, and code quality analysis across all SQL databases (MySQL, PostgreSQL, SQL Server, Oracle). Focuses on SQL injection prevention, access control, code standards, and anti-pattern detection. Complements SQL optimization prompt for complete development coverage.",
@@ -3043,7 +3043,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "problems"
       ],
       "description": "Universal SQL performance optimization assistant for comprehensive query tuning, indexing strategies, and database performance analysis across all SQL databases (MySQL, PostgreSQL, SQL Server, Oracle). Provides execution plan analysis, pagination optimization, batch operations, and performance monitoring guidance.",
@@ -3141,7 +3141,7 @@
         "fetch",
         "searchResults",
         "todos",
-        "editFiles",
+        "edit/editFiles",
         "search",
         "runCommands",
         "bicepschema",
@@ -3155,7 +3155,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
@@ -3178,7 +3178,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
@@ -3201,7 +3201,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "findTestFiles",
@@ -3227,7 +3227,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
@@ -3250,7 +3250,7 @@
       "tools": [
         "changes",
         "codebase",
-        "editFiles",
+        "edit/editFiles",
         "extensions",
         "fetch",
         "githubRepo",
