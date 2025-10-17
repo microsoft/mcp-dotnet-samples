@@ -312,6 +312,11 @@
       ]
     },
     {
+      "filename": "csharp-mcp-expert.chatmode.md",
+      "description": "Expert assistant for developing Model Context Protocol (MCP) servers in C#",
+      "model": "GPT-4.1"
+    },
+    {
       "filename": "debug.chatmode.md",
       "description": "Debug your application to find and fix a bug",
       "tools": [
@@ -468,6 +473,11 @@
       ]
     },
     {
+      "filename": "go-mcp-expert.chatmode.md",
+      "model": "GPT-4.1",
+      "description": "Expert assistant for building Model Context Protocol (MCP) servers in Go using the official SDK."
+    },
+    {
       "filename": "gpt-5-beast-mode.chatmode.md",
       "description": "Beast Mode 2.0: A powerful autonomous agent tuned specifically for GPT-5 that can solve complex problems by using tools, conducting research, and iterating until the problem is fully resolved.",
       "model": "GPT-5 (copilot)",
@@ -567,6 +577,16 @@
         "microsoft.docs.mcp",
         "github"
       ]
+    },
+    {
+      "filename": "java-mcp-expert.chatmode.md",
+      "description": "Expert assistance for building Model Context Protocol servers in Java using reactive streams, the official MCP Java SDK, and Spring Boot integration.",
+      "model": "GPT-4.1"
+    },
+    {
+      "filename": "kotlin-mcp-expert.chatmode.md",
+      "model": "GPT-4.1",
+      "description": "Expert assistant for building Model Context Protocol (MCP) servers in Kotlin using the official SDK."
     },
     {
       "filename": "kusto-assistant.chatmode.md",
@@ -943,6 +963,11 @@
       "description": "A specialized chat mode for analyzing and improving prompts. Every user input is treated as a propt to be improved. It first provides a detailed analysis of the original prompt within a <reasoning> tag, evaluating it against a systematic framework based on OpenAI's prompt engineering best practices. Following the analysis, it generates a new, improved prompt."
     },
     {
+      "filename": "python-mcp-expert.chatmode.md",
+      "description": "Expert assistant for developing Model Context Protocol (MCP) servers in Python",
+      "model": "GPT-4.1"
+    },
+    {
       "filename": "refine-issue.chatmode.md",
       "description": "Refine the requirement or issue with Acceptance Criteria, Technical Considerations, Edge Cases, and NFRs",
       "tools": [
@@ -983,10 +1008,20 @@
       ]
     },
     {
+      "filename": "ruby-mcp-expert.chatmode.md",
+      "description": "Expert assistance for building Model Context Protocol servers in Ruby using the official MCP Ruby SDK gem with Rails integration.",
+      "model": "GPT-4.1"
+    },
+    {
       "filename": "rust-gpt-4.1-beast-mode.chatmode.md",
       "description": "Rust GPT-4.1 Coding Beast Mode for VS Code",
       "model": "GPT-4.1",
       "title": "Rust Beast Mode"
+    },
+    {
+      "filename": "rust-mcp-expert.chatmode.md",
+      "description": "Expert assistant for Rust MCP server development using the rmcp SDK with tokio async runtime",
+      "model": "GPT-4.1"
     },
     {
       "filename": "semantic-kernel-dotnet.chatmode.md",
@@ -1121,6 +1156,11 @@
         "microsoft.docs.mcp",
         "github"
       ]
+    },
+    {
+      "filename": "swift-mcp-expert.chatmode.md",
+      "description": "Expert assistance for building Model Context Protocol servers in Swift using modern concurrency features and the official MCP Swift SDK.",
+      "model": "GPT-4.1"
     },
     {
       "filename": "task-planner.chatmode.md",
@@ -1288,6 +1328,11 @@
         "get_bestpractices",
         "microsoft-docs"
       ]
+    },
+    {
+      "filename": "typescript-mcp-expert.chatmode.md",
+      "description": "Expert assistant for developing Model Context Protocol (MCP) servers in TypeScript",
+      "model": "GPT-4.1"
     },
     {
       "filename": "voidbeast-gpt41enhanced.chatmode.md",
@@ -1567,6 +1612,14 @@
       ]
     },
     {
+      "filename": "csharp-mcp-server.instructions.md",
+      "description": "Instructions for building Model Context Protocol (MCP) servers using the C# SDK",
+      "applyTo": [
+        "**/*.cs",
+        "**/*.csproj"
+      ]
+    },
+    {
       "filename": "csharp.instructions.md",
       "description": "Guidelines for building C# applications",
       "applyTo": [
@@ -1669,6 +1722,15 @@
       "description": "Comprehensive guide for building robust, secure, and efficient CI/CD pipelines using GitHub Actions. Covers workflow structure, jobs, steps, environment variables, secret management, caching, matrix strategies, testing, and deployment strategies."
     },
     {
+      "filename": "go-mcp-server.instructions.md",
+      "description": "Best practices and patterns for building Model Context Protocol (MCP) servers in Go using the official github.com/modelcontextprotocol/go-sdk package.",
+      "applyTo": [
+        "**/*.go",
+        "**/go.mod",
+        "**/go.sum"
+      ]
+    },
+    {
       "filename": "go.instructions.md",
       "description": "Instructions for writing Go code following idiomatic Go practices and community standards",
       "applyTo": [
@@ -1706,6 +1768,16 @@
       "description": "Comprehensive best practices for adopting new Java 25 features since the release of Java 21."
     },
     {
+      "filename": "java-mcp-server.instructions.md",
+      "description": "Best practices and patterns for building Model Context Protocol (MCP) servers in Java using the official MCP Java SDK with reactive streams and Spring integration.",
+      "applyTo": [
+        "**/*.java",
+        "**/pom.xml",
+        "**/build.gradle",
+        "**/build.gradle.kts"
+      ]
+    },
+    {
       "filename": "java.instructions.md",
       "description": "Guidelines for building Java base applications",
       "applyTo": [
@@ -1724,6 +1796,16 @@
       "description": "Expert assistance for Joyride Workspace automation - REPL-driven and user space ClojureScript automation within specific VS Code workspaces",
       "applyTo": [
         "**/.joyride/**"
+      ]
+    },
+    {
+      "filename": "kotlin-mcp-server.instructions.md",
+      "description": "Best practices and patterns for building Model Context Protocol (MCP) servers in Kotlin using the official io.modelcontextprotocol:kotlin-sdk library.",
+      "applyTo": [
+        "**/*.kt",
+        "**/*.kts",
+        "**/build.gradle.kts",
+        "**/settings.gradle.kts"
       ]
     },
     {
@@ -1985,6 +2067,15 @@
       ]
     },
     {
+      "filename": "python-mcp-server.instructions.md",
+      "description": "Instructions for building Model Context Protocol (MCP) servers using the Python SDK",
+      "applyTo": [
+        "**/*.py",
+        "**/pyproject.toml",
+        "**/requirements.txt"
+      ]
+    },
+    {
       "filename": "python.instructions.md",
       "description": "Python coding conventions and guidelines",
       "applyTo": [
@@ -2018,10 +2109,27 @@
       ]
     },
     {
+      "filename": "ruby-mcp-server.instructions.md",
+      "description": "Best practices and patterns for building Model Context Protocol (MCP) servers in Ruby using the official MCP Ruby SDK gem.",
+      "applyTo": [
+        "**/*.rb",
+        "**/Gemfile",
+        "**/*.gemspec",
+        "**/Rakefile"
+      ]
+    },
+    {
       "filename": "ruby-on-rails.instructions.md",
       "description": "Ruby on Rails coding conventions and guidelines",
       "applyTo": [
         "**/*.rb"
+      ]
+    },
+    {
+      "filename": "rust-mcp-server.instructions.md",
+      "description": "Best practices for building Model Context Protocol servers in Rust using the official rmcp SDK with async/await patterns",
+      "applyTo": [
+        "**/*.rs"
       ]
     },
     {
@@ -2077,6 +2185,15 @@
         "**/*.css",
         "**/*.scss",
         "**/*.json"
+      ]
+    },
+    {
+      "filename": "swift-mcp-server.instructions.md",
+      "description": "Best practices and patterns for building Model Context Protocol (MCP) servers in Swift using the official MCP Swift SDK package.",
+      "applyTo": [
+        "**/*.swift",
+        "**/Package.swift",
+        "**/Package.resolved"
       ]
     },
     {
@@ -2138,6 +2255,15 @@
       "description": "Guidelines for TypeScript Development targeting TypeScript 5.x and ES2022 output",
       "applyTo": [
         "**/*.ts"
+      ]
+    },
+    {
+      "filename": "typescript-mcp-server.instructions.md",
+      "description": "Instructions for building Model Context Protocol (MCP) servers using the TypeScript SDK",
+      "applyTo": [
+        "**/*.ts",
+        "**/*.js",
+        "**/package.json"
       ]
     },
     {
@@ -2552,6 +2678,11 @@
       "description": "Ensure that C# types are documented with XML comments and follow best practices for documentation."
     },
     {
+      "filename": "csharp-mcp-server-generator.prompt.md",
+      "mode": "agent",
+      "description": "Generate a complete MCP server project in C# with tools, prompts, and proper configuration"
+    },
+    {
       "filename": "csharp-mstest.prompt.md",
       "mode": "agent",
       "tools": [
@@ -2693,6 +2824,11 @@
       "description": "Set up complete GitHub Copilot configuration for a new project based on technology stack"
     },
     {
+      "filename": "go-mcp-server-generator.prompt.md",
+      "mode": "agent",
+      "description": "Generate a complete Go MCP server project with proper structure, dependencies, and implementation using the official github.com/modelcontextprotocol/go-sdk."
+    },
+    {
       "filename": "java-docs.prompt.md",
       "mode": "agent",
       "tools": [
@@ -2716,6 +2852,11 @@
       "description": "Get best practices for JUnit 5 unit testing, including data-driven tests"
     },
     {
+      "filename": "java-mcp-server-generator.prompt.md",
+      "description": "Generate a complete Model Context Protocol server project in Java using the official MCP Java SDK with reactive streams and optional Spring Boot integration.",
+      "mode": "agent"
+    },
+    {
       "filename": "java-refactoring-extract-method.prompt.md",
       "title": "Refactoring Java Methods with Extract Method",
       "mode": "agent",
@@ -2737,6 +2878,11 @@
       "filename": "javascript-typescript-jest.prompt.md",
       "description": "Best practices for writing JavaScript/TypeScript tests using Jest, including mocking strategies, test structure, and common patterns.",
       "mode": "agent"
+    },
+    {
+      "filename": "kotlin-mcp-server-generator.prompt.md",
+      "mode": "agent",
+      "description": "Generate a complete Kotlin MCP server project with proper structure, dependencies, and implementation using the official io.modelcontextprotocol:kotlin-sdk library."
     },
     {
       "filename": "kotlin-springboot.prompt.md",
@@ -2980,6 +3126,11 @@
       "description": "Guide users through creating high-quality GitHub Copilot prompts with proper structure, tools, and best practices."
     },
     {
+      "filename": "python-mcp-server-generator.prompt.md",
+      "mode": "agent",
+      "description": "Generate a complete MCP server project in Python with tools, resources, and proper configuration"
+    },
+    {
       "filename": "readme-blueprint-generator.prompt.md",
       "description": "Intelligent README.md generation prompt that analyzes project documentation structure and creates comprehensive repository documentation. Scans .github/copilot directory files and copilot-instructions.md to extract project information, technology stack, architecture, development workflow, coding standards, and testing approaches while generating well-structured markdown documentation with proper formatting, cross-references, and developer-focused content.",
       "mode": "agent"
@@ -3014,6 +3165,17 @@
       "filename": "review-and-refactor.prompt.md",
       "mode": "agent",
       "description": "Review and refactor code in your project according to defined instructions"
+    },
+    {
+      "filename": "ruby-mcp-server-generator.prompt.md",
+      "description": "Generate a complete Model Context Protocol server project in Ruby using the official MCP Ruby SDK gem.",
+      "mode": "agent"
+    },
+    {
+      "filename": "rust-mcp-server-generator.prompt.md",
+      "name": "rust-mcp-server-generator",
+      "description": "Generate a complete Rust Model Context Protocol server project with tools, prompts, resources, and tests using the official rmcp SDK",
+      "mode": "agent"
     },
     {
       "filename": "shuffle-json-data.prompt.md",
@@ -3126,9 +3288,19 @@
       ]
     },
     {
+      "filename": "swift-mcp-server-generator.prompt.md",
+      "description": "Generate a complete Model Context Protocol server project in Swift using the official MCP Swift SDK package.",
+      "mode": "agent"
+    },
+    {
       "filename": "technology-stack-blueprint-generator.prompt.md",
       "description": "Comprehensive technology stack blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks, programming languages, and implementation patterns across multiple platforms (.NET, Java, JavaScript, React, Python). Generates configurable blueprints with version information, licensing details, usage patterns, coding conventions, and visual diagrams. Provides implementation-ready templates and maintains architectural consistency for guided development.",
       "mode": "agent"
+    },
+    {
+      "filename": "typescript-mcp-server-generator.prompt.md",
+      "mode": "agent",
+      "description": "Generate a complete MCP server project in TypeScript with tools, resources, and proper configuration"
     },
     {
       "filename": "update-avm-modules-in-bicep.prompt.md",
@@ -3429,6 +3601,35 @@
       "display": {}
     },
     {
+      "filename": "csharp-mcp-development.collection.yml",
+      "id": "csharp-mcp-development",
+      "name": "C# MCP Server Development",
+      "description": "Complete toolkit for building Model Context Protocol (MCP) servers in C# using the official SDK. Includes instructions for best practices, a prompt for generating servers, and an expert chat mode for guidance.",
+      "tags": [
+        "csharp",
+        "mcp",
+        "model-context-protocol",
+        "dotnet",
+        "server-development"
+      ],
+      "items": [
+        {
+          "path": "instructions/csharp-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/csharp-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/csharp-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in C#.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects\n- Implementing tools and prompts\n- Debugging protocol issues\n- Optimizing server performance\n- Learning MCP best practices\n\nTo get the best results, consider:\n- Using the instruction file to set context for all Copilot interactions\n- Using the prompt to generate initial project structure\n- Switching to the expert chat mode for detailed implementation help\n- Providing specific details about what tools or functionality you need"
+        }
+      ],
+      "display": {}
+    },
+    {
       "filename": "database-data-management.collection.yml",
       "id": "database-data-management",
       "name": "Database & Data Management",
@@ -3610,6 +3811,36 @@
       "display": {}
     },
     {
+      "filename": "go-mcp-development.collection.yml",
+      "id": "go-mcp-development",
+      "name": "Go MCP Server Development",
+      "description": "Complete toolkit for building Model Context Protocol (MCP) servers in Go using the official github.com/modelcontextprotocol/go-sdk. Includes instructions for best practices, a prompt for generating servers, and an expert chat mode for guidance.",
+      "tags": [
+        "go",
+        "golang",
+        "mcp",
+        "model-context-protocol",
+        "server-development",
+        "sdk"
+      ],
+      "items": [
+        {
+          "path": "instructions/go-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/go-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/go-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Go.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Go\n- Implementing type-safe tools with structs and JSON schema tags\n- Setting up stdio or HTTP transports\n- Debugging context handling and error patterns\n- Learning Go MCP best practices with the official SDK\n- Optimizing server performance and concurrency\n\nTo get the best results, consider:\n- Using the instruction file to set context for Go MCP development\n- Using the prompt to generate initial project structure\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need stdio or HTTP transport\n- Providing details about what tools or functionality you need\n- Mentioning if you need resources, prompts, or special capabilities"
+        }
+      ],
+      "display": {}
+    },
+    {
       "filename": "java-development.collection.yml",
       "id": "java-development",
       "name": "Java Development",
@@ -3670,6 +3901,68 @@
         {
           "path": "prompts/create-spring-boot-java-project.prompt.md",
           "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "java-mcp-development.collection.yml",
+      "id": "java-mcp-development",
+      "name": "Java MCP Server Development",
+      "description": "Complete toolkit for building Model Context Protocol servers in Java using the official MCP Java SDK with reactive streams and Spring Boot integration.",
+      "tags": [
+        "java",
+        "mcp",
+        "model-context-protocol",
+        "server-development",
+        "sdk",
+        "reactive-streams",
+        "spring-boot",
+        "reactor"
+      ],
+      "items": [
+        {
+          "path": "instructions/java-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/java-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/java-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Java.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Java\n- Implementing reactive handlers with Project Reactor\n- Setting up stdio or HTTP transports\n- Debugging reactive streams and error handling\n- Learning Java MCP best practices with the official SDK\n- Integrating with Spring Boot applications\n\nTo get the best results, consider:\n- Using the instruction file to set context for Java MCP development\n- Using the prompt to generate initial project structure\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need Maven or Gradle\n- Providing details about what tools or functionality you need\n- Mentioning if you need Spring Boot integration"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "kotlin-mcp-development.collection.yml",
+      "id": "kotlin-mcp-development",
+      "name": "Kotlin MCP Server Development",
+      "description": "Complete toolkit for building Model Context Protocol (MCP) servers in Kotlin using the official io.modelcontextprotocol:kotlin-sdk library. Includes instructions for best practices, a prompt for generating servers, and an expert chat mode for guidance.",
+      "tags": [
+        "kotlin",
+        "mcp",
+        "model-context-protocol",
+        "kotlin-multiplatform",
+        "server-development",
+        "ktor"
+      ],
+      "items": [
+        {
+          "path": "instructions/kotlin-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/kotlin-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/kotlin-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Kotlin.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Kotlin\n- Implementing type-safe tools with coroutines and kotlinx.serialization\n- Setting up stdio or SSE transports with Ktor\n- Debugging coroutine patterns and JSON schema issues\n- Learning Kotlin MCP best practices with the official SDK\n- Building multiplatform MCP servers (JVM, Wasm, iOS)\n\nTo get the best results, consider:\n- Using the instruction file to set context for Kotlin MCP development\n- Using the prompt to generate initial project structure with Gradle\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need stdio or SSE/HTTP transport\n- Providing details about what tools or functionality you need\n- Mentioning if you need multiplatform support or specific targets"
         }
       ],
       "display": {}
@@ -3899,6 +4192,99 @@
       "display": {}
     },
     {
+      "filename": "python-mcp-development.collection.yml",
+      "id": "python-mcp-development",
+      "name": "Python MCP Server Development",
+      "description": "Complete toolkit for building Model Context Protocol (MCP) servers in Python using the official SDK with FastMCP. Includes instructions for best practices, a prompt for generating servers, and an expert chat mode for guidance.",
+      "tags": [
+        "python",
+        "mcp",
+        "model-context-protocol",
+        "fastmcp",
+        "server-development"
+      ],
+      "items": [
+        {
+          "path": "instructions/python-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/python-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/python-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Python with FastMCP.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Python\n- Implementing typed tools with Pydantic models and structured output\n- Setting up stdio or streamable HTTP transports\n- Debugging type hints and schema validation issues\n- Learning Python MCP best practices with FastMCP\n- Optimizing server performance and resource management\n\nTo get the best results, consider:\n- Using the instruction file to set context for Python/FastMCP development\n- Using the prompt to generate initial project structure with uv\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need stdio or HTTP transport\n- Providing details about what tools or functionality you need\n- Mentioning if you need structured output, sampling, or elicitation"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "ruby-mcp-development.collection.yml",
+      "id": "ruby-mcp-development",
+      "name": "Ruby MCP Server Development",
+      "description": "Complete toolkit for building Model Context Protocol servers in Ruby using the official MCP Ruby SDK gem with Rails integration support.",
+      "tags": [
+        "ruby",
+        "mcp",
+        "model-context-protocol",
+        "server-development",
+        "sdk",
+        "rails",
+        "gem"
+      ],
+      "items": [
+        {
+          "path": "instructions/ruby-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/ruby-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/ruby-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Ruby.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Ruby\n- Implementing tools, prompts, and resources\n- Setting up stdio or HTTP transports\n- Debugging schema definitions and error handling\n- Learning Ruby MCP best practices with the official SDK\n- Integrating with Rails applications\n\nTo get the best results, consider:\n- Using the instruction file to set context for Ruby MCP development\n- Using the prompt to generate initial project structure\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need stdio or Rails integration\n- Providing details about what tools or functionality you need\n- Mentioning if you need authentication or server_context usage"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "rust-mcp-development.collection.yml",
+      "id": "rust-mcp-development",
+      "name": "Rust MCP Server Development",
+      "description": "Build high-performance Model Context Protocol servers in Rust using the official rmcp SDK with async/await, procedural macros, and type-safe implementations.",
+      "tags": [
+        "rust",
+        "mcp",
+        "model-context-protocol",
+        "server-development",
+        "sdk",
+        "tokio",
+        "async",
+        "macros",
+        "rmcp"
+      ],
+      "items": [
+        {
+          "path": "instructions/rust-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/rust-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/rust-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Rust.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Rust\n- Implementing async handlers with tokio runtime\n- Using rmcp procedural macros for tools\n- Setting up stdio, SSE, or HTTP transports\n- Debugging async Rust and ownership issues\n- Learning Rust MCP best practices with the official rmcp SDK\n- Performance optimization with Arc and RwLock\n\nTo get the best results, consider:\n- Using the instruction file to set context for Rust MCP development\n- Using the prompt to generate initial project structure\n- Switching to the expert chat mode for detailed implementation help\n- Specifying which transport type you need\n- Providing details about what tools or functionality you need\n- Mentioning if you need OAuth authentication"
+        }
+      ],
+      "display": {}
+    },
+    {
       "filename": "security-best-practices.collection.yml",
       "id": "security-best-practices",
       "name": "Security & Code Quality",
@@ -3937,6 +4323,40 @@
         {
           "path": "prompts/ai-prompt-engineering-safety-review.prompt.md",
           "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "swift-mcp-development.collection.yml",
+      "id": "swift-mcp-development",
+      "name": "Swift MCP Server Development",
+      "description": "Comprehensive collection for building Model Context Protocol servers in Swift using the official MCP Swift SDK with modern concurrency features.",
+      "tags": [
+        "swift",
+        "mcp",
+        "model-context-protocol",
+        "server-development",
+        "sdk",
+        "ios",
+        "macos",
+        "concurrency",
+        "actor",
+        "async-await"
+      ],
+      "items": [
+        {
+          "path": "instructions/swift-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/swift-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/swift-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Swift.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Swift\n- Implementing async/await patterns and actor-based concurrency\n- Setting up stdio, HTTP, or network transports\n- Debugging Swift concurrency and ServiceLifecycle integration\n- Learning Swift MCP best practices with the official SDK\n- Optimizing server performance for iOS/macOS platforms\n\nTo get the best results, consider:\n- Using the instruction file to set context for Swift MCP development\n- Using the prompt to generate initial project structure\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need stdio, HTTP, or network transport\n- Providing details about what tools or functionality you need\n- Mentioning if you need resources, prompts, or special capabilities"
         }
       ],
       "display": {}
@@ -4023,6 +4443,35 @@
         {
           "path": "prompts/ai-prompt-engineering-safety-review.prompt.md",
           "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "typescript-mcp-development.collection.yml",
+      "id": "typescript-mcp-development",
+      "name": "TypeScript MCP Server Development",
+      "description": "Complete toolkit for building Model Context Protocol (MCP) servers in TypeScript/Node.js using the official SDK. Includes instructions for best practices, a prompt for generating servers, and an expert chat mode for guidance.",
+      "tags": [
+        "typescript",
+        "mcp",
+        "model-context-protocol",
+        "nodejs",
+        "server-development"
+      ],
+      "items": [
+        {
+          "path": "instructions/typescript-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/typescript-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/typescript-mcp-expert.chatmode.md",
+          "kind": "chat-mode",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in TypeScript/Node.js.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with TypeScript\n- Implementing tools, resources, and prompts with zod validation\n- Setting up HTTP or stdio transports\n- Debugging schema validation and transport issues\n- Learning TypeScript MCP best practices\n- Optimizing server performance and reliability\n\nTo get the best results, consider:\n- Using the instruction file to set context for TypeScript/Node.js development\n- Using the prompt to generate initial project structure with proper configuration\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need HTTP or stdio transport\n- Providing details about what tools or functionality you need"
         }
       ],
       "display": {}
