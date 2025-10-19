@@ -700,6 +700,11 @@
       ]
     },
     {
+      "filename": "php-mcp-expert.chatmode.md",
+      "description": "Expert assistant for PHP MCP server development using the official PHP SDK with attribute-based discovery",
+      "model": "GPT-4.1"
+    },
+    {
       "filename": "plan.chatmode.md",
       "description": "Strategic planning and architecture assistant focused on thoughtful analysis before implementation. Helps developers understand codebases, clarify requirements, and develop comprehensive implementation strategies.",
       "tools": [
@@ -1921,6 +1926,13 @@
       "description": "The most comprehensive, practical, and engineer-authored performance optimization instructions for all languages, frameworks, and stacks. Covers frontend, backend, and database best practices with actionable guidance, scenario-based checklists, troubleshooting, and pro tips."
     },
     {
+      "filename": "php-mcp-server.instructions.md",
+      "description": "Best practices for building Model Context Protocol servers in PHP using the official PHP SDK with attribute-based discovery and multiple transport options",
+      "applyTo": [
+        "**/*.php"
+      ]
+    },
+    {
       "filename": "playwright-python.instructions.md",
       "description": "Playwright Python AI test generation instructions based on official documentation.",
       "applyTo": [
@@ -2978,6 +2990,11 @@
       "description": "Add new language to a Next.js + next-intl application"
     },
     {
+      "filename": "php-mcp-server-generator.prompt.md",
+      "description": "Generate a complete PHP Model Context Protocol server project with tools, resources, prompts, and tests using the official PHP SDK",
+      "mode": "agent"
+    },
+    {
       "filename": "playwright-automation-fill-in-form.prompt.md",
       "description": "Automate filling in a form using Playwright MCP",
       "mode": "agent",
@@ -3963,6 +3980,36 @@
           "path": "chatmodes/kotlin-mcp-expert.chatmode.md",
           "kind": "chat-mode",
           "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Kotlin.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Kotlin\n- Implementing type-safe tools with coroutines and kotlinx.serialization\n- Setting up stdio or SSE transports with Ktor\n- Debugging coroutine patterns and JSON schema issues\n- Learning Kotlin MCP best practices with the official SDK\n- Building multiplatform MCP servers (JVM, Wasm, iOS)\n\nTo get the best results, consider:\n- Using the instruction file to set context for Kotlin MCP development\n- Using the prompt to generate initial project structure with Gradle\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need stdio or SSE/HTTP transport\n- Providing details about what tools or functionality you need\n- Mentioning if you need multiplatform support or specific targets"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "php-mcp-development.collection.yml",
+      "id": "php-mcp-development",
+      "name": "PHP MCP Server Development",
+      "description": "Comprehensive resources for building Model Context Protocol servers using the official PHP SDK with attribute-based discovery, including best practices, project generation, and expert assistance",
+      "tags": [
+        "php",
+        "mcp",
+        "model-context-protocol",
+        "server-development",
+        "sdk",
+        "attributes",
+        "composer"
+      ],
+      "items": [
+        {
+          "path": "instructions/php-mcp-server.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/php-mcp-server-generator.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/php-mcp-expert.chatmode.md",
+          "kind": "chat-mode"
         }
       ],
       "display": {}
