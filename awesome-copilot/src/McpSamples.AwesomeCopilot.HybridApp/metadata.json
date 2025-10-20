@@ -2875,6 +2875,12 @@
       "description": "Refactoring using Extract Methods in Java Language"
     },
     {
+      "filename": "java-refactoring-remove-parameter.prompt.md",
+      "title": "Refactoring Java Methods with Remove Parameter",
+      "mode": "agent",
+      "description": "Refactoring using Remove Parameter in Java Language"
+    },
+    {
       "filename": "java-springboot.prompt.md",
       "mode": "agent",
       "tools": [
