@@ -2440,6 +2440,14 @@
       "description": "Containerize an ASP.NET Core project by creating Dockerfile and .dockerfile files customized for the project."
     },
     {
+      "filename": "conventional-commit.prompt.md",
+      "description": "Prompt and workflow for generating conventional commit messages using a structured XML format. Guides users to create standardized, descriptive commit messages in line with the Conventional Commits specification, including instructions, examples, and validation.",
+      "tools": [
+        "run_in_terminal",
+        "get_terminal_output"
+      ]
+    },
+    {
       "filename": "copilot-instructions-blueprint-generator.prompt.md",
       "description": "Technology-agnostic blueprint generator for creating comprehensive copilot-instructions.md files that guide GitHub Copilot to produce code consistent with project standards, architecture patterns, and exact technology versions by analyzing existing codebase patterns and avoiding assumptions.",
       "mode": "agent"
