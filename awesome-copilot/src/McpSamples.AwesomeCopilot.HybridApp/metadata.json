@@ -17,7 +17,7 @@
       "description": "Ultimate Transparent Thinking Beast Mode"
     },
     {
-      "filename": "accesibility.chatmode.md",
+      "filename": "accessibility.chatmode.md",
       "description": "Accessibility mode.",
       "model": "GPT-4.1",
       "tools": [
