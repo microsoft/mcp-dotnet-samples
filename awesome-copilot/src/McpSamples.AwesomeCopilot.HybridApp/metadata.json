@@ -2135,6 +2135,17 @@
       "description": "Quarkus development standards and instructions"
     },
     {
+      "filename": "r.instructions.md",
+      "description": "R language and document formats (R, Rmd, Quarto): coding standards and Copilot guidance for idiomatic, safe, and consistent code generation.",
+      "applyTo": [
+        "**/*.R",
+        "**/*.r",
+        "**/*.Rmd",
+        "**/*.rmd",
+        "**/*.qmd"
+      ]
+    },
+    {
       "filename": "reactjs.instructions.md",
       "description": "ReactJS development standards and best practices",
       "applyTo": [
@@ -3072,22 +3083,21 @@
       "description": "Generate a Playwright test based on a scenario using Playwright MCP",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "fetch",
-        "findTestFiles",
         "problems",
         "runCommands",
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
-        "playwright"
+        "playwright/*"
       ],
-      "model": "Claude Sonnet 4"
+      "model": "Claude Sonnet 4.5"
     },
     {
       "filename": "postgresql-code-review.prompt.md",
