@@ -373,6 +373,20 @@
       ]
     },
     {
+      "filename": "drupal-expert.chatmode.md",
+      "description": "Expert assistant for Drupal development, architecture, and best practices using PHP 8.3+ and modern Drupal patterns",
+      "model": "GPT-4.1",
+      "tools": [
+        "codebase",
+        "terminalCommand",
+        "edit/editFiles",
+        "fetch",
+        "githubRepo",
+        "runTests",
+        "problems"
+      ]
+    },
+    {
       "filename": "electron-angular-native.chatmode.md",
       "description": "Code Review Mode tailored for Electron app with Node.js backend (main), Angular frontend (render), and native integration layer (e.g., AppleScript, shell, or native tooling). Services in other repos are not reviewed here.",
       "tools": [
@@ -633,6 +647,21 @@
         "testFailure",
         "usages",
         "vscodeAPI"
+      ]
+    },
+    {
+      "filename": "laravel-expert-agent.chatmode.md",
+      "description": "Expert Laravel development assistant specializing in modern Laravel 12+ applications with Eloquent, Artisan, testing, and best practices",
+      "model": "GPT-4.1 | 'gpt-5' | 'Claude Sonnet 4.5'",
+      "tools": [
+        "codebase",
+        "terminalCommand",
+        "edit/editFiles",
+        "fetch",
+        "githubRepo",
+        "runTests",
+        "problems",
+        "search"
       ]
     },
     {
