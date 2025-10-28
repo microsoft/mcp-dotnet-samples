@@ -1391,7 +1391,7 @@
     },
     {
       "filename": "voidbeast-gpt41enhanced.chatmode.md",
-      "description": "'4.1 voidBeast_GPT41Enhanced 1.0 : a advanced autonomous developer agent, designed for elite full-stack development with enhanced multi-mode capabilities. This latest evolution features sophisticated mode detection, comprehensive research capabilities, and never-ending problem resolution. Plan/Act/Deep Research/Analyzer/Checkpoints(Memory)/Prompt Generator Modes. '",
+      "description": "4.1 voidBeast_GPT41Enhanced 1.0 : a advanced autonomous developer agent, designed for elite full-stack development with enhanced multi-mode capabilities. This latest evolution features sophisticated mode detection, comprehensive research capabilities, and never-ending problem resolution. Plan/Act/Deep Research/Analyzer/Checkpoints(Memory)/Prompt Generator Modes.",
       "tools": [
         "changes",
         "codebase",
@@ -4059,6 +4059,60 @@
           "path": "chatmodes/kotlin-mcp-expert.chatmode.md",
           "kind": "chat-mode",
           "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP servers in Kotlin.\n\nThis chat mode is ideal for:\n- Creating new MCP server projects with Kotlin\n- Implementing type-safe tools with coroutines and kotlinx.serialization\n- Setting up stdio or SSE transports with Ktor\n- Debugging coroutine patterns and JSON schema issues\n- Learning Kotlin MCP best practices with the official SDK\n- Building multiplatform MCP servers (JVM, Wasm, iOS)\n\nTo get the best results, consider:\n- Using the instruction file to set context for Kotlin MCP development\n- Using the prompt to generate initial project structure with Gradle\n- Switching to the expert chat mode for detailed implementation help\n- Specifying whether you need stdio or SSE/HTTP transport\n- Providing details about what tools or functionality you need\n- Mentioning if you need multiplatform support or specific targets"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "partners.collection.yml",
+      "id": "partners",
+      "name": "Partners",
+      "description": "Custom agents that have been created by GitHub partners",
+      "tags": [],
+      "items": [
+        {
+          "path": "agents/amplitude-experiment-implementation.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/arm-migration.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/dynatrace-expert.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/jfrog-sec.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/launchdarkly-flag-cleanup.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/neon-migration-specialist.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/neon-optimization-analyzer.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/octopus-deploy-release-notes-mcp.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/stackhawk-security-onboarding.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/terraform.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/pagerduty-incident-responder.agent.md",
+          "kind": "agent"
         }
       ],
       "display": {}
