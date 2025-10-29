@@ -22,7 +22,7 @@
       "model": "GPT-4.1",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -35,9 +35,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -70,6 +70,18 @@
         "vscodeAPI",
         "microsoft.docs.mcp",
         "github"
+      ]
+    },
+    {
+      "filename": "aem-frontend-specialist.chatmode.md",
+      "description": "Expert assistant for developing AEM components using HTL, Tailwind CSS, and Figma-to-code workflows with design system integration",
+      "model": "GPT-4.1",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "fetch",
+        "githubRepo",
+        "figma-dev-mode-mcp-server"
       ]
     },
     {
@@ -135,7 +147,7 @@
       "description": "Provide expert Azure SaaS Architect guidance focusing on multitenant applications using Azure Well-Architected SaaS principles and Microsoft best practices.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -148,9 +160,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -542,7 +554,7 @@
       "description": "Your perfect AI chat mode for high-level architectural documentation and review. Perfect for targeted updates after a story or researching that legacy system when nobody remembers what it's supposed to be doing.",
       "model": "claude-sonnet-4",
       "tools": [
-        "codebase",
+        "search/codebase",
         "changes",
         "edit/editFiles",
         "fetch",
@@ -551,7 +563,7 @@
         "runCommands",
         "runTests",
         "search",
-        "searchResults",
+        "search/searchResults",
         "testFailure",
         "usages",
         "activePullRequest",
@@ -721,13 +733,13 @@
       "description": "Microsoft Learn Contributor chatmode for editing and writing Microsoft Learn documentation following Microsoft Writing Style Guide and authoring best practices.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "new",
         "openSimpleBrowser",
         "problems",
         "search",
-        "searchResults",
+        "search/searchResults",
         "microsoft.docs.mcp"
       ]
     },
@@ -735,7 +747,7 @@
       "filename": "ms-sql-dba.chatmode.md",
       "description": "Work with Microsoft SQL Server databases using the MS SQL extension.",
       "tools": [
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "githubRepo",
         "extensions",
@@ -832,7 +844,7 @@
       "model": "gpt-4.1",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "editFiles",
         "extensions",
         "fetch",
@@ -845,9 +857,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -860,7 +872,7 @@
       "model": "gpt-4.1",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "editFiles",
         "extensions",
         "fetch",
@@ -873,9 +885,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -916,7 +928,7 @@
       "model": "gpt-4.1",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "editFiles",
         "extensions",
         "fetch",
@@ -929,9 +941,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -971,7 +983,7 @@
       "description": "Provide principal-level software engineering guidance with focus on engineering excellence, technical leadership, and pragmatic implementation.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -984,9 +996,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -1112,7 +1124,7 @@
       "description": "Create, update, refactor, explain or work with code using the Python version of Semantic Kernel.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -1126,9 +1138,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -1189,7 +1201,7 @@
       "description": "Generate or update specification documents for new or existing functionality.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -1202,9 +1214,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -1222,7 +1234,7 @@
       "description": "Task planner for creating actionable implementation plans - Brought to you by microsoft/edge-ai",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -1235,9 +1247,9 @@
         "runNotebooks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -1423,7 +1435,7 @@
       "description": "Ask WG Code Alchemist to transform your code with Clean Code principles and SOLID design",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -1436,9 +1448,9 @@
         "runNotebooks",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -2398,7 +2410,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems"
       ],
@@ -2463,7 +2475,7 @@
       "filename": "containerize-aspnet-framework.prompt.md",
       "mode": "agent",
       "tools": [
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "terminalCommand"
       ],
@@ -2473,7 +2485,7 @@
       "filename": "containerize-aspnetcore.prompt.md",
       "mode": "agent",
       "tools": [
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "terminalCommand"
       ],
@@ -2509,7 +2521,7 @@
       "description": "Create an Architectural Decision Record (ADR) document for AI-optimized decision documentation.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -2518,9 +2530,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -2532,7 +2544,7 @@
       "description": "Create a formal specification for an existing GitHub Actions CI/CD workflow, optimized for AI consumption and workflow maintenance.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -2547,9 +2559,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -2563,7 +2575,7 @@
       "mode": "agent",
       "description": "Create GitHub Issue for feature request from specification file using feature_request.yml template.",
       "tools": [
-        "codebase",
+        "search/codebase",
         "search",
         "github",
         "create_issue",
@@ -2576,7 +2588,7 @@
       "mode": "agent",
       "description": "Create GitHub Issues from implementation plan phases using feature_request.yml or chore_request.yml templates.",
       "tools": [
-        "codebase",
+        "search/codebase",
         "search",
         "github",
         "create_issue",
@@ -2589,7 +2601,7 @@
       "mode": "agent",
       "description": "Create GitHub Issues for unimplemented requirements from specification files using feature_request.yml template.",
       "tools": [
-        "codebase",
+        "search/codebase",
         "search",
         "github",
         "create_issue",
@@ -2602,7 +2614,7 @@
       "mode": "agent",
       "description": "Create GitHub Pull Request for feature request from specification file using pull_request_template.md template.",
       "tools": [
-        "codebase",
+        "search/codebase",
         "search",
         "github",
         "create_pull_request",
@@ -2616,7 +2628,7 @@
       "description": "Create a new implementation plan file for new features, refactoring existing code or upgrading packages, design, architecture or infrastructure.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -2625,9 +2637,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -2639,7 +2651,7 @@
       "description": "Create an llms.txt file from scratch based on repository structure following the llms.txt specification at https://llmstxt.org/",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -2648,9 +2660,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -2662,7 +2674,7 @@
       "description": "Create comprehensive, standardized documentation for object-oriented components following industry best practices and architectural documentation standards.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -2671,9 +2683,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -2690,7 +2702,7 @@
       "description": "Create a new specification file for the solution, optimized for Generative AI consumption.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -2699,9 +2711,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -2746,7 +2758,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems"
       ],
@@ -2757,7 +2769,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems"
       ],
@@ -2773,7 +2785,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "search"
@@ -2785,7 +2797,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "search"
@@ -2797,7 +2809,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "search"
@@ -2809,7 +2821,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "search"
@@ -2851,7 +2863,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "runCommands"
@@ -2919,7 +2931,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems"
       ],
@@ -2930,7 +2942,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "search"
@@ -2959,7 +2971,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "search"
@@ -2981,7 +2993,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "search"
@@ -3002,13 +3014,13 @@
       "mode": "agent",
       "description": "Generate a language translation for a mkdocs documentation stack.",
       "tools": [
-        "codebase",
+        "search/codebase",
         "usages",
         "problems",
         "changes",
-        "terminalSelection",
-        "terminalLastCommand",
-        "searchResults",
+        "runCommands/terminalSelection",
+        "runCommands/terminalLastCommand",
+        "search/searchResults",
         "extensions",
         "edit/editFiles",
         "search",
@@ -3021,7 +3033,7 @@
       "filename": "multi-stage-dockerfile.prompt.md",
       "mode": "agent",
       "tools": [
-        "codebase"
+        "search/codebase"
       ],
       "description": "Create optimized multi-stage Dockerfiles for any language or framework"
     },
@@ -3061,7 +3073,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "findTestFiles",
         "search",
@@ -3089,7 +3101,7 @@
       "description": "Website exploration for testing using Playwright MCP",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "fetch",
         "findTestFiles",
@@ -3098,9 +3110,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "playwright"
       ],
@@ -3133,7 +3145,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems"
       ],
@@ -3145,7 +3157,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems"
       ],
@@ -3158,7 +3170,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems",
         "search"
@@ -3215,7 +3227,7 @@
       "filename": "prompt-builder.prompt.md",
       "mode": "agent",
       "tools": [
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "search"
       ],
@@ -3246,15 +3258,15 @@
       "description": "Generate a comprehensive repository summary and narrative story from commit history",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "githubRepo",
         "runCommands",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection"
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection"
       ]
     },
     {
@@ -3288,7 +3300,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems"
       ],
@@ -3300,7 +3312,7 @@
       "mode": "agent",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "problems"
       ],
@@ -3420,11 +3432,11 @@
       "mode": "agent",
       "description": "Update Azure Verified Modules (AVM) to latest versions in Bicep files.",
       "tools": [
-        "codebase",
+        "search/codebase",
         "think",
         "changes",
         "fetch",
-        "searchResults",
+        "search/searchResults",
         "todos",
         "edit/editFiles",
         "search",
@@ -3439,7 +3451,7 @@
       "description": "Update an existing implementation plan file with new or update requirements to provide new features, refactoring existing code or upgrading packages, design, architecture or infrastructure.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -3448,9 +3460,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -3462,7 +3474,7 @@
       "description": "Update the llms.txt file in the root folder to reflect changes in documentation or specifications following the llms.txt specification at https://llmstxt.org/",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -3471,9 +3483,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -3485,7 +3497,7 @@
       "description": "Update a markdown file section with an index/table of files from a specified folder.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -3497,9 +3509,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -3511,7 +3523,7 @@
       "description": "Update existing object-oriented component documentation following industry best practices and architectural documentation standards.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -3520,9 +3532,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
@@ -3534,7 +3546,7 @@
       "description": "Update an existing specification file for the solution, optimized for Generative AI consumption based on new requirements or updates to any existing code.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -3543,9 +3555,9 @@
         "problems",
         "runTasks",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI"
