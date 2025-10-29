@@ -3308,6 +3308,23 @@
       "tested_with": "GitHub Copilot Chat (GPT-4o) - Validated July 20, 2025"
     },
     {
+      "filename": "suggest-awesome-github-copilot-agents.prompt.md",
+      "agent": "agent",
+      "description": "Suggest relevant GitHub Copilot Custom Agents files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing custom agents in this repository.",
+      "tools": [
+        "edit",
+        "search",
+        "runCommands",
+        "runTasks",
+        "changes",
+        "testFailure",
+        "openSimpleBrowser",
+        "fetch",
+        "githubRepo",
+        "todos"
+      ]
+    },
+    {
       "filename": "suggest-awesome-github-copilot-chatmodes.prompt.md",
       "mode": "agent",
       "description": "Suggest relevant GitHub Copilot Custom Chat Modes files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing custom chat modes in this repository.",
@@ -3536,6 +3553,46 @@
     }
   ],
   "collections": [
+    {
+      "filename": "awesome-copilot.collection.yml",
+      "id": "awesome-copilot",
+      "name": "Awesome Copilot",
+      "description": "Meta prompts that help you discover and generate curated GitHub Copilot chat modes, collections, instructions, prompts, and agents.",
+      "tags": [
+        "github-copilot",
+        "discovery",
+        "meta",
+        "prompt-engineering",
+        "agents"
+      ],
+      "items": [
+        {
+          "path": "prompts/suggest-awesome-github-copilot-chatmodes.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/suggest-awesome-github-copilot-collections.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/suggest-awesome-github-copilot-instructions.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/suggest-awesome-github-copilot-prompts.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/suggest-awesome-github-copilot-agents.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "chatmodes/meta-agentic-project-scaffold.chatmode.md",
+          "kind": "chat-mode"
+        }
+      ],
+      "display": {}
+    },
     {
       "filename": "azure-cloud-development.collection.yml",
       "id": "azure-cloud-development",
