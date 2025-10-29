@@ -42,12 +42,12 @@ public class MetadataPrompt : IMetadataPrompt
         1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions, prompts or agents), filename, title and description of each item found. 
            Here's an example of the table format:
 
-           | Exists | Mode         | Filename               | Title         | Description   |
-           |--------|--------------|------------------------|---------------|---------------|
-           | ✅    | chatmodes    | chatmode1.md         | ChatMode 1    | Description 1 |
-           | ❌    | instructions | instruction1.md      | Instruction 1 | Description 1 |
-           | ✅    | prompts      | prompt1.md           | Prompt 1      | Description 1 |
-           | ❌    | agents       | agent1.md            | Agent 1       | Description 1 |
+           | Exists | Mode         | Filename                      | Title         | Description   |
+           |--------|--------------|-------------------------------|---------------|---------------|
+           | ✅    | chatmodes    | chatmode1.chatmode.md         | ChatMode 1    | Description 1 |
+           | ❌    | instructions | instruction1.instructions.md  | Instruction 1 | Description 1 |
+           | ✅    | prompts      | prompt1.prompt.md             | Prompt 1      | Description 1 |
+           | ❌    | agents       | agent1.agent.md               | Agent 1       | Description 1 |
 
            ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
 

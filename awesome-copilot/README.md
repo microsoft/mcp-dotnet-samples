@@ -235,12 +235,12 @@ Awesome Copilot MCP server includes:
     1. Compare existing chatmodes, instructions, prompts, and agents with the search results.
     1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions, prompts or agents), filename, title and description of each item found. Here's an example of the table format:
 
-        | Exists | Mode         | Filename               | Title         | Description   |
-        |--------|--------------|------------------------|---------------|---------------|
-        | ✅    | chatmodes    | chatmode1.json         | ChatMode 1    | Description 1 |
-        | ❌    | instructions | instruction1.json      | Instruction 1 | Description 1 |
-        | ✅    | prompts      | prompt1.json           | Prompt 1      | Description 1 |
-        | ❌    | agents       | agent1.json            | Agent 1       | Description 1 |
+        | Exists | Mode         | Filename                      | Title         | Description   |
+        |--------|--------------|-------------------------------|---------------|---------------|
+        | ✅    | chatmodes    | chatmode1.chatmode.md         | ChatMode 1    | Description 1 |
+        | ❌    | instructions | instruction1.instructions.md  | Instruction 1 | Description 1 |
+        | ✅    | prompts      | prompt1.prompt.md             | Prompt 1      | Description 1 |
+        | ❌    | agents       | agent1.agent.md               | Agent 1       | Description 1 |
 
         ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
 
