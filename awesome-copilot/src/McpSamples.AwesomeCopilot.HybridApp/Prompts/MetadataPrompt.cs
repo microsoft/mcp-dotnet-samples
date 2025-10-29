@@ -30,16 +30,16 @@ public class MetadataPrompt : IMetadataPrompt
         [Description("The keyword to search for")] string keyword)
     {
         return $"""
-        Please search all the chatmodes, instructions, prompts, and collections that are related to the search keyword, `{keyword}`.
+        Please search all the chatmodes, instructions, prompts, agents, and collections that are related to the search keyword, `{keyword}`.
 
         Here's the process to follow:
 
         1. Use the `awesome-copilot` MCP server.
-        1. Search all chatmodes, instructions, and prompts for the keyword provided.
-        1. DO NOT load any chatmodes, instructions, or prompts from the MCP server until the user asks to do so.
-        1. Scan local chatmodes, instructions, and prompts markdown files in `.github/chatmodes`, `.github/instructions`, and `.github/prompts` directories respectively.
-        1. Compare existing chatmodes, instructions, and prompts with the search results.
-        1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions or prompts), filename, title and description of each item found. 
+        1. Search all chatmodes, instructions, prompts, and agents for the keyword provided.
+        1. DO NOT load any chatmodes, instructions, prompts, or agents from the MCP server until the user asks to do so.
+        1. Scan local chatmodes, instructions, prompts, and agents markdown files in `.github/chatmodes`, `.github/instructions`, `.github/prompts`, and `.github/agents` directories respectively.
+        1. Compare existing chatmodes, instructions, prompts, and agents with the search results.
+        1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions, prompts or agents), filename, title and description of each item found. 
            Here's an example of the table format:
 
            | Exists | Mode         | Filename               | Title         | Description   |
@@ -47,13 +47,14 @@ public class MetadataPrompt : IMetadataPrompt
            | ✅    | chatmodes    | chatmode1.md         | ChatMode 1    | Description 1 |
            | ❌    | instructions | instruction1.md      | Instruction 1 | Description 1 |
            | ✅    | prompts      | prompt1.md           | Prompt 1      | Description 1 |
+           | ❌    | agents       | agent1.md            | Agent 1       | Description 1 |
 
            ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
 
         1. If any item doesn't exist in the repository, ask which item the user wants to save.
-        1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, or `.github/prompts`) 
+        1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, `.github/prompts`, or `.github/agents`) 
            using the mode and filename, with NO modification.
-        1. Include a search for Collections, which are made up of multiple chatmodes, instructions, and prompts, but contain a and, description and tags.
+        1. Include a search for Collections, which are made up of multiple chatmodes, instructions, prompts, and agents, but contain a name, description and tags.
         1. If there are any that match, provide a summary of the collection, including its name, description, tags, and the items it contains.
         1. Do NOT automatically install or save any items. Wait for explicit user confirmation.
         1. Use the table from above to show the items in the collection.
@@ -75,7 +76,7 @@ public class MetadataPrompt : IMetadataPrompt
         Provide a human-friendly summary that includes:
         - Collection name and description
         - Tags
-        - A breakdown of items grouped by kind (chat-mode, instruction, prompt) with filenames
+        - A breakdown of items grouped by kind (chat-mode, instruction, prompt, agent) with filenames
 
         Do NOT automatically install or save any items. Wait for explicit user confirmation.
         """;
