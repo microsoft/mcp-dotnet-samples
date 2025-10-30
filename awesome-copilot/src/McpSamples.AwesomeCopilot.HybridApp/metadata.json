@@ -1153,6 +1153,20 @@
       ]
     },
     {
+      "filename": "shopify-expert.chatmode.md",
+      "description": "Expert Shopify development assistant specializing in theme development, Liquid templating, app development, and Shopify APIs",
+      "model": "GPT-4.1",
+      "tools": [
+        "codebase",
+        "terminalCommand",
+        "edit/editFiles",
+        "fetch",
+        "githubRepo",
+        "runTests",
+        "problems"
+      ]
+    },
+    {
       "filename": "simple-app-idea-generator.chatmode.md",
       "description": "Brainstorm and develop new application ideas through fun, interactive questioning until ready for specification creation.",
       "tools": [
