@@ -15,5 +15,8 @@ public enum InstructionMode
     Instructions,
 
     [JsonStringEnumMemberName("prompts")]
-    Prompts
+    Prompts,
+
+    [JsonStringEnumMemberName("agents")]
+    Agents
 }

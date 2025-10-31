@@ -48,8 +48,8 @@ public interface IMetadataTool
 public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger) : IMetadataTool
 {
     /// <inheritdoc />
-    [McpServerTool(Name = "search_instructions", Title = "Searches custom instructions")]
-    [Description("Searches custom instructions based on keywords in their titles and descriptions.")]
+    [McpServerTool(Name = "search_instructions", Title = "Searches custom instructions and agents")]
+    [Description("Searches custom instructions and agents based on keywords in their titles and descriptions.")]
     public async Task<MetadataResult> SearchAsync(
         [Description("The keyword to search for")] string keywords)
     {
@@ -73,11 +73,11 @@ public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger
     }
 
     /// <inheritdoc />
-    [McpServerTool(Name = "load_instruction", Title = "Loads a custom instruction")]
-    [Description("Loads a custom instruction from the repository.")]
+    [McpServerTool(Name = "load_instruction", Title = "Loads a custom instruction or agent")]
+    [Description("Loads a custom instruction or agent from the repository.")]
     public async Task<string> LoadAsync(
         [Description("The instruction mode")] InstructionMode mode,
-        [Description("The filename of the instruction")] string filename)
+        [Description("The filename of the instruction or agent")] string filename)
     {
         try
         {
