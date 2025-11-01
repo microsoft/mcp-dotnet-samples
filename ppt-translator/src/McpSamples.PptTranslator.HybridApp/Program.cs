@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using McpSamples.PptTranslator.HybridApp.Services;
 
 class Program
 {
     static void Main()
     {
-        string filePath = "TestFiles/sample.pptx";
+        string filePath = "../../TestFiles/sample.pptx";
         var pptService = new PptLoadService();
 
         int slideCount = pptService.GetSlideCount(filePath);

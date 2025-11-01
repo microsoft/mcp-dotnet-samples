@@ -6,9 +6,7 @@ namespace McpSamples.PptTranslator.HybridApp.Services
 {
     public class PptLoadService
     {
-        /// <summary>
         /// PPTX 파일을 열고 슬라이드 수를 반환
-        /// </summary>
         public int GetSlideCount(string filePath)
         {
             if (!File.Exists(filePath))
@@ -18,7 +16,7 @@ namespace McpSamples.PptTranslator.HybridApp.Services
 
             using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
             var presentation = SCPresentation.Open(stream);
-            
+
             return presentation.Slides.Count;
         }
     }
