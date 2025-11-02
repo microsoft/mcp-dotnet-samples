@@ -2,7 +2,7 @@
     "servers": {
         "todo-list": {
             "type": "http",
-            "url": "http://localhost:5288/mcp"
+            "url": "http://localhost:5202/mcp"
         }
     }
 }
