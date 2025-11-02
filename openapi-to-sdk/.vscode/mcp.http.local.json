@@ -1,0 +1,8 @@
+{
+    "servers": {
+        "todo-list": {
+            "type": "http",
+            "url": "http://localhost:5252/mcp"
+        }
+    }
+}
