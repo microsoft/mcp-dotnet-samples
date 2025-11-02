@@ -1,6 +1,15 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using McpSamples.OpenApiToSdk.HybridApp.Configurations;
+using McpSamples.Shared.Configurations;
+using McpSamples.Shared.Extensions;
 
-app.MapGet("/", () => "Hello World!");
+var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
-app.Run();
+IHostApplicationBuilder builder = useStreamableHttp
+                                ? WebApplication.CreateBuilder(args)
+                                : Host.CreateApplicationBuilder(args);
+
+builder.Services.AddAppSettings<OpenApiToSdkAppSettings>(builder.Configuration, args);
+
+IHost app = builder.BuildApp(useStreamableHttp);
+
+await app.RunAsync();
