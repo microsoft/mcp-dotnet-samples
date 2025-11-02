@@ -2,7 +2,7 @@ using McpSamples.Shared.Configurations;
 
 using Microsoft.OpenApi.Models;
 
-namespace McpSamples.TodoList.HybridApp.Configurations;
+namespace McpSamples.PPTFontFix.HybridApp.Configurations;
 
 /// <summary>
 /// This represents the application settings for ppt-font-fix app.

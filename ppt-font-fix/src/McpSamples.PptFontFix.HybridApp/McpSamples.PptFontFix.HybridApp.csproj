@@ -10,6 +10,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
     <PackageReference Include="ModelContextProtocol" Version="0.4.0-preview.2" />
+    <PackageReference Include="ShapeCrawler" Version="0.74.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
   </ItemGroup>
 
 </Project>
