@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="4.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

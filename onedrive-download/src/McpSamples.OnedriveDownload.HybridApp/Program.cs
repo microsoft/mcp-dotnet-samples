@@ -1,39 +1,26 @@
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
 using McpSamples.OnedriveDownload.HybridApp.Configurations;
+using McpSamples.Shared.Configurations;
+using McpSamples.Shared.Extensions;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Identity.Web;
 
-var builder = WebApplication.CreateBuilder(args);
+var envs = Environment.GetEnvironmentVariables();
+var useStreamableHttp = AppSettings.UseStreamableHttp(envs, args);
 
-// 수동 endpoint 설정 없이 microsoft identity web 사용
+IHostApplicationBuilder builder = useStreamableHttp
+                                ? WebApplication.CreateBuilder(args)
+                                : Host.CreateApplicationBuilder(args);
 
-builder.Services.Configure<OnedriveDownloadAppSettings>(builder.Configuration);
+builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
 
-// Entra ID 인증 구성 추가
+// Entra ID and Microsoft Graph API authentication
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("EntraId"));
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("EntraId"))
+    .EnableTokenAcquisitionToCallDownstreamApi()
+    .AddMicrosoftGraph(builder.Configuration.GetSection("Graph"))
+    .AddInMemoryTokenCaches();
 
-// Microsoft login UI 추가
-builder.Services.AddRazorPages()
-    .AddMicrosoftIdentityUI();
+IHost app = builder.BuildApp(useStreamableHttp);
 
-// HTTP 요청 파이프라인 구성
-var app = builder.Build();
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection(); 
-app.UseRouting();
-
-// IMPORTANT: 인증 및 권한 부여 미들웨어 추가
-app.UseAuthentication(); // 사용자 누구인지 식별하기
-app.UseAuthorization(); // 사용자가 리소스에 액세스할 수 있는지 확인하기
-
-app.MapRazorPages();
-app.MapGet("/", () => "You are authenticated.").RequireAuthorization();
-
-app.Run();
+await app.RunAsync();
