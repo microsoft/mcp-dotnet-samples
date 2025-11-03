@@ -10,7 +10,7 @@ namespace McpSamples.AwesomeCopilot.HybridApp.Prompts;
 public interface IMetadataPrompt
 {
     /// <summary>
-    /// Gets a prompt for searching copilot instructions.
+    /// Gets a prompt for searching the awesome copilot content.
     /// </summary>
     /// <param name="keyword">The keyword to search for.</param>
     /// <returns>A formatted search prompt.</returns>
@@ -24,13 +24,13 @@ public interface IMetadataPrompt
 public class MetadataPrompt : IMetadataPrompt
 {
     /// <inheritdoc />
-    [McpServerPrompt(Name = "get_search_prompt", Title = "Prompt for searching copilot instructions")]
-    [Description("Get a prompt for searching copilot instructions.")]
+    [McpServerPrompt(Name = "get_search_prompt", Title = "Prompt for searching the awesome copilot content")]
+    [Description("Get a prompt for searching the awesome copilot content.")]
     public string GetSearchPrompt(
         [Description("The keyword to search for")] string keyword)
     {
         return $"""
-        Please search all the chatmodes, instructions and prompts that are related to the search keyword, `{keyword}`.
+        Please search all the chatmodes, instructions, prompts, and collections that are related to the search keyword, `{keyword}`.
 
         Here's the process to follow:
 
@@ -44,15 +44,40 @@ public class MetadataPrompt : IMetadataPrompt
 
            | Exists | Mode         | Filename               | Title         | Description   |
            |--------|--------------|------------------------|---------------|---------------|
-           | ✅    | chatmodes    | chatmode1.json         | ChatMode 1    | Description 1 |
-           | ❌    | instructions | instruction1.json      | Instruction 1 | Description 1 |
-           | ✅    | prompts      | prompt1.json           | Prompt 1      | Description 1 |
+           | ✅    | chatmodes    | chatmode1.md         | ChatMode 1    | Description 1 |
+           | ❌    | instructions | instruction1.md      | Instruction 1 | Description 1 |
+           | ✅    | prompts      | prompt1.md           | Prompt 1      | Description 1 |
 
            ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
 
         1. If any item doesn't exist in the repository, ask which item the user wants to save.
         1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, or `.github/prompts`) 
            using the mode and filename, with NO modification.
+        1. Include a search for Collections, which are made up of multiple chatmodes, instructions, and prompts, but contain a and, description and tags.
+        1. If there are any that match, provide a summary of the collection, including its name, description, tags, and the items it contains.
+        1. Do NOT automatically install or save any items. Wait for explicit user confirmation.
+        1. Use the table from above to show the items in the collection.
+        """;
+    }
+
+    /// <summary>
+    /// Gets a prompt to display details about a specific collection.
+    /// </summary>
+    [McpServerPrompt(Name = "search_collections", Title = "Prompt to search Collections in the awesome copilot repo by keyword")]
+    [Description("Prompt to search Collections in the awesome copilot repo by keyword.")]
+    public string SearchCollectionsPrompt([
+        Description("The keyword to search the Collections for")]
+        string keyword)
+    {
+        return $"""
+        Please fetch the collection that matches `{keyword}` in the ID, name, description, or tags from the awesome-copilot MCP server collections endpoint.
+
+        Provide a human-friendly summary that includes:
+        - Collection name and description
+        - Tags
+        - A breakdown of items grouped by kind (chat-mode, instruction, prompt) with filenames
+
+        Do NOT automatically install or save any items. Wait for explicit user confirmation.
         """;
     }
 }
