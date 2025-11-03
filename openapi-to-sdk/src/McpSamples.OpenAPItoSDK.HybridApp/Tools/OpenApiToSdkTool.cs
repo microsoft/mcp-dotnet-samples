@@ -1,7 +1,6 @@
 using System.ComponentModel;
-using System.IO;
+using System.IO.Compression;
 
-using McpSamples.OpenApiToSdk.HybridApp.Configurations;
 using McpSamples.OpenApiToSdk.HybridApp.Services;
 
 using ModelContextProtocol.Server;
@@ -24,10 +23,10 @@ public interface IOpenApiToSdkTool
     /// Generates an SDK from an OpenAPI specification using Kiota.
     /// </summary>
     /// <param name="openApiUrl">The URL of the OpenAPI specification.</param>
-    /// <param name="language">The target language for the SDK (e.g., "csharp", "typescript").</param>
-    /// <param name="outputDir">Optional output directory for the generated SDK.</param>
+    /// <param name="language">The target language for the SDK.</param>
+    /// <param name="additionalOptions">Additional Kiota CLI options.</param>
     /// <returns>The path to the generated SDK ZIP file or an error message.</returns>
-    Task<string> GenerateSdkAsync(string openApiUrl, string language, string? outputDir = null);
+    Task<string> GenerateSdkAsync(string openApiUrl, string language, string? additionalOptions = null);
 }
 
 /// <summary>
@@ -51,45 +50,84 @@ public class OpenApiToSdkTool(IOpenApiService openApiService) : IOpenApiToSdkToo
     public async Task<string> GenerateSdkAsync(
         [Description("URL of the OpenAPI specification")] string openApiUrl,
         [Description("Target language for the SDK (e.g., csharp, typescript)")] string language,
-        [Description("Optional output directory for the generated SDK")] string? outputDir = null)
+        [Description("Optional extra Kiota options (e.g., --namespace Contoso.Api)")] string? additionalOptions = null)
     {
-        // 1. Download OpenAPI spec
+        // Download OpenAPI spec from URL
         var specContent = await openApiService.DownloadOpenApiSpecAsync(openApiUrl);
-        if (string.IsNullOrEmpty(specContent))
+        if (string.IsNullOrWhiteSpace(specContent))
         {
             return "Failed to download OpenAPI specification.";
         }
 
-        // 2. Create project temp directory (openapi-to-sdk/temp/)
-        var projectRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
+        // Resolve openapi-to-sdk root directory and create temp folder
+        var projectRoot = ResolveOpenApiToSdkRoot(Directory.GetCurrentDirectory());
         var projectTempDir = Path.Combine(projectRoot, "temp");
         Directory.CreateDirectory(projectTempDir);
 
-        // 3. Save spec to temp file (Kiota requires file path)
-        var tempSpecPath = Path.Combine(projectTempDir, $"openapi-spec-{Guid.NewGuid()}.json");
-        Console.WriteLine($"Temporary OpenAPI spec path: {tempSpecPath}");
+        // Save spec to temporary file (Kiota requires file path)
+        var tempSpecPath = Path.Combine(projectTempDir, $"openapi-spec-{Guid.NewGuid():N}.json");
         await File.WriteAllTextAsync(tempSpecPath, specContent);
 
-        // 4. Set output directory (default: temp folder)
-        var finalOutputDir = outputDir ?? Path.Combine(projectTempDir, $"sdk-output-{Guid.NewGuid()}");
+        // Create output directory for generated SDK
+        var finalOutputDir = Path.Combine(projectTempDir, $"sdk-output-{Guid.NewGuid():N}");
         Directory.CreateDirectory(finalOutputDir);
 
-        // 4. Map Kiota command options
-        var additionalOptions = "";  // Additional options (e.g., --namespace MyNamespace) can be extended
+        // Execute Kiota with mapped options
         var error = await openApiService.RunKiotaAsync(tempSpecPath, language, finalOutputDir, additionalOptions);
 
-        // 5. Clean up temp file
-        File.Delete(tempSpecPath);
+        // Clean up temporary spec file
+        try
+        {
+            File.Delete(tempSpecPath);
+        }
+        catch
+        {
+            // Best effort cleanup
+        }
 
         if (!string.IsNullOrEmpty(error))
         {
             return $"SDK generation failed: {error}";
         }
 
-        // 6. Compress generated SDK to ZIP (refer to next task)
-        var zipPath = Path.Combine(projectTempDir, $"sdk-{Guid.NewGuid()}.zip");
-        // TODO: Implement ZIP compression logic (add separate service)
+        // Compress generated SDK to ZIP
+        var zipPath = Path.Combine(projectTempDir, $"sdk-{Guid.NewGuid():N}.zip");
+        if (File.Exists(zipPath))
+        {
+            File.Delete(zipPath);
+        }
+        
+        ZipFile.CreateFromDirectory(finalOutputDir, zipPath);
 
-        return $"SDK generated successfully. ZIP path: {zipPath}";  // Eventually return URI (Feature 1.2)
+        return $"SDK generated successfully. ZIP path: {zipPath}";
+    }
+
+    /// <summary>
+    /// Resolves the openapi-to-sdk project root directory.
+    /// </summary>
+    /// <param name="start">The starting directory path.</param>
+    /// <returns>The resolved project root directory path.</returns>
+    private static string ResolveOpenApiToSdkRoot(string start)
+    {
+        var dir = start;
+        while (!string.IsNullOrEmpty(dir))
+        {
+            var name = Path.GetFileName(dir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+            if (string.Equals(name, "openapi-to-sdk", StringComparison.OrdinalIgnoreCase))
+            {
+                return dir;
+            }
+
+            var parent = Directory.GetParent(dir);
+            if (parent is null)
+            {
+                break;
+            }
+
+            dir = parent.FullName;
+        }
+
+        // Fallback to current directory if root not found
+        return start;
     }
 }
