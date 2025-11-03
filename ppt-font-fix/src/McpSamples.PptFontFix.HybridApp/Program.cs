@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using McpSamples.PptFontFix.HybridApp.Services; 
-using McpSamples.PptFontFix.HybridApp.Models; 
+using McpSamples.PptFontFix.HybridApp.Services; // 서비스 using
+using McpSamples.PptFontFix.HybridApp.Models; // 모델 using
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+using System.Collections.Generic; // IEnumerable<string>을 위해 추가
 
 /// <summary>
 /// This is the code for testing PPT font analysis functionality.
@@ -57,11 +57,13 @@ class Program
                 Console.WriteLine("(None)");
             }
 
-            // InconsistentlyUsedFonts
+            // InconsistentlyUsedFonts (비일관 폰트)
             Console.WriteLine($"Inconsistently Used Fonts ({result.InconsistentlyUsedFonts.Count}):");
             if (result.InconsistentlyUsedFonts.Any())
             {
                 result.InconsistentlyUsedFonts.ForEach(font => Console.WriteLine($"- {font}"));
+
+                // 비일관 위치 출력
                 Console.WriteLine($"\n[Locations of Inconsistent Fonts ({result.InconsistentFontLocations.Count})]");
                 if (result.InconsistentFontLocations.Any())
                 {
