@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using ModelContextProtocol.Server;
 
 namespace McpSamples.OpenApiToSdk.HybridApp.Prompts;
