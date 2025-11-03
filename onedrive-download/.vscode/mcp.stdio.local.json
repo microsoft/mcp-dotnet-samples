@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "onedrive-download": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder:cdp-mcp}/onedrive-download/src/McpSamples.OnedriveDownload.HybridApp/McpSamples.OnedriveDownload.HybridApp.csproj"
+      ]
+    }
+  }
+}
