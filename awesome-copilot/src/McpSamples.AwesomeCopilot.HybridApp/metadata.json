@@ -2375,6 +2375,13 @@
       ]
     },
     {
+      "filename": "update-code-from-shorthand.instructions.md",
+      "description": "Shorthand code will be in the file provided from the prompt or raw data in the prompt, and will be used to update the code file when the prompt has the text `UPDATE CODE FROM SHORTHAND`.",
+      "applyTo": [
+        "**/${input:file}"
+      ]
+    },
+    {
       "filename": "vuejs3.instructions.md",
       "description": "VueJS 3 development standards and best practices with Composition API and TypeScript",
       "applyTo": [
