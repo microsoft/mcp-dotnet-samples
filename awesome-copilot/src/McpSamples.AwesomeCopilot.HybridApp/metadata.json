@@ -1630,6 +1630,10 @@
       ]
     },
     {
+      "filename": "codexer.instructions.md",
+      "description": "Advanced Python research assistant with Context 7 MCP integration, focusing on speed, reliability, and 10+ years of software development expertise"
+    },
+    {
       "filename": "coldfusion-cfc.instructions.md",
       "description": "ColdFusion Coding Standards for CFC component and application patterns",
       "applyTo": [
@@ -3042,6 +3046,17 @@
         "runTasks"
       ],
       "model": "Claude Sonnet 4"
+    },
+    {
+      "filename": "model-recommendation.prompt.md",
+      "description": "Analyze chatmode or prompt files and recommend optimal AI models based on task complexity, required capabilities, and cost-efficiency",
+      "mode": "agent",
+      "tools": [
+        "search/codebase",
+        "fetch",
+        "context7/*"
+      ],
+      "model": "Auto (copilot)"
     },
     {
       "filename": "multi-stage-dockerfile.prompt.md",
