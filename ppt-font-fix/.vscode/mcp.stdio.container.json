@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "ppt-font-fix": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest",
+        "-tc",
+        "-p"
+      ]
+    }
+  }
+}

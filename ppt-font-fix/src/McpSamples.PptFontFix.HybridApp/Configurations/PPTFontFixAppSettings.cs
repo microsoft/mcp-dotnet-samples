@@ -2,12 +2,12 @@ using McpSamples.Shared.Configurations;
 
 using Microsoft.OpenApi.Models;
 
-namespace McpSamples.PPTFontFix.HybridApp.Configurations;
+namespace McpSamples.PptFontFix.HybridApp.Configurations;
 
 /// <summary>
 /// This represents the application settings for ppt-font-fix app.
 /// </summary>
-public class PPTFontFixAppSettings : AppSettings
+public class PptFontFixAppSettings : AppSettings
 {
     /// <inheritdoc />
     public override OpenApiInfo OpenApi { get; set; } = new()

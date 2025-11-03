@@ -1,10 +1,10 @@
 namespace McpSamples.PptFontFix.HybridApp.Models;
 
 /// <summary>
-/// This represents the result of PPT font analysis.
+/// This represents the result of Ppt font analysis.
 /// </summary>
 
-public class PPTFontAnalyzeResult
+public class PptFontAnalyzeResult
 {
     /// <summary>
     /// Gets or sets the list of used fonts in the presentation.

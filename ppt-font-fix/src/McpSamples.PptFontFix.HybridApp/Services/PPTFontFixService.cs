@@ -7,65 +7,65 @@ using McpSamples.PptFontFix.HybridApp.Models;
 namespace McpSamples.PptFontFix.HybridApp.Services;
 
 /// <summary>
-/// This provides interface for PPT font fixing operations.
+/// This provides interface for Ppt font fixing operations.
 /// </summary>
-public interface IPPTFontFixService
+public interface IPptFontFixService
 {
     /// <summary>
-    /// open a PPT file.
+    /// open a Ppt file.
     /// </summary>
     /// <param name="filePath"></param>
-    Task OpenPPTFileAsync(string filePath);
+    Task OpenPptFileAsync(string filePath);
 
     /// <summary>
-    /// Analyze fonts in a PPT file.
+    /// Analyze fonts in a Ppt file.
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns>A classified list of fonts used in the presentation.</returns>
-    Task<PPTFontAnalyzeResult> AnalyzeFontsAsync();
+    Task<PptFontAnalyzeResult> AnalyzeFontsAsync();
 }
 
 /// <summary>
-/// This represents the service entity for PPT font fixing.
+/// This represents the service entity for Ppt font fixing.
 /// </summary>
 /// <param name="logger"></param>
-public class PPTFontFixService(ILogger<PPTFontFixService> logger) : IPPTFontFixService
+public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixService
 {
     private Presentation? _presentation;
     /// <inheritdoc />
-    public async Task OpenPPTFileAsync(string filePath)
+    public async Task OpenPptFileAsync(string filePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath, nameof(filePath));
         if (File.Exists(filePath) == false)
         {
-            throw new FileNotFoundException("PPT file does not exist.", filePath);
+            throw new FileNotFoundException("Ppt file does not exist.", filePath);
         }
 
         try
         {
             this._presentation = new Presentation(filePath);
-            logger.LogInformation("PPT file opened successfully and verified by ShapeCrawler: {FilePath}", filePath);
+            logger.LogInformation("Ppt file opened successfully and verified by ShapeCrawler: {FilePath}", filePath);
 
             await Task.CompletedTask;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to open PPT file with ShapeCrawler: {FilePath}", filePath);
+            logger.LogError(ex, "Failed to open Ppt file with ShapeCrawler: {FilePath}", filePath);
             throw;
         }
     }
 
     /// <inheritdoc />
-    public async Task<PPTFontAnalyzeResult> AnalyzeFontsAsync()
+    public async Task<PptFontAnalyzeResult> AnalyzeFontsAsync()
     {
         if (this._presentation == null)
         {
-            throw new InvalidOperationException("PPT file is not opened. Please open a PPT file before analyzing fonts.");
+            throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before analyzing fonts.");
         }
 
         var totalFontsInSlides = new HashSet<string>();
         var visibleFontUsages = new Dictionary<string, List<FontUsageLocation>>();
-        var result = new PPTFontAnalyzeResult();
+        var result = new PptFontAnalyzeResult();
         var slideWidth = this._presentation.SlideWidth;
         var slideHeight = this._presentation.SlideHeight;
 

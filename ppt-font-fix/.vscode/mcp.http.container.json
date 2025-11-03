@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "ppt-font-fix": {
+      "type": "http",
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}
