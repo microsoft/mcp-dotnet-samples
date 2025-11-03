@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using McpSamples.PptFontFix.HybridApp.Services; 
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 /// <summary>
-/// This is the code for testing PPT font analysis functionality.
+/// This is the code for testing Ppt font analysis functionality.
 /// </summary>
 class Program
 {
@@ -20,14 +20,14 @@ class Program
                 .AddConsole();
         });
 
-        ILogger<PPTFontFixService> logger = loggerFactory.CreateLogger<PPTFontFixService>();
-        IPPTFontFixService fontService = new PPTFontFixService(logger);
+        ILogger<PptFontFixService> logger = loggerFactory.CreateLogger<PptFontFixService>();
+        IPptFontFixService fontService = new PptFontFixService(logger);
 
         try
         {
-            await fontService.OpenPPTFileAsync("test.pptx");
+            await fontService.OpenPptFileAsync("test.pptx");
 
-            PPTFontAnalyzeResult result = await fontService.AnalyzeFontsAsync();
+            PptFontAnalyzeResult result = await fontService.AnalyzeFontsAsync();
 
             // UsedFonts
             Console.WriteLine($"Used (Standard) Fonts ({result.UsedFonts.Count}):");
