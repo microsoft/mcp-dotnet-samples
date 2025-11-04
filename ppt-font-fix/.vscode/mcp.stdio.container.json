@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "markdown-to-html": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest",
+        "-tc",
+        "-p"
+      ]
+    }
+  }
+}
