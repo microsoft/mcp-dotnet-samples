@@ -1,4 +1,5 @@
 using McpSamples.OnedriveDownload.HybridApp.Configurations;
+using McpSamples.OnedriveDownload.HybridApp.Tools;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -20,6 +21,8 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .EnableTokenAcquisitionToCallDownstreamApi()
     .AddMicrosoftGraph(builder.Configuration.GetSection("Graph"))
     .AddInMemoryTokenCaches();
+
+builder.Services.AddScoped<IOneDriveTool, OneDriveTool>();
 
 IHost app = builder.BuildApp(useStreamableHttp);
 

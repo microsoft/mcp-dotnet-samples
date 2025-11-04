@@ -1,6 +1,6 @@
 using System.ComponentModel;
+using System.Text;
 using Microsoft.Graph;
-using Microsoft.Graph.Models;
 using ModelContextProtocol.Server;
 
 namespace McpSamples.OnedriveDownload.HybridApp.Tools;
@@ -32,11 +32,11 @@ public class OneDriveDownloadResult
 public interface IOneDriveTool
 {
     /// <summary>
-    /// Downloads a file from OneDrive given its full path.
+    /// Downloads a file from a OneDrive sharing URL.
     /// </summary>
-    /// <param name="filePath">The full path to the file in OneDrive (e.g., '/Documents/MyFile.docx').</param>
+    /// <param name="sharingUrl">The OneDrive sharing URL.</param>
     /// <returns>Returns <see cref="OneDriveDownloadResult"/> instance.</returns>
-    Task<OneDriveDownloadResult> DownloadFileAsync(string filePath);
+    Task<OneDriveDownloadResult> DownloadFileFromUrlAsync(string sharingUrl);
 }
 
 /// <summary>
@@ -46,47 +46,95 @@ public interface IOneDriveTool
 public class OneDriveTool(GraphServiceClient graphServiceClient, ILogger<OneDriveTool> logger) : IOneDriveTool
 {
     /// <inheritdoc />
-    [McpServerTool(Name = "download_onedrive_file", Title = "Download OneDrive File")]
-    [Description("Downloads a file from OneDrive given its full path.")]
-    public async Task<OneDriveDownloadResult> DownloadFileAsync(
-        [Description("The full path to the file in OneDrive (e.g., '/Documents/MyFile.docx')")] string filePath)
+    [McpServerTool(Name = "download_file_from_onedrive_url", Title = "Download File from OneDrive URL")]
+    [Description("Downloads a file from a given OneDrive sharing URL.")]
+    public async Task<OneDriveDownloadResult> DownloadFileFromUrlAsync(
+        [Description("The OneDrive sharing URL for the file to download.")] string sharingUrl)
     {
         var result = new OneDriveDownloadResult();
 
-        // Get the user's Drive ID
-        var myDrive = await graphServiceClient.Me.Drive.GetAsync();
-        if (myDrive == null || string.IsNullOrEmpty(myDrive.Id))
+        // 1. Validate the sharing URL.
+        if (string.IsNullOrWhiteSpace(sharingUrl) || !Uri.TryCreate(sharingUrl, UriKind.Absolute, out var uri))
         {
-            result.ErrorMessage = "Could not retrieve user's OneDrive information.";
-            return result;
-        }
-        string driveId = myDrive.Id;
-
-        // Find the file by path
-        var driveItem = await graphServiceClient.Drives[driveId].Root.ItemWithPath(filePath).GetAsync();
-
-        if (driveItem == null || driveItem.File == null)
-        {
-            result.ErrorMessage = $"File not found at path: {filePath}";
+            result.ErrorMessage = "Invalid URL format. Please provide a valid OneDrive sharing URL.";
+            logger.LogWarning("Invalid URL format provided: {SharingUrl}", sharingUrl);
             return result;
         }
 
-        // Download the file content
-        using var contentStream = await graphServiceClient.Drives[driveId].Items[driveItem.Id].Content.GetAsync();
-        if (contentStream == null)
+        string host = uri.Host.ToLowerInvariant();
+        if (!host.EndsWith("1drv.ms") && !host.EndsWith("onedrive.live.com") && !host.EndsWith("sharepoint.com"))
         {
-            result.ErrorMessage = $"Could not retrieve content for file: {filePath}";
+            result.ErrorMessage = "The provided URL is not a recognized OneDrive or SharePoint sharing URL.";
+            logger.LogWarning("Unrecognized host for sharing URL: {Host}", host);
             return result;
         }
 
-        using var memoryStream = new MemoryStream();
-        await contentStream.CopyToAsync(memoryStream);
-        byte[] fileBytes = memoryStream.ToArray();
+        try
+        {
+            // 2. Convert the sharing URL to a sharing token for the Graph API.
+            string base64Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(sharingUrl));
+            string sharingToken = "u!" + base64Value.TrimEnd('=').Replace('/', '_').Replace('+', '-');
 
-        result.FileContentBase64 = Convert.ToBase64String(fileBytes);
-        result.FileName = driveItem.Name;
+            // 3. Get the DriveItem using the sharing token.
+            var driveItem = await graphServiceClient.Shares[sharingToken].DriveItem.Request().GetAsync();
 
-        logger.LogInformation("File '{FileName}' downloaded successfully from OneDrive.", driveItem.Name);
+            if (driveItem == null || driveItem.File == null)
+            {
+                result.ErrorMessage = "Could not retrieve file information from the sharing URL. The URL might be invalid or the file may have been removed.";
+                logger.LogWarning("DriveItem not found or is not a file for sharing URL: {SharingUrl}", sharingUrl);
+                return result;
+            }
+
+            // 4. Download the file content using the DriveItem details.
+            var driveId = driveItem.ParentReference?.DriveId;
+            var itemId = driveItem.Id;
+
+            if (string.IsNullOrEmpty(driveId) || string.IsNullOrEmpty(itemId))
+            {
+                result.ErrorMessage = "Could not extract necessary identifiers from the shared file.";
+                logger.LogWarning("DriveId or ItemId missing for shared file: {SharingUrl}", sharingUrl);
+                return result;
+            }
+
+            using var contentStream = await graphServiceClient.Drives[driveId].Items[itemId].Content.Request().GetAsync();
+            if (contentStream == null)
+            {
+                result.ErrorMessage = $"Could not retrieve content for file: {driveItem.Name}";
+                logger.LogWarning("Content stream is null for file: {FileName}", driveItem.Name);
+                return result;
+            }
+
+            // 5. Process the stream and populate the result.
+            using var memoryStream = new MemoryStream();
+            await contentStream.CopyToAsync(memoryStream);
+            byte[] fileBytes = memoryStream.ToArray();
+
+            result.FileContentBase64 = Convert.ToBase64String(fileBytes);
+            result.FileName = driveItem.Name;
+
+            logger.LogInformation("File '{FileName}' downloaded successfully from sharing URL.", driveItem.Name);
+        }
+        catch (ServiceException ex)
+        {
+            logger.LogError(ex, "Error downloading file from OneDrive sharing URL: {ErrorMessage}", ex.Message);
+            if ((System.Net.HttpStatusCode)ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                result.ErrorMessage = $"File not found or sharing URL is invalid: {sharingUrl}";
+            }
+            else if ((System.Net.HttpStatusCode)ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                result.ErrorMessage = $"Access denied to file via sharing URL. Ensure the logged-in user has permissions or the link is public: {sharingUrl}";
+            }
+            else
+            {
+                result.ErrorMessage = $"OneDrive API error: {ex.Message}";
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An unexpected error occurred while downloading file from sharing URL: {ErrorMessage}", ex.Message);
+            result.ErrorMessage = $"An unexpected error occurred: {ex.Message}";
+        }
 
         return result;
     }

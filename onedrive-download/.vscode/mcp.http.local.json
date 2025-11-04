@@ -2,7 +2,7 @@
   "servers": {
     "onedrive-download": {
       "type": "http",
-      "url": "http://0.0.0.0:5251/mcp"
+      "url": "http://0.0.0.0:5285/mcp"
     }
   }
 }
