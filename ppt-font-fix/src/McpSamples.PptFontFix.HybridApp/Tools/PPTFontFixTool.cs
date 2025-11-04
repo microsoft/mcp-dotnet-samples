@@ -10,50 +10,50 @@ using ModelContextProtocol.Server;
 namespace McpSamples.PptFontFix.HybridApp.Tools;
 
 /// <summary>
-/// This provides interface for the PPT font fix tool.
+/// This provides interface for the Ppt font fix tool.
 /// </summary>
 
-public interface IPPTFontFixTool
+public interface IPptFontFixTool
 {
     /// <summary>
-    /// open a PPT file.
+    /// open a Ppt file.
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns>Returns the result as a string.</returns>
-    Task<string> OpenPPTFileAsync(string filePath);
+    Task<string> OpenPptFileAsync(string filePath);
 
     /// <summary>
-    /// Analyze fonts in a PPT file.
+    /// Analyze fonts in a Ppt file.
     /// </summary>
-    /// <returns>Returns <see cref="PPTFontAnalyzeResult"/> instance.</returns>
-    Task<PPTFontAnalyzeResult> AnalyzeFontsAsync();
+    /// <returns>Returns <see cref="PptFontAnalyzeResult"/> instance.</returns>
+    Task<PptFontAnalyzeResult> AnalyzeFontsAsync();
 }
 
 /// <summary>
-/// This represents the tool entity for PPT font fixing.
+/// This represents the tool entity for Ppt font fixing.
 /// </summary>
 /// <param name="logger"><see cref="ILogger{TCategoryName}"/> instance.</param>
-/// <param name="service"><see cref="IPPTFontFixService"/> instance.</param>
+/// <param name="service"><see cref="IPptFontFixService"/> instance.</param>
 [McpServerToolType]
-public class PPTFontFixTool(IPPTFontFixService service, ILogger<PPTFontFixTool> logger) : IPPTFontFixTool
+public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> logger) : IPptFontFixTool
 {
     /// <inheritdoc />
-    [McpServerTool(Name = "open_ppt_file", Title = "Open a PPT File")]
-    [Description("Opens a PPT file and verifies it using ShapeCrawler.")]
-    public async Task<string> OpenPPTFileAsync(
-        [Description("The path of the PPT file to open")] string filePath)
+    [McpServerTool(Name = "open_ppt_file", Title = "Open a Ppt File")]
+    [Description("Opens a Ppt file and verifies it using ShapeCrawler.")]
+    public async Task<string> OpenPptFileAsync(
+        [Description("The path of the Ppt file to open")] string filePath)
     {
         try
         {
-            await service.OpenPPTFileAsync(filePath).ConfigureAwait(false);
+            await service.OpenPptFileAsync(filePath).ConfigureAwait(false);
 
-            string successMessage = $"PPT file opened successfully: {filePath}";
+            string successMessage = $"Ppt file opened successfully: {filePath}";
             logger.LogInformation(successMessage);
             return successMessage;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to open PPT file: {FilePath}", filePath);
+            logger.LogError(ex, "Failed to open Ppt file: {FilePath}", filePath);
 
             // throw exception to inform the caller about the failure
             throw;
@@ -61,14 +61,14 @@ public class PPTFontFixTool(IPPTFontFixService service, ILogger<PPTFontFixTool> 
     }
 
     /// <inheritdoc />
-    [McpServerTool(Name = "analyze_fonts", Title = "Analyze Fonts in PPT File")]
-    [Description("Analyzes fonts used in the opened PPT file and identifies inconsistencies.")]
-    public async Task<PPTFontAnalyzeResult> AnalyzeFontsAsync()
+    [McpServerTool(Name = "analyze_fonts", Title = "Analyze Fonts in Ppt File")]
+    [Description("Analyzes fonts used in the opened Ppt file and identifies inconsistencies.")]
+    public async Task<PptFontAnalyzeResult> AnalyzeFontsAsync()
     {
         try
         {
             // call the service to analyze fonts
-            PPTFontAnalyzeResult result = await service.AnalyzeFontsAsync().ConfigureAwait(false);
+            PptFontAnalyzeResult result = await service.AnalyzeFontsAsync().ConfigureAwait(false);
 
             if (result != null)
             {
@@ -79,13 +79,13 @@ public class PPTFontFixTool(IPPTFontFixService service, ILogger<PPTFontFixTool> 
             else
             {
                 logger.LogWarning("Font analysis service returned a null result.");
-                return new PPTFontAnalyzeResult();
+                return new PptFontAnalyzeResult();
             }
         }
         catch (Exception ex)
         {
             // log the error and rethrow
-            logger.LogError(ex, "Failed to analyze fonts in the PPT file.");
+            logger.LogError(ex, "Failed to analyze fonts in the Ppt file.");
             throw; // preserve stack trace
         }
     }

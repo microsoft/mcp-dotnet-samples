@@ -7,7 +7,7 @@
     }
   ],
   "servers": {
-    "markdown-to-html": {
+    "ppt-font-fix": {
       "type": "stdio",
       "command": "dotnet",
       "args": [
