@@ -2877,6 +2877,12 @@
       "description": "Review the C#/.NET code for design pattern implementation and suggest improvements."
     },
     {
+      "filename": "dotnet-upgrade.prompt.md",
+      "name": ".NET Upgrade Analysis Prompts",
+      "description": "Ready-to-use prompts for comprehensive .NET framework upgrade analysis and execution",
+      "prompts": ""
+    },
+    {
       "filename": "editorconfig.prompt.md",
       "title": "EditorConfig Expert",
       "description": "Generates a comprehensive and best-practice-oriented .editorconfig file based on project analysis and user preferences.",
@@ -3795,6 +3801,10 @@
         },
         {
           "path": "prompts/dotnet-best-practices.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/dotnet-upgrade.prompt.md",
           "kind": "prompt"
         }
       ],
