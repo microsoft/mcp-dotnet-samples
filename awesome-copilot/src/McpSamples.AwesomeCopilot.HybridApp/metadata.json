@@ -4773,6 +4773,11 @@
       "description": "Support development of .NET (OOP) WinForms Designer compatible Apps."
     },
     {
+      "filename": "adr-generator.agent.md",
+      "name": "ADR Generator",
+      "description": "Expert agent for creating comprehensive Architectural Decision Records (ADRs) with structured formatting optimized for AI consumption and human readability."
+    },
+    {
       "filename": "amplitude-experiment-implementation.agent.md",
       "name": "Amplitude Experiment Implementation",
       "description": "This custom agent uses Amplitude's MCP tools to deploy new experiments inside of Amplitude, enabling seamless variant testing capabilities and rollout of product features."
@@ -4930,7 +4935,16 @@
     {
       "filename": "terraform.agent.md",
       "name": "Terraform Agent",
-      "description": "With Terraform custom agent, each developer can easily adhere to Terraform configurations, use approved modules, apply the correct tags, and ensure they're following the Terraform best practices by default. This leads to significant time saving, eliminating security gaps, and inconsistencies. And saves time that would be wasted on repetitive boilerplate code."
+      "description": "Terraform infrastructure specialist with automated HCP Terraform workflows. Leverages Terraform MCP server for registry integration, workspace management, and run orchestration. Generates compliant code using latest provider/module versions, manages private registries, automates variable sets, and orchestrates infrastructure deployments with proper validation and security practices.",
+      "tools": [
+        "*"
+      ],
+      "mcp-servers": "",
+      "terraform": "",
+      "type": "local",
+      "command": "docker",
+      "args": "[ 'run', '-i', '--rm', '-e', 'TFE_TOKEN=${COPILOT_MCP_TFE_TOKEN}', '-e', 'TFE_ADDRESS=${COPILOT_MCP_TFE_ADDRESS}', '-e', 'ENABLE_TF_OPERATIONS=${COPILOT_MCP_ENABLE_TF_OPERATIONS}',",
+      "'hashicorp/terraform-mcp-server": "latest' ]"
     }
   ]
 }
