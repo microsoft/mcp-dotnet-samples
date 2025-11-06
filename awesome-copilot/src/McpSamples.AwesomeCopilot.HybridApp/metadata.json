@@ -1090,6 +1090,18 @@
       "model": "GPT-4.1"
     },
     {
+      "filename": "search-ai-optimization-expert.chatmode.md",
+      "description": "Expert guidance for modern search optimization: SEO, Answer Engine Optimization (AEO), and Generative Engine Optimization (GEO) with AI-ready content strategies",
+      "tools": [
+        "codebase",
+        "fetch",
+        "githubRepo",
+        "terminalCommand",
+        "edit/editFiles",
+        "problems"
+      ]
+    },
+    {
       "filename": "semantic-kernel-dotnet.chatmode.md",
       "description": "Create, update, refactor, explain or work with code using the .NET version of Semantic Kernel.",
       "tools": [
