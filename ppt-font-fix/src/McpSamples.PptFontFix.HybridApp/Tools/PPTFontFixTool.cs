@@ -27,6 +27,12 @@ public interface IPptFontFixTool
     /// </summary>
     /// <returns>Returns <see cref="PptFontAnalyzeResult"/> instance.</returns>
     Task<PptFontAnalyzeResult> AnalyzeFontsAsync();
+
+    /// <summary>
+    /// Save the modified Ppt file.
+    /// </summary>
+    /// <param name="newFilePath"></param>
+    Task<string> SavePptFileAsync(string newFilePath);
 }
 
 /// <summary>
@@ -55,7 +61,6 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
         {
             logger.LogError(ex, "Failed to open Ppt file: {FilePath}", filePath);
 
-            // throw exception to inform the caller about the failure
             throw;
         }
     }
@@ -67,7 +72,6 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
     {
         try
         {
-            // call the service to analyze fonts
             PptFontAnalyzeResult result = await service.AnalyzeFontsAsync().ConfigureAwait(false);
 
             if (result != null)
@@ -84,9 +88,30 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
         }
         catch (Exception ex)
         {
-            // log the error and rethrow
             logger.LogError(ex, "Failed to analyze fonts in the Ppt file.");
-            throw; // preserve stack trace
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    [McpServerTool(Name = "save_ppt_file", Title = "Save Modified Ppt File")]
+    [Description("Saves the modified Ppt file to the specified path.")]
+    public async Task<string> SavePptFileAsync(
+        [Description("The path to save the modified Ppt file")] string newFilePath)
+    {
+        try
+        {
+            await service.SavePptFileAsync(newFilePath).ConfigureAwait(false);
+
+            string successMessage = $"Ppt file saved successfully: {newFilePath}";
+            logger.LogInformation(successMessage);
+            return successMessage;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to save Ppt file: {FilePath}", newFilePath);
+
+            throw;
         }
     }
 }

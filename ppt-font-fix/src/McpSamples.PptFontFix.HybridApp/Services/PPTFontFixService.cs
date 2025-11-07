@@ -20,9 +20,14 @@ public interface IPptFontFixService
     /// <summary>
     /// Analyze fonts in a Ppt file.
     /// </summary>
-    /// <param name="filePath"></param>
     /// <returns>A classified list of fonts used in the presentation.</returns>
     Task<PptFontAnalyzeResult> AnalyzeFontsAsync();
+
+    /// <summary>
+    /// Save the modified Ppt file.
+    /// </summary>
+    /// <param name="newFilePath"></param>
+    Task SavePptFileAsync(string newFilePath);
 }
 
 /// <summary>
@@ -82,19 +87,20 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
                 bool isWhitespace = string.IsNullOrWhiteSpace(portion.Text);
                 if (!isWhitespace)
                 {
-                    // Count only visible text portions
-                    if (!visibleFontUsages.ContainsKey(fontName))
+                    if (!visibleFontUsages.TryGetValue(fontName, out List<FontUsageLocation>? value))
                     {
-                        visibleFontUsages[fontName] = new List<FontUsageLocation>();
+                        value = [];
+                        visibleFontUsages[fontName] = value;
                     }
-                    visibleFontUsages[fontName].Add(location);
+
+                    value.Add(location);
                 }
             }
         };
 
         foreach (var slide in this._presentation.Slides)
         {
-            bool isSlideVisible = !slide.Hidden(); 
+            bool isSlideVisible = !slide.Hidden();
             foreach (var shape in slide.Shapes)
             {
                 var location = new FontUsageLocation { SlideNumber = slide.Number, ShapeName = shape.Name };
@@ -156,5 +162,29 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
         logger.LogInformation("[Result] Inconsistently Used Fonts: {Fonts}", string.Join(", ", result.InconsistentlyUsedFonts));
 
         return await Task.FromResult(result);
+    }
+    
+    /// <inheritdoc />
+    public async Task SavePptFileAsync(string newFilePath)
+    {
+        if (this._presentation == null)
+        {
+            throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before saving.");
+        }
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(newFilePath, nameof(newFilePath));
+
+        try
+        {
+            this._presentation.Save(newFilePath);
+            logger.LogInformation("Ppt file saved successfully: {FilePath}", newFilePath);
+
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to save Ppt file: {FilePath}", newFilePath);
+            throw;
+        }
     }
 }
