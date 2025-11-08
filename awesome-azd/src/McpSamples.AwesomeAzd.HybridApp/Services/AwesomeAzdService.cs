@@ -83,9 +83,4 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         throw new NotImplementedException();
     }
 
-    public Task<string> GetTemplateInitCommandAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
-
 }

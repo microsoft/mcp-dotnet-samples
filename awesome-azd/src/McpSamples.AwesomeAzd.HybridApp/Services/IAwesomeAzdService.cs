@@ -22,11 +22,5 @@ namespace McpSamples.AwesomeAzd.HybridApp.Services
         /// <returns>The <see cref="AwesomeAzdTemplateModel"/> corresponding to the specified ID, or null if not found.</returns>
         Task<AwesomeAzdTemplateModel?> GetTemplateDetailByIdAsync(string id);
 
-        /// <summary>
-        /// Generates the azd init command for a specific template.
-        /// </summary>
-        /// <param name="id">The template ID for which to generate the command.</param>
-        /// <returns>A string containing the azd init command for the template.</returns>
-        Task<string> GetTemplateInitCommandAsync(string id);
     }
 }
