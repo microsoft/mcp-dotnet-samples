@@ -2,7 +2,7 @@
   "servers": {
     "ppt-font-fix": {
       "type": "http",
-      "url": "http://localhost:5280/mcp"
+      "url": "http://localhost:5166/mcp"
     }
   }
 }
