@@ -28,6 +28,12 @@ public interface IPptFontFixService
     /// </summary>
     /// <param name="newFilePath"></param>
     Task SavePptFileAsync(string newFilePath);
+
+    /// <summary>
+    /// Remove Unused Fonts from the presentation.
+    /// </summary>
+    /// <param name="locationsToRemove">A list of shape locations to be removed.</param>
+    Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove);
 }
 
 /// <summary>
@@ -163,7 +169,7 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
 
         return await Task.FromResult(result);
     }
-    
+
     /// <inheritdoc />
     public async Task SavePptFileAsync(string newFilePath)
     {
@@ -186,5 +192,46 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
             logger.LogError(ex, "Failed to save Ppt file: {FilePath}", newFilePath);
             throw;
         }
+    }
+    
+    /// <inheritdoc />
+    public async Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove)
+    {
+        if (this._presentation == null)
+        {
+            throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before removing unused fonts.");
+        }
+
+        if (locationsToRemove == null || locationsToRemove.Count == 0)
+        {
+            logger.LogInformation("No locations provided for removal. Skipping removal process.");
+            return await Task.FromResult(0);
+        }
+
+        int removalCount = 0;
+
+        foreach (var location in locationsToRemove)
+        {
+            var slide = this._presentation.Slides.FirstOrDefault(s => s.Number == location.SlideNumber);
+            if (slide == null)
+            {
+                logger.LogWarning("Slide number {SlideNumber} not found. Skipping.", location.SlideNumber);
+                continue;
+            }
+
+            var shape = slide.Shapes.FirstOrDefault(sh => sh.Name == location.ShapeName);
+            if (shape == null)
+            {
+                logger.LogWarning("Shape name {ShapeName} not found in slide {SlideNumber}. Skipping.", location.ShapeName, location.SlideNumber);
+                continue;
+            }
+
+            shape.Remove();
+            removalCount++;
+            logger.LogInformation("Removed shape {ShapeName} from slide {SlideNumber}.", location.ShapeName, location.SlideNumber);
+        }
+
+        logger.LogInformation("Total shapes removed: {Count}", removalCount);
+        return await Task.FromResult(removalCount);
     }
 }

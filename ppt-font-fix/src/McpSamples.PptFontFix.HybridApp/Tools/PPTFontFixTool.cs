@@ -33,6 +33,12 @@ public interface IPptFontFixTool
     /// </summary>
     /// <param name="newFilePath"></param>
     Task<string> SavePptFileAsync(string newFilePath);
+
+    /// <summary>
+    /// Remove shapes from the presentation.
+    /// </summary>
+    /// <param name="locationsToRemove">A list of shape locations to be removed.</param>
+    Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove);
 }
 
 /// <summary>
@@ -111,6 +117,26 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
         {
             logger.LogError(ex, "Failed to save Ppt file: {FilePath}", newFilePath);
 
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+   [McpServerTool(Name = "remove_unused_font_shapes", Title = "Remove Unused Font Shapes")]
+   [Description("Removes shapes that contain unused fonts (e.g., empty text boxes). Takes the 'unusedFontLocations' list from the analysis result.")]
+    public async Task<int> RemoveUnusedFontsAsync(
+        [Description("A list of shape locations (from 'unusedFontLocations') to be removed.")]
+        List<FontUsageLocation> locationsToRemove)
+    {
+        try
+        {
+            int count = await service.RemoveUnusedFontsAsync(locationsToRemove).ConfigureAwait(false);
+            logger.LogInformation("RemoveUnusedFontsAsync Tool executed, {Count} shapes removed.", count);
+            return count;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to remove unused font shapes.");
             throw;
         }
     }
