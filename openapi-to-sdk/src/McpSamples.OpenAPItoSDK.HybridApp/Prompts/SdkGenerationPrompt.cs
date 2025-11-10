@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 using ModelContextProtocol.Server;
 
 namespace McpSamples.OpenApiToSdk.HybridApp.Prompts;
@@ -31,7 +33,7 @@ public interface ISdkGenerationPrompt
 public class SdkGenerationPrompt : ISdkGenerationPrompt
 {
     /// <inheritdoc />
-    [McpServerPrompt(Name = "generate_sdk_with_parsing", Title = "Generate SDK from OpenAPI Spec with Kiota Parsing")]
+    [McpServerPrompt(Name = "generate_sdk", Title = "Generate SDK from OpenAPI Spec with Kiota Parsing")]
     [Description("Provides a structured prompt for parsing Kiota options and generating an SDK.")]
     public string GetSdkGenerationPrompt(
         [Description("The Location of the OpenAPI description.")] string openApiDocUrl,
