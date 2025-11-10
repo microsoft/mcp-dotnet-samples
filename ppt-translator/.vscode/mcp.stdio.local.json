@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "ppt-translator": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder:ppt-translator}/src/McpSamples.PptTranslator.HybridApp/McpSamples.PptTranslator.HybridApp.csproj"
+      ]
+    }
+  }
+}
