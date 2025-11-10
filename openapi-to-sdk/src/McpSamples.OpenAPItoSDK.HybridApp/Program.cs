@@ -1,11 +1,10 @@
 using McpSamples.OpenApiToSdk.HybridApp.Configurations;
+using McpSamples.OpenApiToSdk.HybridApp.Services;
+using McpSamples.OpenApiToSdk.HybridApp.Tools;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
-using McpSamples.OpenApiToSdk.HybridApp.Services;
+using McpSamples.Shared.OpenApi;
 
-/// <summary>
-/// Entry point for the OpenAPI to SDK MCP server.
-/// </summary>
 var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
 IHostApplicationBuilder builder = useStreamableHttp
@@ -14,10 +13,30 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<OpenApiToSdkAppSettings>(builder.Configuration, args);
 
-// 추가: OpenAPI 서비스 등록
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IOpenApiService, OpenApiService>();
+builder.Services.AddScoped<OpenApiToSdkTool>();
+
+if (useStreamableHttp == true)
+{
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddOpenApi("swagger", o =>
+    {
+        o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+        o.AddDocumentTransformer<McpDocumentTransformer<OpenApiToSdkAppSettings>>();
+    });
+    builder.Services.AddOpenApi("openapi", o =>
+    {
+        o.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
+        o.AddDocumentTransformer<McpDocumentTransformer<OpenApiToSdkAppSettings>>();
+    });
+}
 
 IHost app = builder.BuildApp(useStreamableHttp);
+
+if (useStreamableHttp == true)
+{
+    (app as WebApplication)!.MapOpenApi("/{documentName}.json");
+}
 
 await app.RunAsync();

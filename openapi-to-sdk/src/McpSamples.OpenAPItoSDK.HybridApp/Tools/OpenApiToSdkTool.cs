@@ -1,5 +1,8 @@
+using System;
 using System.ComponentModel;
+using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 
 using McpSamples.OpenApiToSdk.HybridApp.Services;
 
@@ -96,7 +99,7 @@ public class OpenApiToSdkTool(IOpenApiService openApiService) : IOpenApiToSdkToo
         {
             File.Delete(zipPath);
         }
-        
+
         ZipFile.CreateFromDirectory(finalOutputDir, zipPath);
 
         return $"SDK generated successfully. ZIP path: {zipPath}";
