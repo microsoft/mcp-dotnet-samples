@@ -2549,8 +2549,8 @@
       "filename": "conventional-commit.prompt.md",
       "description": "Prompt and workflow for generating conventional commit messages using a structured XML format. Guides users to create standardized, descriptive commit messages in line with the Conventional Commits specification, including instructions, examples, and validation.",
       "tools": [
-        "run_in_terminal",
-        "get_terminal_output"
+        "runCommands/runInTerminal",
+        "runCommands/getTerminalOutput"
       ]
     },
     {
@@ -2961,8 +2961,8 @@
       "filename": "git-flow-branch-creator.prompt.md",
       "description": "Intelligent Git Flow branch creator that analyzes git status/diff and creates appropriate branches following the nvie Git Flow branching model.",
       "tools": [
-        "run_in_terminal",
-        "get_terminal_output"
+        "runCommands/runInTerminal",
+        "runCommands/getTerminalOutput"
       ],
       "mode": "agent"
     },
