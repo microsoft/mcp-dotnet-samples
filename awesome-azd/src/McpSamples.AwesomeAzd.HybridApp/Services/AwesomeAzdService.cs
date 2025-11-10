@@ -58,6 +58,7 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 ?? new List<AwesomeAzdTemplateModel>();
 
+
             logger.LogInformation("Loaded {count} templates.", _cachedTemplates.Count);
             return _cachedTemplates;
         }
@@ -78,7 +79,7 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         return searchTerms.Any(term => text.Contains(term, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    public Task<AwesomeAzdTemplateModel?> GetTemplateDetailByIdAsync(string id)
+    public async Task<AwesomeAzdTemplateModel?> GetTemplateDetailByTitleAsync(string title, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
