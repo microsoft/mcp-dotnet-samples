@@ -14,10 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.IO.Compression" Version="4.*" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
   </ItemGroup>
 

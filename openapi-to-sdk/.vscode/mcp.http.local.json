@@ -2,7 +2,7 @@
     "servers": {
         "openapi-to-sdk": {
             "type": "http",
-            "url": "http://localhost:5222/mcp"
+            "url": "http://0.0.0.0:5222/mcp"
         }
     }
 }
