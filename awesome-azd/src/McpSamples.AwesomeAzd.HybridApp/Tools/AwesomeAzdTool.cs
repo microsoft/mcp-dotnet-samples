@@ -1,6 +1,7 @@
 using System.ComponentModel;
 
 using McpSamples.AwesomeAzd.HybridApp.Services;
+using McpSamples.AwesomeAzd.HybridApp.Models;
 
 using ModelContextProtocol.Server;
 
@@ -16,7 +17,7 @@ public interface IAwesomeAzdTool
     /// </summary>
     /// <param name="keywords">The keyword to search templates for</param>
     /// <returns>A list of matching template titles.</returns>
-    Task<List<string>> GetTemplateListAsync(string keywords);
+    Task<List<AwesomeAzdTemplateModel>> GetTemplateListAsync(string keywords);
 }
 
 /// <summary>
@@ -28,22 +29,26 @@ public class AwesomeAzdTool(IAwesomeAzdService service, ILogger<AwesomeAzdTool> 
     /// <inheritdoc />
     [McpServerTool(Name = "get_templates", Title = "Search Azure Developer templates")]
     [Description("Searches available Azure Developer templates by keyword.")]
-    public async Task<List<string>> GetTemplateListAsync(
+    public async Task<List<AwesomeAzdTemplateModel>> GetTemplateListAsync(
         [Description("The keyword to search templates for")] string keywords)
     {
-        var result = new List<string>();
+        var result = new List<AwesomeAzdTemplateModel>();
 
         try
         {
             var templates = await service.GetTemplateListAsync(keywords).ConfigureAwait(false);
-            result = templates.Select(t => t.Title).ToList();
+            result = templates.ToList();
 
             logger.LogInformation("Template search completed successfully for keyword '{Keywords}'.", keywords);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error occurred while searching templates with keyword '{Keywords}'.", keywords);
-            result.Add($"Error: {ex.Message}");
+            result.Add(new AwesomeAzdTemplateModel
+            {
+                Title = "Error",
+                Description = ex.Message
+            });
         }
 
         return result;
