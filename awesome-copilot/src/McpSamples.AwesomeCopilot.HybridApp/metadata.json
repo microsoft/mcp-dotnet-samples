@@ -4,7 +4,7 @@
       "filename": "4.1-Beast.chatmode.md",
       "description": "GPT 4.1 as a top-notch coding agent.",
       "model": "GPT-4.1",
-      "title": "4.1 Beast Mode (VS Code v1.102)"
+      "title": "4.1 Beast Mode v3.1"
     },
     {
       "filename": "Thinking-Beast-Mode.chatmode.md",
@@ -1199,7 +1199,7 @@
       "description": "Expert-level software engineering agent. Deliver production-ready, maintainable code. Execute systematically and specification-driven. Document comprehensively. Operate autonomously and adaptively.",
       "tools": [
         "changes",
-        "codebase",
+        "search/codebase",
         "edit/editFiles",
         "extensions",
         "fetch",
@@ -1212,9 +1212,9 @@
         "runTasks",
         "runTests",
         "search",
-        "searchResults",
-        "terminalLastCommand",
-        "terminalSelection",
+        "search/searchResults",
+        "runCommands/terminalLastCommand",
+        "runCommands/terminalSelection",
         "testFailure",
         "usages",
         "vscodeAPI",
@@ -2273,6 +2273,13 @@
       ]
     },
     {
+      "filename": "shell.instructions.md",
+      "description": "Shell scripting best practices and conventions for bash, sh, zsh, and other shells",
+      "applyTo": [
+        "**/*.sh"
+      ]
+    },
+    {
       "filename": "spec-driven-workflow-v1.instructions.md",
       "description": "Specification-Driven Workflow v1 provides a structured approach to software development, ensuring that requirements are clearly defined, designs are meticulously planned, and implementations are thoroughly documented and validated.",
       "applyTo": [
@@ -2358,6 +2365,17 @@
         "**/*.tfvars",
         "**/*.tflint.hcl",
         "**/*.tfstate",
+        "**/*.tf.json",
+        "**/*.tfvars.json"
+      ]
+    },
+    {
+      "filename": "terraform-sap-btp.instructions.md",
+      "description": "Terraform conventions and guidelines for SAP Business Technology Platform (SAP BTP).",
+      "applyTo": [
+        "**/*.tf",
+        "**/*.tfvars",
+        "**/*.tflint.hcl",
         "**/*.tf.json",
         "**/*.tfvars.json"
       ]
@@ -3614,6 +3632,19 @@
         "testFailure",
         "usages",
         "vscodeAPI"
+      ]
+    },
+    {
+      "filename": "write-coding-standards-from-file.prompt.md",
+      "mode": "agent",
+      "description": "Write a coding standards document for a project using the coding styles from the file(s) and/or folder(s) passed as arguments in the prompt.",
+      "tools": [
+        "createFile",
+        "editFiles",
+        "fetch",
+        "githubRepo",
+        "search",
+        "testFailure"
       ]
     }
   ],
