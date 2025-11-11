@@ -34,6 +34,14 @@ public interface IPptFontFixService
     /// </summary>
     /// <param name="locationsToRemove">A list of shape locations to be removed.</param>
     Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove);
+
+    ///<summary>
+    /// Replace a font with another font throughout the presentation.
+    /// </summary>
+    /// <param name="fontToReplace">The font name to be replaced.</param>
+    /// <param name="replacementFont">The replacement font name.</param>
+    /// <returns>The number of replacements made.</returns>
+    Task<int> ReplaceFontAsync(string fontToReplace, string replacementFont);
 }
 
 /// <summary>
@@ -193,7 +201,7 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
             throw;
         }
     }
-    
+
     /// <inheritdoc />
     public async Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove)
     {
@@ -233,5 +241,47 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
 
         logger.LogInformation("Total shapes removed: {Count}", removalCount);
         return await Task.FromResult(removalCount);
+    }
+    
+    /// <inheritdoc />
+    public async Task<int> ReplaceFontAsync(string fontToReplace, string replacementFont)
+    {
+        if (this._presentation == null)
+        {
+            throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before replacing fonts.");
+        }
+
+        if (string.IsNullOrWhiteSpace(fontToReplace))
+        {
+            throw new ArgumentException("Font to replace cannot be null or whitespace.", nameof(fontToReplace));
+        }
+
+        if (string.IsNullOrWhiteSpace(replacementFont))
+        {
+            throw new ArgumentException("Replacement font cannot be null or whitespace.", nameof(replacementFont));
+        }
+
+        int replacementCount = 0;
+
+        foreach (var slide in this._presentation.Slides)
+        {
+            foreach (var shape in slide.Shapes)
+            {
+                if (shape.TextBox != null)
+                {
+                    foreach (var portion in shape.TextBox.Paragraphs.SelectMany(p => p.Portions))
+                    {
+                        if (portion.Font != null && string.Equals(portion.Font.LatinName, fontToReplace, StringComparison.OrdinalIgnoreCase))
+                        {
+                            portion.Font.LatinName = replacementFont;
+                            replacementCount++;
+                        }
+                    }
+                }
+            }
+        }
+
+        logger.LogInformation("Total font replacements made: {Count}", replacementCount);
+        return await Task.FromResult(replacementCount);
     }
 }

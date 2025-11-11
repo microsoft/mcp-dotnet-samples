@@ -39,6 +39,12 @@ public interface IPptFontFixTool
     /// </summary>
     /// <param name="locationsToRemove">A list of shape locations to be removed.</param>
     Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove);
+
+    /// <summary>
+    /// Replace a font with another font throughout the presentation.
+    /// </summary>
+    /// <param name="fontToReplace">The font to be replaced.</param>
+    Task<int> ReplaceFontAsync(string fontToReplace, string replacementFont);
 }
 
 /// <summary>
@@ -122,10 +128,10 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
     }
 
     /// <inheritdoc />
-   [McpServerTool(Name = "remove_unused_font_shapes", Title = "Remove Unused Font Shapes")]
-   [Description("Removes shapes that contain unused fonts (e.g., empty text boxes). Takes the 'unusedFontLocations' list from the analysis result.")]
+    [McpServerTool(Name = "remove_unused_font_shapes", Title = "Remove Unused Font Shapes")]
+    [Description("Removes shapes that contain unused fonts (e.g., empty text boxes). Takes the 'unusedFontLocations' list from the analysis result.")]
     public async Task<int> RemoveUnusedFontsAsync(
-        [Description("A list of shape locations (from 'unusedFontLocations') to be removed.")]
+         [Description("A list of shape locations (from 'unusedFontLocations') to be removed.")]
         List<FontUsageLocation> locationsToRemove)
     {
         try
@@ -137,6 +143,26 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to remove unused font shapes.");
+            throw;
+        }
+    }
+    
+    /// <inheritdoc />
+    [McpServerTool(Name = "replace_font", Title = "Replace Font Throughout Presentation")]
+    [Description("Replaces a specified font with another font throughout the presentation.")]
+    public async Task<int> ReplaceFontAsync(
+        [Description("The font to be replaced")] string fontToReplace,
+        [Description("The replacement font")] string replacementFont)
+    {
+        try
+        {
+            int count = await service.ReplaceFontAsync(fontToReplace, replacementFont).ConfigureAwait(false);
+            logger.LogInformation("ReplaceFontAsync Tool executed, {Count} instances of '{FontToReplace}' replaced with '{ReplacementFont}'.", count, fontToReplace, replacementFont);
+            return count;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to replace font '{FontToReplace}' with '{ReplacementFont}'.", fontToReplace, replacementFont);
             throw;
         }
     }
