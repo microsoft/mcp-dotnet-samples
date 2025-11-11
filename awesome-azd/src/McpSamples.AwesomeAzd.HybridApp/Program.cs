@@ -13,6 +13,8 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<AwesomeAzdAppSettings>(builder.Configuration, args);
 
+builder.Services.AddHttpClient<IAwesomeAzdService, AwesomeAzdService>();
+
 IHost app = builder.BuildApp(useStreamableHttp);
 
 await app.RunAsync();
