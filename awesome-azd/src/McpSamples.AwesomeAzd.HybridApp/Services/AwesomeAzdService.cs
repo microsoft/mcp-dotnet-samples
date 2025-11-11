@@ -7,8 +7,6 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
 {
     private const string AwesomeAzdTemplateFileUrl = "https://raw.githubusercontent.com/Azure/awesome-azd/main/website/static/templates.json";
 
-    private List<AwesomeAzdTemplateModel>? _cachedTemplates;
-
     public async Task<List<AwesomeAzdTemplateModel>> GetTemplateListAsync(string keywords, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(keywords))
@@ -35,16 +33,11 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
                     || (t.AzureServices?.Any(svc => ContainsAnyKeyword(svc, searchTerms)) ?? false))
             .ToList();
 
-        _cachedTemplates = result;
         return result;
     }
 
     private async Task<List<AwesomeAzdTemplateModel>> GetTemplatesAsync(CancellationToken cancellationToken)
     {
-        if (_cachedTemplates != null && _cachedTemplates.Any())
-        {
-            return _cachedTemplates;
-        }
 
         try
         {
@@ -54,13 +47,14 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            _cachedTemplates = JsonSerializer.Deserialize<List<AwesomeAzdTemplateModel>>(json,
+
+            var result = JsonSerializer.Deserialize<List<AwesomeAzdTemplateModel>>(json,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 ?? new List<AwesomeAzdTemplateModel>();
 
+            logger.LogInformation("Loaded {count} templates.", result.Count);
 
-            logger.LogInformation("Loaded {count} templates.", _cachedTemplates.Count);
-            return _cachedTemplates;
+            return result;
         }
         catch (Exception ex)
         {
@@ -79,9 +73,5 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         return searchTerms.Any(term => text.Contains(term, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    public async Task<AwesomeAzdTemplateModel?> GetTemplateDetailByTitleAsync(string title, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
 
 }
