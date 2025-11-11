@@ -474,7 +474,7 @@
     },
     {
       "filename": "expert-react-frontend-engineer.chatmode.md",
-      "description": "Provide expert React frontend engineering guidance using modern TypeScript and design patterns.",
+      "description": "Expert React 19.2 frontend engineer specializing in modern hooks, Server Components, Actions, TypeScript, and performance optimization",
       "tools": [
         "changes",
         "codebase",
@@ -1771,6 +1771,15 @@
       "applyTo": [
         "**/*.csproj",
         "**/*.cs"
+      ]
+    },
+    {
+      "filename": "dotnet-maui-9-to-dotnet-maui-10-upgrade.instructions.md",
+      "description": "Instructions for upgrading .NET MAUI applications from version 9 to version 10, including breaking changes, deprecated APIs, and migration strategies for ListView to CollectionView.",
+      "applyTo": [
+        "**/*.csproj",
+        "**/*.cs",
+        "**/*.xaml"
       ]
     },
     {
