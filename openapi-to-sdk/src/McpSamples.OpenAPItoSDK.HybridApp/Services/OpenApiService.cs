@@ -18,22 +18,14 @@ public class OpenApiService(HttpClient httpClient, ILogger<OpenApiService> logge
             throw new ArgumentException("URL is required.", nameof(url));
         }
 
-        try
-        {
-            logger.LogInformation("Downloading OpenAPI spec from {Url}", url);
-            var response = await httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
+        logger.LogInformation("Downloading OpenAPI spec from {Url}", url);
+        var response = await httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
 
-            var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-            logger.LogInformation("Downloaded OpenAPI spec from {Url} (Length={Length})", url, content.Length);
-            
-            return content;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to download OpenAPI spec from {Url}", url);
-            throw;
-        }
+        var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        logger.LogInformation("Downloaded OpenAPI spec from {Url} (Length={Length})", url, content.Length);
+        
+        return content;
     }
 
     /// <inheritdoc />
