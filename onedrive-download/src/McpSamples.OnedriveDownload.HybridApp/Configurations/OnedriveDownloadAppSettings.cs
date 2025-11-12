@@ -29,12 +29,17 @@ public class EntraIdSettings
     public string? ClientId { get; set; }
 
     /// <summary>
+    /// Gets or sets the client secret.
+    /// </summary>
+    public string? ClientSecret { get; set; }
+
+    /// <summary>
     /// Gets or sets the user-assigned client ID.
     /// </summary>
     public string? UserAssignedClientId { get; set; }
 
     /// <summary>
-    /// Gets the value indicating whether to use the managed identity or not.
+    /// Gets or sets the value indicating whether to use the managed identity or not.
     /// </summary>
-    public bool UseManagedIdentity => string.IsNullOrWhiteSpace(UserAssignedClientId) == false;
+    public bool UseManagedIdentity { get; set; }
 }

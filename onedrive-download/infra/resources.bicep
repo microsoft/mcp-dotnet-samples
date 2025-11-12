@@ -7,6 +7,16 @@ param tags object = {}
 @description('The name of the service defined in azure.yaml.')
 param azdServiceName string
 
+@description('The client ID of the Entra application')
+param mcpAppId string
+
+@description('The tenant ID of the Entra application')
+param mcpAppTenantId string
+
+@description('The client secret of the Entra application')
+@secure()
+param mcpAppClientSecret string
+
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
 
@@ -92,11 +102,19 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
         }
         {
           name: 'OnedriveDownload__EntraId__UseManagedIdentity'
-          value: 'true'
+          value: 'false'
         }
         {
-          name: 'OnedriveDownload__EntraId__UserAssignedClientId'
-          value: userAssignedIdentity.properties.clientId
+          name: 'OnedriveDownload__EntraId__TenantId'
+          value: mcpAppTenantId
+        }
+        {
+          name: 'OnedriveDownload__EntraId__ClientId'
+          value: mcpAppId
+        }
+        {
+          name: 'OnedriveDownload__EntraId__ClientSecret'
+          value: mcpAppClientSecret
         }
       ]
       cors: {
@@ -128,5 +146,6 @@ resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = functionApp.id
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME string = functionApp.name
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = functionApp.properties.defaultHostName
+output AZURE_USER_ASSIGNED_IDENTITY_PRINCIPAL_ID string = userAssignedIdentity.properties.principalId
 // This output is no longer relevant, but keeping it to avoid breaking main.bicep for now. I will fix main.bicep next.
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = ''

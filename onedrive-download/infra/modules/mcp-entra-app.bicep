@@ -9,20 +9,11 @@ param mcpAppDisplayName string
 @description('Tenant ID where the application is registered')
 param tenantId string = tenant().tenantId
 
-@description('The principle id of the user-assigned managed identity')
-param userAssignedIdentityPrincipleId string
-
-@description('The web app name for callback URL configuration')
-param functionAppName string
-
 @description('Provide an array of Microsoft Graph scopes like "User.Read"')
 param appScopes array = ['User.Read']
 
 @description('Provide an array of Microsoft Graph roles like "Mail.Send"')
 param appRoles array = ['Mail.Send']
-
-var loginEndpoint = environment().authentication.loginEndpoint
-var issuer = '${loginEndpoint}${tenantId}/v2.0'
 
 // Microsoft Graph app ID
 var graphAppId = '00000003-0000-0000-c000-000000000000'
@@ -32,7 +23,6 @@ var msGraphAppId = graphAppId
 var vscodeAppId = 'aebc6443-996d-45c2-90f0-388ff96faa56'
 
 // Permission ID
-var delegatedUserReadPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d'
 var applicationMailSendPermissionId = 'b633e1c5-b582-4048-a93e-9f11b44c7e96'
 
 // Get the Microsoft Graph service principal so that the scope names
@@ -87,21 +77,6 @@ resource mcpEntraApp 'Microsoft.Graph/applications@v1.0' = {
       resourceAccess: concat(scopes, roles)
     }
   ]
-  spa: {
-    redirectUris: [
-      'https://${functionAppName}.azurewebsites.net/auth/callback'
-    ]
-  }
-
-  resource fic 'federatedIdentityCredentials@v1.0' = {
-    name: '${mcpEntraApp.uniqueName}/msiAsFic'
-    description: 'Trust the user-assigned MI as a credential for the MCP app'
-    audiences: [
-       'api://AzureADTokenExchange'
-    ]
-    issuer: issuer
-    subject: userAssignedIdentityPrincipleId
-  }
 }
 
 resource applicationRegistrationServicePrincipal 'Microsoft.Graph/servicePrincipals@v1.0' = {
@@ -114,12 +89,27 @@ resource applicationPermissionGrantForApp 'Microsoft.Graph/appRoleAssignedTo@v1.
   principalId: applicationRegistrationServicePrincipal.id
 }
 
-resource applicationPermissionGrantForUserAssignedIdentity 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
-  resourceId: msGraphSP.id
-  appRoleId: applicationMailSendPermissionId
-  principalId: userAssignedIdentityPrincipleId
+// Deployment script to generate client secret
+resource generateClientSecret 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
+  name: '${mcpAppUniqueName}-secret-generator'
+  location: resourceGroup().location
+  kind: 'AzureCLI'
+  properties: {
+    azCliVersion: '2.53.0' // Specify a recent Azure CLI version
+    scriptContent: '''
+      #!/bin/bash
+      echo "Generating client secret for app: ${mcpEntraApp.id}"
+      secretValue=$(az ad app credential reset --id "${mcpEntraApp.id}" --query "password" -o tsv)
+      outputJson=$(printf '{"clientSecret": "%s"}' "$secretValue")
+      echo $outputJson > $AZ_SCRIPTS_OUTPUT_PATH
+    '''
+    retentionInterval: 'P1D' // Keep script for 1 day
+    forceUpdateTag: 'v1.0' // Force script to run on every deployment
+    timeout: 'PT10M' // 10 minutes timeout
+  }
 }
 
 // Outputs
 output mcpAppId string = mcpEntraApp.appId
 output mcpAppTenantId string = tenantId
+output mcpAppClientSecret string = generateClientSecret.properties.outputs.clientSecret
