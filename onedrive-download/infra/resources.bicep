@@ -4,88 +4,129 @@ param location string = resourceGroup().location
 @description('Tags that will be applied to all resources')
 param tags object = {}
 
-@description('Id of the user or app to assign application roles')
-param principalId string
-
+@description('The name of the service defined in azure.yaml.')
 param azdServiceName string
 
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
-var functionAppName = '${abbrs.webSitesFunctions}${resourceToken}'
 
-// Monitor application with Azure Monitor
+// 1. Monitoring
 module monitoring 'br/public:avm/ptn/azd/monitoring:0.1.0' = {
   name: 'monitoring'
   params: {
     logAnalyticsName: '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
     applicationInsightsName: '${abbrs.insightsComponents}${resourceToken}'
-    applicationInsightsDashboardName: '${abbrs.portalDashboards}${resourceToken}'
     location: location
     tags: tags
   }
 }
 
-// User assigned identity
-module managedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
-  name: 'managedIdentity'
-  params: {
-    name: '${abbrs.managedIdentityUserAssignedIdentities}onedrive-download-${resourceToken}'
-    location: location
-    tags: tags
+// 2. Storage account for the function app
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
+  name: '${abbrs.storageStorageAccounts}${resourceToken}'
+  location: location
+  tags: tags
+  sku: {
+    name: 'Standard_LRS'
   }
-}
-
-// Create an App Service Plan to group applications under the same payment plan and SKU
-module appServicePlan 'br/public:avm/res/web/serverfarm:0.1.1' = {
-  name: 'appServicePlan'
-  params: {
-    name: '${abbrs.webServerFarms}${resourceToken}'
-    sku: {
-      name: 'FC1'
-      tier: 'FlexConsumption'
-    }
-    reserved: true
-    location: location
-    tags: tags
-  }
-}
-
-// Backing storage for Azure Functions app
-module storage 'br/public:avm/res/storage/storage-account:0.8.3' = {
-  name: 'storage'
-  params: {
-    name: '${abbrs.storageStorageAccounts}${resourceToken}'
-    allowBlobPublicAccess: false
-    allowSharedKeyAccess: false
-    publicNetworkAccess: 'Enabled'
+  kind: 'StorageV2'
+  properties: {
     minimumTlsVersion: 'TLS1_2'
-    location: location
-    tags: tags
+    supportsHttpsTrafficOnly: true
+    allowBlobPublicAccess: false
   }
 }
 
-// Function app
-module functionApp 'br/public:avm/res/web/function-app:0.4.0' = {
-  name: 'function-app'
-  params: {
-    name: functionAppName
-    location: location
-    tags: union(tags, { 'azd-service-name': azdServiceName })
-    appInsightsName: monitoring.outputs.applicationInsightsName
-    appServicePlanId: appServicePlan.outputs.resourceId
-    storageAccountId: storage.outputs.resourceId
-    runtimeName: 'dotnet-isolated'
-    runtimeVersion: '9.0'
-    managedIdentities: {
-      userAssignedResourceIds: [
-        managedIdentity.outputs.resourceId
+// 3. User-assigned managed identity for the function app
+resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: '${abbrs.managedIdentityUserAssignedIdentities}${azdServiceName}-${resourceToken}'
+  location: location
+  tags: tags
+}
+
+// 4. App Service plan (Serverless consumption)
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: '${abbrs.webServerFarms}${resourceToken}'
+  location: location
+  tags: tags
+  sku: {
+    name: 'Y1'
+    tier: 'Dynamic'
+  }
+  properties: {
+    reserved: true // Required for Linux consumption plan
+  }
+}
+
+// 5. The Function App
+resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
+  name: '${abbrs.webSitesFunctions}${azdServiceName}-${resourceToken}'
+  location: location
+  tags: union(tags, { 'azd-service-name': azdServiceName })
+  kind: 'functionapp,linux'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userAssignedIdentity.id}': {}
+    }
+  }
+  properties: {
+    serverFarmId: appServicePlan.id
+    siteConfig: {
+      appSettings: [
+        {
+          name: 'AzureWebJobsStorage__accountName'
+          value: storageAccount.name
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'custom' // For custom handlers
+        }
+        {
+          name: 'FUNCTIONS_EXTENSION_VERSION'
+          value: '~4'
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: monitoring.outputs.applicationInsightsConnectionString
+        }
+        {
+          name: 'OnedriveDownload__EntraId__UseManagedIdentity'
+          value: 'true'
+        }
+        {
+          name: 'OnedriveDownload__EntraId__UserAssignedClientId'
+          value: userAssignedIdentity.properties.clientId
+        }
       ]
+      cors: {
+        allowedOrigins: [
+          'https://portal.azure.com'
+        ]
+      }
+      linuxFxVersion: 'DOTNET-ISOLATED|8.0' // Even for custom handlers, a base runtime is needed.
     }
-    appSettings: {
-      AZURE_CLIENT_ID: managedIdentity.outputs.clientId
-    }
+    httpsOnly: true
+    clientAffinityEnabled: false
   }
 }
 
-output AZURE_FUNCTION_APP_NAME string = functionApp.outputs.name
-output AZURE_FUNCTION_APP_URI string = functionApp.outputs.uri
+// Grant the function app's identity access to the storage account
+var storageBlobDataOwnerRole = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b')
+
+resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(functionApp.id, storageAccount.id, storageBlobDataOwnerRole)
+  scope: storageAccount
+  properties: {
+    principalId: userAssignedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: storageBlobDataOwnerRole
+  }
+}
+
+// Outputs for azd
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = functionApp.id
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME string = functionApp.name
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = functionApp.properties.defaultHostName
+// This output is no longer relevant, but keeping it to avoid breaking main.bicep for now. I will fix main.bicep next.
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = ''

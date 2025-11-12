@@ -18,8 +18,8 @@ param functionAppName string
 @description('Provide an array of Microsoft Graph scopes like "User.Read"')
 param appScopes array = ['User.Read']
 
-@description('Provide an array of Microsoft Graph roles like "Files.Read.All"')
-param appRoles array = ['Files.Read.All']
+@description('Provide an array of Microsoft Graph roles like "Mail.Send"')
+param appRoles array = ['Mail.Send']
 
 var loginEndpoint = environment().authentication.loginEndpoint
 var issuer = '${loginEndpoint}${tenantId}/v2.0'
@@ -33,7 +33,7 @@ var vscodeAppId = 'aebc6443-996d-45c2-90f0-388ff96faa56'
 
 // Permission ID
 var delegatedUserReadPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d'
-var applicationFilesReadPermissionId = 'df85f4d6-205c-4ac5-a5ea-6bf408dba283'
+var applicationMailSendPermissionId = 'b633e1c5-b582-4048-a93e-9f11b44c7e96'
 
 // Get the Microsoft Graph service principal so that the scope names
 // can be looked up and mapped to a permission ID
@@ -110,13 +110,13 @@ resource applicationRegistrationServicePrincipal 'Microsoft.Graph/servicePrincip
 
 resource applicationPermissionGrantForApp 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
   resourceId: msGraphSP.id
-  appRoleId: applicationFilesReadPermissionId
+  appRoleId: applicationMailSendPermissionId
   principalId: applicationRegistrationServicePrincipal.id
 }
 
 resource applicationPermissionGrantForUserAssignedIdentity 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
   resourceId: msGraphSP.id
-  appRoleId: applicationFilesReadPermissionId
+  appRoleId: applicationMailSendPermissionId
   principalId: userAssignedIdentityPrincipleId
 }
 
