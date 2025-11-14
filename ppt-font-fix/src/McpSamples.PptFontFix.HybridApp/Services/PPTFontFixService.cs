@@ -51,6 +51,8 @@ public interface IPptFontFixService
 public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixService
 {
     private Presentation? _presentation;
+
+    private HashSet<string>? _analyzedVisibleFonts;
     /// <inheritdoc />
     public async Task OpenPptFileAsync(string filePath)
     {
@@ -63,6 +65,8 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
         try
         {
             this._presentation = new Presentation(filePath);
+
+            this._analyzedVisibleFonts = null;
             logger.LogInformation("Ppt file opened successfully and verified by ShapeCrawler: {FilePath}", filePath);
 
             await Task.CompletedTask;
@@ -150,6 +154,9 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
         }
 
         var allVisibleFontNames = new HashSet<string>(visibleFontUsages.Keys);
+        
+        this._analyzedVisibleFonts = new HashSet<string>(allVisibleFontNames, StringComparer.OrdinalIgnoreCase);
+        
         var unusedFonts = new HashSet<string>(totalFontsInSlides);
         unusedFonts.ExceptWith(allVisibleFontNames);
         result.UnusedFonts = unusedFonts.ToList();
@@ -260,6 +267,12 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
         {
             throw new ArgumentException("Replacement font cannot be null or whitespace.", nameof(replacementFont));
         }
+
+        if (!this._analyzedVisibleFonts.Contains(replacementFont))
+        {
+            throw new ArgumentException($"The font '{replacementFont}' is not a valid font found in the presentation's visible text. Please choose from the analyzed list.", nameof(replacementFont));
+        }
+
 
         int replacementCount = 0;
 
