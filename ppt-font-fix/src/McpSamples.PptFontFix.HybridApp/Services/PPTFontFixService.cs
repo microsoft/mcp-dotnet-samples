@@ -34,6 +34,14 @@ public interface IPptFontFixService
     /// </summary>
     /// <param name="locationsToRemove">A list of shape locations to be removed.</param>
     Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove);
+
+    ///<summary>
+    /// Replace a font with another font throughout the presentation.
+    /// </summary>
+    /// <param name="fontToReplace">The font name to be replaced.</param>
+    /// <param name="replacementFont">The replacement font name.</param>
+    /// <returns>The number of replacements made.</returns>
+    Task<int> ReplaceFontAsync(string fontToReplace, string replacementFont);
 }
 
 /// <summary>
@@ -43,6 +51,8 @@ public interface IPptFontFixService
 public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixService
 {
     private Presentation? _presentation;
+
+    private HashSet<string>? _analyzedVisibleFonts;
     /// <inheritdoc />
     public async Task OpenPptFileAsync(string filePath)
     {
@@ -55,6 +65,8 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
         try
         {
             this._presentation = new Presentation(filePath);
+
+            this._analyzedVisibleFonts = null;
             logger.LogInformation("Ppt file opened successfully and verified by ShapeCrawler: {FilePath}", filePath);
 
             await Task.CompletedTask;
@@ -142,6 +154,9 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
         }
 
         var allVisibleFontNames = new HashSet<string>(visibleFontUsages.Keys);
+        
+        this._analyzedVisibleFonts = new HashSet<string>(allVisibleFontNames, StringComparer.OrdinalIgnoreCase);
+        
         var unusedFonts = new HashSet<string>(totalFontsInSlides);
         unusedFonts.ExceptWith(allVisibleFontNames);
         result.UnusedFonts = unusedFonts.ToList();
@@ -193,7 +208,7 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
             throw;
         }
     }
-    
+
     /// <inheritdoc />
     public async Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove)
     {
@@ -233,5 +248,53 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
 
         logger.LogInformation("Total shapes removed: {Count}", removalCount);
         return await Task.FromResult(removalCount);
+    }
+    
+    /// <inheritdoc />
+    public async Task<int> ReplaceFontAsync(string fontToReplace, string replacementFont)
+    {
+        if (this._presentation == null)
+        {
+            throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before replacing fonts.");
+        }
+
+        if (string.IsNullOrWhiteSpace(fontToReplace))
+        {
+            throw new ArgumentException("Font to replace cannot be null or whitespace.", nameof(fontToReplace));
+        }
+
+        if (string.IsNullOrWhiteSpace(replacementFont))
+        {
+            throw new ArgumentException("Replacement font cannot be null or whitespace.", nameof(replacementFont));
+        }
+
+        if (!this._analyzedVisibleFonts.Contains(replacementFont))
+        {
+            throw new ArgumentException($"The font '{replacementFont}' is not a valid font found in the presentation's visible text. Please choose from the analyzed list.", nameof(replacementFont));
+        }
+
+
+        int replacementCount = 0;
+
+        foreach (var slide in this._presentation.Slides)
+        {
+            foreach (var shape in slide.Shapes)
+            {
+                if (shape.TextBox != null)
+                {
+                    foreach (var portion in shape.TextBox.Paragraphs.SelectMany(p => p.Portions))
+                    {
+                        if (portion.Font != null && string.Equals(portion.Font.LatinName, fontToReplace, StringComparison.OrdinalIgnoreCase))
+                        {
+                            portion.Font.LatinName = replacementFont;
+                            replacementCount++;
+                        }
+                    }
+                }
+            }
+        }
+
+        logger.LogInformation("Total font replacements made: {Count}", replacementCount);
+        return await Task.FromResult(replacementCount);
     }
 }
