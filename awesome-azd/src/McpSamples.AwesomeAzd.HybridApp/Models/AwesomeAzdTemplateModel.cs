@@ -59,10 +59,25 @@ public class AwesomeAzdTemplateModel
     public List<string> Languages { get; set; } = new();
 }
 
-
+/// <summary>
+/// Represents the result of executing a terminal command.
+/// </summary>
 public class CommandExecutionResult
 {
+    /// <summary>
+    /// Gets or sets a value indicating whether the command executed successfully.
+    /// True if the command exited with code 0; otherwise, false.
+    /// </summary>
     public bool Success { get; set; }
+
+    /// <summary>
+    /// Gets or sets the standard output produced by the executed command.
+    /// </summary>
     public string Output { get; set; } = "";
+
+    /// <summary>
+    /// Gets or sets the standard error produced by the executed command.
+    /// If an exception occurred or the command failed, this may contain the error message.
+    /// </summary>
     public string Error { get; set; } = "";
 }
