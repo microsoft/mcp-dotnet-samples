@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "openapi-to-sdk": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "openapi-to-sdk:latest"
+      ]
+    }
+  }
+}
