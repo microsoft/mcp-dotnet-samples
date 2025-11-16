@@ -5,6 +5,8 @@ using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 using McpSamples.Shared.OpenApi;
 
+using Microsoft.OpenApi.Models;
+
 var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
 IHostApplicationBuilder builder = useStreamableHttp
@@ -13,8 +15,7 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<OpenApiToSdkAppSettings>(builder.Configuration, args);
 
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<IOpenApiService, OpenApiService>();
+builder.Services.AddHttpClient<IOpenApiService, OpenApiService>();
 builder.Services.AddScoped<OpenApiToSdkTool>();
 
 if (useStreamableHttp == true)
@@ -37,6 +38,7 @@ IHost app = builder.BuildApp(useStreamableHttp);
 if (useStreamableHttp == true)
 {
     (app as WebApplication)!.MapOpenApi("/{documentName}.json");
+    (app as WebApplication)!.UseStaticFiles();
 }
 
 await app.RunAsync();
