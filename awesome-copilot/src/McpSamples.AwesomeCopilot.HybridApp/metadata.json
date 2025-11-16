@@ -5018,6 +5018,28 @@
       "DEBUG_MODE": "COPILOT_MCP_OPIK_DEBUG"
     },
     {
+      "filename": "diffblue-cover.agent.md",
+      "name": "DiffblueCover",
+      "description": "Expert agent for creating unit tests for java applications using Diffblue Cover.",
+      "tools": [
+        "*"
+      ],
+      "mcp-servers": "",
+      "DiffblueCover": "",
+      "type": "local",
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "fastmcp",
+        "fastmcp",
+        "run",
+        "/placeholder/path/to/cover-mcp/main.py"
+      ],
+      "env": "",
+      "DIFFBLUE_COVER_CLI": "/placeholder/path/to/dcover"
+    },
+    {
       "filename": "dynatrace-expert.agent.md",
       "name": "Dynatrace Expert",
       "description": "The Dynatrace Expert Agent integrates observability and security capabilities directly into GitHub workflows, enabling development teams to investigate incidents, validate deployments, triage errors, detect performance regressions, validate releases, and manage security vulnerabilities by autonomously analysing traces, logs, and Dynatrace findings. This enables targeted and precise remediation of identified issues directly within the repository.",
