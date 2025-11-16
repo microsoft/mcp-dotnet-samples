@@ -58,3 +58,11 @@ public class AwesomeAzdTemplateModel
     /// </summary>
     public List<string> Languages { get; set; } = new();
 }
+
+
+public class CommandExecutionResult
+{
+    public bool Success { get; set; }
+    public string Output { get; set; } = "";
+    public string Error { get; set; } = "";
+}

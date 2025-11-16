@@ -26,55 +26,55 @@ public class TemplatePrompt : ITemplatePrompt
     [McpServerPrompt(Name = "get_template_search_prompt", Title = "Prompt for searching AZD templates")]
     [Description("Get a prompt for searching Azure templates by keyword.")]
     public string GetSearchPrompt(
-        [Description("The keyword to search for")] string keyword)
+      [Description("The keyword to search for")] string keyword)
     {
         return $"""
-        Please search all Azure templates that are related to the search keyword `{keyword}`.
+        Please search all Azure templates related to the keyword `{keyword}`.
 
-        Here's the process to follow:
+        Follow this process:
 
         1. Use the `awesome-azd` MCP server.
+        2. Search all templates in the **Awesome AZD repository** using the `get_templates` tool.
+        3. Return the results in the following **table format**:
 
-        1. Search all templates in the **Awesome AZD repository** for the given keyword with get_templates tool.
+          | Title | Description | Source |
+          |-------|-------------|--------|
+          | ...   | ...         | ...    |
 
-        1. Return a structured response in a **table format** that includes:
-           - Title  
-           - Description  
+        4. After showing the table, ask the user to **select one template by its Title**.
 
-        1. Example table format:
+        5. Once the user selects a Title:
+          - Retrieve the selected template's `source` value.
+          - Convert the `source` URL into the proper `<path>` for AZD:
 
-           | Title            | Description                    |
-           |------------------|--------------------------------|
-           | Starter - Bicep  | A starter template with Bicep  |
+            Rules:
+            - If the URL starts with:
+              `https://github.com/Azure-Samples/...`
+              → Use `Azure-Samples/<repo>`.
 
-        1. Once a template is selected, **return all available details** about the selected template, including:
-           - `title`
-           - `description`
-           - `preview`
-           - `author`
-           - `authorUrl`
-           - `source`
-           - `tags`
-           - `azureServices`
-           - `languages`
-           - `id`
+            - Otherwise, extract the normal `owner/repo`.
 
-        1. If the user wants to execute this template, provide a command guide using the following rule:
-           - Use the syntax:  
-             ``
-             azd init -t <path>
-             ```
-           - `<path>` is determined as follows:
-             - If the GitHub source URL starts with  
-               `https://github.com/Azure-Samples/...`,  
-               then use the organization/repository name:
-               ```
-               e.g. azd init -t Azure-Samples/azure-openai-chat-frontend
-               ```
-             - Otherwise, include the full `owner/repo` path:
-               ```
-               e.g. azd init -t pascalvanderheiden/ais-apim-openai
-               ```
+          - Build the AZD command:
+            ```
+            azd init -t <path> --non-interactive --no-prompt
+            ```
+
+            **IMPORTANT**  
+            MCP executes commands in a non-TTY environment.  
+            Without `--non-interactive` and `--no-prompt`, `azd init` will wait for input and **never finish**.  
+            So always include those flags.
+
+        6. **Immediately execute this command using the MCP tool `ExecuteTemplateCommandAsync`:**
+
+            ```
+            ExecuteTemplateCommandAsync("<generated command>", "<working directory>")
+            ```
+
+            - The working directory is where the template project should be initialized.
+
+        7. Return the execution result (Success, Output, Error) back to the user.
+
         """;
     }
+
 }

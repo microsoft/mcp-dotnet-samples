@@ -1,6 +1,10 @@
 namespace McpSamples.AwesomeAzd.HybridApp.Services;
 
+using System.Diagnostics;
 using System.Text.Json;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using McpSamples.AwesomeAzd.HybridApp.Models;
 
 public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logger) : IAwesomeAzdService
@@ -36,6 +40,79 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         return result;
     }
 
+   public async Task<CommandExecutionResult> ExecuteTemplateCommandAsync(
+    string command,
+    string? workingDirectory = null,
+    CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // ⭐ Default working directory 설정: 현재 폴더 + /test
+            if (string.IsNullOrWhiteSpace(workingDirectory))
+            {
+                string current = Directory.GetCurrentDirectory();
+                workingDirectory = Path.Combine(current, "test");
+
+                if (!Directory.Exists(workingDirectory))
+                    Directory.CreateDirectory(workingDirectory);
+            }
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"/c {command}",
+                    WorkingDirectory = workingDirectory,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+
+            cancellationToken.Register(() =>
+            {
+                try { process.Kill(); } catch { }
+            });
+
+            string output = await process.StandardOutput.ReadToEndAsync();
+            string error = await process.StandardError.ReadToEndAsync();
+
+            await process.WaitForExitAsync(cancellationToken);
+
+            return new CommandExecutionResult
+            {
+                Success = process.ExitCode == 0,
+                Output = output,
+                Error = error
+            };
+        }
+        catch (OperationCanceledException)
+        {
+            return new CommandExecutionResult
+            {
+                Success = false,
+                Output = "",
+                Error = "Command execution cancelled"
+            };
+        }
+        catch (Exception ex)
+        {
+            return new CommandExecutionResult
+            {
+                Success = false,
+                Output = "",
+                Error = ex.Message
+            };
+        }
+    }
+
+    
     private async Task<List<AwesomeAzdTemplateModel>> GetTemplatesAsync(CancellationToken cancellationToken)
     {
 

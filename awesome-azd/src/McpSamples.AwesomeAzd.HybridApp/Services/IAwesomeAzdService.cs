@@ -14,6 +14,7 @@ namespace McpSamples.AwesomeAzd.HybridApp.Services
         /// <param name="cancellationToken">Cancellation token for the async operation.</param>
         /// <returns>A <see cref="List{AwesomeAzdTemplateModel}"/> containing all matching search results.</returns>
         Task<List<AwesomeAzdTemplateModel>> GetTemplateListAsync(string keywords, CancellationToken cancellationToken = default);
-
+        
+        Task<CommandExecutionResult> ExecuteTemplateCommandAsync(string command, string workingDirectory, CancellationToken cancellationToken = default);
     }
 }
