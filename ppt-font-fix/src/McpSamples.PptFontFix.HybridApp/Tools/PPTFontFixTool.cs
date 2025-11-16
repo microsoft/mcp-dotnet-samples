@@ -16,35 +16,21 @@ namespace McpSamples.PptFontFix.HybridApp.Tools;
 public interface IPptFontFixTool
 {
     /// <summary>
-    /// open a Ppt file.
+    /// Opens and analyzes fonts in a specified PPT file.
     /// </summary>
-    /// <param name="filePath"></param>
-    /// <returns>Returns the result as a string.</returns>
-    Task<string> OpenPptFileAsync(string filePath);
-
-    /// <summary>
-    /// Analyze fonts in a Ppt file.
-    /// </summary>
+    /// <param name="filePath">The path to be analyzed.</param>
     /// <returns>Returns <see cref="PptFontAnalyzeResult"/> instance.</returns>
-    Task<PptFontAnalyzeResult> AnalyzeFontsAsync();
+    Task<PptFontAnalyzeResult> AnalyzePptFileAsync(string filePath);
 
     /// <summary>
-    /// Save the modified Ppt file.
+    /// Updates the PPT file by removing unused fonts, replacing inconsistent fonts, and saving to a new path.
     /// </summary>
-    /// <param name="newFilePath"></param>
-    Task<string> SavePptFileAsync(string newFilePath);
-
-    /// <summary>
-    /// Remove shapes from the presentation.
-    /// </summary>
-    /// <param name="locationsToRemove">A list of shape locations to be removed.</param>
-    Task<int> RemoveUnusedFontsAsync(List<FontUsageLocation> locationsToRemove);
-
-    /// <summary>
-    /// Replace a font with another font throughout the presentation.
-    /// </summary>
-    /// <param name="fontToReplace">The font to be replaced.</param>
-    Task<int> ReplaceFontAsync(string fontToReplace, string replacementFont);
+    /// <param name="replacementFont">The font to replace all inconsistent fonts with.</param>
+    /// <param name="inconsistentFontsToReplace">The list of inconsistent font names to be replaced.</param>
+    /// <param name="locationsToRemove">The list of shape locations to be removed.</param>
+    /// <param name="newFilePath">The full path to save the new .pptx file.</param>
+    /// <returns>Returns a success message with the new file path.</returns>
+    Task<string> UpdatePptFileAsync(string replacementFont, List<string> inconsistentFontsToReplace, List<FontUsageLocation> locationsToRemove, string newFilePath);
 }
 
 /// <summary>
@@ -56,36 +42,17 @@ public interface IPptFontFixTool
 public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> logger) : IPptFontFixTool
 {
     /// <inheritdoc />
-    [McpServerTool(Name = "open_ppt_file", Title = "Open a Ppt File")]
-    [Description("Opens a Ppt file and verifies it using ShapeCrawler.")]
-    public async Task<string> OpenPptFileAsync(
-        [Description("The path of the Ppt file to open")] string filePath)
+    [McpServerTool(Name = "analyze_ppt_file", Title = "Analyze PPT File Fonts")]
+    [Description("Opens a Ppt file AND analyzes fonts used, identifies inconsistencies.")]
+    public async Task<PptFontAnalyzeResult> AnalyzePptFileAsync(
+        [Description("The path of the Ppt file to open and analyze")] string filePath)
     {
         try
         {
             await service.OpenPptFileAsync(filePath).ConfigureAwait(false);
+            logger.LogInformation("Ppt file opened successfully: {FilePath}", filePath);
 
-            string successMessage = $"Ppt file opened successfully: {filePath}";
-            logger.LogInformation(successMessage);
-            return successMessage;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to open Ppt file: {FilePath}", filePath);
-
-            throw;
-        }
-    }
-
-    /// <inheritdoc />
-    [McpServerTool(Name = "analyze_fonts", Title = "Analyze Fonts in Ppt File")]
-    [Description("Analyzes fonts used in the opened Ppt file and identifies inconsistencies.")]
-    public async Task<PptFontAnalyzeResult> AnalyzeFontsAsync()
-    {
-        try
-        {
             PptFontAnalyzeResult result = await service.AnalyzeFontsAsync().ConfigureAwait(false);
-
             if (result != null)
             {
                 int count = result.InconsistentlyUsedFonts?.Count ?? 0;
@@ -100,69 +67,45 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to analyze fonts in the Ppt file.");
+            logger.LogError(ex, "Failed during Ppt file analysis process for: {FilePath}", filePath);
             throw;
         }
     }
 
     /// <inheritdoc />
-    [McpServerTool(Name = "save_ppt_file", Title = "Save Modified Ppt File")]
-    [Description("Saves the modified Ppt file to the specified path.")]
-    public async Task<string> SavePptFileAsync(
-        [Description("The path to save the modified Ppt file")] string newFilePath)
+    [McpServerTool(Name = "update_ppt_file", Title = "Update and Save PPT File")]
+    [Description("Removes unused fonts, replaces inconsistently used fonts with another font defined within the Ppt file, and saves the file.")]
+    public async Task<string> UpdatePptFileAsync(
+        [Description("The replacement font")] string replacementFont,
+        [Description("The fonts to be replaced")] List<string> inconsistentFontsToReplace,
+        [Description("A list of shape locations (from analysis result) to be removed")] List<FontUsageLocation> locationsToRemove,
+        [Description("The full path to save the modified Ppt file")] string newFilePath)
     {
         try
         {
-            await service.SavePptFileAsync(newFilePath).ConfigureAwait(false);
+            int removalCount = await service.RemoveUnusedFontsAsync(locationsToRemove).ConfigureAwait(false);
+            logger.LogInformation("{Count} unused font shapes removed.", removalCount);
 
-            string successMessage = $"Ppt file saved successfully: {newFilePath}";
-            logger.LogInformation(successMessage);
+            int totalReplacementCount = 0;
+            if (inconsistentFontsToReplace != null)
+            {
+                foreach (var fontToReplace in inconsistentFontsToReplace)
+                {
+                    int count = await service.ReplaceFontAsync(fontToReplace, replacementFont).ConfigureAwait(false);
+                    totalReplacementCount += count;
+                }
+            }
+            logger.LogInformation("{Count} instances of inconsistent fonts replaced with '{ReplacementFont}'.", totalReplacementCount, replacementFont);
+
+            await service.SavePptFileAsync(newFilePath).ConfigureAwait(false);
+            logger.LogInformation("Ppt file saved successfully: {FilePath}", newFilePath);
+
+            string successMessage = $"PPT update complete. {removalCount} shapes removed, {totalReplacementCount} fonts replaced. File saved to: {newFilePath}";
             return successMessage;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to save Ppt file: {FilePath}", newFilePath);
-
-            throw;
-        }
-    }
-
-    /// <inheritdoc />
-    [McpServerTool(Name = "remove_unused_font_shapes", Title = "Remove Unused Font Shapes")]
-    [Description("Removes shapes that contain unused fonts (e.g., empty text boxes). Takes the 'unusedFontLocations' list from the analysis result.")]
-    public async Task<int> RemoveUnusedFontsAsync(
-         [Description("A list of shape locations (from 'unusedFontLocations') to be removed.")]
-        List<FontUsageLocation> locationsToRemove)
-    {
-        try
-        {
-            int count = await service.RemoveUnusedFontsAsync(locationsToRemove).ConfigureAwait(false);
-            logger.LogInformation("RemoveUnusedFontsAsync Tool executed, {Count} shapes removed.", count);
-            return count;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to remove unused font shapes.");
-            throw;
-        }
-    }
-    
-    /// <inheritdoc />
-    [McpServerTool(Name = "replace_font", Title = "Replace Font Throughout Presentation")]
-    [Description("Replaces a specified font with another font throughout the presentation.")]
-    public async Task<int> ReplaceFontAsync(
-        [Description("The font to be replaced")] string fontToReplace,
-        [Description("The replacement font")] string replacementFont)
-    {
-        try
-        {
-            int count = await service.ReplaceFontAsync(fontToReplace, replacementFont).ConfigureAwait(false);
-            logger.LogInformation("ReplaceFontAsync Tool executed, {Count} instances of '{FontToReplace}' replaced with '{ReplacementFont}'.", count, fontToReplace, replacementFont);
-            return count;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to replace font '{FontToReplace}' with '{ReplacementFont}'.", fontToReplace, replacementFont);
+            logger.LogError(ex, "Failed during Ppt file update process. Save path: {FilePath}", newFilePath);
             throw;
         }
     }
