@@ -7,7 +7,7 @@
         "run",
         "-i",
         "--rm",
-        "ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest"
+        "openapi-to-sdk:latest"
       ]
     }
   }

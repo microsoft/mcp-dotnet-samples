@@ -33,8 +33,9 @@ public interface IOpenApiToSdkTool
     /// <param name="openApiUrl">The URL of the OpenAPI specification.</param>
     /// <param name="language">The target language for the SDK (e.g., "csharp", "typescript").</param>
     /// <param name="additionalOptions">Additional Kiota CLI options.</param>
+    /// <param name="outputDir">Optional: The directory where the generated SDK ZIP file will be saved. If not provided, a default 'GeneratedSDKs' folder will be used.</param>
     /// <returns>An <see cref="OpenApiToSdkResult"/> containing the path to the generated SDK ZIP file or an error message.</returns>
-    Task<OpenApiToSdkResult> GenerateSdkAsync(string openApiUrl, string language, string? additionalOptions = null);
+    Task<OpenApiToSdkResult> GenerateSdkAsync(string openApiUrl, string language, string? additionalOptions = null, string? outputDir = null);
 }
 
 /// <summary>
@@ -45,15 +46,15 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
 {
     private readonly IOpenApiService _openApiService;
     private readonly ILogger<OpenApiToSdkTool> _logger;
-    private readonly IHostEnvironment _hostEnvironment;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHostEnvironment? _hostEnvironment;
+    private readonly IHttpContextAccessor? _httpContextAccessor;
 
-    public OpenApiToSdkTool(IOpenApiService openApiService, ILogger<OpenApiToSdkTool> logger, IHostEnvironment hostEnvironment, IHttpContextAccessor httpContextAccessor)
+    public OpenApiToSdkTool(IOpenApiService openApiService, ILogger<OpenApiToSdkTool> logger, IHostEnvironment? hostEnvironment = null, IHttpContextAccessor? httpContextAccessor = null)
     {
         _openApiService = openApiService ?? throw new ArgumentNullException(nameof(openApiService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _hostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
-        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+        _hostEnvironment = hostEnvironment;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <inheritdoc />
@@ -81,12 +82,12 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
     public async Task<OpenApiToSdkResult> GenerateSdkAsync(
         [Description("URL of the OpenAPI specification")] string openApiUrl,
         [Description("Target language for the SDK (e.g., csharp, typescript)")] string language,
-        [Description("Optional extra Kiota options (e.g., --namespace Contoso.Api)")] string? additionalOptions = null)
+        [Description("Optional extra Kiota options (e.g., --namespace Contoso.Api)")] string? additionalOptions = null,
+        [Description("Optional: The directory where the generated SDK ZIP file will be saved. If not provided, a default 'GeneratedSDKs' folder will be used.")] string? outputDir = null)
     {
         var result = new OpenApiToSdkResult();
         var tempSpecPath = string.Empty;
         var sdkOutputDir = string.Empty;
-        var tempZipPath = string.Empty;
 
         try
         {
@@ -111,25 +112,41 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
                 return result;
             }
 
-            // Prepare public directory for the zip file
-            var downloadsDir = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "generated-sdks");
-            Directory.CreateDirectory(downloadsDir);
-            var zipFileName = $"{language}-{DateTime.Now:yyyyMMddHHmmss}.zip"; // Changed to language-datetime.zip
-            var finalZipPath = Path.Combine(downloadsDir, zipFileName);
+            string finalOutputDirectory;
+            string zipFileName = $"{language}-{DateTime.Now:yyyyMMddHHmmss}.zip";
+
+            // HTTP 모드: wwwroot/generated에 저장
+            if (_httpContextAccessor?.HttpContext is not null && _hostEnvironment is not null)
+            {
+                finalOutputDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "generated");
+            }
+            // STDIO 모드 또는 사용자가 경로를 지정하지 않은 경우: 현재 작업 디렉터리에 저장
+            else
+            {
+                finalOutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "generated");
+            }
+
+            // 사용자가 outputDir을 지정한 경우, 해당 경로를 사용
+            if (!string.IsNullOrWhiteSpace(outputDir))
+            {
+                finalOutputDirectory = outputDir;
+            }
+
+            Directory.CreateDirectory(finalOutputDirectory);
+            string finalZipPath = Path.Combine(finalOutputDirectory, zipFileName);
 
             // Compress generated SDK to ZIP
             ZipFile.CreateFromDirectory(sdkOutputDir, finalZipPath);
 
-            // Construct downloadable URI
-            if (_httpContextAccessor.HttpContext is not null)
+            // HTTP 모드에서는 URI를, 그렇지 않으면 로컬 경로를 반환
+            if (_httpContextAccessor?.HttpContext is not null && _hostEnvironment is not null)
             {
                 var request = _httpContextAccessor.HttpContext.Request;
                 var baseUrl = $"{request.Scheme}://{request.Host}";
-                result.ZipPath = $"{baseUrl}/generated-sdks/{zipFileName}";
+                result.ZipPath = $"{baseUrl}/generated/{zipFileName}";
             }
             else
             {
-                // Fallback to local file path for non-HTTP contexts (e.g., STDIO)
                 result.ZipPath = finalZipPath;
             }
         }
@@ -149,8 +166,6 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
             {
                 Directory.Delete(sdkOutputDir, true);
             }
-            // The finalZipPath is in wwwroot, so it's not cleaned up here.
-            // It's meant to be served.
         }
 
         return result;

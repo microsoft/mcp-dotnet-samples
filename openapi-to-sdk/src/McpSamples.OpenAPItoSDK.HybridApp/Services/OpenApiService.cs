@@ -24,7 +24,7 @@ public class OpenApiService(HttpClient httpClient, ILogger<OpenApiService> logge
 
         var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
         logger.LogInformation("Downloaded OpenAPI spec from {Url} (Length={Length})", url, content.Length);
-        
+
         return content;
     }
 
@@ -66,13 +66,13 @@ public class OpenApiService(HttpClient httpClient, ILogger<OpenApiService> logge
             if (await Task.WhenAny(exitTask, Task.Delay(timeout)).ConfigureAwait(false) == exitTask)
             {
                 await Task.WhenAll(outputTask, errorTask).ConfigureAwait(false);
-                
+
                 if (process.ExitCode != 0)
                 {
                     logger.LogError("Kiota execution failed (ExitCode={ExitCode}): {Error}", process.ExitCode, await errorTask);
                     return $"Kiota error: {await errorTask}";
                 }
-                
+
                 logger.LogInformation("Kiota execution succeeded: {Output}", await outputTask);
                 return null;
             }
@@ -86,7 +86,7 @@ public class OpenApiService(HttpClient httpClient, ILogger<OpenApiService> logge
                 {
                     // Best effort cleanup
                 }
-                
+
                 return "Kiota execution timed out.";
             }
         }

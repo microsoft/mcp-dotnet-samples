@@ -16,7 +16,6 @@ IHostApplicationBuilder builder = useStreamableHttp
 builder.Services.AddAppSettings<OpenApiToSdkAppSettings>(builder.Configuration, args);
 
 builder.Services.AddHttpClient<IOpenApiService, OpenApiService>();
-builder.Services.AddScoped<OpenApiToSdkTool>();
 
 if (useStreamableHttp == true)
 {
