@@ -33,8 +33,6 @@ var vscodeAppId = 'aebc6443-996d-45c2-90f0-388ff96faa56'
 
 // Permission IDs for Microsoft Graph
 var delegatedUserReadPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d'
-var filesReadAllPermissionId = '0e263e50-5827-48a4-b97c-d940288653c7'
-var sitesReadAllPermissionId = '205e70e5-aba6-4c52-a976-6d2d46c48043'
 var applicationMailSendPermissionId = 'b633e1c5-b582-4048-a93e-9f11b44c7e96'
 
 // Get the Microsoft Graph service principal so that the scope names
@@ -110,33 +108,19 @@ resource applicationRegistrationServicePrincipal 'Microsoft.Graph/servicePrincip
   appId: mcpEntraApp.appId
 }
 
-// Grant Files.Read.All permission to the application service principal
-resource applicationFilesReadPermissionGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
+// Grant the required roles to the application service principal
+resource applicationRoleAssignments 'Microsoft.Graph/appRoleAssignedTo@v1.0' = [for role in roles: {
   resourceId: msGraphSP.id
-  appRoleId: filesReadAllPermissionId
+  appRoleId: role.id
   principalId: applicationRegistrationServicePrincipal.id
-}
+}]
 
-// Grant Sites.Read.All permission to the application service principal
-resource applicationSitesReadPermissionGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
+// Grant the required roles to the user-assigned identity
+resource userAssignedRoleAssignments 'Microsoft.Graph/appRoleAssignedTo@v1.0' = [for role in roles: {
   resourceId: msGraphSP.id
-  appRoleId: sitesReadAllPermissionId
-  principalId: applicationRegistrationServicePrincipal.id
-}
-
-// Grant Files.Read.All permission to the user-assigned identity
-resource userAssignedFilesReadPermissionGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
-  resourceId: msGraphSP.id
-  appRoleId: filesReadAllPermissionId
+  appRoleId: role.id
   principalId: userAssignedIdentityPrincipleId
-}
-
-// Grant Sites.Read.All permission to the user-assigned identity
-resource userAssignedSitesReadPermissionGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
-  resourceId: msGraphSP.id
-  appRoleId: sitesReadAllPermissionId
-  principalId: userAssignedIdentityPrincipleId
-}
+}]
 
 // Outputs
 output mcpAppId string = mcpEntraApp.appId
