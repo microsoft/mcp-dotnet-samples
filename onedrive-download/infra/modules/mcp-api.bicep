@@ -20,7 +20,6 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' existing = {
   name: functionAppName
 }
 
-
 // Create a named value in APIM to store the function key
 resource functionHostKeyNamedValue 'Microsoft.ApiManagement/service/namedValues@2023-05-01-preview' = {
   parent: apimService
