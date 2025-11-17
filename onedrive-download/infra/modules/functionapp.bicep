@@ -25,7 +25,7 @@ param azdServiceName string
 param identityType string = 'UserAssigned'
 
 var applicationInsightsIdentity = 'ClientId=${identityClientId};Authorization=AAD'
-var kind = 'app,linux'
+var kind = 'functionapp,linux'
 
 // Create base application settings
 var baseAppSettings = {
@@ -77,12 +77,28 @@ module mcp 'br/public:avm/res/web/site:0.15.1' = {
         '${identityId}'
       ]
     }
+    functionAppConfig: {
+      deployment: {
+        storage: {
+          type: 'blobContainer'
+          value: '${stg.properties.primaryEndpoints.blob}${deploymentStorageContainerName}'
+          authentication: {
+            type: identityType == 'SystemAssigned' ? 'SystemAssignedIdentity' : 'UserAssignedIdentity'
+            userAssignedIdentityResourceId: identityType == 'UserAssigned' ? identityId : ''
+          }
+        }
+      }
+      scaleAndConcurrency: {
+        instanceMemoryMB: instanceMemoryMB
+        maximumInstanceCount: maximumInstanceCount
+      }
+      runtime: {
+        name: runtimeName
+        version: runtimeVersion
+      }
+    }
     siteConfig: {
       alwaysOn: false
-      webSocketsEnabled: true
-      http20Enabled: true
-      minTlsVersion: '1.2'
-      linuxFxVersion: 'DOTNET|9.0'
     }
     virtualNetworkSubnetId: !empty(virtualNetworkSubnetId) ? virtualNetworkSubnetId : null
     appSettingsKeyValuePairs: union(allAppSettings, {
