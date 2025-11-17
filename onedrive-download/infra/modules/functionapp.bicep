@@ -96,14 +96,6 @@ module mcp 'br/public:avm/res/web/site:0.15.1' = {
         name: runtimeName
         version: runtimeVersion
       }
-      customHandler: {
-        description: {
-          defaultExecutablePath: 'McpSamples.OnedriveDownload.HybridApp.exe'
-          workingDirectory: ''
-          arguments: []
-        }
-        enableForwardingHttpRequest: true
-      }
     }
     siteConfig: {
       alwaysOn: false
