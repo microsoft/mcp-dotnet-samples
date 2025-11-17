@@ -1,0 +1,7 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "custom",
+    "FUNCTIONS_CUSTOMHANDLER_PORT": "5260"
+  }
+}

@@ -84,7 +84,7 @@ module mcp 'br/public:avm/res/web/site:0.15.1' = {
           value: '${stg.properties.primaryEndpoints.blob}${deploymentStorageContainerName}'
           authentication: {
             type: identityType == 'SystemAssigned' ? 'SystemAssignedIdentity' : 'UserAssignedIdentity'
-            userAssignedIdentityResourceId: identityType == 'UserAssigned' ? identityId : '' 
+            userAssignedIdentityResourceId: identityType == 'UserAssigned' ? identityId : ''
           }
         }
       }
@@ -95,6 +95,14 @@ module mcp 'br/public:avm/res/web/site:0.15.1' = {
       runtime: {
         name: runtimeName
         version: runtimeVersion
+      }
+      customHandler: {
+        description: {
+          defaultExecutablePath: 'McpSamples.OnedriveDownload.HybridApp.exe'
+          workingDirectory: ''
+          arguments: []
+        }
+        enableForwardingHttpRequest: true
       }
     }
     siteConfig: {
