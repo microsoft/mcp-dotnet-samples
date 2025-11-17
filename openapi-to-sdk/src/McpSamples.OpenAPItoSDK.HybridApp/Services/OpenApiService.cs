@@ -33,11 +33,13 @@ public class OpenApiService(HttpClient httpClient, ILogger<OpenApiService> logge
     {
         // Map Kiota command options
         var arguments = new StringBuilder();
-        arguments.Append($"generate --openapi \"{openApiSpecPath}\" --language {language} --output \"{outputDir}\"");
+        arguments.Append($"generate");
+        arguments.Append($" --openapi \"{openApiSpecPath}\" --language {language} --output \"{outputDir}\"");
         if (!string.IsNullOrWhiteSpace(additionalOptions))
         {
             arguments.Append($" {additionalOptions}");
         }
+
 
         var processStartInfo = new ProcessStartInfo
         {

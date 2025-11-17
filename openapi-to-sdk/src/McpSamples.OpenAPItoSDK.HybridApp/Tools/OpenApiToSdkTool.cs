@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using System.Threading.Tasks;
 
 using McpSamples.OpenApiToSdk.HybridApp.Models;
@@ -32,10 +33,12 @@ public interface IOpenApiToSdkTool
     /// </summary>
     /// <param name="openApiUrl">The URL of the OpenAPI specification.</param>
     /// <param name="language">The target language for the SDK (e.g., "csharp", "typescript").</param>
+    /// <param name="className">Optional: The class name to use for the core client class.</param>
+    /// <param name="namespaceName">Optional: The namespace to use for the core client class.</param>
     /// <param name="additionalOptions">Additional Kiota CLI options.</param>
-    /// <param name="outputDir">Optional: The directory where the generated SDK ZIP file will be saved. If not provided, a default 'GeneratedSDKs' folder will be used.</param>
+    /// <param name="outputDir">Optional: The directory where the generated SDK ZIP file will be saved. If not provided, a default 'generated' folder will be used.</param>
     /// <returns>An <see cref="OpenApiToSdkResult"/> containing the path to the generated SDK ZIP file or an error message.</returns>
-    Task<OpenApiToSdkResult> GenerateSdkAsync(string openApiUrl, string language, string? additionalOptions = null, string? outputDir = null);
+    Task<OpenApiToSdkResult> GenerateSdkAsync(string openApiUrl, string language, string? className = null, string? namespaceName = null, string? additionalOptions = null, string? outputDir = null);
 }
 
 /// <summary>
@@ -82,7 +85,9 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
     public async Task<OpenApiToSdkResult> GenerateSdkAsync(
         [Description("URL of the OpenAPI specification")] string openApiUrl,
         [Description("Target language for the SDK (e.g., csharp, typescript)")] string language,
-        [Description("Optional extra Kiota options (e.g., --namespace Contoso.Api)")] string? additionalOptions = null,
+        [Description("Optional: The class name to use for the core client class. Defaults to ApiClient.")] string? className = null,
+        [Description("Optional: The namespace to use for the core client class. Defaults to ApiSdk.")] string? namespaceName = null,
+        [Description("Optional extra Kiota options (e.g., --include-path Paths)")] string? additionalOptions = null,
         [Description("Optional: The directory where the generated SDK ZIP file will be saved. If not provided, a default 'generated' folder will be used.")] string? outputDir = null)
     {
         var result = new OpenApiToSdkResult();
@@ -105,7 +110,17 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
             sdkOutputDir = Path.Combine(tempDir, $"sdk-output-{Guid.NewGuid():N}");
             Directory.CreateDirectory(sdkOutputDir);
 
-            var error = await _openApiService.RunKiotaAsync(tempSpecPath, language, sdkOutputDir, additionalOptions);
+            var kiotaOptions = new StringBuilder(additionalOptions ?? "");
+            if (!string.IsNullOrWhiteSpace(className))
+            {
+                kiotaOptions.Append($" --class-name {className}");
+            }
+            if (!string.IsNullOrWhiteSpace(namespaceName))
+            {
+                kiotaOptions.Append($" --namespace-name {namespaceName}");
+            }
+
+            var error = await _openApiService.RunKiotaAsync(tempSpecPath, language, sdkOutputDir, kiotaOptions.ToString().Trim());
             if (!string.IsNullOrEmpty(error))
             {
                 result.ErrorMessage = $"SDK generation failed: {error}";
