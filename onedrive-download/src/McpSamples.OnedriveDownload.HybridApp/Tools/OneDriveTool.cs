@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text;
+using Azure.Storage.Files.Shares;
 using Microsoft.Graph;
 using ModelContextProtocol.Server;
 
@@ -11,9 +12,9 @@ namespace McpSamples.OnedriveDownload.HybridApp.Tools;
 public class OneDriveDownloadResult
 {
     /// <summary>
-    /// Gets or sets the base64 encoded content of the downloaded file.
+    /// Gets or sets the path of the downloaded file in the file share.
     /// </summary>
-    public string? FileContentBase64 { get; set; }
+    public string? DownloadPath { get; set; }
 
     /// <summary>
     /// Gets or sets the name of the downloaded file.
@@ -32,7 +33,7 @@ public class OneDriveDownloadResult
 public interface IOneDriveTool
 {
     /// <summary>
-    /// Downloads a file from a OneDrive sharing URL.
+    /// Downloads a file from a OneDrive sharing URL and saves it to a file share.
     /// </summary>
     /// <param name="sharingUrl">The OneDrive sharing URL.</param>
     /// <returns>Returns <see cref="OneDriveDownloadResult"/> instance.</returns>
@@ -43,11 +44,12 @@ public interface IOneDriveTool
 /// This represents the tool entity for OneDrive file operations.
 /// </summary>
 [McpServerToolType]
-public class OneDriveTool(GraphServiceClient graphServiceClient, ILogger<OneDriveTool> logger) : IOneDriveTool
+public class OneDriveTool(GraphServiceClient graphServiceClient, IConfiguration configuration, ILogger<OneDriveTool> logger) : IOneDriveTool
 {
+    private const string FileShareName = "downloads";
     /// <inheritdoc />
     [McpServerTool(Name = "download_file_from_onedrive_url", Title = "Download File from OneDrive URL")]
-    [Description("Downloads a file from a given OneDrive sharing URL.")]
+    [Description("Downloads a file from a given OneDrive sharing URL and saves it to a shared location.")]
     public async Task<OneDriveDownloadResult> DownloadFileFromUrlAsync(
         [Description("The OneDrive sharing URL for the file to download.")] string sharingUrl)
     {
@@ -104,15 +106,29 @@ public class OneDriveTool(GraphServiceClient graphServiceClient, ILogger<OneDriv
                 return result;
             }
 
-            // 5. Process the stream and populate the result.
+            // 5. Process the stream and upload to Azure File Share.
             using var memoryStream = new MemoryStream();
             await contentStream.CopyToAsync(memoryStream);
-            byte[] fileBytes = memoryStream.ToArray();
+            memoryStream.Position = 0; // Reset stream position for upload
 
-            result.FileContentBase64 = Convert.ToBase64String(fileBytes);
+            var connectionString = configuration["FileShareConnectionString"];
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                result.ErrorMessage = "File share connection string is not configured.";
+                logger.LogError("FileShareConnectionString is not found in configuration.");
+                return result;
+            }
+
+            var shareClient = new ShareClient(connectionString, FileShareName);
+            await shareClient.CreateIfNotExistsAsync();
+
+            var fileClient = shareClient.GetRootDirectoryClient().GetFileClient(driveItem.Name);
+            await fileClient.UploadAsync(memoryStream);
+
             result.FileName = driveItem.Name;
+            result.DownloadPath = fileClient.Path;
 
-            logger.LogInformation("File '{FileName}' downloaded successfully from sharing URL.", driveItem.Name);
+            logger.LogInformation("File '{FileName}' downloaded and uploaded to '{FilePath}' successfully.", result.FileName, result.DownloadPath);
         }
         catch (ServiceException ex)
         {

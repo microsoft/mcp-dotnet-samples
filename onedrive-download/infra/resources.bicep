@@ -7,18 +7,10 @@ param tags object = {}
 @description('The name of the service defined in azure.yaml.')
 param azdServiceName string
 
-@description('The client ID of the Entra application')
-param mcpAppId string
-
-@description('The tenant ID of the Entra application')
-param mcpAppTenantId string
-
-@description('The client secret of the Entra application')
-@secure()
-param mcpAppClientSecret string
-
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
+var functionAppName = '${abbrs.webSitesFunctions}${azdServiceName}-${resourceToken}'
+var deploymentStorageContainerName = 'app-package-${take(functionAppName, 32)}-${take(toLower(uniqueString(functionAppName, resourceToken)), 7)}'
 
 // 1. Monitoring
 module monitoring 'br/public:avm/ptn/azd/monitoring:0.1.0' = {
@@ -28,6 +20,14 @@ module monitoring 'br/public:avm/ptn/azd/monitoring:0.1.0' = {
     applicationInsightsName: '${abbrs.insightsComponents}${resourceToken}'
     location: location
     tags: tags
+  }
+}
+
+// API Management
+module apimService './modules/apim.bicep' = {
+  name: 'apimService'
+  params:{
+    apiManagementName: '${abbrs.apiManagementService}${resourceToken}'
   }
 }
 
@@ -45,6 +45,16 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
     supportsHttpsTrafficOnly: true
     allowBlobPublicAccess: false
   }
+
+  resource blobServices 'blobServices' = {
+    name: 'default'
+    resource container 'containers' = {
+      name: deploymentStorageContainerName
+      properties: {
+        publicAccess: 'None'
+      }
+    }
+  }
 }
 
 // 3. User-assigned managed identity for the function app
@@ -54,86 +64,75 @@ resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
   tags: tags
 }
 
-// 4. App Service plan (Serverless consumption)
+// 4. App Service plan (Flex Consumption)
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: '${abbrs.webServerFarms}${resourceToken}'
   location: location
   tags: tags
   sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
+    name: 'FC1'
+    tier: 'FlexConsumption'
   }
   properties: {
-    reserved: true // Required for Linux consumption plan
+    reserved: true // Required for Linux
   }
 }
 
-// 5. The Function App
-resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
-  name: '${abbrs.webSitesFunctions}${azdServiceName}-${resourceToken}'
-  location: location
-  tags: union(tags, { 'azd-service-name': azdServiceName })
-  kind: 'functionapp,linux'
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userAssignedIdentity.id}': {}
+// 5. The Web App
+module fncapp './modules/functionapp.bicep' = {
+  name: 'functionapp'
+  params: {
+    name: functionAppName
+    location: location
+    tags: tags
+    azdServiceName: azdServiceName
+    applicationInsightsName: monitoring.outputs.applicationInsightsName
+    appServicePlanId: appServicePlan.id
+    runtimeName: 'dotnet-isolated'
+    runtimeVersion: '9.0'
+    storageAccountName: storageAccount.name
+    deploymentStorageContainerName: deploymentStorageContainerName
+    identityId: userAssignedIdentity.id
+    identityClientId: userAssignedIdentity.properties.clientId
+    appSettings: {
+      OnedriveDownload__EntraId__UseManagedIdentity: 'true'
+      OnedriveDownload__EntraId__TenantId: entraApp.outputs.mcpAppTenantId
+      OnedriveDownload__EntraId__UserAssignedClientId: userAssignedIdentity.properties.clientId
+      FileShareConnectionString: 'DefaultEndpointsProtocol=https;AccountName=${fileShareStorage.name};AccountKey=${fileShareStorage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
     }
   }
-  properties: {
-    serverFarmId: appServicePlan.id
-    siteConfig: {
-      appSettings: [
-        {
-          name: 'AzureWebJobsStorage__accountName'
-          value: storageAccount.name
-        }
-        {
-          name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'custom' // For custom handlers
-        }
-        {
-          name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~4'
-        }
-        {
-          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: monitoring.outputs.applicationInsightsConnectionString
-        }
-        {
-          name: 'OnedriveDownload__EntraId__UseManagedIdentity'
-          value: 'false'
-        }
-        {
-          name: 'OnedriveDownload__EntraId__TenantId'
-          value: mcpAppTenantId
-        }
-        {
-          name: 'OnedriveDownload__EntraId__ClientId'
-          value: mcpAppId
-        }
-        {
-          name: 'OnedriveDownload__EntraId__ClientSecret'
-          value: mcpAppClientSecret
-        }
-      ]
-      cors: {
-        allowedOrigins: [
-          'https://portal.azure.com'
-        ]
-      }
-      linuxFxVersion: 'DOTNET-ISOLATED|8.0' // Even for custom handlers, a base runtime is needed.
-    }
-    httpsOnly: true
-    clientAffinityEnabled: false
+}
+
+// MCP Entra App
+module entraApp './modules/mcp-entra-app.bicep' = {
+  name: 'mcpEntraApp'
+  params: {
+    mcpAppUniqueName: 'mcp-onedrivedownload-${resourceToken}'
+    mcpAppDisplayName: 'MCP-OneDriveDownload-${resourceToken}'
+    userAssignedIdentityPrincipleId: userAssignedIdentity.properties.principalId
+    functionAppName: functionAppName
   }
+}
+
+// MCP server API endpoints
+module mcpApiModule './modules/mcp-api.bicep' = {
+  name: 'mcpApiModule'
+  params: {
+    apimServiceName: apimService.outputs.name
+    functionAppName: functionAppName
+    mcpAppId: entraApp.outputs.mcpAppId
+    mcpAppTenantId: entraApp.outputs.mcpAppTenantId
+  }
+  dependsOn: [
+    fncapp
+  ]
 }
 
 // Grant the function app's identity access to the storage account
 var storageBlobDataOwnerRole = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b')
 
 resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(functionApp.id, storageAccount.id, storageBlobDataOwnerRole)
+  name: guid(storageAccount.id, userAssignedIdentity.id, storageBlobDataOwnerRole)
   scope: storageAccount
   properties: {
     principalId: userAssignedIdentity.properties.principalId
@@ -142,10 +141,38 @@ resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
+// Storage account for file shares
+resource fileShareStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
+  name: '${abbrs.storageStorageAccounts}${resourceToken}files'
+  location: location
+  tags: tags
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+  properties: {
+    minimumTlsVersion: 'TLS1_2'
+    supportsHttpsTrafficOnly: true
+    allowBlobPublicAccess: false
+  }
+
+  resource fileService 'fileServices' = {
+    name: 'default'
+    resource fileShare 'shares' = {
+      name: 'downloads'
+      properties: {
+        shareQuota: 1024 // 1 GiB
+      }
+    }
+  }
+}
+
 // Outputs for azd
-output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = functionApp.id
-output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME string = functionApp.name
-output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = functionApp.properties.defaultHostName
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = fncapp.outputs.resourceId
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME string = fncapp.outputs.name
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = fncapp.outputs.fqdn
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_GATEWAY_FQDN string = replace(apimService.outputs.gatewayUrl, 'https://', '')
 output AZURE_USER_ASSIGNED_IDENTITY_PRINCIPAL_ID string = userAssignedIdentity.properties.principalId
+output mcpAppId string = entraApp.outputs.mcpAppId
 // This output is no longer relevant, but keeping it to avoid breaking main.bicep for now. I will fix main.bicep next.
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = ''

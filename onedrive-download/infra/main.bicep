@@ -30,25 +30,6 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   tags: tags
 }
 
-var resourceToken = uniqueString(subscription().id, rg.id, location)
-
-module entraApp 'modules/mcp-entra-app.bicep' = {
-  scope: rg
-  name: 'mcp-entra-app'
-  params: {
-    mcpAppUniqueName: 'mcp-app-${resourceToken}'
-    mcpAppDisplayName: 'mcp-app-${environmentName}'
-    appScopes: [
-      'User.Read'
-      'Files.Read.All'
-      'Sites.Read.All'
-    ]
-    appRoles: [
-      'Mail.Send'
-    ]
-  }
-}
-
 module resources 'resources.bicep' = {
   scope: rg
   name: 'resources'
@@ -56,12 +37,11 @@ module resources 'resources.bicep' = {
     location: location
     tags: tags
     azdServiceName: 'onedrive-download'
-    mcpAppId: entraApp.outputs.mcpAppId
-    mcpAppTenantId: entraApp.outputs.mcpAppTenantId
-    mcpAppClientSecret: entraApp.outputs.mcpAppClientSecret
   }
 }
 
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = resources.outputs.AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME string = resources.outputs.AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_GATEWAY_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_GATEWAY_FQDN
+output AZURE_CLIENT_ID string = resources.outputs.mcpAppId

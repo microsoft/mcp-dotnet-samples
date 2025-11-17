@@ -1,0 +1,15 @@
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio
+.vs/
+
+# From md_file/.gitignore
+feature.md
+feature2.md

@@ -1,6 +1,7 @@
 using System.Reflection;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -32,7 +33,15 @@ public static class HostApplicationBuilderExtensions
             // Configure the HTTP request pipeline.
             webApp.UseHttpsRedirection();
 
+            // Map MCP endpoint
             webApp.MapMcp("/mcp");
+
+            // Handle other routes - return 404
+            webApp.MapFallback(async context =>
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync("Not Found");
+            });
 
             return webApp;
         }

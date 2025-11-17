@@ -1,0 +1,18 @@
+### MCP Server Deployment Test
+POST https://func-4f6ymjmtqwias.azurewebsites.net/api/mcp-handler
+Content-Type: application/json
+# 인증이 필요한 경우 아래 헤더 중 하나를 추가하세요.
+# x-functions-key: YOUR_FUNCTION_KEY
+# Authorization: Bearer YOUR_ACCESS_TOKEN
+
+{
+    "context": {"invocationId": "test-vscode-rest-client"},
+    "tool_invocations": [{
+        "tool_id": "outlook-email-tool",
+        "name": "Search-Emails",
+        "arguments": {
+            "top": 1,
+            "query": "from:test@example.com"
+        }
+    }]
+}
