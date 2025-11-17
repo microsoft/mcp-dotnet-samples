@@ -107,6 +107,10 @@ module mcp 'br/public:avm/res/web/site:0.15.1' = {
     }
     siteConfig: {
       alwaysOn: false
+      linuxFxVersion: 'CUSTOM||'
+      webSocketsEnabled: true
+      http20Enabled: true
+      minTlsVersion: '1.2'
     }
     virtualNetworkSubnetId: !empty(virtualNetworkSubnetId) ? virtualNetworkSubnetId : null
     appSettingsKeyValuePairs: union(allAppSettings, {
