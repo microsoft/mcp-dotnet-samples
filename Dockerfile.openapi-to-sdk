@@ -24,8 +24,14 @@ WORKDIR /app
 COPY --from=build /app .
 
 COPY --from=build /root/.dotnet/tools /opt/kiota-tools
+RUN chmod -R 755 /opt/kiota-tools && \
+    ln -s /opt/kiota-tools/kiota /usr/local/bin/kiota
+
+RUN mkdir -p /app/generated /wwwroot /wwwroot/generated && \
+    chmod 755 /app/generated && \
+    chmod -R 777 /wwwroot
+
 ENV PATH="/opt/kiota-tools:${PATH}"
-RUN chmod -R +rX /opt/kiota-tools
 
 USER $APP_UID
 
