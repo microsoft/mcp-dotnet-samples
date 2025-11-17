@@ -96,7 +96,7 @@ module fncapp './modules/functionapp.bicep' = {
     identityClientId: userAssignedIdentity.properties.clientId
     appSettings: {
       OnedriveDownload__EntraId__UseManagedIdentity: 'true'
-      OnedriveDownload__EntraId__TenantId: entraApp.outputs.mcpAppTenantId
+      OnedriveDownload__EntraId__TenantId: tenant().tenantId
       OnedriveDownload__EntraId__UserAssignedClientId: userAssignedIdentity.properties.clientId
       FileShareConnectionString: 'DefaultEndpointsProtocol=https;AccountName=${fileShareStorage.name};AccountKey=${fileShareStorage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
     }
@@ -114,7 +114,6 @@ module entraApp './modules/mcp-entra-app.bicep' = {
     appScopes: [
       'User.Read'
       'Files.Read.All'
-      'Sites.Read.All'
     ]
     appRoles: []
   }

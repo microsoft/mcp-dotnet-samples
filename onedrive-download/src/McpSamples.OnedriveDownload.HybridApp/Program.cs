@@ -1,6 +1,10 @@
 using Azure.Core;
 using Azure.Identity;
 using McpSamples.OnedriveDownload.HybridApp.Configurations;
+using Microsoft.Extensions.Logging;
+using Microsoft.ApplicationInsights.DependencyCollector;
+using McpSamples.OnedriveDownload.HybridApp.Services;
+using McpSamples.OnedriveDownload.HybridApp.Tools;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 using McpSamples.Shared.OpenApi;
@@ -22,6 +26,13 @@ IHostApplicationBuilder builder = useStreamableHttp
                                 : Host.CreateApplicationBuilder(args);
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
+
+// Add Application Insights for proper Azure logging FIRST
+if (useStreamableHttp == true)
+{
+    builder.Services.AddApplicationInsightsTelemetry();
+    builder.Logging.AddApplicationInsights();
+}
 
 if (useStreamableHttp == true)
 {
@@ -49,32 +60,85 @@ if (!string.IsNullOrEmpty(keyVaultName))
     }
 }
 
+// Add session services
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(1);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
+
+// Add token storage
+builder.Services.AddSingleton<ITokenStorage, InMemoryTokenStorage>();
+
+// Add controllers
+builder.Services.AddControllers();
+
+// Add OAuth support
 builder.Services.AddScoped<GraphServiceClient>(sp =>
 {
+    var config = sp.GetRequiredService<IConfiguration>();
+    var logger = sp.GetRequiredService<ILogger<Program>>();
+
+    // Try to get from AppSettings first, fallback to environment variables
     var settings = sp.GetRequiredService<OnedriveDownloadAppSettings>();
     var entraId = settings.EntraId;
 
-    // Always use Managed Identity in Azure
-    // When running in Azure Functions behind APIM, the Managed Identity is the recommended approach
-    if (string.IsNullOrEmpty(entraId.UserAssignedClientId))
+    // Fallback to environment variables if not found in settings
+    var userAssignedClientId = entraId.UserAssignedClientId
+        ?? config["OnedriveDownload:EntraId:UserAssignedClientId"]
+        ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__UserAssignedClientId");
+
+    var clientSecret = entraId.ClientSecret
+        ?? config["OnedriveDownload:EntraId:ClientSecret"]
+        ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientSecret");
+
+    var tenantId = entraId.TenantId
+        ?? config["OnedriveDownload:EntraId:TenantId"]
+        ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__TenantId");
+
+    var clientId = entraId.ClientId
+        ?? config["OnedriveDownload:EntraId:ClientId"]
+        ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientId");
+
+    // For local development: Try to use ClientSecretCredential if ClientSecret is provided
+    // For Azure: Use ManagedIdentityCredential
+    TokenCredential credential;
+
+    if (!string.IsNullOrEmpty(clientSecret) && !string.IsNullOrEmpty(tenantId) && !string.IsNullOrEmpty(clientId))
     {
-        throw new InvalidOperationException("UserAssignedClientId must be configured. Set OnedriveDownload__EntraId__UserAssignedClientId in environment variables or configuration.");
+        logger.LogInformation("Using ClientSecretCredential for local development");
+        credential = new ClientSecretCredential(
+            tenantId,
+            clientId,
+            clientSecret
+        );
+    }
+    else if (!string.IsNullOrEmpty(userAssignedClientId))
+    {
+        logger.LogInformation("Using ManagedIdentityCredential for Azure");
+        credential = new ManagedIdentityCredential(
+            ManagedIdentityId.FromUserAssignedClientId(userAssignedClientId)
+        );
+    }
+    else
+    {
+        throw new InvalidOperationException("Either (ClientSecret + TenantId + ClientId) or UserAssignedClientId must be configured for GraphServiceClient initialization.");
     }
 
     try
     {
-        TokenCredential credential = new ManagedIdentityCredential(
-            ManagedIdentityId.FromUserAssignedClientId(entraId.UserAssignedClientId)
-        );
-
         string[] scopes = { "https://graph.microsoft.com/.default" };
         var client = new GraphServiceClient(credential, scopes);
-
+        logger.LogInformation("GraphServiceClient initialized successfully");
         return client;
     }
     catch (Exception ex)
     {
-        throw new InvalidOperationException($"Failed to initialize GraphServiceClient with UserAssignedClientId '{entraId.UserAssignedClientId}': {ex.Message}", ex);
+        logger.LogError(ex, "Failed to initialize GraphServiceClient");
+        throw new InvalidOperationException($"Failed to initialize GraphServiceClient: {ex.Message}", ex);
     }
 });
 
@@ -94,10 +158,37 @@ if (useStreamableHttp == true)
 
 IHost app = builder.BuildApp(useStreamableHttp);
 
+// Debug: Log configuration values after app is built
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("*** [Config] TenantId: {TenantId}", builder.Configuration["OnedriveDownload:EntraId:TenantId"]);
+logger.LogInformation("*** [Config] UserAssignedClientId: {UserAssignedClientId}", builder.Configuration["OnedriveDownload:EntraId:UserAssignedClientId"]);
+logger.LogInformation("*** [Config] ClientId: {ClientId}", builder.Configuration["OnedriveDownload:EntraId:ClientId"]);
+logger.LogInformation("*** [Config] ClientSecret: {ClientSecret}", string.IsNullOrEmpty(builder.Configuration["OnedriveDownload:EntraId:ClientSecret"]) ? "NOT SET" : "SET");
+
+// Debug: Log environment variables directly
+logger.LogInformation("*** [ENV] OnedriveDownload__EntraId__TenantId: {TenantId}", Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__TenantId"));
+logger.LogInformation("*** [ENV] OnedriveDownload__EntraId__UserAssignedClientId: {UserAssignedClientId}", Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__UserAssignedClientId"));
+logger.LogInformation("*** [ENV] OnedriveDownload__EntraId__ClientId: {ClientId}", Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientId"));
+logger.LogInformation("*** [ENV] OnedriveDownload__EntraId__ClientSecret: {ClientSecret}", Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientSecret"));
+
+// Debug: Log all environment variables that start with "OnedriveDownload"
+logger.LogInformation("*** [ENV] All OnedriveDownload variables:");
+foreach (System.Collections.DictionaryEntry envVar in Environment.GetEnvironmentVariables())
+{
+    if (envVar.Key.ToString().StartsWith("OnedriveDownload", StringComparison.OrdinalIgnoreCase))
+    {
+        logger.LogInformation("*** [ENV] {Key}={Value}", envVar.Key, envVar.Value);
+    }
+}
+
 if (useStreamableHttp == true)
 {
     var webApp = (app as Microsoft.AspNetCore.Builder.WebApplication)!;
     webApp.MapOpenApi("/{documentName}.json");
+
+    // Add session and auth middleware
+    webApp.UseSession();
+    webApp.MapControllers();
 }
 
 await app.RunAsync();
