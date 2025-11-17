@@ -111,6 +111,12 @@ module entraApp './modules/mcp-entra-app.bicep' = {
     mcpAppDisplayName: 'MCP-OneDriveDownload-${resourceToken}'
     userAssignedIdentityPrincipleId: userAssignedIdentity.properties.principalId
     functionAppName: functionAppName
+    appScopes: [
+      'User.Read'
+      'Files.Read.All'
+      'Sites.Read.All'
+    ]
+    appRoles: []
   }
 }
 

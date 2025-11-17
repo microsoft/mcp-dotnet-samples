@@ -31,8 +31,10 @@ var msGraphAppId = graphAppId
 // VS Code app ID
 var vscodeAppId = 'aebc6443-996d-45c2-90f0-388ff96faa56'
 
-// Permission ID
+// Permission IDs for Microsoft Graph
 var delegatedUserReadPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d'
+var filesReadAllPermissionId = '0e263e50-5827-48a4-b97c-d940288653c7'
+var sitesReadAllPermissionId = '205e70e5-aba6-4c52-a976-6d2d46c48043'
 var applicationMailSendPermissionId = 'b633e1c5-b582-4048-a93e-9f11b44c7e96'
 
 // Get the Microsoft Graph service principal so that the scope names
@@ -108,15 +110,31 @@ resource applicationRegistrationServicePrincipal 'Microsoft.Graph/servicePrincip
   appId: mcpEntraApp.appId
 }
 
-resource applicationPermissionGrantForApp 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
+// Grant Files.Read.All permission to the application service principal
+resource applicationFilesReadPermissionGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
   resourceId: msGraphSP.id
-  appRoleId: applicationMailSendPermissionId
+  appRoleId: filesReadAllPermissionId
   principalId: applicationRegistrationServicePrincipal.id
 }
 
-resource applicationPermissionGrantForUserAssignedIdentity 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
+// Grant Sites.Read.All permission to the application service principal
+resource applicationSitesReadPermissionGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
   resourceId: msGraphSP.id
-  appRoleId: applicationMailSendPermissionId
+  appRoleId: sitesReadAllPermissionId
+  principalId: applicationRegistrationServicePrincipal.id
+}
+
+// Grant Files.Read.All permission to the user-assigned identity
+resource userAssignedFilesReadPermissionGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
+  resourceId: msGraphSP.id
+  appRoleId: filesReadAllPermissionId
+  principalId: userAssignedIdentityPrincipleId
+}
+
+// Grant Sites.Read.All permission to the user-assigned identity
+resource userAssignedSitesReadPermissionGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
+  resourceId: msGraphSP.id
+  appRoleId: sitesReadAllPermissionId
   principalId: userAssignedIdentityPrincipleId
 }
 
