@@ -120,37 +120,6 @@ module entraApp './modules/mcp-entra-app.bicep' = {
   }
 }
 
-// Microsoft Graph app ID
-var msGraphAppId = '00000003-0000-0000-c000-000000000000'
-
-// Get Microsoft Graph service principal for role assignment
-resource msGraphSP 'Microsoft.Graph/servicePrincipals@v1.0' existing = {
-  appId: msGraphAppId
-}
-
-// Permission IDs needed for OneDrive file reading
-var filesReadAllRoleId = '01ce198f-1ce1-47b3-a953-17dfad7d91e6' // Files.Read.All (delegated)
-var sitesReadAllRoleId = '19dbc78e-2b68-4e8b-a46f-ab2ofc1dd4c7' // Sites.Read.All (delegated)
-
-// Get the MCP Entra App service principal (created by entraApp module)
-resource mcpEntraAppServicePrincipal 'Microsoft.Graph/servicePrincipals@v1.0' existing = {
-  appId: entraApp.outputs.mcpAppId
-}
-
-// Grant Files.Read.All role to MCP app service principal
-resource mcpAppFilesReadGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
-  resourceId: msGraphSP.id
-  appRoleId: filesReadAllRoleId
-  principalId: mcpEntraAppServicePrincipal.id
-}
-
-// Grant Files.Read.All role to user-assigned identity
-resource userAssignedFilesReadGrant 'Microsoft.Graph/appRoleAssignedTo@v1.0' = {
-  resourceId: msGraphSP.id
-  appRoleId: filesReadAllRoleId
-  principalId: userAssignedIdentity.properties.principalId
-}
-
 // MCP server API endpoints
 module mcpApiModule './modules/mcp-api.bicep' = {
   name: 'mcpApiModule'
@@ -162,8 +131,6 @@ module mcpApiModule './modules/mcp-api.bicep' = {
   }
   dependsOn: [
     fncapp
-    mcpAppFilesReadGrant
-    userAssignedFilesReadGrant
   ]
 }
 

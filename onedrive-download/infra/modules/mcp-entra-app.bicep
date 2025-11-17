@@ -31,10 +31,6 @@ var msGraphAppId = graphAppId
 // VS Code app ID
 var vscodeAppId = 'aebc6443-996d-45c2-90f0-388ff96faa56'
 
-// Permission IDs for Microsoft Graph
-var delegatedUserReadPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d'
-var applicationMailSendPermissionId = 'b633e1c5-b582-4048-a93e-9f11b44c7e96'
-
 // Get the Microsoft Graph service principal so that the scope names
 // can be looked up and mapped to a permission ID
 resource msGraphSP 'Microsoft.Graph/servicePrincipals@v1.0' existing = {
