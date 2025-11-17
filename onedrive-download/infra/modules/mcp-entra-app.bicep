@@ -108,20 +108,6 @@ resource applicationRegistrationServicePrincipal 'Microsoft.Graph/servicePrincip
   appId: mcpEntraApp.appId
 }
 
-// Grant the required roles to the application service principal
-resource applicationRoleAssignments 'Microsoft.Graph/appRoleAssignedTo@v1.0' = [for role in roles: {
-  resourceId: msGraphSP.id
-  appRoleId: role.id
-  principalId: applicationRegistrationServicePrincipal.id
-}]
-
-// Grant the required roles to the user-assigned identity
-resource userAssignedRoleAssignments 'Microsoft.Graph/appRoleAssignedTo@v1.0' = [for role in roles: {
-  resourceId: msGraphSP.id
-  appRoleId: role.id
-  principalId: userAssignedIdentityPrincipleId
-}]
-
 // Outputs
 output mcpAppId string = mcpEntraApp.appId
 output mcpAppTenantId string = tenantId
