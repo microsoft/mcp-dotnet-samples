@@ -7,5 +7,13 @@
         "excludedTypes": "Request"
       }
     }
+  },
+  "customHandler": {
+    "description": {
+      "defaultExecutablePath": "McpSamples.OnedriveDownload.HybridApp.exe",
+      "workingDirectory": "",
+      "arguments": []
+    },
+    "enableForwardingHttpRequest": true
   }
 }
