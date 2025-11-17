@@ -82,7 +82,7 @@ module mcp 'br/public:avm/res/web/site:0.15.1' = {
       webSocketsEnabled: true
       http20Enabled: true
       minTlsVersion: '1.2'
-      linuxFxVersion: 'DOTNETCORE|9.0'
+      linuxFxVersion: 'DOTNET|9.0'
     }
     virtualNetworkSubnetId: !empty(virtualNetworkSubnetId) ? virtualNetworkSubnetId : null
     appSettingsKeyValuePairs: union(allAppSettings, {
