@@ -473,6 +473,35 @@
       ]
     },
     {
+      "filename": "expert-nextjs-developer.chatmode.md",
+      "description": "Expert Next.js 16 developer specializing in App Router, Server Components, Cache Components, Turbopack, and modern React patterns with TypeScript",
+      "model": "GPT-4.1",
+      "tools": [
+        "changes",
+        "codebase",
+        "edit/editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runNotebooks",
+        "runTasks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "figma-dev-mode-mcp-server"
+      ]
+    },
+    {
       "filename": "expert-react-frontend-engineer.chatmode.md",
       "description": "Expert React 19.2 frontend engineer specializing in modern hooks, Server Components, Actions, TypeScript, and performance optimization",
       "tools": [
@@ -828,6 +857,20 @@
       "filename": "php-mcp-expert.chatmode.md",
       "description": "Expert assistant for PHP MCP server development using the official PHP SDK with attribute-based discovery",
       "model": "GPT-4.1"
+    },
+    {
+      "filename": "pimcore-expert.chatmode.md",
+      "description": "Expert Pimcore development assistant specializing in CMS, DAM, PIM, and E-Commerce solutions with Symfony integration",
+      "model": "GPT-4.1 | 'gpt-5' | 'Claude Sonnet 4.5'",
+      "tools": [
+        "codebase",
+        "terminalCommand",
+        "edit/editFiles",
+        "fetch",
+        "githubRepo",
+        "runTests",
+        "problems"
+      ]
     },
     {
       "filename": "plan.chatmode.md",
@@ -4328,6 +4371,10 @@
           "kind": "agent"
         },
         {
+          "path": "agents/droid.agent.md",
+          "kind": "agent"
+        },
+        {
           "path": "agents/dynatrace-expert.agent.md",
           "kind": "agent"
         },
@@ -4968,6 +5015,11 @@
       ]
     },
     {
+      "filename": "arch.agent.md",
+      "name": "Senior Cloud Architect",
+      "description": "Expert in modern architecture design patterns, NFR requirements, and creating comprehensive architectural diagrams and documentation"
+    },
+    {
       "filename": "arm-migration.agent.md",
       "name": "arm-migration-agent",
       "description": "Arm Cloud Migration Assistant accelerates moving x86 workloads to Arm infrastructure. It scans the repository for architecture assumptions, portability issues, container base image and dependency incompatibilities, and recommends Arm-optimized changes. It can drive multi-arch container builds, validate performance, and guide optimization, enabling smooth cross-platform deployment directly inside GitHub.",
@@ -5038,6 +5090,18 @@
       ],
       "env": "",
       "DIFFBLUE_COVER_CLI": "/placeholder/path/to/dcover"
+    },
+    {
+      "filename": "droid.agent.md",
+      "name": "droid",
+      "description": "Provides installation guidance, usage examples, and automation patterns for the Droid CLI, with emphasis on droid exec for CI/CD and non-interactive automation",
+      "tools": [
+        "read",
+        "search",
+        "edit",
+        "shell"
+      ],
+      "model": "claude-sonnet-4-5-20250929"
     },
     {
       "filename": "dynatrace-expert.agent.md",
