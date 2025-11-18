@@ -216,7 +216,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Logger.LogInformation("Successfully retrieved file content via Graph API. File name: {FileName}", fileName);
 
-            // Step 5: Azure File Share에 업로드
+            // Step 5: Azure File Share에 업로드 (선택사항)
             var uploadResult = await UploadToFileShareAsync(fileContent, fileName);
             if (uploadResult.Success)
             {
@@ -226,8 +226,11 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             }
             else
             {
-                result.ErrorMessage = uploadResult.ErrorMessage;
-                Logger.LogError("Failed to upload file to File Share: {Error}", uploadResult.ErrorMessage);
+                // File Share 업로드 실패해도 파일 다운로드는 성공한 것으로 반환
+                // (File Share가 선택사항이므로)
+                result.FileName = fileName;
+                result.DownloadPath = $"File downloaded successfully but File Share upload failed: {uploadResult.ErrorMessage}";
+                Logger.LogWarning("File Share upload failed but download succeeded: {Error}", uploadResult.ErrorMessage);
             }
         }
         catch (Exception ex)
@@ -262,10 +265,29 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 return (false, fileName, "", "File share connection string is not configured.");
             }
 
-            var shareClient = new ShareClient(connectionString, FileShareName);
-            await shareClient.CreateIfNotExistsAsync();
+            Logger.LogInformation("Attempting to upload file to File Share: {FileShareName}/{FileName}", FileShareName, fileName);
 
-            var fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+            var shareClient = new ShareClient(connectionString, FileShareName);
+
+            // Check if share exists
+            var shareExists = await shareClient.ExistsAsync();
+            Logger.LogInformation("File Share '{FileShareName}' exists: {Exists}", FileShareName, shareExists);
+
+            if (!shareExists)
+            {
+                Logger.LogInformation("Creating File Share: {FileShareName}", FileShareName);
+                await shareClient.CreateAsync();
+            }
+
+            var rootDirClient = shareClient.GetRootDirectoryClient();
+            var fileClient = rootDirClient.GetFileClient(fileName);
+
+            // Set file size first
+            fileStream.Position = 0;
+            await fileClient.CreateAsync(fileStream.Length);
+
+            // Upload file content
+            fileStream.Position = 0;
             await fileClient.UploadAsync(fileStream);
 
             Logger.LogInformation("File uploaded to File Share. Path: {Path}", fileClient.Path);
@@ -273,7 +295,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Failed to upload file to File Share");
+            Logger.LogError(ex, "Failed to upload file to File Share: {ErrorMessage}", ex.Message);
             return (false, fileName, "", $"Failed to upload file: {ex.Message}");
         }
     }
