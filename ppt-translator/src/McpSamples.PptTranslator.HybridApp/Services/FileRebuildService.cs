@@ -89,8 +89,6 @@ namespace McpSamples.PptTranslator.HybridApp.Services
                     portion.Font.IsItalic = originalItalic;
                     portion.Font.Underline = originalUnderline;
                     portion.Font.Color.Set(originalColorHex);
-
-                    // (중복 로그 삭제됨)
                 }
             }
 
@@ -110,7 +108,7 @@ namespace McpSamples.PptTranslator.HybridApp.Services
         {
             public int SlideIndex { get; set; }
             public string ShapeId { get; set; } = "";
-            public string Text { get; set; } = "";  // 중요: Text로 통일
+            public string Text { get; set; } = "";  
         }
     }
 }
