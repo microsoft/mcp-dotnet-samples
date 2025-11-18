@@ -121,26 +121,113 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Logger.LogInformation("URL validated successfully. IsFilePath: {IsFilePath}", isFilePath);
 
-            // Step 3: HTTP를 통한 파일 다운로드
-            // 사용자가 이미 인증되었으므로, 공유 링크는 바로 접근 가능
-            Logger.LogInformation("Downloading file via HTTP (user authenticated)");
+            // Step 3: 사용자 GraphServiceClient 생성 (토큰 기반)
+            Logger.LogInformation("Creating GraphServiceClient for authenticated user: {UserId}", userId);
+            var userAuthService = serviceProvider.GetRequiredService<IUserAuthenticationService>();
+            var userGraphClient = await userAuthService.GetUserGraphClientAsync(userId);
 
+            // Step 4: Graph API를 통한 파일 다운로드
             Stream? fileContent = null;
             string fileName = "unknown_file";
 
-            var httpResult = await DownloadByHttpAsync(sharingUrl);
-            fileContent = httpResult.Content;
-            fileName = httpResult.FileName;
+            try
+            {
+                Logger.LogInformation("Attempting to download via Graph API for user: {UserId}", userId);
+
+                // OneDrive 공유 URL을 itemId로 변환하여 Graph API로 접근
+                if (isSharingUrl && uri != null)
+                {
+                    // 공유 URL에서 itemId 추출
+                    var itemId = ExtractItemIdFromUrl(sharingUrl);
+
+                    if (!string.IsNullOrEmpty(itemId))
+                    {
+                        Logger.LogInformation("Accessing file via Graph API with item ID: {ItemId}", userId);
+
+                        // 사용자 토큰 조회
+                        var tokenStorage = serviceProvider.GetRequiredService<ITokenStorage>();
+                        var accessToken = await tokenStorage.GetAccessTokenAsync(userId);
+
+                        if (string.IsNullOrEmpty(accessToken))
+                        {
+                            result.ErrorMessage = "Failed to get access token for file download.";
+                            Logger.LogError("No access token available for user: {UserId}", userId);
+                            return result;
+                        }
+
+                        // /content 엔드포인트로 파일 다운로드 (사용자 토큰 포함)
+                        using var httpClient = new System.Net.Http.HttpClient();
+                        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+
+                        var contentUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/content";
+                        Logger.LogInformation("Downloading from Graph API endpoint: {ContentUrl}", contentUrl);
+
+                        var response = await httpClient.GetAsync(contentUrl);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            Logger.LogWarning("Failed to download file content. Status: {StatusCode}", response.StatusCode);
+                            var errorContent = await response.Content.ReadAsStringAsync();
+
+                            if (errorContent.Contains("SPO license") || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                            {
+                                result.ErrorMessage = "Tenant does not have a SharePoint Online (SPO) license. " +
+                                    "Please verify your license or use a public sharing link.";
+                            }
+                            else
+                            {
+                                result.ErrorMessage = $"Failed to download file. HTTP Status: {response.StatusCode}";
+                            }
+                            return result;
+                        }
+
+                        // 파일명 추출 (URL 또는 Content-Disposition 헤더에서)
+                        fileName = ExtractFileName(response, uri);
+
+                        // 파일 내용 다운로드
+                        fileContent = new MemoryStream();
+                        await response.Content.CopyToAsync(fileContent);
+                        fileContent.Position = 0;
+
+                        Logger.LogInformation("Successfully downloaded file via Graph API with user token. File name: {FileName}", fileName);
+                    }
+                    else
+                    {
+                        result.ErrorMessage = "Could not extract file ID from sharing URL.";
+                        Logger.LogWarning("Failed to extract item ID from URL: {SharingUrl}", sharingUrl);
+                        return result;
+                    }
+                }
+                else if (isFilePath)
+                {
+                    result.ErrorMessage = "File path access is not yet supported. Please use OneDrive sharing URL.";
+                    Logger.LogWarning("File path not supported: {FilePath}", sharingUrl);
+                    return result;
+                }
+            }
+            catch (Exception ex) when (ex.Message.Contains("BadRequest") || ex.Message.Contains("SPO license"))
+            {
+                Logger.LogError(ex, "SPO license error: {ErrorMessage}", ex.Message);
+                result.ErrorMessage = "Tenant does not have a SharePoint Online (SPO) license. " +
+                    "Please acquire SPO license or ensure it's properly assigned.";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to download file via Graph API: {ErrorMessage}", ex.Message);
+                result.ErrorMessage = $"Failed to download file: {ex.Message}";
+                return result;
+            }
 
             // Step 5: 파일 내용 확인
             if (fileContent == null)
             {
-                result.ErrorMessage = "Failed to download file. Please ensure the sharing link is valid and you have access to it.";
-                Logger.LogWarning("File content is null after download attempts");
+                result.ErrorMessage = "Failed to download file. File content is empty or file does not exist.";
+                Logger.LogWarning("File content is null after Graph API download");
                 return result;
             }
 
-            Logger.LogInformation("Successfully retrieved file content. File name: {FileName}", fileName);
+            Logger.LogInformation("Successfully retrieved file content via Graph API. File name: {FileName}", fileName);
 
             // Step 6: Azure File Share에 업로드
             var uploadResult = await UploadToFileShareAsync(fileContent, fileName);
@@ -172,41 +259,6 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
         return result;
     }
 
-
-    /// <summary>
-    /// HTTP를 통해 파일 다운로드 (공유 링크용)
-    /// </summary>
-    private async Task<(Stream? Content, string FileName)> DownloadByHttpAsync(string sharingUrl)
-    {
-        try
-        {
-            Logger.LogInformation("Downloading file via HTTP from: {SharingUrl}", sharingUrl);
-
-            using var httpClient = new System.Net.Http.HttpClient();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
-
-            var response = await httpClient.GetAsync(sharingUrl);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                Logger.LogWarning("HTTP download failed with status {StatusCode}", response.StatusCode);
-                return (null, "unknown_file");
-            }
-
-            var fileName = ExtractFileName(response, new Uri(sharingUrl));
-            Logger.LogInformation("HTTP download successful. File name: {FileName}", fileName);
-
-            var memoryStream = new MemoryStream();
-            await response.Content.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-            return (memoryStream, fileName);
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Failed to download file via HTTP");
-            return (null, "unknown_file");
-        }
-    }
 
 
     /// <summary>
@@ -273,6 +325,22 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
     private string ExtractFileNameFromPath(string filePath)
     {
         var lastSegment = filePath.Split('/').LastOrDefault();
+        if (!string.IsNullOrEmpty(lastSegment) && lastSegment.Contains('.'))
+        {
+            return System.Net.WebUtility.UrlDecode(lastSegment);
+        }
+
+        return $"downloaded_file_{DateTime.UtcNow:yyyyMMdd_HHmmss}";
+    }
+
+    /// <summary>
+    /// URL에서 파일명 추출
+    /// </summary>
+    private string ExtractFileNameFromUrl(Uri uri)
+    {
+        var path = uri.AbsolutePath;
+        var lastSegment = path.Split('/').LastOrDefault();
+
         if (!string.IsNullOrEmpty(lastSegment) && lastSegment.Contains('.'))
         {
             return System.Net.WebUtility.UrlDecode(lastSegment);
