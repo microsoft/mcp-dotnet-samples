@@ -302,11 +302,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             var rootDirClient = shareClient.GetRootDirectoryClient();
             var fileClient = rootDirClient.GetFileClient(fileName);
 
-            // Set file size first
-            fileStream.Position = 0;
-            await fileClient.CreateAsync(fileStream.Length);
-
-            // Upload file content
+            // Upload file
             fileStream.Position = 0;
             await fileClient.UploadAsync(fileStream);
 
