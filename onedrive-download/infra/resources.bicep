@@ -148,6 +148,19 @@ resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
+// Grant the function app's identity access to the file share storage account
+var storageFileDataSmbShareContributorRole = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb')
+
+resource fileShareRbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(fileShareStorage.id, userAssignedIdentity.id, storageFileDataSmbShareContributorRole)
+  scope: fileShareStorage
+  properties: {
+    principalId: userAssignedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: storageFileDataSmbShareContributorRole
+  }
+}
+
 // Storage account for file shares
 resource fileShareStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: '${abbrs.storageStorageAccounts}${resourceToken}files'
