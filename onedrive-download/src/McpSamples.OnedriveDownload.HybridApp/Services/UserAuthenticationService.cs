@@ -1,171 +1,100 @@
 using Microsoft.Graph;
-using Microsoft.Identity.Client;
-using Azure.Core;
 using System.Net.Http.Headers;
 
 namespace McpSamples.OnedriveDownload.HybridApp.Services;
 
 /// <summary>
-/// Service for handling user OAuth authentication with Microsoft identity.
-/// Uses Authorization Code Flow (OAuth 2.0) for web applications.
+/// Service for handling user authentication using tokens from HTTP context.
+/// Supports user-delegated authentication where the client automatically provides user tokens.
 /// </summary>
 public interface IUserAuthenticationService
 {
     /// <summary>
-    /// Gets the authorization URL for user login.
+    /// Gets the current user's access token from HTTP context.
     /// </summary>
-    string GetAuthorizationUrl();
+    Task<string?> GetCurrentUserAccessTokenAsync();
 
     /// <summary>
-    /// Exchanges authorization code for access token.
+    /// Gets GraphServiceClient using the current user's access token.
     /// </summary>
-    Task<string?> GetAccessTokenFromCodeAsync(string authorizationCode);
+    Task<GraphServiceClient> GetUserGraphClientAsync();
 
     /// <summary>
-    /// Gets GraphServiceClient using user's access token.
+    /// Extracts user principal name from the token claims.
     /// </summary>
-    Task<GraphServiceClient> GetUserGraphClientAsync(string userId);
-
-    /// <summary>
-    /// Refreshes user's access token using refresh token.
-    /// </summary>
-    Task<bool> RefreshAccessTokenAsync(string userId);
+    Task<string?> GetCurrentUserPrincipalNameAsync();
 }
 
 /// <summary>
-/// Implementation of user authentication service using MSAL (Microsoft Authentication Library).
-/// Uses Authorization Code Flow for web applications (not Interactive Authentication).
+/// Implementation of user authentication service using tokens from HTTP context.
+/// The client automatically provides user tokens (e.g., from azd auth login).
 /// </summary>
 public class UserAuthenticationService : IUserAuthenticationService
 {
-    private readonly IConfidentialClientApplication _confidentialClientApp;
-    private readonly ITokenStorage _tokenStorage;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<UserAuthenticationService> _logger;
-    private readonly string _clientId;
-    private readonly string _tenantId;
-    private readonly string _clientSecret;
-    private readonly string _redirectUri;
-    private readonly string[] _scopes = { "https://graph.microsoft.com/.default" };
 
     public UserAuthenticationService(
-        IConfiguration configuration,
-        ITokenStorage tokenStorage,
+        IHttpContextAccessor httpContextAccessor,
         ILogger<UserAuthenticationService> logger)
     {
-        _tokenStorage = tokenStorage;
+        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
-
-        // Get credentials from configuration
-        _clientId = configuration["OnedriveDownload:EntraId:ClientId"]
-            ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientId")
-            ?? throw new InvalidOperationException("ClientId is not configured");
-
-        _tenantId = configuration["OnedriveDownload:EntraId:TenantId"]
-            ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__TenantId")
-            ?? throw new InvalidOperationException("TenantId is not configured");
-
-        _clientSecret = configuration["OnedriveDownload:EntraId:ClientSecret"]
-            ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientSecret")
-            ?? string.Empty;
-
-        _redirectUri = configuration["OnedriveDownload:EntraId:RedirectUri"]
-            ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__RedirectUri")
-            ?? "https://func-onedrive-download-34ugypgdcsh76.azurewebsites.net/auth/callback";
-
-        // Initialize MSAL Confidential Client Application
-        // This is for Authorization Code Flow (server-to-server)
-        var authority = $"https://login.microsoftonline.com/{_tenantId}";
-
-        _confidentialClientApp = ConfidentialClientApplicationBuilder
-            .Create(_clientId)
-            .WithAuthority(authority)
-            .WithClientSecret(_clientSecret)
-            .Build();
-
-        _logger.LogInformation("UserAuthenticationService initialized. ClientId: {ClientId}, TenantId: {TenantId}", _clientId, _tenantId);
     }
 
-    public string GetAuthorizationUrl()
-    {
-        // Build the authorization URL for user login
-        var scopes = new[] { "https://graph.microsoft.com/.default", "offline_access" };
-        var authUrl = $"https://login.microsoftonline.com/{_tenantId}/oauth2/v2.0/authorize?" +
-                      $"client_id={Uri.EscapeDataString(_clientId)}&" +
-                      $"redirect_uri={Uri.EscapeDataString(_redirectUri)}&" +
-                      $"response_type=code&" +
-                      $"scope={Uri.EscapeDataString(string.Join(" ", scopes))}&" +
-                      $"response_mode=query";
-
-        _logger.LogInformation("Authorization URL generated");
-        return authUrl;
-    }
-
-    public async Task<string?> GetAccessTokenFromCodeAsync(string authorizationCode)
+    public Task<string?> GetCurrentUserAccessTokenAsync()
     {
         try
         {
-            _logger.LogInformation("Exchanging authorization code for access token");
+            _logger.LogInformation("=== GetCurrentUserAccessTokenAsync called ===");
 
-            var result = await _confidentialClientApp
-                .AcquireTokenByAuthorizationCode(
-                    _scopes,
-                    authorizationCode)
-                .ExecuteAsync();
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                _logger.LogWarning("HttpContext is null");
+                return Task.FromResult<string?>(null);
+            }
 
-            var userId = result.Account?.HomeAccountId?.Identifier ?? result.Account?.Username ?? "unknown";
+            // Extract token from Authorization header
+            var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+            if (string.IsNullOrEmpty(authHeader))
+            {
+                _logger.LogWarning("Authorization header not found");
+                return Task.FromResult<string?>(null);
+            }
 
-            // Save access token
-            await _tokenStorage.SaveTokenAsync(userId, result.AccessToken, (int)result.ExpiresOn.Subtract(DateTime.UtcNow).TotalSeconds);
+            // Expected format: "Bearer {token}"
+            if (!authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogWarning("Authorization header does not start with 'Bearer'");
+                return Task.FromResult<string?>(null);
+            }
 
-            // Note: Refresh token is managed internally by MSAL's token cache
-            // MSAL automatically handles token refresh using the cache
-            _logger.LogInformation("Access token saved for user: {UserId}", userId);
-
-            _logger.LogInformation("Access token obtained for user: {UserId}", userId);
-            return userId;
+            var token = authHeader.Substring("Bearer ".Length).Trim();
+            _logger.LogInformation("Access token extracted from Authorization header");
+            return Task.FromResult<string?>(token);
         }
-        catch (MsalException ex)
+        catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to exchange authorization code: {ErrorMessage}", ex.Message);
-            return null;
+            _logger.LogError(ex, "Failed to get access token from context: {ErrorMessage}", ex.Message);
+            return Task.FromResult<string?>(null);
         }
     }
 
-    public async Task<GraphServiceClient> GetUserGraphClientAsync(string userId)
+    public async Task<GraphServiceClient> GetUserGraphClientAsync()
     {
         try
         {
             _logger.LogInformation("=== GetUserGraphClientAsync called ===");
-            _logger.LogInformation("Attempting to get access token for userId: {UserId}", userId);
 
-            var accessToken = await _tokenStorage.GetAccessTokenAsync(userId);
-            _logger.LogInformation("Token Storage returned: {TokenStatus}", string.IsNullOrEmpty(accessToken) ? "NULL/EMPTY" : "TOKEN_FOUND");
-
+            var accessToken = await GetCurrentUserAccessTokenAsync();
             if (string.IsNullOrEmpty(accessToken))
             {
-                _logger.LogWarning("Access token is empty for userId: {UserId}", userId);
-                // Try to refresh the token
-                var refreshToken = await _tokenStorage.GetRefreshTokenAsync(userId);
-                _logger.LogInformation("Refresh token status: {RefreshTokenStatus}", string.IsNullOrEmpty(refreshToken) ? "NULL/EMPTY" : "FOUND");
-
-                if (!string.IsNullOrEmpty(refreshToken))
-                {
-                    var refreshed = await RefreshAccessTokenAsync(userId);
-                    if (!refreshed)
-                    {
-                        _logger.LogError("Token refresh failed for userId: {UserId}", userId);
-                        throw new InvalidOperationException($"No valid access token for user: {userId}");
-                    }
-                    accessToken = await _tokenStorage.GetAccessTokenAsync(userId);
-                }
-                else
-                {
-                    _logger.LogError("No refresh token found for userId: {UserId}", userId);
-                    throw new InvalidOperationException($"No valid token for user: {userId}");
-                }
+                _logger.LogError("No access token available in HTTP context");
+                throw new InvalidOperationException("No access token found. User authentication is required.");
             }
 
-            _logger.LogInformation("Access token acquired successfully for userId: {UserId}", userId);
+            _logger.LogInformation("Access token acquired successfully");
 
             // Create GraphServiceClient with user's token
             var authProvider = new DelegateAuthenticationProvider(request =>
@@ -175,38 +104,48 @@ public class UserAuthenticationService : IUserAuthenticationService
             });
 
             var graphClient = new GraphServiceClient(authProvider);
-            _logger.LogInformation("GraphServiceClient created for user: {UserId}", userId);
+            _logger.LogInformation("GraphServiceClient created for authenticated user");
             return graphClient;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to create GraphServiceClient for user {UserId}: {ErrorMessage}", userId, ex.Message);
+            _logger.LogError(ex, "Failed to create GraphServiceClient: {ErrorMessage}", ex.Message);
             throw;
         }
     }
 
-    public async Task<bool> RefreshAccessTokenAsync(string userId)
+    public Task<string?> GetCurrentUserPrincipalNameAsync()
     {
         try
         {
-            _logger.LogInformation("Attempting to refresh access token for user: {UserId}", userId);
-
-            var token = await _tokenStorage.GetAccessTokenAsync(userId);
-
-            if (!string.IsNullOrEmpty(token))
+            // Try to extract from X-MS-CLIENT-PRINCIPAL-NAME header (Azure App Service)
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
             {
-                _logger.LogInformation("Token still valid for user: {UserId}", userId);
-                return true;
+                return Task.FromResult<string?>(null);
             }
 
-            _logger.LogWarning("Token expired for user: {UserId}. User needs to re-authenticate.", userId);
-            await _tokenStorage.RemoveTokenAsync(userId);
-            return false;
+            var principalName = context.Request.Headers["X-MS-CLIENT-PRINCIPAL-NAME"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(principalName))
+            {
+                _logger.LogInformation("Principal name extracted: {PrincipalName}", principalName);
+                return Task.FromResult<string?>(principalName);
+            }
+
+            // Try to extract from X-FORWARDED-USER header (Common proxy header)
+            var forwardedUser = context.Request.Headers["X-FORWARDED-USER"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(forwardedUser))
+            {
+                _logger.LogInformation("Principal name extracted from X-FORWARDED-USER: {PrincipalName}", forwardedUser);
+                return Task.FromResult<string?>(forwardedUser);
+            }
+
+            return Task.FromResult<string?>(null);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error checking token for user {UserId}: {ErrorMessage}", userId, ex.Message);
-            return false;
+            _logger.LogError(ex, "Failed to get principal name: {ErrorMessage}", ex.Message);
+            return Task.FromResult<string?>(null);
         }
     }
 }

@@ -60,18 +60,7 @@ if (!string.IsNullOrEmpty(keyVaultName))
     }
 }
 
-// Add session services
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromHours(1);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-    options.Cookie.SameSite = SameSiteMode.Lax;
-});
-
-// Add authentication and token services
-builder.Services.AddSingleton<ITokenStorage, InMemoryTokenStorage>();
+// Add authentication service (user-delegated with automatic token from HTTP context)
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 
 // Add controllers
@@ -120,9 +109,6 @@ if (useStreamableHttp == true)
 {
     var webApp = (app as Microsoft.AspNetCore.Builder.WebApplication)!;
     webApp.MapOpenApi("/{documentName}.json");
-
-    // Add session middleware
-    webApp.UseSession();
     webApp.MapControllers();
 
     logger.LogInformation("╔════════════════════════════════════════════════════════════════╗");
