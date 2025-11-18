@@ -2,8 +2,9 @@ using McpSamples.Shared.Configurations;
 using Microsoft.OpenApi.Models;
 
 namespace McpSamples.PptTranslator.HybridApp.Configurations;
+
 /// <summary>
-/// This represents the application settings for ppt-translator service.
+/// Application settings for the PPT Translator service.
 /// </summary>
 public class PptTranslatorAppSettings : AppSettings
 {
@@ -12,7 +13,6 @@ public class PptTranslatorAppSettings : AppSettings
     {
         Title = "MCP PPT Translator",
         Version = "1.0.0",
-        Description = "A simple MCP server for Translating PPTX file."
+        Description = "MCP server for translating PowerPoint (.pptx) files."
     };
-
 }
