@@ -1,83 +1,67 @@
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.Graph;
 using System.Net.Http.Headers;
 
 namespace McpSamples.OnedriveDownload.HybridApp.Services;
 
 /// <summary>
-/// Service for handling user authentication using tokens from HTTP context.
-/// Supports user-delegated authentication where the client automatically provides user tokens.
+/// Service for handling user authentication using Azure DefaultCredential.
+/// Automatically gets tokens from azd auth login or other Azure credentials.
 /// </summary>
 public interface IUserAuthenticationService
 {
     /// <summary>
-    /// Gets the current user's access token from HTTP context.
+    /// Gets the current user's access token from Azure credentials.
     /// </summary>
     Task<string?> GetCurrentUserAccessTokenAsync();
 
     /// <summary>
-    /// Gets GraphServiceClient using the current user's access token.
+    /// Gets GraphServiceClient using Azure credentials.
     /// </summary>
     Task<GraphServiceClient> GetUserGraphClientAsync();
-
-    /// <summary>
-    /// Extracts user principal name from the token claims.
-    /// </summary>
-    Task<string?> GetCurrentUserPrincipalNameAsync();
 }
 
 /// <summary>
-/// Implementation of user authentication service using tokens from HTTP context.
-/// The client automatically provides user tokens (e.g., from azd auth login).
+/// Implementation of user authentication service using Azure DefaultCredential.
+/// Automatically retrieves tokens from azd auth login or other Azure credential sources.
 /// </summary>
 public class UserAuthenticationService : IUserAuthenticationService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<UserAuthenticationService> _logger;
+    private readonly string[] _scopes = { "https://graph.microsoft.com/.default" };
 
     public UserAuthenticationService(
-        IHttpContextAccessor httpContextAccessor,
         ILogger<UserAuthenticationService> logger)
     {
-        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
     }
 
-    public Task<string?> GetCurrentUserAccessTokenAsync()
+    public async Task<string?> GetCurrentUserAccessTokenAsync()
     {
         try
         {
             _logger.LogInformation("=== GetCurrentUserAccessTokenAsync called ===");
+            _logger.LogInformation("Attempting to get token from Azure DefaultCredential");
 
-            var context = _httpContextAccessor.HttpContext;
-            if (context == null)
-            {
-                _logger.LogWarning("HttpContext is null");
-                return Task.FromResult<string?>(null);
-            }
+            // Use DefaultAzureCredential which includes:
+            // - azd auth login token
+            // - Environment variables
+            // - Visual Studio credentials
+            // - Azure PowerShell credentials
+            // - Azure CLI credentials
+            var credential = new DefaultAzureCredential();
 
-            // Extract token from Authorization header
-            var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
-            if (string.IsNullOrEmpty(authHeader))
-            {
-                _logger.LogWarning("Authorization header not found");
-                return Task.FromResult<string?>(null);
-            }
+            var token = await credential.GetTokenAsync(
+                new TokenRequestContext(_scopes));
 
-            // Expected format: "Bearer {token}"
-            if (!authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-            {
-                _logger.LogWarning("Authorization header does not start with 'Bearer'");
-                return Task.FromResult<string?>(null);
-            }
-
-            var token = authHeader.Substring("Bearer ".Length).Trim();
-            _logger.LogInformation("Access token extracted from Authorization header");
-            return Task.FromResult<string?>(token);
+            _logger.LogInformation("Access token acquired from Azure DefaultCredential");
+            return token.Token;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get access token from context: {ErrorMessage}", ex.Message);
-            return Task.FromResult<string?>(null);
+            _logger.LogError(ex, "Failed to get access token from Azure DefaultCredential: {ErrorMessage}", ex.Message);
+            return null;
         }
     }
 
@@ -90,8 +74,8 @@ public class UserAuthenticationService : IUserAuthenticationService
             var accessToken = await GetCurrentUserAccessTokenAsync();
             if (string.IsNullOrEmpty(accessToken))
             {
-                _logger.LogError("No access token available in HTTP context");
-                throw new InvalidOperationException("No access token found. User authentication is required.");
+                _logger.LogError("No access token available from Azure credentials");
+                throw new InvalidOperationException("No access token found. Please ensure you are authenticated via 'azd auth login'.");
             }
 
             _logger.LogInformation("Access token acquired successfully");
@@ -111,41 +95,6 @@ public class UserAuthenticationService : IUserAuthenticationService
         {
             _logger.LogError(ex, "Failed to create GraphServiceClient: {ErrorMessage}", ex.Message);
             throw;
-        }
-    }
-
-    public Task<string?> GetCurrentUserPrincipalNameAsync()
-    {
-        try
-        {
-            // Try to extract from X-MS-CLIENT-PRINCIPAL-NAME header (Azure App Service)
-            var context = _httpContextAccessor.HttpContext;
-            if (context == null)
-            {
-                return Task.FromResult<string?>(null);
-            }
-
-            var principalName = context.Request.Headers["X-MS-CLIENT-PRINCIPAL-NAME"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(principalName))
-            {
-                _logger.LogInformation("Principal name extracted: {PrincipalName}", principalName);
-                return Task.FromResult<string?>(principalName);
-            }
-
-            // Try to extract from X-FORWARDED-USER header (Common proxy header)
-            var forwardedUser = context.Request.Headers["X-FORWARDED-USER"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(forwardedUser))
-            {
-                _logger.LogInformation("Principal name extracted from X-FORWARDED-USER: {PrincipalName}", forwardedUser);
-                return Task.FromResult<string?>(forwardedUser);
-            }
-
-            return Task.FromResult<string?>(null);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to get principal name: {ErrorMessage}", ex.Message);
-            return Task.FromResult<string?>(null);
         }
     }
 }

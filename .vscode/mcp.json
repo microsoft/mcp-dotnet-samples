@@ -9,7 +9,11 @@
   "servers": {
     "onedrive-download": {
       "type": "http",
-      "url": "https://${input:functionAppFqdn}/mcp"
+      "url": "https://${input:functionAppFqdn}/mcp",
+      "auth": {
+        "type": "bearer",
+        "token": "${command:getAzureAuthToken}"
+      }
     }
   }
 }

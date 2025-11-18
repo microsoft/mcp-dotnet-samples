@@ -69,7 +69,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             Logger.LogInformation("=== OneDriveTool.DownloadFileFromUrlAsync called ===");
             Logger.LogInformation("sharingUrl: {SharingUrl}", sharingUrl);
 
-            // Step 1: 사용자 토큰 확인 (자동으로 HTTP 요청에서 전달됨)
+            // Step 1: Azure 자격증명에서 토큰 자동 획득 (azd auth login 포함)
             var userAuthService = serviceProvider.GetRequiredService<IUserAuthenticationService>();
             var accessToken = await userAuthService.GetCurrentUserAccessTokenAsync();
             Logger.LogInformation("User token status: {TokenStatus}", string.IsNullOrEmpty(accessToken) ? "NOT FOUND" : "FOUND");
@@ -77,8 +77,8 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             // 사용자 토큰 확인
             if (string.IsNullOrEmpty(accessToken))
             {
-                result.ErrorMessage = "User not authenticated. Please provide valid authentication credentials.";
-                Logger.LogWarning("No user token found in HTTP request");
+                result.ErrorMessage = "User not authenticated. Please run 'azd auth login' first.";
+                Logger.LogWarning("No user token found from Azure credentials");
                 return result;
             }
 
