@@ -1,4 +1,11 @@
 {
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "consoleapp-project-path",
+      "description": "The absolute path to the console app project Directory"
+    }
+  ],
   "servers": {
     "ppt-translator": {
       "type": "stdio",
@@ -6,7 +13,10 @@
       "args": [
         "run",
         "--project",
-        "${workspaceFolder:ppt-translator}/src/McpSamples.PptTranslator.HybridApp/McpSamples.PptTranslator.HybridApp.csproj"
+        "${input:consoleapp-project-path}",
+        "--",
+        "-tc",
+        "-p"
       ]
     }
   }

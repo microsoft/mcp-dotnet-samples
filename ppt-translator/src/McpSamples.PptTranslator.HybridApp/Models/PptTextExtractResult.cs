@@ -1,7 +1,7 @@
 namespace McpSamples.PptTranslator.HybridApp.Models
 {
     /// <summary>
-    /// Represents the overall text extraction result from a PPT file.
+    /// Contains the text extraction result from a PPT file.
     /// </summary>
     public class PptTextExtractResult
     {
@@ -10,7 +10,7 @@ namespace McpSamples.PptTranslator.HybridApp.Models
     }
 
     /// <summary>
-    /// Represents a single extracted text element from a slide shape.
+    /// Represents a text item extracted from a slide.
     /// </summary>
     public class PptTextExtractItem
     {

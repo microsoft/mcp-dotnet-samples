@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using ShapeCrawler;
 using ShapeCrawler.Presentations;
 using McpSamples.PptTranslator.HybridApp.Models;
 
@@ -16,7 +16,6 @@ public interface ITextExtractService
     /// <summary>
     /// Opens a PPT file for text extraction.
     /// </summary>
-    /// <param name="filePath"></param>
     Task OpenPptFileAsync(string filePath);
 
     /// <summary>
@@ -25,15 +24,13 @@ public interface ITextExtractService
     Task<PptTextExtractResult> TextExtractAsync();
 
     /// <summary>
-    /// Saves the extracted text result as a JSON file.
-    /// <param name="extracted">The extracted text result.</param>
-    /// <param name="outputPath">The output JSON file path.</param>
+    /// Saves the extracted text to a JSON file.
     /// </summary>
     Task<string> ExtractToJsonAsync(PptTextExtractResult extracted, string outputPath);
 }
 
 /// <summary>
-/// Provides text extraction from PPT files.
+/// Provides functionalities for extracting text from PPT files.
 /// </summary>
 public class TextExtractService : ITextExtractService
 {
@@ -55,7 +52,7 @@ public class TextExtractService : ITextExtractService
         try
         {
             _presentation = new Presentation(filePath);
-            _logger.LogInformation("PPT file opened successfully: {FilePath}", filePath);
+            _logger.LogInformation("PPT file opened: {FilePath}", filePath);
         }
         catch (Exception ex)
         {
@@ -81,33 +78,30 @@ public class TextExtractService : ITextExtractService
             {
                 foreach (var shape in slide.Shapes)
                 {
-                    if (shape.TextBox == null) continue;
+                    if (shape.TextBox == null)
+                        continue;
 
                     string text = shape.TextBox.Text?.Trim() ?? string.Empty;
-                    if (string.IsNullOrWhiteSpace(text)) continue;
+                    if (string.IsNullOrWhiteSpace(text))
+                        continue;
 
                     items.Add(new PptTextExtractItem
                     {
                         SlideIndex = slide.Number,
-                        ShapeId = shape.Name,
+                        ShapeId = shape.Id.ToString(),
                         Text = text
                     });
-
-                    _logger.LogDebug("[Extracted] Slide {Slide}, Shape {Shape}: {Preview}",
-                        slide.Number,
-                        shape.Name,
-                        text.Length > 30 ? text.Substring(0, 30) + "..." : text);
                 }
             }
 
             result.Items = items;
             result.TotalCount = items.Count;
 
-            _logger.LogInformation("Extracted {Count} text items from presentation.", result.TotalCount);
+            _logger.LogInformation("Extracted {Count} text items.", result.TotalCount);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while extracting text from PPT.");
+            _logger.LogError(ex, "Error occurred during text extraction.");
             throw;
         }
 
@@ -132,7 +126,7 @@ public class TextExtractService : ITextExtractService
         var json = JsonSerializer.Serialize(extracted, options);
         await File.WriteAllTextAsync(outputPath, json);
 
-        _logger.LogInformation("JSON file saved successfully: {Path}", Path.GetFullPath(outputPath));
+        _logger.LogInformation("JSON saved: {Path}", Path.GetFullPath(outputPath));
         return Path.GetFullPath(outputPath);
     }
 }
