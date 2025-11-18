@@ -176,15 +176,8 @@ resource fileShareStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
     allowBlobPublicAccess: false
   }
 
-  resource fileService 'fileServices' = {
-    name: 'default'
-    resource fileShare 'shares' = {
-      name: 'downloads'
-      properties: {
-        shareQuota: 1024 // 1 GiB
-      }
-    }
-  }
+  // Note: File share will be created automatically by the application code
+  // using CreateIfNotExistsAsync() when first needed
 }
 
 // Outputs for azd

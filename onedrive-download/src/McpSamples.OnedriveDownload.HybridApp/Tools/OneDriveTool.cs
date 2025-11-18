@@ -266,17 +266,36 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             }
 
             Logger.LogInformation("Attempting to upload file to File Share: {FileShareName}/{FileName}", FileShareName, fileName);
+            Logger.LogInformation("ConnectionString validation: {IsEmpty}", string.IsNullOrEmpty(connectionString));
 
             var shareClient = new ShareClient(connectionString, FileShareName);
 
             // Check if share exists
-            var shareExists = await shareClient.ExistsAsync();
-            Logger.LogInformation("File Share '{FileShareName}' exists: {Exists}", FileShareName, shareExists);
+            bool shareExists = false;
+            try
+            {
+                shareExists = await shareClient.ExistsAsync();
+                Logger.LogInformation("File Share '{FileShareName}' exists: {Exists}", FileShareName, shareExists);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to check if File Share exists: {ErrorMessage}", ex.Message);
+                throw;
+            }
 
             if (!shareExists)
             {
                 Logger.LogInformation("Creating File Share: {FileShareName}", FileShareName);
-                await shareClient.CreateAsync();
+                try
+                {
+                    await shareClient.CreateAsync();
+                    Logger.LogInformation("File Share created successfully");
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "Failed to create File Share: {ErrorMessage}", ex.Message);
+                    throw;
+                }
             }
 
             var rootDirClient = shareClient.GetRootDirectoryClient();
