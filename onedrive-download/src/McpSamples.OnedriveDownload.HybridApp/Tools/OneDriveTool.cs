@@ -310,21 +310,63 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             try
             {
-                // First create the file with max size
+                // Create file with specified size
                 await fileClient.CreateAsync(fileSize);
-                Logger.LogInformation("File created in share with size: {FileSize}", fileSize);
+                Logger.LogInformation("File created with size: {FileSize} bytes", fileSize);
 
-                // Then upload the content
+                // Upload file content in chunks
                 fileStream.Position = 0;
-                await fileClient.UploadAsync(fileStream);
-                Logger.LogInformation("File content uploaded successfully");
+                const int chunkSize = 4 * 1024 * 1024; // 4MB chunks
+                long offset = 0;
+
+                while (offset < fileSize)
+                {
+                    long currentChunkSize = Math.Min(chunkSize, fileSize - offset);
+                    byte[] buffer = new byte[currentChunkSize];
+
+                    int bytesRead = await fileStream.ReadAsync(buffer, 0, (int)currentChunkSize);
+                    if (bytesRead == 0) break;
+
+                    await fileClient.UploadRangeAsync(new Azure.HttpRange(offset, bytesRead), new MemoryStream(buffer, 0, bytesRead));
+                    offset += bytesRead;
+
+                    Logger.LogInformation("Uploaded chunk: {Offset}/{FileSize} bytes", offset, fileSize);
+                }
+
+                Logger.LogInformation("File uploaded successfully. Total size: {FileSize} bytes", fileSize);
             }
             catch (Azure.RequestFailedException rfe) when (rfe.Status == 409)
             {
-                // File already exists, overwrite it
-                Logger.LogInformation("File already exists, overwriting...");
+                // File already exists, try to delete and recreate
+                Logger.LogInformation("File already exists, attempting to delete and recreate...");
+                try
+                {
+                    await fileClient.DeleteAsync();
+                }
+                catch (Exception deleteEx)
+                {
+                    Logger.LogWarning(deleteEx, "Failed to delete existing file, will try upload anyway");
+                }
+
+                await fileClient.CreateAsync(fileSize);
                 fileStream.Position = 0;
-                await fileClient.UploadAsync(fileStream);
+
+                long offset = 0;
+                const int chunkSize = 4 * 1024 * 1024;
+
+                while (offset < fileSize)
+                {
+                    long currentChunkSize = Math.Min(chunkSize, fileSize - offset);
+                    byte[] buffer = new byte[currentChunkSize];
+
+                    int bytesRead = await fileStream.ReadAsync(buffer, 0, (int)currentChunkSize);
+                    if (bytesRead == 0) break;
+
+                    await fileClient.UploadRangeAsync(new Azure.HttpRange(offset, bytesRead), new MemoryStream(buffer, 0, bytesRead));
+                    offset += bytesRead;
+                }
+
+                Logger.LogInformation("File recreated and uploaded successfully");
             }
 
             Logger.LogInformation("File uploaded to File Share. Path: {Path}, Size: {FileSize}", fileClient.Path, fileSize);
