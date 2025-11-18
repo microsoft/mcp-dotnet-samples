@@ -266,115 +266,62 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 return (false, fileName, "", "File share connection string is not configured.");
             }
 
+            Logger.LogInformation("=== Starting File Share Upload ===");
             Logger.LogInformation("Attempting to upload file to File Share: {FileShareName}/{FileName}", FileShareName, fileName);
-            Logger.LogInformation("ConnectionString validation: {IsEmpty}", string.IsNullOrEmpty(connectionString));
 
             var shareClient = new ShareClient(connectionString, FileShareName);
 
             // Check if share exists
-            bool shareExists = false;
-            try
-            {
-                shareExists = await shareClient.ExistsAsync();
-                Logger.LogInformation("File Share '{FileShareName}' exists: {Exists}", FileShareName, shareExists);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Failed to check if File Share exists: {ErrorMessage}", ex.Message);
-                throw;
-            }
+            bool shareExists = await shareClient.ExistsAsync();
+            Logger.LogInformation("File Share '{FileShareName}' exists: {Exists}", FileShareName, shareExists);
 
             if (!shareExists)
             {
                 Logger.LogInformation("Creating File Share: {FileShareName}", FileShareName);
-                try
-                {
-                    await shareClient.CreateAsync();
-                    Logger.LogInformation("File Share created successfully");
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex, "Failed to create File Share: {ErrorMessage}", ex.Message);
-                    throw;
-                }
+                await shareClient.CreateAsync();
+                Logger.LogInformation("File Share created successfully");
             }
 
             var rootDirClient = shareClient.GetRootDirectoryClient();
             var fileClient = rootDirClient.GetFileClient(fileName);
 
-            // Upload file content directly
+            // Get file size
             fileStream.Position = 0;
             long fileSize = fileStream.Length;
+            Logger.LogInformation("File size: {FileSize} bytes", fileSize);
 
-            Logger.LogInformation("Uploading file: {FileName}, Size: {FileSize} bytes", fileName, fileSize);
-
+            // Delete file if it already exists
             try
             {
-                // Create file with specified size
-                await fileClient.CreateAsync(fileSize);
-                Logger.LogInformation("File created with size: {FileSize} bytes", fileSize);
-
-                // Upload file content in chunks
-                fileStream.Position = 0;
-                const int chunkSize = 4 * 1024 * 1024; // 4MB chunks
-                long offset = 0;
-
-                while (offset < fileSize)
+                bool fileExists = await fileClient.ExistsAsync();
+                if (fileExists)
                 {
-                    long currentChunkSize = Math.Min(chunkSize, fileSize - offset);
-                    byte[] buffer = new byte[currentChunkSize];
-
-                    int bytesRead = await fileStream.ReadAsync(buffer, 0, (int)currentChunkSize);
-                    if (bytesRead == 0) break;
-
-                    await fileClient.UploadRangeAsync(new Azure.HttpRange(offset, bytesRead), new MemoryStream(buffer, 0, bytesRead));
-                    offset += bytesRead;
-
-                    Logger.LogInformation("Uploaded chunk: {Offset}/{FileSize} bytes", offset, fileSize);
-                }
-
-                Logger.LogInformation("File uploaded successfully. Total size: {FileSize} bytes", fileSize);
-            }
-            catch (Azure.RequestFailedException rfe) when (rfe.Status == 409)
-            {
-                // File already exists, try to delete and recreate
-                Logger.LogInformation("File already exists, attempting to delete and recreate...");
-                try
-                {
+                    Logger.LogInformation("File already exists, deleting...");
                     await fileClient.DeleteAsync();
+                    Logger.LogInformation("File deleted successfully");
                 }
-                catch (Exception deleteEx)
-                {
-                    Logger.LogWarning(deleteEx, "Failed to delete existing file, will try upload anyway");
-                }
-
-                await fileClient.CreateAsync(fileSize);
-                fileStream.Position = 0;
-
-                long offset = 0;
-                const int chunkSize = 4 * 1024 * 1024;
-
-                while (offset < fileSize)
-                {
-                    long currentChunkSize = Math.Min(chunkSize, fileSize - offset);
-                    byte[] buffer = new byte[currentChunkSize];
-
-                    int bytesRead = await fileStream.ReadAsync(buffer, 0, (int)currentChunkSize);
-                    if (bytesRead == 0) break;
-
-                    await fileClient.UploadRangeAsync(new Azure.HttpRange(offset, bytesRead), new MemoryStream(buffer, 0, bytesRead));
-                    offset += bytesRead;
-                }
-
-                Logger.LogInformation("File recreated and uploaded successfully");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Could not check/delete existing file: {Message}", ex.Message);
             }
 
-            Logger.LogInformation("File uploaded to File Share. Path: {Path}, Size: {FileSize}", fileClient.Path, fileSize);
+            // Create file
+            Logger.LogInformation("Creating file in share...");
+            await fileClient.CreateAsync(fileSize);
+            Logger.LogInformation("File created with size: {FileSize} bytes", fileSize);
+
+            // Upload entire file at once
+            fileStream.Position = 0;
+            Logger.LogInformation("Uploading file content...");
+            await fileClient.UploadRangeAsync(new Azure.HttpRange(0, fileSize), fileStream);
+            Logger.LogInformation("=== File uploaded successfully ===");
+
             return (true, fileName, fileClient.Path, null);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Failed to upload file to File Share: {ErrorMessage}", ex.Message);
+            Logger.LogError(ex, "=== Failed to upload file to File Share: {ErrorMessage} ===", ex.Message);
             return (false, fileName, "", $"Failed to upload file: {ex.Message}");
         }
     }
