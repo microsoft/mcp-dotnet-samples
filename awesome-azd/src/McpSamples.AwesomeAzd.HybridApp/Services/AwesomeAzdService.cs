@@ -40,23 +40,28 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         return result;
     }
 
-   public async Task<CommandExecutionResult> ExecuteTemplateCommandAsync(
-    string command,
-    string? workingDirectory = null,
-    CancellationToken cancellationToken = default)
+    public async Task<CommandExecutionResult> ExecuteTemplateCommandAsync(string command, string? workingDirectory = null, CancellationToken cancellationToken = default)
     {
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // ⭐ Default working directory 설정: 현재 폴더 + /test
             if (string.IsNullOrWhiteSpace(workingDirectory))
             {
                 string current = Directory.GetCurrentDirectory();
-                workingDirectory = Path.Combine(current, "test");
+                logger.LogInformation("Initial CurrentDirectory = {path}", current);
+
+                // 템플릿 이름 파싱
+                string templateName = ExtractTemplateNameFromCommand(command);
+                logger.LogInformation("Parsed template name = {name}", templateName);
+
+                workingDirectory = Path.Combine(current, templateName);
 
                 if (!Directory.Exists(workingDirectory))
+                {
+                    logger.LogInformation("Creating default directory: {dir}", workingDirectory);
                     Directory.CreateDirectory(workingDirectory);
+                }
             }
 
             var process = new Process
@@ -150,5 +155,42 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         return searchTerms.Any(term => text.Contains(term, StringComparison.InvariantCultureIgnoreCase));
     }
 
+
+    private string ExtractTemplateNameFromCommand(string command)
+    {
+        if (string.IsNullOrWhiteSpace(command))
+            return "MyTemplate";
+
+        try
+        {
+            // -t 다음 값을 뜯어오기
+            // 예: -t Azure-Samples/openai-mcp-agent-dotnet
+            var parts = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < parts.Length - 1; i++)
+            {
+                if (parts[i] == "-t")
+                {
+                    string path = parts[i + 1]; // Azure-Samples/openai-mcp-agent-dotnet
+
+                    // owner/repo → repo
+                    if (path.Contains('/'))
+                    {
+                        string repo = path.Split('/').Last().Trim();
+                        if (!string.IsNullOrWhiteSpace(repo))
+                            return repo;
+                    }
+
+                    return path; // fallback (owner 없이 repo만 왔을 때)
+                }
+            }
+        }
+        catch
+        {
+            // 무슨 일이 생겨도 default
+        }
+
+        return "MyTemplate";
+    }
 
 }
