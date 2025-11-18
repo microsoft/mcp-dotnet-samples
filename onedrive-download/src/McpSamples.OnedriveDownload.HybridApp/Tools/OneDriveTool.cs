@@ -302,19 +302,32 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             var rootDirClient = shareClient.GetRootDirectoryClient();
             var fileClient = rootDirClient.GetFileClient(fileName);
 
-            // Upload file - need to set max size first, then upload
+            // Upload file content directly
             fileStream.Position = 0;
             long fileSize = fileStream.Length;
 
-            // Create the file with the correct size
-            await fileClient.CreateAsync(fileSize);
-            Logger.LogInformation("File created with size: {FileSize}", fileSize);
+            Logger.LogInformation("Uploading file: {FileName}, Size: {FileSize} bytes", fileName, fileSize);
 
-            // Upload the file content
-            fileStream.Position = 0;
-            await fileClient.UploadAsync(fileStream);
+            try
+            {
+                // First create the file with max size
+                await fileClient.CreateAsync(fileSize);
+                Logger.LogInformation("File created in share with size: {FileSize}", fileSize);
 
-            Logger.LogInformation("File uploaded to File Share. Path: {Path}", fileClient.Path);
+                // Then upload the content
+                fileStream.Position = 0;
+                await fileClient.UploadAsync(fileStream);
+                Logger.LogInformation("File content uploaded successfully");
+            }
+            catch (Azure.RequestFailedException rfe) when (rfe.Status == 409)
+            {
+                // File already exists, overwrite it
+                Logger.LogInformation("File already exists, overwriting...");
+                fileStream.Position = 0;
+                await fileClient.UploadAsync(fileStream);
+            }
+
+            Logger.LogInformation("File uploaded to File Share. Path: {Path}, Size: {FileSize}", fileClient.Path, fileSize);
             return (true, fileName, fileClient.Path, null);
         }
         catch (Exception ex)
