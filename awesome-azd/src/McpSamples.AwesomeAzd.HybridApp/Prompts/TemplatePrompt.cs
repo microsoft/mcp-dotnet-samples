@@ -29,52 +29,83 @@ public class TemplatePrompt : ITemplatePrompt
         [Description("The keyword to search for")] string keyword)
     {
         return $"""
-        Please search all Azure templates that are related to the search keyword `{keyword}`.
+        Please search all Azure templates related to the keyword `{keyword}`.
 
-        Here's the process to follow:
+        Follow this process:
 
-        1. Use the `awesome-azd` MCP server.
+        ------------------------------------------------------------
+        1. Search templates
+        ------------------------------------------------------------
+        - Use the `awesome-azd` MCP server.
+        - Call the `get_templates` tool.
+        - Filter all templates whose metadata contains the keyword `{keyword}`.
 
-        1. Search all templates in the **Awesome AZD repository** for the given keyword with get_templates tool.
+        ------------------------------------------------------------
+        2. Return results as a table
+        ------------------------------------------------------------
+        Return ONLY this table format:
 
-        1. Return a structured response in a **table format** that includes:
-           - Title  
-           - Description  
+        | Title | Description | Source |
+        |-------|-------------|---------|
+        | ...   | ...         | ...     |
 
-        1. Example table format:
+        After the table, ask the user for the following **three inputs**:
 
-           | Title            | Description                    |
-           |------------------|--------------------------------|
-           | Starter - Bicep  | A starter template with Bicep  |
+        - **Selected Title** (must match a Title from the table)
+        - **Working Directory** (default = "<current_working_directory>/<template_name>")
+        - **Environment Name** (default = "myenv")
+        
+        Ask the user to separate input values with semicolons (;): <Title> ; <WorkingDirectory or empty> ; <EnvironmentName or empty>
+          ex) OpenAI Agent ; C:\projects\agent ; AzureEnv
 
-        1. Once a template is selected, **return all available details** about the selected template, including:
-           - `title`
-           - `description`
-           - `preview`
-           - `author`
-           - `authorUrl`
-           - `source`
-           - `tags`
-           - `azureServices`
-           - `languages`
-           - `id`
+        ------------------------------------------------------------
+        3. After the user selects a template (Title)
+        ------------------------------------------------------------
+        - Find the template's `source` from the search results.
+        - Convert `source` URL into AZD `<path>` using these rules:
 
-        1. If the user wants to execute this template, provide a command guide using the following rule:
-           - Use the syntax:  
-             ``
-             azd init -t <path>
-             ```
-           - `<path>` is determined as follows:
-             - If the GitHub source URL starts with  
-               `https://github.com/Azure-Samples/...`,  
-               then use the organization/repository name:
-               ```
-               e.g. azd init -t Azure-Samples/azure-openai-chat-frontend
-               ```
-             - Otherwise, include the full `owner/repo` path:
-               ```
-               e.g. azd init -t pascalvanderheiden/ais-apim-openai
-               ```
+            If source starts with:
+            `https://github.com/Azure-Samples/<repo>`
+             → AZD path = `Azure-Samples/<repo>`
+
+            Otherwise:
+             → Extract `owner/repo` from GitHub URL.
+
+        ------------------------------------------------------------
+        4.1 Build the AZD init command
+        ------------------------------------------------------------
+        Construct:
+
+            azd init -t <path> --environment <envName>
+
+        Notes:
+        - If user did NOT provide Environment Name:
+            Use default: `myenv`
+
+        ------------------------------------------------------------
+        4.2 Working directory rules
+        ------------------------------------------------------------
+        If the user provides a directory:
+            Use that directory.
+
+        If the user does NOT provide a directory:
+            you MUST pass `null` as the working directory.
+            (The backend will automatically apply the default behavior.)
+
+        ------------------------------------------------------------
+        5. Execute the command
+        ------------------------------------------------------------
+        Use:
+            Call the `execute_command` tool.
+            ExecuteTemplateCommandAsync(
+                "<generated command>",
+                "<chosen working directory OR null>"
+            );
+
+        After execution, return:
+        - Success / Failure
+        - Output
+        - Error (if any)
         """;
     }
 }
