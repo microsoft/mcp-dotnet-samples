@@ -142,14 +142,26 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                     return result;
                 }
 
-                Logger.LogInformation("Accessing file via Graph API with item ID");
+                Logger.LogInformation("Accessing file via Graph API with user token");
 
                 // /content 엔드포인트로 파일 다운로드 (사용자 토큰 포함)
                 using var httpClient = new System.Net.Http.HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
 
-                var contentUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/content";
-                Logger.LogInformation("Downloading from Graph API endpoint: {ContentUrl}", contentUrl);
+                // 1drv.ms URL인 경우 직접 사용, 아니면 /me/drive/items/{itemId}/content 사용
+                string contentUrl;
+                if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                {
+                    // itemId가 실제로 URL인 경우 (1drv.ms)
+                    contentUrl = itemId;
+                    Logger.LogInformation("Using direct sharing URL: {ContentUrl}", contentUrl);
+                }
+                else
+                {
+                    // itemId를 추출한 경우 Graph API 사용
+                    contentUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/content";
+                    Logger.LogInformation("Downloading from Graph API endpoint: {ContentUrl}", contentUrl);
+                }
 
                 var response = await httpClient.GetAsync(contentUrl);
 
@@ -267,21 +279,32 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
     }
 
     /// <summary>
-    /// 공유 URL에서 Item ID 추출
+    /// 공유 URL에서 Item ID 추출 또는 직접 다운로드
     /// </summary>
     private string? ExtractItemIdFromUrl(string url)
     {
         try
         {
-            // resid 파라미터에서 Item ID 추출
-            // https://onedrive.live.com/embed?resid=ABC123 → ABC123
             var uri = new Uri(url);
+
+            // 1drv.ms 단축 URL 처리
+            if (uri.Host.EndsWith("1drv.ms", StringComparison.OrdinalIgnoreCase))
+            {
+                Logger.LogInformation("Detected 1drv.ms shortened URL, will redirect to get actual URL");
+                // 1drv.ms URL은 /b/, /f/, /u/ 등으로 시작
+                // 이 URL을 직접 /content로 리다이렉트하는 것이 더 간단
+                // 하지만 itemId가 필요하면 리다이렉트를 따라가야 함
+                return url; // URL 자체를 반환 (아래에서 처리)
+            }
+
+            // resid 파라미터에서 Item ID 추출
+            // https://onedrive.live.com/embed?resid=ABC123!567 → 567
             var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
             var resid = query.Get("resid");
 
             if (!string.IsNullOrEmpty(resid))
             {
-                // resid는 보통 ID!123 형식
+                // resid는 보통 ID!itemId 형식
                 return resid.Split('!').LastOrDefault();
             }
 
