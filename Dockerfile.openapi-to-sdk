@@ -27,9 +27,10 @@ COPY --from=build /root/.dotnet/tools /opt/kiota-tools
 RUN chmod -R 755 /opt/kiota-tools && \
     ln -s /opt/kiota-tools/kiota /usr/local/bin/kiota
 
-RUN mkdir -p /app/generated /wwwroot /wwwroot/generated && \
-    chmod 755 /app/generated && \
-    chmod -R 777 /wwwroot
+# /app/generated 및 /wwwroot, /wwwroot/generated 디렉터리 생성 및 권한 설정
+RUN mkdir -p /app/generated /app/wwwroot/generated && \
+    chown -R $APP_UID:$APP_UID /app/generated /app/wwwroot && \
+    chmod -R 777 /app/generated /app/wwwroot
 
 ENV PATH="/opt/kiota-tools:${PATH}"
 
