@@ -45,13 +45,13 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
+            logger.LogInformation("Executing command: {command}", command);
 
             if (string.IsNullOrWhiteSpace(workingDirectory))
             {
                 string current = Directory.GetCurrentDirectory();
                 logger.LogInformation("Initial CurrentDirectory = {path}", current);
 
-                // 템플릿 이름 파싱
                 string templateName = ExtractTemplateNameFromCommand(command);
                 logger.LogInformation("Parsed template name = {name}", templateName);
 
@@ -59,7 +59,6 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
 
                 if (!Directory.Exists(workingDirectory))
                 {
-                    logger.LogInformation("Creating default directory: {dir}", workingDirectory);
                     Directory.CreateDirectory(workingDirectory);
                 }
             }
@@ -77,7 +76,8 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
                     CreateNoWindow = true
                 }
             };
-
+            
+            logger.LogInformation("Creating default directory: {dir}", workingDirectory);
             process.Start();
 
             cancellationToken.Register(() =>
@@ -99,6 +99,7 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         }
         catch (OperationCanceledException)
         {
+            logger.LogWarning("Command execution cancelled by user");
             return new CommandExecutionResult
             {
                 Success = false,
@@ -108,6 +109,7 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Exception occurred while executing command");
             return new CommandExecutionResult
             {
                 Success = false,
@@ -163,17 +165,14 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
 
         try
         {
-            // -t 다음 값을 뜯어오기
-            // 예: -t Azure-Samples/openai-mcp-agent-dotnet
             var parts = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             for (int i = 0; i < parts.Length - 1; i++)
             {
                 if (parts[i] == "-t")
                 {
-                    string path = parts[i + 1]; // Azure-Samples/openai-mcp-agent-dotnet
+                    string path = parts[i + 1];
 
-                    // owner/repo → repo
                     if (path.Contains('/'))
                     {
                         string repo = path.Split('/').Last().Trim();
@@ -181,13 +180,13 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
                             return repo;
                     }
 
-                    return path; // fallback (owner 없이 repo만 왔을 때)
+                    return path;
                 }
             }
         }
         catch
         {
-            // 무슨 일이 생겨도 default
+            
         }
 
         return "MyTemplate";
