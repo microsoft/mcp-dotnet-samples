@@ -70,77 +70,12 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-// Add token storage
+// Add authentication and token services
 builder.Services.AddSingleton<ITokenStorage, InMemoryTokenStorage>();
+builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 
 // Add controllers
 builder.Services.AddControllers();
-
-// Add OAuth support
-builder.Services.AddScoped<GraphServiceClient>(sp =>
-{
-    var config = sp.GetRequiredService<IConfiguration>();
-    var logger = sp.GetRequiredService<ILogger<Program>>();
-
-    // Try to get from AppSettings first, fallback to environment variables
-    var settings = sp.GetRequiredService<OnedriveDownloadAppSettings>();
-    var entraId = settings.EntraId;
-
-    // Fallback to environment variables if not found in settings
-    var userAssignedClientId = entraId.UserAssignedClientId
-        ?? config["OnedriveDownload:EntraId:UserAssignedClientId"]
-        ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__UserAssignedClientId");
-
-    var clientSecret = entraId.ClientSecret
-        ?? config["OnedriveDownload:EntraId:ClientSecret"]
-        ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientSecret");
-
-    var tenantId = entraId.TenantId
-        ?? config["OnedriveDownload:EntraId:TenantId"]
-        ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__TenantId");
-
-    var clientId = entraId.ClientId
-        ?? config["OnedriveDownload:EntraId:ClientId"]
-        ?? Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientId");
-
-    // For local development: Try to use ClientSecretCredential if ClientSecret is provided
-    // For Azure: Use ManagedIdentityCredential
-    TokenCredential credential;
-
-    if (!string.IsNullOrEmpty(clientSecret) && !string.IsNullOrEmpty(tenantId) && !string.IsNullOrEmpty(clientId))
-    {
-        logger.LogInformation("Using ClientSecretCredential for local development");
-        credential = new ClientSecretCredential(
-            tenantId,
-            clientId,
-            clientSecret
-        );
-    }
-    else if (!string.IsNullOrEmpty(userAssignedClientId))
-    {
-        logger.LogInformation("Using ManagedIdentityCredential for Azure");
-        credential = new ManagedIdentityCredential(
-            ManagedIdentityId.FromUserAssignedClientId(userAssignedClientId)
-        );
-    }
-    else
-    {
-        throw new InvalidOperationException("Either (ClientSecret + TenantId + ClientId) or UserAssignedClientId must be configured for GraphServiceClient initialization.");
-    }
-
-    try
-    {
-        string[] scopes = { "https://graph.microsoft.com/.default" };
-        var client = new GraphServiceClient(credential, scopes);
-        logger.LogInformation("GraphServiceClient initialized successfully");
-        return client;
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "Failed to initialize GraphServiceClient");
-        throw new InvalidOperationException($"Failed to initialize GraphServiceClient: {ex.Message}", ex);
-    }
-});
 
 if (useStreamableHttp == true)
 {
@@ -175,7 +110,7 @@ logger.LogInformation("*** [ENV] OnedriveDownload__EntraId__ClientSecret: {Clien
 logger.LogInformation("*** [ENV] All OnedriveDownload variables:");
 foreach (System.Collections.DictionaryEntry envVar in Environment.GetEnvironmentVariables())
 {
-    if (envVar.Key.ToString().StartsWith("OnedriveDownload", StringComparison.OrdinalIgnoreCase))
+    if (envVar.Key?.ToString()?.StartsWith("OnedriveDownload", StringComparison.OrdinalIgnoreCase) == true)
     {
         logger.LogInformation("*** [ENV] {Key}={Value}", envVar.Key, envVar.Value);
     }
@@ -186,9 +121,15 @@ if (useStreamableHttp == true)
     var webApp = (app as Microsoft.AspNetCore.Builder.WebApplication)!;
     webApp.MapOpenApi("/{documentName}.json");
 
-    // Add session and auth middleware
+    // Add session middleware
     webApp.UseSession();
     webApp.MapControllers();
+
+    logger.LogInformation("╔════════════════════════════════════════════════════════════════╗");
+    logger.LogInformation("║         MCP OneDrive Download Server 시작됨 (Started)         ║");
+    logger.LogInformation("║     사용자 위임 방식으로 OneDrive에 접근합니다                 ║");
+    logger.LogInformation("║     User-delegated access to OneDrive enabled                  ║");
+    logger.LogInformation("╚════════════════════════════════════════════════════════════════╝");
 }
 
 await app.RunAsync();

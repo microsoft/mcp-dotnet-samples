@@ -38,6 +38,16 @@ public interface ITokenStorage
     /// Removes the token for a user (logout).
     /// </summary>
     Task RemoveTokenAsync(string userId);
+
+    /// <summary>
+    /// Sets the current authenticated user ID (set during interactive login).
+    /// </summary>
+    Task SetCurrentUserIdAsync(string userId);
+
+    /// <summary>
+    /// Gets the current authenticated user ID.
+    /// </summary>
+    Task<string?> GetCurrentUserIdAsync();
 }
 
 /// <summary>
@@ -53,6 +63,7 @@ public class InMemoryTokenStorage : ITokenStorage
     }
 
     private readonly ConcurrentDictionary<string, TokenInfo> _tokens = new();
+    private string? _currentUserId;
 
     public Task<string?> GetAccessTokenAsync(string userId)
     {
@@ -131,5 +142,16 @@ public class InMemoryTokenStorage : ITokenStorage
     {
         _tokens.TryRemove(userId, out _);
         return Task.CompletedTask;
+    }
+
+    public Task SetCurrentUserIdAsync(string userId)
+    {
+        _currentUserId = userId;
+        return Task.CompletedTask;
+    }
+
+    public Task<string?> GetCurrentUserIdAsync()
+    {
+        return Task.FromResult(_currentUserId);
     }
 }
