@@ -3,14 +3,26 @@ using ModelContextProtocol.Server;
 
 namespace McpSamples.AwesomeAzd.HybridApp.Prompts;
 
+/// <summary>
+/// Provides an interface for generating prompts that guide template searches.
+/// </summary>
 public interface ITemplatePrompt
 {
+    /// <summary>
+    /// Gets a prompt for searching Azure templates by keyword.
+    /// </summary>
+    /// <param name="keyword">The keyword to search for.</param>
+    /// <returns>A formatted search prompt.</returns>
     string GetSearchPrompt(string keyword);
 }
 
+/// <summary>
+/// Represents the prompt entity for the Awesome AZD templates repository.
+/// </summary>
 [McpServerPromptType]
 public class TemplatePrompt : ITemplatePrompt
 {
+    /// <inheritdoc />
     [McpServerPrompt(Name = "get_template_search_prompt", Title = "Prompt for searching AZD templates")]
     [Description("Get a prompt for searching Azure templates by keyword.")]
     public string GetSearchPrompt(
