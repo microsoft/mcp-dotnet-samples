@@ -302,7 +302,15 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             var rootDirClient = shareClient.GetRootDirectoryClient();
             var fileClient = rootDirClient.GetFileClient(fileName);
 
-            // Upload file
+            // Upload file - need to set max size first, then upload
+            fileStream.Position = 0;
+            long fileSize = fileStream.Length;
+
+            // Create the file with the correct size
+            await fileClient.CreateAsync(fileSize);
+            Logger.LogInformation("File created with size: {FileSize}", fileSize);
+
+            // Upload the file content
             fileStream.Position = 0;
             await fileClient.UploadAsync(fileStream);
 
