@@ -63,6 +63,16 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
                 }
             }
 
+            if (!Directory.Exists(workingDirectory))
+            {
+                logger.LogInformation("Creating directory: {dir}", workingDirectory);
+                Directory.CreateDirectory(workingDirectory);
+            }
+            else
+            {
+                logger.LogInformation("Using existing directory: {dir}", workingDirectory);
+            }
+            
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
