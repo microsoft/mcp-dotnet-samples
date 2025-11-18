@@ -182,8 +182,9 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                     return result;
                 }
 
-                // 파일명 추출 (URL 또는 Content-Disposition 헤더에서)
+                // 파일명 추출 (Content-Disposition 헤더 또는 생성)
                 fileName = ExtractFileName(response, uri!);
+                Logger.LogInformation("Final filename: {FileName}", fileName);
 
                 // 파일 내용 다운로드
                 fileContent = new MemoryStream();
@@ -328,14 +329,12 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
         {
             var uri = new Uri(url);
 
-            // 1drv.ms 단축 URL 처리
+            // 1drv.ms 단축 URL 처리 - URL 자체를 직접 사용
             if (uri.Host.EndsWith("1drv.ms", StringComparison.OrdinalIgnoreCase))
             {
-                Logger.LogInformation("Detected 1drv.ms shortened URL, will redirect to get actual URL");
-                // 1drv.ms URL은 /b/, /f/, /u/ 등으로 시작
-                // 이 URL을 직접 /content로 리다이렉트하는 것이 더 간단
-                // 하지만 itemId가 필요하면 리다이렉트를 따라가야 함
-                return url; // URL 자체를 반환 (아래에서 처리)
+                Logger.LogInformation("Detected 1drv.ms shortened URL, will use direct download");
+                // 1drv.ms는 ?download=1을 추가하여 직접 다운로드 가능
+                return $"{url}?download=1";
             }
 
             // resid 파라미터에서 Item ID 추출
@@ -346,9 +345,11 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             if (!string.IsNullOrEmpty(resid))
             {
                 // resid는 보통 ID!itemId 형식
+                Logger.LogInformation("Extracted itemId from resid parameter");
                 return resid.Split('!').LastOrDefault();
             }
 
+            Logger.LogWarning("Could not extract item ID from URL");
             return null;
         }
         catch (Exception ex)

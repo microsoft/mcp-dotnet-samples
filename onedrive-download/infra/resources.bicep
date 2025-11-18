@@ -78,6 +78,25 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   }
 }
 
+// Storage account for file shares (moved up before fncapp)
+resource fileShareStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
+  name: '${abbrs.storageStorageAccounts}${resourceToken}files'
+  location: location
+  tags: tags
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+  properties: {
+    minimumTlsVersion: 'TLS1_2'
+    supportsHttpsTrafficOnly: true
+    allowBlobPublicAccess: false
+  }
+
+  // Note: File share will be created automatically by the application code
+  // using CreateIfNotExistsAsync() when first needed
+}
+
 // 5. The Web App
 module fncapp './modules/functionapp.bicep' = {
   name: 'functionapp'
@@ -161,24 +180,6 @@ resource fileShareRbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
-// Storage account for file shares
-resource fileShareStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
-  name: '${abbrs.storageStorageAccounts}${resourceToken}files'
-  location: location
-  tags: tags
-  sku: {
-    name: 'Standard_LRS'
-  }
-  kind: 'StorageV2'
-  properties: {
-    minimumTlsVersion: 'TLS1_2'
-    supportsHttpsTrafficOnly: true
-    allowBlobPublicAccess: false
-  }
-
-  // Note: File share will be created automatically by the application code
-  // using CreateIfNotExistsAsync() when first needed
-}
 
 // Outputs for azd
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = fncapp.outputs.resourceId
