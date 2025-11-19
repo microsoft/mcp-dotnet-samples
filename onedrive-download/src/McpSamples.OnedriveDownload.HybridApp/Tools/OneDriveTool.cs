@@ -391,7 +391,8 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             // Upload file
             fileStream.Position = 0;
-            Logger.LogInformation("Uploading file to file share: {FileName}", fileName);
+            long fileSize = fileStream.Length;
+            Logger.LogInformation("Uploading file to file share: {FileName}, Size: {FileSize} bytes", fileName, fileSize);
             var fileClient = rootDirClient.GetFileClient(fileName);
 
             // Delete existing file if it exists
@@ -409,7 +410,13 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 Logger.LogWarning(ex, "Error deleting existing file, will continue with upload");
             }
 
-            // Upload file using UploadAsync
+            // Create file with specified size
+            Logger.LogInformation("Creating file with size: {FileSize}", fileSize);
+            await fileClient.CreateAsync(fileSize);
+            Logger.LogInformation("File created successfully, uploading content...");
+
+            // Upload file content
+            fileStream.Position = 0;
             await fileClient.UploadAsync(fileStream);
             Logger.LogInformation("=== File Share upload successful ===");
 
