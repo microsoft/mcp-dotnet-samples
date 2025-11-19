@@ -411,10 +411,24 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 Logger.LogWarning(ex, "Error deleting existing file, will continue with upload");
             }
 
-            // Upload file - delete existing and upload new
+            // Upload file - create file first, then upload content
             Logger.LogInformation("Uploading file content, size: {FileSize} bytes", fileSize);
 
-            // Read entire file into byte array to ensure complete upload
+            // Step 1: Create the file with the correct size
+            Logger.LogInformation("Step 1: Creating file...");
+            try
+            {
+                await fileClient.CreateAsync(fileSize);
+                Logger.LogInformation("File created successfully");
+            }
+            catch (Azure.RequestFailedException ex) when (ex.Status == 409)
+            {
+                Logger.LogInformation("File already exists (409), will overwrite");
+                // File already exists, that's okay
+            }
+
+            // Step 2: Read entire file into byte array to ensure complete upload
+            Logger.LogInformation("Step 2: Reading file from stream...");
             fileStream.Position = 0;
             byte[] fileBytes = new byte[fileSize];
             int bytesRead = await fileStream.ReadAsync(fileBytes, 0, (int)fileSize);
@@ -422,10 +436,11 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             if (bytesRead != fileSize)
             {
-                Logger.LogWarning("Bytes read ({BytesRead}) does not match expected size ({FileSize})", bytesRead, fileSize);
+                Logger.LogWarning("WARNING: Bytes read ({BytesRead}) does not match expected size ({FileSize})", bytesRead, fileSize);
             }
 
-            // Upload bytes directly (CreateAsync already handles file creation)
+            // Step 3: Upload bytes
+            Logger.LogInformation("Step 3: Uploading {ByteCount} bytes to file...", fileBytes.Length);
             using (var uploadStream = new MemoryStream(fileBytes))
             {
                 uploadStream.Position = 0;
