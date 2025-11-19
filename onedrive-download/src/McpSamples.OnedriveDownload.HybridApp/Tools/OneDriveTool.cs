@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using Azure.Storage.Files.Shares;
 using Microsoft.Graph;
 using ModelContextProtocol.Server;
 using McpSamples.OnedriveDownload.HybridApp.Services;
@@ -328,19 +329,32 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Logger.LogInformation("Using File Share connection string (masked for security)");
 
-            // Create ShareClient directly using connection string (most reliable method)
-            var shareClient = new Azure.Storage.Files.Shares.ShareClient(
-                new Uri("https://" +
-                    connectionString.Split("AccountName=")[1].Split(";")[0] +
-                    ".file.core.windows.net/downloads"),
+            // Create ShareClient using connection string directly (most reliable method)
+            var shareUri = new Uri("https://" +
+                connectionString.Split("AccountName=")[1].Split(";")[0] +
+                ".file.core.windows.net/downloads");
+            var shareClient = new ShareClient(shareUri,
                 new Azure.Storage.StorageSharedKeyCredential(
                     connectionString.Split("AccountName=")[1].Split(";")[0],
                     connectionString.Split("AccountKey=")[1].Split(";")[0]));
 
+            Logger.LogInformation("ShareClient created for URI: {Uri}", shareUri);
+
             // Check if share exists, create if not
             Logger.LogInformation("Checking if file share exists...");
-            await shareClient.CreateIfNotExistsAsync();
-            Logger.LogInformation("File share 'downloads' is ready");
+            var shareExists = await shareClient.ExistsAsync();
+            Logger.LogInformation("File share exists: {Exists}", shareExists.Value);
+
+            if (!shareExists.Value)
+            {
+                Logger.LogInformation("Creating file share...");
+                await shareClient.CreateAsync();
+                Logger.LogInformation("File share created successfully");
+            }
+            else
+            {
+                Logger.LogInformation("File share already exists");
+            }
 
             // Get directory reference
             var rootDirClient = shareClient.GetRootDirectoryClient();
