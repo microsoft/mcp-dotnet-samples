@@ -250,11 +250,17 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                     }
                 }
 
-                // If filename still looks like an itemId, use default
+                // If filename still looks like an itemId, use default with extension
                 if (fileName.StartsWith("s!", StringComparison.OrdinalIgnoreCase) || fileName.Contains("!"))
                 {
-                    fileName = $"downloaded_file_{DateTime.UtcNow:yyyyMMdd_HHmmss}";
-                    Logger.LogInformation("Filename appears to be itemId, using default: {FileName}", fileName);
+                    // Content-Type에서 확장자 추출
+                    string extension = ".bin";
+                    if (response.Content.Headers.ContentType?.MediaType != null)
+                    {
+                        extension = GetExtensionFromContentType(response.Content.Headers.ContentType.MediaType);
+                    }
+                    fileName = $"downloaded_file_{DateTime.UtcNow:yyyyMMdd_HHmmss}{extension}";
+                    Logger.LogInformation("Filename appears to be itemId, using default with extension: {FileName}", fileName);
                 }
 
                 Logger.LogInformation("Final filename: {FileName}", fileName);
