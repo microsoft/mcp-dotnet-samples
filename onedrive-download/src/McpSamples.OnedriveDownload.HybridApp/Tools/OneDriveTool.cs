@@ -157,6 +157,13 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 string contentUrl;
                 string? graphItemId = null;
 
+                // Configure HttpClient to follow redirects and handle file downloads properly
+                var handler = new System.Net.Http.HttpClientHandler
+                {
+                    AllowAutoRedirect = true,
+                    MaxAutomaticRedirections = 5
+                };
+
                 if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 {
                     // itemId가 실제로 URL인 경우 (1drv.ms)
@@ -172,12 +179,6 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                     Logger.LogInformation("Downloading from Graph API endpoint: {ContentUrl}", contentUrl);
                 }
 
-                // Configure HttpClient to follow redirects and handle file downloads properly
-                var handler = new System.Net.Http.HttpClientHandler
-                {
-                    AllowAutoRedirect = true,
-                    MaxAutomaticRedirections = 5
-                };
                 using var downloadClient = new System.Net.Http.HttpClient(handler);
                 downloadClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
                 downloadClient.Timeout = TimeSpan.FromMinutes(5); // Allow more time for large files
@@ -522,12 +523,12 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
         {
             var uri = new Uri(url);
 
-            // 1drv.ms 단축 URL 처리 - URL 자체를 직접 사용
+            // 1drv.ms 단축 URL 처리 - URL 자체를 직접 사용 (파라미터는 나중에 추가)
             if (uri.Host.EndsWith("1drv.ms", StringComparison.OrdinalIgnoreCase))
             {
                 Logger.LogInformation("Detected 1drv.ms shortened URL, will use direct download");
-                // 1drv.ms는 ?download=1을 추가하여 직접 다운로드 가능
-                return $"{url}?download=1";
+                // URL 자체만 반환 - 다운로드 로직에서 ?download=1 추가
+                return url;
             }
 
             // resid 파라미터에서 Item ID 추출
