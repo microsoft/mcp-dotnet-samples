@@ -5292,6 +5292,22 @@
       "STACKHAWK_API_KEY": "COPILOT_MCP_STACKHAWK_API_KEY"
     },
     {
+      "filename": "technical-content-evaluator.agent.md",
+      "name": "technical-content-evaluator",
+      "description": "Elite technical content editor and curriculum architect for evaluating technical training materials, documentation, and educational content. Reviews for technical accuracy, pedagogical excellence, content flow, code validation, and ensures A-grade quality standards.",
+      "tools": [
+        "edit",
+        "search",
+        "shell",
+        "fetch",
+        "runTasks",
+        "githubRepo",
+        "todos",
+        "runSubagent"
+      ],
+      "model": "Claude Sonnet 4.5 (copilot)"
+    },
+    {
       "filename": "terraform.agent.md",
       "name": "Terraform Agent",
       "description": "Terraform infrastructure specialist with automated HCP Terraform workflows. Leverages Terraform MCP server for registry integration, workspace management, and run orchestration. Generates compliant code using latest provider/module versions, manages private registries, automates variable sets, and orchestrates infrastructure deployments with proper validation and security practices.",
