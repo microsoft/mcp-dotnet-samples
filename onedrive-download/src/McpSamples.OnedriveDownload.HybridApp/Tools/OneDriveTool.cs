@@ -605,7 +605,45 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             }
         }
 
-        // Default filename
-        return $"downloaded_file_{DateTime.UtcNow:yyyyMMdd_HHmmss}";
+        // Try to extract extension from Content-Type header
+        string extension = ".bin"; // 기본 확장자
+        if (response.Content.Headers.ContentType?.MediaType != null)
+        {
+            var contentType = response.Content.Headers.ContentType.MediaType;
+            extension = GetExtensionFromContentType(contentType);
+        }
+
+        // Default filename with extension
+        return $"downloaded_file_{DateTime.UtcNow:yyyyMMdd_HHmmss}{extension}";
+    }
+
+    /// <summary>
+    /// MIME type을 파일 확장자로 변환
+    /// </summary>
+    private string GetExtensionFromContentType(string contentType)
+    {
+        return contentType?.ToLower() switch
+        {
+            "application/pdf" => ".pdf",
+            "application/msword" => ".doc",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => ".docx",
+            "application/vnd.ms-excel" => ".xls",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" => ".xlsx",
+            "application/vnd.ms-powerpoint" => ".ppt",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation" => ".pptx",
+            "text/plain" => ".txt",
+            "text/csv" => ".csv",
+            "image/jpeg" or "image/jpg" => ".jpg",
+            "image/png" => ".png",
+            "image/gif" => ".gif",
+            "image/webp" => ".webp",
+            "video/mp4" => ".mp4",
+            "audio/mpeg" => ".mp3",
+            "application/zip" => ".zip",
+            "application/json" => ".json",
+            "text/html" => ".html",
+            "text/xml" or "application/xml" => ".xml",
+            _ => ".bin"
+        };
     }
 }
