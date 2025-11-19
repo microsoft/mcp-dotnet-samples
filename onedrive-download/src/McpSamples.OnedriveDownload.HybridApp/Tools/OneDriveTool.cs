@@ -180,7 +180,12 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 }
 
                 using var downloadClient = new System.Net.Http.HttpClient(handler);
-                downloadClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+                // 1drv.ms URL은 공개 링크이므로 Authorization 헤더 불필요
+                // Graph API는 Authorization 헤더 필수
+                if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    downloadClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+                }
                 downloadClient.Timeout = TimeSpan.FromMinutes(5); // Allow more time for large files
 
                 var response = await downloadClient.GetAsync(contentUrl);
