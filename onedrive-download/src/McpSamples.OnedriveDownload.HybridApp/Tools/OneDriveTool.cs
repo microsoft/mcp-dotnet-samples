@@ -329,12 +329,32 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Logger.LogInformation("Using File Share connection string (masked for security)");
 
-            // Create ShareClient from connection string (most reliable and flexible method)
+            // Parse connection string to extract account name and key
+            var parts = connectionString.Split(';');
+            string accountName = "";
+            string accountKey = "";
+            string endpointSuffix = "core.windows.net";
+
+            foreach (var part in parts)
+            {
+                if (part.StartsWith("AccountName="))
+                    accountName = part.Substring("AccountName=".Length);
+                else if (part.StartsWith("AccountKey="))
+                    accountKey = part.Substring("AccountKey=".Length);
+                else if (part.StartsWith("EndpointSuffix="))
+                    endpointSuffix = part.Substring("EndpointSuffix=".Length);
+            }
+
+            Logger.LogInformation("Parsed account: {AccountName}", accountName);
+
+            // Create ShareClient from URI and credential (most reliable method)
             ShareClient shareClient;
             try
             {
-                shareClient = new ShareClient(connectionString, "downloads");
-                Logger.LogInformation("ShareClient created successfully");
+                var shareUri = new Uri($"https://{accountName}.file.{endpointSuffix}/downloads");
+                var credential = new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey);
+                shareClient = new ShareClient(shareUri, credential);
+                Logger.LogInformation("ShareClient created successfully for URI: {Uri}", shareUri);
             }
             catch (Exception ex)
             {
