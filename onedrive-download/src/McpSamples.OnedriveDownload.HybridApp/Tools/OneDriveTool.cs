@@ -411,15 +411,44 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 Logger.LogWarning(ex, "Error deleting existing file, will continue with upload");
             }
 
-            // Create file with specified size
-            Logger.LogInformation("Creating file with size: {FileSize}", fileSize);
-            await fileClient.CreateAsync(fileSize);
-            Logger.LogInformation("File created successfully, uploading content...");
+            // Upload file - delete existing and upload new
+            Logger.LogInformation("Uploading file content, size: {FileSize} bytes", fileSize);
 
-            // Upload file content
+            // Read entire file into byte array to ensure complete upload
             fileStream.Position = 0;
-            await fileClient.UploadAsync(fileStream);
+            byte[] fileBytes = new byte[fileSize];
+            int bytesRead = await fileStream.ReadAsync(fileBytes, 0, (int)fileSize);
+            Logger.LogInformation("Read {BytesRead} bytes from stream", bytesRead);
+
+            if (bytesRead != fileSize)
+            {
+                Logger.LogWarning("Bytes read ({BytesRead}) does not match expected size ({FileSize})", bytesRead, fileSize);
+            }
+
+            // Upload bytes directly (CreateAsync already handles file creation)
+            using (var uploadStream = new MemoryStream(fileBytes))
+            {
+                uploadStream.Position = 0;
+                await fileClient.UploadAsync(uploadStream);
+            }
             Logger.LogInformation("=== File Share upload successful ===");
+
+            // Verify upload by checking file properties
+            try
+            {
+                var properties = await fileClient.GetPropertiesAsync();
+                Logger.LogInformation("File verified - Size: {FileSize} bytes", properties.Value.ContentLength);
+
+                if (properties.Value.ContentLength != fileSize)
+                {
+                    Logger.LogWarning("WARNING: Uploaded file size ({UploadedSize}) does not match original size ({OriginalSize})",
+                        properties.Value.ContentLength, fileSize);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Failed to verify file properties");
+            }
 
             // Generate SAS URI for public access (valid for 24 hours)
             try
