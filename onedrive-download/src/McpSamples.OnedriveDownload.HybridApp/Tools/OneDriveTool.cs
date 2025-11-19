@@ -330,8 +330,17 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             Logger.LogInformation("Using File Share connection string (masked for security)");
 
             // Create ShareClient from connection string (most reliable and flexible method)
-            var shareClient = new ShareClient(connectionString, "downloads");
-            Logger.LogInformation("ShareClient created successfully");
+            ShareClient shareClient;
+            try
+            {
+                shareClient = new ShareClient(connectionString, "downloads");
+                Logger.LogInformation("ShareClient created successfully");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error creating ShareClient: {ErrorMessage}", ex.Message);
+                throw;
+            }
 
             // Check if share exists, create if not
             Logger.LogInformation("Checking if file share exists...");
