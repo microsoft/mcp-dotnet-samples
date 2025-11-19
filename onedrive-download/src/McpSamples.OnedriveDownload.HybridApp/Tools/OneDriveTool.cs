@@ -329,31 +329,32 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Logger.LogInformation("Using File Share connection string (masked for security)");
 
-            // Create ShareClient using connection string directly (most reliable method)
-            var shareUri = new Uri("https://" +
-                connectionString.Split("AccountName=")[1].Split(";")[0] +
-                ".file.core.windows.net/downloads");
-            var shareClient = new ShareClient(shareUri,
-                new Azure.Storage.StorageSharedKeyCredential(
-                    connectionString.Split("AccountName=")[1].Split(";")[0],
-                    connectionString.Split("AccountKey=")[1].Split(";")[0]));
-
-            Logger.LogInformation("ShareClient created for URI: {Uri}", shareUri);
+            // Create ShareClient from connection string (most reliable and flexible method)
+            var shareClient = new ShareClient(connectionString, "downloads");
+            Logger.LogInformation("ShareClient created successfully");
 
             // Check if share exists, create if not
             Logger.LogInformation("Checking if file share exists...");
-            var shareExists = await shareClient.ExistsAsync();
-            Logger.LogInformation("File share exists: {Exists}", shareExists.Value);
+            try
+            {
+                var shareExists = await shareClient.ExistsAsync();
+                Logger.LogInformation("File share exists: {Exists}", shareExists.Value);
 
-            if (!shareExists.Value)
-            {
-                Logger.LogInformation("Creating file share...");
-                await shareClient.CreateAsync();
-                Logger.LogInformation("File share created successfully");
+                if (!shareExists.Value)
+                {
+                    Logger.LogInformation("Creating file share...");
+                    await shareClient.CreateAsync();
+                    Logger.LogInformation("File share created successfully");
+                }
+                else
+                {
+                    Logger.LogInformation("File share already exists");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Logger.LogInformation("File share already exists");
+                Logger.LogError(ex, "Error checking/creating file share: {ErrorMessage}", ex.Message);
+                throw;
             }
 
             // Get directory reference
