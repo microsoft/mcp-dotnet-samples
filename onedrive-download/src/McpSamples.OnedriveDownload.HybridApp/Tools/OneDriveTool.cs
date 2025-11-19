@@ -152,24 +152,37 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 using var httpClient = new System.Net.Http.HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
 
-                // 1drv.ms URL인 경우 직접 사용, 아니면 /me/drive/items/{itemId}/content 사용
+                // Always use Graph API for downloads (more reliable)
+                // If itemId is a URL (1drv.ms), we'll use it but append ?download=1 for redirect handling
                 string contentUrl;
                 string? graphItemId = null;
+
                 if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 {
                     // itemId가 실제로 URL인 경우 (1drv.ms)
-                    contentUrl = itemId;
-                    Logger.LogInformation("Using direct sharing URL: {ContentUrl}", contentUrl);
+                    // Try to follow redirects to get actual file content
+                    contentUrl = $"{itemId}?download=1";
+                    Logger.LogInformation("Using 1drv.ms URL with download parameter: {ContentUrl}", contentUrl);
                 }
                 else
                 {
-                    // itemId를 추출한 경우 Graph API 사용
+                    // itemId를 추출한 경우 Graph API 사용 (권장)
                     graphItemId = itemId;
                     contentUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/content";
                     Logger.LogInformation("Downloading from Graph API endpoint: {ContentUrl}", contentUrl);
                 }
 
-                var response = await httpClient.GetAsync(contentUrl);
+                // Configure HttpClient to follow redirects and handle file downloads properly
+                var handler = new System.Net.Http.HttpClientHandler
+                {
+                    AllowAutoRedirect = true,
+                    MaxAutomaticRedirections = 5
+                };
+                using var downloadClient = new System.Net.Http.HttpClient(handler);
+                downloadClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+                downloadClient.Timeout = TimeSpan.FromMinutes(5); // Allow more time for large files
+
+                var response = await downloadClient.GetAsync(contentUrl);
 
                 if (!response.IsSuccessStatusCode)
                 {
