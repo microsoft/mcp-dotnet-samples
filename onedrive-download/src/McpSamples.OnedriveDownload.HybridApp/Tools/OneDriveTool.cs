@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using Azure.Storage.Files.Shares;
+using System.Text.Json;
+using Azure.Identity;
+using Azure.Storage.Blobs;
 using Microsoft.Graph;
 using ModelContextProtocol.Server;
 using McpSamples.OnedriveDownload.HybridApp.Services;
@@ -150,6 +152,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
                 // 1drv.ms URL인 경우 직접 사용, 아니면 /me/drive/items/{itemId}/content 사용
                 string contentUrl;
+                string? graphItemId = null;
                 if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 {
                     // itemId가 실제로 URL인 경우 (1drv.ms)
@@ -159,6 +162,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 else
                 {
                     // itemId를 추출한 경우 Graph API 사용
+                    graphItemId = itemId;
                     contentUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/content";
                     Logger.LogInformation("Downloading from Graph API endpoint: {ContentUrl}", contentUrl);
                 }
@@ -182,8 +186,50 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                     return result;
                 }
 
-                // 파일명 추출 (Content-Disposition 헤더 또는 생성)
+                // 파일명 추출 시도
                 fileName = ExtractFileName(response, uri!);
+
+                // Graph API itemId가 있으면 파일 메타데이터를 조회해서 실제 파일명 가져오기
+                if (!string.IsNullOrEmpty(graphItemId))
+                {
+                    try
+                    {
+                        var metadataUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{graphItemId}";
+                        var metadataResponse = await httpClient.GetAsync(metadataUrl);
+                        if (metadataResponse.IsSuccessStatusCode)
+                        {
+                            var metadataContent = await metadataResponse.Content.ReadAsStringAsync();
+                            Logger.LogInformation("File metadata response: {Metadata}", metadataContent);
+
+                            // JSON 파싱으로 name 필드 추출
+                            try
+                            {
+                                using (JsonDocument doc = JsonDocument.Parse(metadataContent))
+                                {
+                                    var root = doc.RootElement;
+                                    if (root.TryGetProperty("name", out JsonElement nameElement))
+                                    {
+                                        var extractedName = nameElement.GetString();
+                                        if (!string.IsNullOrEmpty(extractedName))
+                                        {
+                                            fileName = System.Net.WebUtility.HtmlDecode(extractedName);
+                                            Logger.LogInformation("Extracted filename from metadata: {FileName}", fileName);
+                                        }
+                                    }
+                                }
+                            }
+                            catch (JsonException ex)
+                            {
+                                Logger.LogWarning(ex, "Failed to parse metadata JSON, using extracted filename");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogWarning(ex, "Failed to fetch file metadata, using extracted filename");
+                    }
+                }
+
                 Logger.LogInformation("Final filename: {FileName}", fileName);
 
                 // 파일 내용 다운로드
@@ -217,7 +263,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Logger.LogInformation("Successfully retrieved file content via Graph API. File name: {FileName}", fileName);
 
-            // Step 5: Azure File Share에 업로드 (선택사항)
+            // Step 5: Azure File Share에 업로드
             var uploadResult = await UploadToFileShareAsync(fileContent, fileName);
             if (uploadResult.Success)
             {
@@ -228,7 +274,6 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             else
             {
                 // File Share 업로드 실패해도 파일 다운로드는 성공한 것으로 반환
-                // (File Share가 선택사항이므로)
                 result.FileName = fileName;
                 result.DownloadPath = $"File downloaded successfully but File Share upload failed: {uploadResult.ErrorMessage}";
                 Logger.LogWarning("File Share upload failed but download succeeded: {Error}", uploadResult.ErrorMessage);
@@ -253,71 +298,71 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
 
     /// <summary>
-    /// Azure File Share에 파일 업로드
+    /// Azure File Share에 파일 업로드 (Connection String 사용)
     /// </summary>
     private async Task<(bool Success, string FileName, string Path, string? ErrorMessage)> UploadToFileShareAsync(Stream fileStream, string fileName)
     {
         try
         {
+            Logger.LogInformation("=== Starting File Share Upload ===");
+            Logger.LogInformation("Attempting to upload file to File Share: {FileName}", fileName);
+
             var connectionString = Configuration["FileShareConnectionString"];
+
             if (string.IsNullOrEmpty(connectionString))
             {
                 Logger.LogError("FileShareConnectionString is not configured");
                 return (false, fileName, "", "File share connection string is not configured.");
             }
 
-            Logger.LogInformation("=== Starting File Share Upload ===");
-            Logger.LogInformation("Attempting to upload file to File Share: {FileShareName}/{FileName}", FileShareName, fileName);
+            Logger.LogInformation("Using File Share connection string (masked for security)");
 
-            var shareClient = new ShareClient(connectionString, FileShareName);
+            // Parse connection string to extract account name and key
+            var accountName = connectionString.Split("AccountName=")[1].Split(";")[0];
+            var accountKey = connectionString.Split("AccountKey=")[1].Split(";")[0];
+            Logger.LogInformation("Parsed storage account: {AccountName}", accountName);
 
-            // Check if share exists
-            bool shareExists = await shareClient.ExistsAsync();
-            Logger.LogInformation("File Share '{FileShareName}' exists: {Exists}", FileShareName, shareExists);
+            // Create ShareClient using StorageSharedKeyCredential
+            var shareUri = new Uri($"https://{accountName}.file.core.windows.net/downloads");
+            var credential = new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey);
+            var shareClient = new Azure.Storage.Files.Shares.ShareClient(shareUri, credential);
 
-            if (!shareExists)
-            {
-                Logger.LogInformation("Creating File Share: {FileShareName}", FileShareName);
-                await shareClient.CreateAsync();
-                Logger.LogInformation("File Share created successfully");
-            }
+            // Check if share exists, create if not
+            Logger.LogInformation("Checking if file share exists...");
+            await shareClient.CreateIfNotExistsAsync();
+            Logger.LogInformation("File share 'downloads' is ready");
 
+            // Get directory reference
             var rootDirClient = shareClient.GetRootDirectoryClient();
+
+            // Upload file
+            fileStream.Position = 0;
+            Logger.LogInformation("Uploading file to file share: {FileName}", fileName);
             var fileClient = rootDirClient.GetFileClient(fileName);
 
-            // Get file size
-            fileStream.Position = 0;
-            long fileSize = fileStream.Length;
-            Logger.LogInformation("File size: {FileSize} bytes", fileSize);
-
-            // Delete file if it already exists
+            // Delete existing file if it exists
             try
             {
-                bool fileExists = await fileClient.ExistsAsync();
-                if (fileExists)
-                {
-                    Logger.LogInformation("File already exists, deleting...");
-                    await fileClient.DeleteAsync();
-                    Logger.LogInformation("File deleted successfully");
-                }
+                await fileClient.DeleteAsync();
+                Logger.LogInformation("Deleted existing file: {FileName}", fileName);
+            }
+            catch (Azure.RequestFailedException ex) when (ex.Status == 404)
+            {
+                Logger.LogInformation("File does not exist, creating new file: {FileName}", fileName);
             }
             catch (Exception ex)
             {
-                Logger.LogWarning(ex, "Could not check/delete existing file: {Message}", ex.Message);
+                Logger.LogWarning(ex, "Error deleting existing file, will continue with upload");
             }
 
-            // Create file
-            Logger.LogInformation("Creating file in share...");
-            await fileClient.CreateAsync(fileSize);
-            Logger.LogInformation("File created with size: {FileSize} bytes", fileSize);
+            // Upload file using UploadAsync
+            await fileClient.UploadAsync(fileStream);
+            Logger.LogInformation("=== File Share upload successful ===");
 
-            // Upload entire file at once
-            fileStream.Position = 0;
-            Logger.LogInformation("Uploading file content...");
-            await fileClient.UploadRangeAsync(new Azure.HttpRange(0, fileSize), fileStream);
-            Logger.LogInformation("=== File uploaded successfully ===");
+            var fileUri = fileClient.Uri.AbsoluteUri;
+            Logger.LogInformation("File URI: {FileUri}", fileUri);
 
-            return (true, fileName, fileClient.Path, null);
+            return (true, fileName, fileUri, null);
         }
         catch (Exception ex)
         {
