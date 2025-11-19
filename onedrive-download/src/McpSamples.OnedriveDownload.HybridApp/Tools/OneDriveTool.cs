@@ -5,6 +5,7 @@ using System.Text.Json;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Files.Shares;
+using Azure.Storage.Sas;
 using Microsoft.Graph;
 using ModelContextProtocol.Server;
 using McpSamples.OnedriveDownload.HybridApp.Services;
@@ -347,12 +348,12 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Logger.LogInformation("Parsed account: {AccountName}", accountName);
 
-            // Create ShareClient from URI and credential (most reliable method)
+            // Create ShareClient from URI and credential
             ShareClient shareClient;
+            var credential = new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey);
             try
             {
                 var shareUri = new Uri($"https://{accountName}.file.{endpointSuffix}/downloads");
-                var credential = new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey);
                 shareClient = new ShareClient(shareUri, credential);
                 Logger.LogInformation("ShareClient created successfully for URI: {Uri}", shareUri);
             }
@@ -420,10 +421,33 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             await fileClient.UploadAsync(fileStream);
             Logger.LogInformation("=== File Share upload successful ===");
 
-            var fileUri = fileClient.Uri.AbsoluteUri;
-            Logger.LogInformation("File URI: {FileUri}", fileUri);
+            // Generate SAS URI for public access (valid for 24 hours)
+            try
+            {
+                var sasBuilder = new Azure.Storage.Sas.ShareSasBuilder
+                {
+                    ShareName = "downloads",
+                    FilePath = fileName,
+                    Resource = "f", // "f" for file
+                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(24)
+                };
 
-            return (true, fileName, fileUri, null);
+                // Add permissions: Read
+                sasBuilder.SetPermissions(Azure.Storage.Sas.ShareFileSasPermissions.Read);
+
+                var sasToken = sasBuilder.ToSasQueryParameters(credential).ToString();
+                var fileUri = $"{fileClient.Uri.AbsoluteUri}?{sasToken}";
+                Logger.LogInformation("File URI with SAS: {FileUri}", fileUri);
+
+                return (true, fileName, fileUri, null);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Failed to generate SAS URI, returning file URI without SAS");
+                var fileUri = fileClient.Uri.AbsoluteUri;
+                Logger.LogInformation("File URI without SAS: {FileUri}", fileUri);
+                return (true, fileName, fileUri, null);
+            }
         }
         catch (Exception ex)
         {
