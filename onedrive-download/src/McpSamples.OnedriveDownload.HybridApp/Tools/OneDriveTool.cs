@@ -223,11 +223,22 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                                 Logger.LogWarning(ex, "Failed to parse metadata JSON, using extracted filename");
                             }
                         }
+                        else
+                        {
+                            Logger.LogWarning("Failed to fetch metadata. Status: {StatusCode}", metadataResponse.StatusCode);
+                        }
                     }
                     catch (Exception ex)
                     {
                         Logger.LogWarning(ex, "Failed to fetch file metadata, using extracted filename");
                     }
+                }
+
+                // If filename still looks like an itemId, use default
+                if (fileName.StartsWith("s!", StringComparison.OrdinalIgnoreCase) || fileName.Contains("!"))
+                {
+                    fileName = $"downloaded_file_{DateTime.UtcNow:yyyyMMdd_HHmmss}";
+                    Logger.LogInformation("Filename appears to be itemId, using default: {FileName}", fileName);
                 }
 
                 Logger.LogInformation("Final filename: {FileName}", fileName);
@@ -317,15 +328,14 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Logger.LogInformation("Using File Share connection string (masked for security)");
 
-            // Parse connection string to extract account name and key
-            var accountName = connectionString.Split("AccountName=")[1].Split(";")[0];
-            var accountKey = connectionString.Split("AccountKey=")[1].Split(";")[0];
-            Logger.LogInformation("Parsed storage account: {AccountName}", accountName);
-
-            // Create ShareClient using StorageSharedKeyCredential
-            var shareUri = new Uri($"https://{accountName}.file.core.windows.net/downloads");
-            var credential = new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey);
-            var shareClient = new Azure.Storage.Files.Shares.ShareClient(shareUri, credential);
+            // Create ShareClient directly using connection string (most reliable method)
+            var shareClient = new Azure.Storage.Files.Shares.ShareClient(
+                new Uri("https://" +
+                    connectionString.Split("AccountName=")[1].Split(";")[0] +
+                    ".file.core.windows.net/downloads"),
+                new Azure.Storage.StorageSharedKeyCredential(
+                    connectionString.Split("AccountName=")[1].Split(";")[0],
+                    connectionString.Split("AccountKey=")[1].Split(";")[0]));
 
             // Check if share exists, create if not
             Logger.LogInformation("Checking if file share exists...");
