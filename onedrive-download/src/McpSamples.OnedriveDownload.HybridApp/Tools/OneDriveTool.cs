@@ -164,45 +164,24 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                     MaxAutomaticRedirections = 5
                 };
 
-                if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                if (itemId != null && itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 {
-                    // itemId가 실제로 URL인 경우 (1drv.ms)
-                    // 1drv.ms 링크를 download URL로 변환
-                    // https://1drv.ms/u/s!ABC... -> https://1drv.ms/download?resid=ABC...
-                    if (itemId.Contains("1drv.ms"))
-                    {
-                        // 1drv.ms URL에서 resid 추출
-                        var oneDriveUri = new Uri(itemId);
-                        var path = oneDriveUri.AbsolutePath; // /u/s!ABC...
-
-                        // /u/s! 패턴을 찾아서 resid로 변환
-                        if (path.Contains("/u/s!"))
-                        {
-                            var resid = path.Substring(path.IndexOf("s!")).TrimEnd('/');
-                            contentUrl = $"https://1drv.ms/download?resid={resid}";
-                            Logger.LogInformation("Converted 1drv.ms URL to download URL: {ContentUrl}", contentUrl);
-                        }
-                        else
-                        {
-                            contentUrl = itemId + "?download=1";
-                            Logger.LogInformation("Using 1drv.ms URL with download parameter: {ContentUrl}", contentUrl);
-                        }
-                    }
-                    else
-                    {
-                        contentUrl = itemId + "?download=1";
-                        Logger.LogInformation("Using shared URL with download parameter: {ContentUrl}", contentUrl);
-                    }
+                    // itemId가 실제로 URL인 경우 (기타 공유 링크)
+                    // 직접 이 URL로 요청 (리다이렉트 자동 처리)
+                    contentUrl = itemId;
+                    Logger.LogInformation("Using direct URL for download: {ContentUrl}", contentUrl);
                 }
                 else
                 {
-                    // itemId를 추출한 경우 Graph API 사용 (권장)
+                    // itemId를 추출한 경우 또는 1drv.ms에서 추출한 경우 Graph API 사용
                     graphItemId = itemId;
                     contentUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/content";
                     Logger.LogInformation("Downloading from Graph API endpoint: {ContentUrl}", contentUrl);
                 }
 
                 using var downloadClient = new System.Net.Http.HttpClient(handler);
+                downloadClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+
                 // 1drv.ms URL은 공개 링크이므로 Authorization 헤더 불필요
                 // Graph API는 Authorization 헤더 필수
                 if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase) == false)
@@ -557,12 +536,25 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
         {
             var uri = new Uri(url);
 
-            // 1drv.ms 단축 URL 처리 - URL 자체를 직접 사용 (파라미터는 나중에 추가)
+            // 1drv.ms 단축 URL 처리 - itemId 추출
             if (uri.Host.EndsWith("1drv.ms", StringComparison.OrdinalIgnoreCase))
             {
-                Logger.LogInformation("Detected 1drv.ms shortened URL, will use direct download");
-                // URL 자체만 반환 - 다운로드 로직에서 ?download=1 추가
-                return url;
+                Logger.LogInformation("Detected 1drv.ms shortened URL, extracting itemId");
+                // 1drv.ms URL 형식: https://1drv.ms/u/s!ABC123... 또는 https://1drv.ms/f/s!ABC123...
+                // s! 다음의 부분이 encoded itemId
+                var path = uri.AbsolutePath; // /u/s!ABC123... 또는 /f/s!ABC123...
+
+                if (path.Contains("s!"))
+                {
+                    var encodedItemId = path.Substring(path.IndexOf("s!"));
+                    Logger.LogInformation("Extracted encoded itemId from 1drv.ms URL: {EncodedItemId}", encodedItemId);
+                    return encodedItemId; // Graph API에서 사용 가능한 형식
+                }
+                else
+                {
+                    Logger.LogWarning("Could not extract itemId pattern from 1drv.ms URL");
+                    return url; // fallback: URL 자체 사용
+                }
             }
 
             // resid 파라미터에서 Item ID 추출
