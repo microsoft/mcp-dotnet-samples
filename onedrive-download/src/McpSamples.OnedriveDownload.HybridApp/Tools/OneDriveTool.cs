@@ -167,9 +167,32 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 {
                     // itemId가 실제로 URL인 경우 (1drv.ms)
-                    // Try to follow redirects to get actual file content
-                    contentUrl = $"{itemId}?download=1";
-                    Logger.LogInformation("Using 1drv.ms URL with download parameter: {ContentUrl}", contentUrl);
+                    // 1drv.ms 링크를 download URL로 변환
+                    // https://1drv.ms/u/s!ABC... -> https://1drv.ms/download?resid=ABC...
+                    if (itemId.Contains("1drv.ms"))
+                    {
+                        // 1drv.ms URL에서 resid 추출
+                        var oneDriveUri = new Uri(itemId);
+                        var path = oneDriveUri.AbsolutePath; // /u/s!ABC...
+
+                        // /u/s! 패턴을 찾아서 resid로 변환
+                        if (path.Contains("/u/s!"))
+                        {
+                            var resid = path.Substring(path.IndexOf("s!")).TrimEnd('/');
+                            contentUrl = $"https://1drv.ms/download?resid={resid}";
+                            Logger.LogInformation("Converted 1drv.ms URL to download URL: {ContentUrl}", contentUrl);
+                        }
+                        else
+                        {
+                            contentUrl = itemId + "?download=1";
+                            Logger.LogInformation("Using 1drv.ms URL with download parameter: {ContentUrl}", contentUrl);
+                        }
+                    }
+                    else
+                    {
+                        contentUrl = itemId + "?download=1";
+                        Logger.LogInformation("Using shared URL with download parameter: {ContentUrl}", contentUrl);
+                    }
                 }
                 else
                 {
