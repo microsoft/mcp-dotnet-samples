@@ -126,6 +126,7 @@ module fncapp './modules/functionapp.bicep' = {
       OnedriveDownload__EntraId__TenantId: tenant().tenantId
       OnedriveDownload__EntraId__UserAssignedClientId: userAssignedIdentity.properties.clientId
       OnedriveDownload__EntraId__ClientId: entraApp.outputs.mcpAppId
+      OnedriveDownload__EntraId__Personal365RefreshToken: environment('PERSONAL_365_REFRESH_TOKEN', '')
       FileShareConnectionString: 'DefaultEndpointsProtocol=https;AccountName=${fileShareStorage.name};AccountKey=${listKeys(fileShareStorage.id, fileShareStorage.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
     }
   }

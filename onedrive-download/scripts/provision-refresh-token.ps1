@@ -51,4 +51,20 @@ Write-Host ""
 & $ExePath
 
 $exitCode = $LASTEXITCODE
+
+# .env.local에서 토큰을 읽어서 환경 변수로 설정
+if ($exitCode -eq 0 -and (Test-Path $CsprojFile)) {
+    Write-Host "`n로딩중: 프로비저닝된 토큰을 환경 변수로 설정 중..."
+
+    $envLocalPath = Join-Path $ScriptDir ".env.local"
+    if (Test-Path $envLocalPath) {
+        $envContent = Get-Content $envLocalPath | Where-Object { $_.StartsWith("PERSONAL_365_REFRESH_TOKEN=") }
+        if ($envContent) {
+            $tokenLine = $envContent -split "=" | Select-Object -Last 1
+            [Environment]::SetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN", $tokenLine, "User")
+            Write-Host "✓ 환경 변수 설정 완료: PERSONAL_365_REFRESH_TOKEN"
+        }
+    }
+}
+
 exit $exitCode
