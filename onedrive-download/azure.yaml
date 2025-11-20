@@ -13,6 +13,22 @@ hooks:
     posix:
       shell: sh
       run: dotnet run --project ./src/McpSamples.OnedriveDownload.HybridApp -- --provision
+  postdeploy:
+    windows:
+      shell: pwsh
+      run: |
+        $refreshToken = $env:PERSONAL_365_REFRESH_TOKEN
+        if ($refreshToken) {
+          $functionAppName = $env:AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME
+          $resourceGroup = "rg-" + $env:AZURE_ENV_NAME
+          az functionapp config appsettings set --name $functionAppName --resource-group $resourceGroup --settings "OnedriveDownload__EntraId__Personal365RefreshToken=$refreshToken" | Out-Null
+        }
+    posix:
+      shell: sh
+      run: |
+        if [ -n "$PERSONAL_365_REFRESH_TOKEN" ]; then
+          az functionapp config appsettings set --name "$AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME" --resource-group "rg-$AZURE_ENV_NAME" --settings "OnedriveDownload__EntraId__Personal365RefreshToken=$PERSONAL_365_REFRESH_TOKEN"
+        fi
 
 services:
   onedrive-download:
