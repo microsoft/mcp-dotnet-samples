@@ -7,6 +7,10 @@ param tags object = {}
 @description('The name of the service defined in azure.yaml.')
 param azdServiceName string
 
+@description('Personal 365 Refresh Token for OneDrive access (will be set via postdeploy hook)')
+@secure()
+param personal365RefreshToken string = ''
+
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
 var functionAppName = '${abbrs.webSitesFunctions}${azdServiceName}-${resourceToken}'

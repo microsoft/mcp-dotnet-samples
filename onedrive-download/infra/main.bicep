@@ -37,6 +37,7 @@ module resources 'resources.bicep' = {
     location: location
     tags: tags
     azdServiceName: 'onedrive-download'
+    personal365RefreshToken: ''
   }
 }
 
