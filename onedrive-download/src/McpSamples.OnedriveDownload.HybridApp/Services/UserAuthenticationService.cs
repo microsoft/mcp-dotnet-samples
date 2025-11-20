@@ -89,9 +89,20 @@ public class UserAuthenticationService : IUserAuthenticationService
 
             // Step 1: 기본 DefaultAzureCredential로 토큰 획득
             _logger.LogInformation("Step 1: Getting initial token from DefaultAzureCredential");
-            var baseCredential = new DefaultAzureCredential();
-            var baseToken = await baseCredential.GetTokenAsync(
-                new TokenRequestContext(_scopes));
+            AccessToken baseToken;
+            try
+            {
+                var baseCredential = new DefaultAzureCredential();
+                baseToken = await baseCredential.GetTokenAsync(
+                    new TokenRequestContext(_scopes));
+                _logger.LogInformation("✓ Step 1 completed: Initial token acquired");
+            }
+            catch (Exception stepEx)
+            {
+                _logger.LogError(stepEx, "Step 1 failed: Could not get initial token. Exception: {ExceptionType} - {Message}",
+                    stepEx.GetType().Name, stepEx.Message);
+                return null;
+            }
 
             // Step 2: JWT 토큰에서 tenantId 추출
             _logger.LogInformation("Step 2: Extracting tenantId from JWT token");
@@ -99,34 +110,43 @@ public class UserAuthenticationService : IUserAuthenticationService
 
             if (string.IsNullOrEmpty(homeTenantId))
             {
-                _logger.LogWarning("Could not extract tenant ID from token");
+                _logger.LogWarning("Step 2 failed: Could not extract tenant ID from token");
                 return null;
             }
 
-            _logger.LogInformation("✓ Extracted home tenant ID: {HomeTenantId}", homeTenantId);
+            _logger.LogInformation("✓ Step 2 completed: Extracted home tenant ID: {HomeTenantId}", homeTenantId);
 
             // Step 3: 추출한 tenantId로 Personal 365 토큰 획득
             _logger.LogInformation("Step 3: Acquiring Personal OneDrive token for tenant {HomeTenantId}", homeTenantId);
-
-            var credentialOptions = new DefaultAzureCredentialOptions
+            try
             {
-                TenantId = homeTenantId,
-                VisualStudioTenantId = homeTenantId,
-                SharedTokenCacheTenantId = homeTenantId
-            };
+                var credentialOptions = new DefaultAzureCredentialOptions
+                {
+                    TenantId = homeTenantId,
+                    VisualStudioTenantId = homeTenantId,
+                    SharedTokenCacheTenantId = homeTenantId
+                };
 
-            var m365Credential = new DefaultAzureCredential(credentialOptions);
+                var m365Credential = new DefaultAzureCredential(credentialOptions);
 
-            var m365Token = await m365Credential.GetTokenAsync(
-                new TokenRequestContext(_oneDriveScopes));
+                var m365Token = await m365Credential.GetTokenAsync(
+                    new TokenRequestContext(_oneDriveScopes));
 
-            _logger.LogInformation("✓ Personal OneDrive token acquired successfully");
-            return m365Token.Token;
+                _logger.LogInformation("✓ Step 3 completed: Personal OneDrive token acquired successfully");
+                return m365Token.Token;
+            }
+            catch (Exception stepEx)
+            {
+                _logger.LogError(stepEx, "Step 3 failed: Could not get Personal 365 token. Exception: {ExceptionType} - {Message}",
+                    stepEx.GetType().Name, stepEx.Message);
+                return null;
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get Personal OneDrive access token: {ErrorMessage}", ex.Message);
-            _logger.LogError(ex, "Stack trace: {StackTrace}", ex.StackTrace);
+            _logger.LogError(ex, "GetPersonalOneDriveAccessTokenAsync failed: {ErrorMessage}", ex.Message);
+            _logger.LogError("Exception type: {ExceptionType}", ex.GetType().Name);
+            _logger.LogError("Stack trace: {StackTrace}", ex.StackTrace);
             return null;
         }
     }
@@ -138,39 +158,67 @@ public class UserAuthenticationService : IUserAuthenticationService
     {
         try
         {
-            _logger.LogInformation("Extracting tenantId from JWT token");
+            _logger.LogInformation("ExtractTenantIdFromJwt: Starting to extract tenantId from JWT token");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                _logger.LogError("ExtractTenantIdFromJwt: Token is null or empty");
+                return null;
+            }
+
+            _logger.LogInformation("ExtractTenantIdFromJwt: Token length: {TokenLength} chars", token.Length);
+
             var handler = new JwtSecurityTokenHandler();
 
             if (!handler.CanReadToken(token))
             {
-                _logger.LogError("Token cannot be read as JWT");
+                _logger.LogError("ExtractTenantIdFromJwt: Token cannot be read as JWT");
                 return null;
             }
+
+            _logger.LogInformation("ExtractTenantIdFromJwt: Token is readable as JWT");
 
             var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
 
             if (jwtToken == null)
             {
-                _logger.LogError("Failed to parse JWT token");
+                _logger.LogError("ExtractTenantIdFromJwt: Failed to parse JWT token");
                 return null;
             }
 
-            var tidClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "tid");
+            _logger.LogInformation("ExtractTenantIdFromJwt: JWT parsed successfully. Token issued: {IssuedAt}, Expires: {ExpiresAt}",
+                jwtToken.ValidFrom, jwtToken.ValidTo);
+
+            var claimsList = jwtToken.Claims.ToList();
+            _logger.LogInformation("ExtractTenantIdFromJwt: Total claims in token: {ClaimCount}", claimsList.Count);
+
+            foreach (var claim in claimsList)
+            {
+                if (claim.Type == "tid" || claim.Type == "oid" || claim.Type == "upn" || claim.Type == "aud")
+                {
+                    _logger.LogInformation("ExtractTenantIdFromJwt: Found important claim - {ClaimType}: {ClaimValue}",
+                        claim.Type, claim.Value);
+                }
+            }
+
+            var tidClaim = claimsList.FirstOrDefault(c => c.Type == "tid");
             if (tidClaim == null)
             {
-                _logger.LogError("No 'tid' claim found in JWT token");
-                _logger.LogInformation("Available claims: {Claims}",
-                    string.Join(", ", jwtToken.Claims.Select(c => c.Type)));
+                _logger.LogError("ExtractTenantIdFromJwt: No 'tid' claim found in JWT token!");
+                _logger.LogInformation("ExtractTenantIdFromJwt: Available claim types: {Claims}",
+                    string.Join(", ", claimsList.Select(c => c.Type)));
                 return null;
             }
 
             var tenantId = tidClaim.Value;
-            _logger.LogInformation("✓ Successfully extracted tenantId: {TenantId}", tenantId);
+            _logger.LogInformation("✓ ExtractTenantIdFromJwt: Successfully extracted tenantId: {TenantId}", tenantId);
             return tenantId;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error extracting tenantId from JWT: {ErrorMessage}", ex.Message);
+            _logger.LogError(ex, "ExtractTenantIdFromJwt: Error extracting tenantId from JWT. Exception: {ExceptionType} - {Message}",
+                ex.GetType().Name, ex.Message);
+            _logger.LogError("ExtractTenantIdFromJwt: Stack trace: {StackTrace}", ex.StackTrace);
             return null;
         }
     }
