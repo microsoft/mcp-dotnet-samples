@@ -33,7 +33,7 @@ hooks:
             $functionAppName = $env:AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME
             $resourceGroup = "rg-$env:AZURE_ENV_NAME"
             Write-Host "토큰을 Azure Function App에 설정 중..."
-            az functionapp config appsettings set --name $functionAppName --resource-group $resourceGroup --settings "OnedriveDownload__EntraId__Personal365RefreshToken=$refreshToken" | Out-Null
+            az functionapp config appsettings set --name $functionAppName --resource-group $resourceGroup --settings "PERSONAL_365_REFRESH_TOKEN=$refreshToken" | Out-Null
             Write-Host "완료: $functionAppName"
           } else {
             Write-Host "PERSONAL_365_REFRESH_TOKEN을 찾을 수 없습니다"
@@ -52,7 +52,7 @@ hooks:
             functionAppName="$AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME"
             resourceGroup="rg-$AZURE_ENV_NAME"
             echo "토큰을 Azure Function App에 설정 중..."
-            az functionapp config appsettings set --name "$functionAppName" --resource-group "$resourceGroup" --settings "OnedriveDownload__EntraId__Personal365RefreshToken=$refreshToken"
+            az functionapp config appsettings set --name "$functionAppName" --resource-group "$resourceGroup" --settings "PERSONAL_365_REFRESH_TOKEN=$refreshToken"
             echo "완료: $functionAppName"
           else
             echo "PERSONAL_365_REFRESH_TOKEN을 찾을 수 없습니다"
