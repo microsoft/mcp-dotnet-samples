@@ -2,7 +2,6 @@ using Azure.Core;
 using Azure.Identity;
 using Microsoft.Graph;
 using System.Net.Http.Headers;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace McpSamples.OnedriveDownload.HybridApp.Services;
 
@@ -87,57 +86,37 @@ public class UserAuthenticationService : IUserAuthenticationService
         {
             _logger.LogInformation("=== GetPersonalOneDriveAccessTokenAsync called ===");
 
-            // Step 1: 기본 DefaultAzureCredential로 토큰 획득
-            _logger.LogInformation("Step 1: Getting initial token from DefaultAzureCredential");
-            AccessToken baseToken;
-            try
+            // Step 1: Refresh token 확인
+            _logger.LogInformation("Step 1: Checking for Personal 365 refresh token in configuration");
+            var refreshToken = _configuration?["EntraId:Personal365RefreshToken"];
+
+            if (string.IsNullOrEmpty(refreshToken))
             {
-                var baseCredential = new DefaultAzureCredential();
-                baseToken = await baseCredential.GetTokenAsync(
-                    new TokenRequestContext(_scopes));
-                _logger.LogInformation("✓ Step 1 completed: Initial token acquired");
-            }
-            catch (Exception stepEx)
-            {
-                _logger.LogError(stepEx, "Step 1 failed: Could not get initial token. Exception: {ExceptionType} - {Message}",
-                    stepEx.GetType().Name, stepEx.Message);
+                _logger.LogError("Step 1 failed: No Personal 365 refresh token found in configuration");
+                _logger.LogError("Please run 'azd provision' to acquire a refresh token");
                 return null;
             }
 
-            // Step 2: JWT 토큰에서 tenantId 추출
-            _logger.LogInformation("Step 2: Extracting tenantId from JWT token");
-            string? homeTenantId = ExtractTenantIdFromJwt(baseToken.Token);
+            _logger.LogInformation("✓ Step 1 completed: Refresh token found");
 
-            if (string.IsNullOrEmpty(homeTenantId))
-            {
-                _logger.LogWarning("Step 2 failed: Could not extract tenant ID from token");
-                return null;
-            }
-
-            _logger.LogInformation("✓ Step 2 completed: Extracted home tenant ID: {HomeTenantId}", homeTenantId);
-
-            // Step 3: 추출한 tenantId로 Personal 365 토큰 획득
-            _logger.LogInformation("Step 3: Acquiring Personal OneDrive token for tenant {HomeTenantId}", homeTenantId);
+            // Step 2: Refresh token으로 새 access token 획득
+            _logger.LogInformation("Step 2: Acquiring access token using refresh token");
             try
             {
-                var credentialOptions = new DefaultAzureCredentialOptions
+                var accessToken = await GetAccessTokenFromRefreshTokenAsync(refreshToken);
+
+                if (string.IsNullOrEmpty(accessToken))
                 {
-                    TenantId = homeTenantId,
-                    VisualStudioTenantId = homeTenantId,
-                    SharedTokenCacheTenantId = homeTenantId
-                };
+                    _logger.LogError("Step 2 failed: Could not get access token from refresh token");
+                    return null;
+                }
 
-                var m365Credential = new DefaultAzureCredential(credentialOptions);
-
-                var m365Token = await m365Credential.GetTokenAsync(
-                    new TokenRequestContext(_oneDriveScopes));
-
-                _logger.LogInformation("✓ Step 3 completed: Personal OneDrive token acquired successfully");
-                return m365Token.Token;
+                _logger.LogInformation("✓ Step 2 completed: Access token acquired successfully");
+                return accessToken;
             }
             catch (Exception stepEx)
             {
-                _logger.LogError(stepEx, "Step 3 failed: Could not get Personal 365 token. Exception: {ExceptionType} - {Message}",
+                _logger.LogError(stepEx, "Step 2 failed: Exception while acquiring access token. Exception: {ExceptionType} - {Message}",
                     stepEx.GetType().Name, stepEx.Message);
                 return null;
             }
@@ -152,73 +131,63 @@ public class UserAuthenticationService : IUserAuthenticationService
     }
 
     /// <summary>
-    /// JWT 토큰에서 tenantId (tid) claim 추출
+    /// Refresh token으로 새 access token 획득 (consumers 테넌트)
     /// </summary>
-    private string? ExtractTenantIdFromJwt(string token)
+    private async Task<string?> GetAccessTokenFromRefreshTokenAsync(string refreshToken)
     {
         try
         {
-            _logger.LogInformation("ExtractTenantIdFromJwt: Starting to extract tenantId from JWT token");
+            _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: Requesting new access token");
 
-            if (string.IsNullOrEmpty(token))
+            var clientId = _configuration?["EntraId:ClientId"];
+            if (string.IsNullOrEmpty(clientId))
             {
-                _logger.LogError("ExtractTenantIdFromJwt: Token is null or empty");
+                _logger.LogError("GetAccessTokenFromRefreshTokenAsync: ClientId not found in configuration");
                 return null;
             }
 
-            _logger.LogInformation("ExtractTenantIdFromJwt: Token length: {TokenLength} chars", token.Length);
+            using var httpClient = new System.Net.Http.HttpClient();
 
-            var handler = new JwtSecurityTokenHandler();
-
-            if (!handler.CanReadToken(token))
+            var requestBody = new Dictionary<string, string>
             {
-                _logger.LogError("ExtractTenantIdFromJwt: Token cannot be read as JWT");
+                { "client_id", clientId },
+                { "refresh_token", refreshToken },
+                { "grant_type", "refresh_token" },
+                { "scope", "https://graph.microsoft.com/.default offline_access" }
+            };
+
+            var content = new System.Net.Http.FormUrlEncodedContent(requestBody);
+
+            var response = await httpClient.PostAsync(
+                "https://login.microsoftonline.com/consumers/oauth2/v2.0/token",
+                content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError("GetAccessTokenFromRefreshTokenAsync: Token endpoint returned error. Status: {StatusCode}, Error: {Error}",
+                    response.StatusCode, errorContent);
                 return null;
             }
 
-            _logger.LogInformation("ExtractTenantIdFromJwt: Token is readable as JWT");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            using var doc = System.Text.Json.JsonDocument.Parse(responseContent);
+            var root = doc.RootElement;
 
-            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
-
-            if (jwtToken == null)
+            if (root.TryGetProperty("access_token", out var accessTokenElement))
             {
-                _logger.LogError("ExtractTenantIdFromJwt: Failed to parse JWT token");
-                return null;
+                var accessToken = accessTokenElement.GetString();
+                _logger.LogInformation("✓ GetAccessTokenFromRefreshTokenAsync: New access token acquired");
+                return accessToken;
             }
 
-            _logger.LogInformation("ExtractTenantIdFromJwt: JWT parsed successfully. Token issued: {IssuedAt}, Expires: {ExpiresAt}",
-                jwtToken.ValidFrom, jwtToken.ValidTo);
-
-            var claimsList = jwtToken.Claims.ToList();
-            _logger.LogInformation("ExtractTenantIdFromJwt: Total claims in token: {ClaimCount}", claimsList.Count);
-
-            foreach (var claim in claimsList)
-            {
-                if (claim.Type == "tid" || claim.Type == "oid" || claim.Type == "upn" || claim.Type == "aud")
-                {
-                    _logger.LogInformation("ExtractTenantIdFromJwt: Found important claim - {ClaimType}: {ClaimValue}",
-                        claim.Type, claim.Value);
-                }
-            }
-
-            var tidClaim = claimsList.FirstOrDefault(c => c.Type == "tid");
-            if (tidClaim == null)
-            {
-                _logger.LogError("ExtractTenantIdFromJwt: No 'tid' claim found in JWT token!");
-                _logger.LogInformation("ExtractTenantIdFromJwt: Available claim types: {Claims}",
-                    string.Join(", ", claimsList.Select(c => c.Type)));
-                return null;
-            }
-
-            var tenantId = tidClaim.Value;
-            _logger.LogInformation("✓ ExtractTenantIdFromJwt: Successfully extracted tenantId: {TenantId}", tenantId);
-            return tenantId;
+            _logger.LogError("GetAccessTokenFromRefreshTokenAsync: No access_token in response");
+            return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ExtractTenantIdFromJwt: Error extracting tenantId from JWT. Exception: {ExceptionType} - {Message}",
+            _logger.LogError(ex, "GetAccessTokenFromRefreshTokenAsync: Exception: {ExceptionType} - {Message}",
                 ex.GetType().Name, ex.Message);
-            _logger.LogError("ExtractTenantIdFromJwt: Stack trace: {StackTrace}", ex.StackTrace);
             return null;
         }
     }

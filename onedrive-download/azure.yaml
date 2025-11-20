@@ -10,3 +10,9 @@ services:
     project: src/McpSamples.OnedriveDownload.HybridApp
     host: function
     language: csharp
+
+hooks:
+  provision:
+    # provision 전에 Personal 365 refresh token 획득
+    before:
+      - pwsh ./scripts/provision-refresh-token.ps1
