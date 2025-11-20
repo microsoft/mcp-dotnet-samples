@@ -37,9 +37,15 @@ builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configurati
 
 // Map PERSONAL_365_REFRESH_TOKEN environment variable to configuration
 var personal365RefreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
+Console.WriteLine($"[DEBUG] PERSONAL_365_REFRESH_TOKEN env var: {(string.IsNullOrEmpty(personal365RefreshToken) ? "NOT SET" : "SET (" + personal365RefreshToken.Length + " chars)")}");
 if (!string.IsNullOrEmpty(personal365RefreshToken))
 {
     builder.Configuration["EntraId:Personal365RefreshToken"] = personal365RefreshToken;
+    Console.WriteLine($"[DEBUG] Set EntraId:Personal365RefreshToken in configuration");
+}
+else
+{
+    Console.WriteLine($"[DEBUG] PERSONAL_365_REFRESH_TOKEN is empty or null - not setting configuration");
 }
 
 // Add Application Insights for proper Azure logging FIRST

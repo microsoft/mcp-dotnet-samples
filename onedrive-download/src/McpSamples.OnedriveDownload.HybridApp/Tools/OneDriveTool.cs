@@ -111,12 +111,13 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 Logger.LogInformation("Attempting to download via Graph API with Personal OneDrive token");
 
                 // Encode sharing URL for Graph API
-                string encodedSharingUrl = System.Web.HttpUtility.UrlEncode(sharingUrl);
-                string base64EncodedUrl = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"u!{encodedSharingUrl}"))
+                // IMPORTANT: Do NOT UrlEncode first - base64 encode the raw URL directly
+                string base64EncodedUrl = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(sharingUrl))
                     .TrimEnd('=').Replace('+', '-').Replace('/', '_');
 
                 // Graph API endpoint for shared drive items
-                string graphUrl = $"https://graph.microsoft.com/v1.0/shares/{base64EncodedUrl}/driveItem/content";
+                // Format: https://graph.microsoft.com/v1.0/shares/u!{base64EncodedUrl}/driveItem/content
+                string graphUrl = $"https://graph.microsoft.com/v1.0/shares/u!{base64EncodedUrl}/driveItem/content";
 
                 Logger.LogInformation("Graph API URL: {GraphUrl}", graphUrl);
 
