@@ -17,17 +17,48 @@ hooks:
     windows:
       shell: pwsh
       run: |
-        $refreshToken = $env:PERSONAL_365_REFRESH_TOKEN
-        if ($refreshToken) {
-          $functionAppName = $env:AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME
-          $resourceGroup = "rg-" + $env:AZURE_ENV_NAME
-          az functionapp config appsettings set --name $functionAppName --resource-group $resourceGroup --settings "OnedriveDownload__EntraId__Personal365RefreshToken=$refreshToken" | Out-Null
+        # .azure/{env}/.env 파일에서 토큰 읽기
+        $envFile = ".\.azure\$env:AZURE_ENV_NAME\.env"
+        if (Test-Path $envFile) {
+          $content = Get-Content $envFile -Raw
+          $refreshToken = $null
+          foreach ($line in $content -split "`n") {
+            if ($line -match '^PERSONAL_365_REFRESH_TOKEN=(.*)$') {
+              $refreshToken = $matches[1].Trim('"')
+              break
+            }
+          }
+
+          if ($refreshToken) {
+            $functionAppName = $env:AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME
+            $resourceGroup = "rg-$env:AZURE_ENV_NAME"
+            Write-Host "토큰을 Azure Function App에 설정 중..."
+            az functionapp config appsettings set --name $functionAppName --resource-group $resourceGroup --settings "OnedriveDownload__EntraId__Personal365RefreshToken=$refreshToken" | Out-Null
+            Write-Host "완료: $functionAppName"
+          } else {
+            Write-Host "PERSONAL_365_REFRESH_TOKEN을 찾을 수 없습니다"
+          }
+        } else {
+          Write-Host ".env 파일을 찾을 수 없습니다: $envFile"
         }
     posix:
       shell: sh
       run: |
-        if [ -n "$PERSONAL_365_REFRESH_TOKEN" ]; then
-          az functionapp config appsettings set --name "$AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME" --resource-group "rg-$AZURE_ENV_NAME" --settings "OnedriveDownload__EntraId__Personal365RefreshToken=$PERSONAL_365_REFRESH_TOKEN"
+        # .azure/{env}/.env 파일에서 토큰 읽기
+        envFile="./.azure/$AZURE_ENV_NAME/.env"
+        if [ -f "$envFile" ]; then
+          refreshToken=$(grep '^PERSONAL_365_REFRESH_TOKEN=' "$envFile" | cut -d'=' -f2- | sed 's/^"//;s/"$//')
+          if [ -n "$refreshToken" ]; then
+            functionAppName="$AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME"
+            resourceGroup="rg-$AZURE_ENV_NAME"
+            echo "토큰을 Azure Function App에 설정 중..."
+            az functionapp config appsettings set --name "$functionAppName" --resource-group "$resourceGroup" --settings "OnedriveDownload__EntraId__Personal365RefreshToken=$refreshToken"
+            echo "완료: $functionAppName"
+          else
+            echo "PERSONAL_365_REFRESH_TOKEN을 찾을 수 없습니다"
+          fi
+        else
+          echo ".env 파일을 찾을 수 없습니다: $envFile"
         fi
 
 services:
