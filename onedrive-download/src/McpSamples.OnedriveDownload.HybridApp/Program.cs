@@ -35,20 +35,8 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
 
-// Map OnedriveDownload__EntraId__Personal365RefreshToken environment variable to configuration
-var personal365RefreshToken = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__Personal365RefreshToken");
-Console.WriteLine($"DEBUG: OnedriveDownload__EntraId__Personal365RefreshToken = {(string.IsNullOrEmpty(personal365RefreshToken) ? "NULL" : "SET")}");
-
-// 모든 환경변수 출력 (디버깅용)
-Console.WriteLine("DEBUG: All environment variables starting with 'OnedriveDownload':");
-foreach (System.Collections.DictionaryEntry envVar in Environment.GetEnvironmentVariables())
-{
-    if (envVar.Key?.ToString()?.StartsWith("OnedriveDownload") == true)
-    {
-        Console.WriteLine($"  {envVar.Key} = {(envVar.Value?.ToString()?.Length > 20 ? envVar.Value?.ToString()?.Substring(0, 20) + "..." : envVar.Value)}");
-    }
-}
-
+// Map PERSONAL_365_REFRESH_TOKEN environment variable to configuration
+var personal365RefreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
 if (!string.IsNullOrEmpty(personal365RefreshToken))
 {
     builder.Configuration["EntraId:Personal365RefreshToken"] = personal365RefreshToken;
