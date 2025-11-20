@@ -5,14 +5,17 @@ name: onedrive-download
 metadata:
   template: azd-init@1.14.0
 
+hooks:
+  preprovision:
+    windows:
+      shell: pwsh
+      run: dotnet run --project ./src/McpSamples.OnedriveDownload.HybridApp -- --provision
+    posix:
+      shell: sh
+      run: dotnet run --project ./src/McpSamples.OnedriveDownload.HybridApp -- --provision
+
 services:
   onedrive-download:
     project: src/McpSamples.OnedriveDownload.HybridApp
     host: function
     language: csharp
-
-hooks:
-  provision:
-    # provision 전에 Personal 365 refresh token 획득
-    before:
-      - powershell -ExecutionPolicy Bypass -File ./scripts/provision-refresh-token.ps1

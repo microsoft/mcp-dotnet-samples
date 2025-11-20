@@ -17,3 +17,4 @@ feature2.md
 # Environment files with sensitive data
 .env.local
 .env*.local
+.azure/

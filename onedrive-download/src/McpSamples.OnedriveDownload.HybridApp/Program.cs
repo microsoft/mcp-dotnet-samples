@@ -13,6 +13,14 @@ using Microsoft.Graph;
 
 using Constants = McpSamples.OnedriveDownload.HybridApp.Constants;
 
+// Check if running in provisioning mode (during azd provision)
+var isProvisioning = args.Contains("--provision", StringComparer.InvariantCultureIgnoreCase);
+if (isProvisioning)
+{
+    await ProvisionRefreshToken.ProvisionAsync();
+    return;
+}
+
 var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
 // Force HTTP mode unless --stdio is explicitly passed
@@ -26,6 +34,13 @@ IHostApplicationBuilder builder = useStreamableHttp
                                 : Host.CreateApplicationBuilder(args);
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
+
+// Map PERSONAL_365_REFRESH_TOKEN environment variable to configuration
+var personal365RefreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
+if (!string.IsNullOrEmpty(personal365RefreshToken))
+{
+    builder.Configuration["EntraId:Personal365RefreshToken"] = personal365RefreshToken;
+}
 
 // Add Application Insights for proper Azure logging FIRST
 if (useStreamableHttp == true)
