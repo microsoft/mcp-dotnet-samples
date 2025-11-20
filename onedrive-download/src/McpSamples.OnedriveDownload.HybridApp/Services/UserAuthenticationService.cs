@@ -87,19 +87,26 @@ public class UserAuthenticationService : IUserAuthenticationService
         {
             _logger.LogInformation("=== GetPersonalOneDriveAccessTokenAsync called ===");
 
-            // Step 1: Azure CLI에서 홈 테넌트 ID 획득
-            string? homeTenantId = await GetHomeTenantIdFromAzureCliAsync();
+            // Step 1: 기본 DefaultAzureCredential로 토큰 획득
+            _logger.LogInformation("Step 1: Getting initial token from DefaultAzureCredential");
+            var baseCredential = new DefaultAzureCredential();
+            var baseToken = await baseCredential.GetTokenAsync(
+                new TokenRequestContext(_scopes));
+
+            // Step 2: JWT 토큰에서 tenantId 추출
+            _logger.LogInformation("Step 2: Extracting tenantId from JWT token");
+            string? homeTenantId = ExtractTenantIdFromJwt(baseToken.Token);
 
             if (string.IsNullOrEmpty(homeTenantId))
             {
-                _logger.LogWarning("Could not determine home tenant ID");
+                _logger.LogWarning("Could not extract tenant ID from token");
                 return null;
             }
 
-            _logger.LogInformation("Found home tenant ID: {HomeTenantId}", homeTenantId);
+            _logger.LogInformation("✓ Extracted home tenant ID: {HomeTenantId}", homeTenantId);
 
-            // Step 2: DefaultAzureCredential에 homeTenantId 지정하여 Personal 365 토큰 획득
-            _logger.LogInformation("Acquiring token for home tenant {HomeTenantId}", homeTenantId);
+            // Step 3: 추출한 tenantId로 Personal 365 토큰 획득
+            _logger.LogInformation("Step 3: Acquiring Personal OneDrive token for tenant {HomeTenantId}", homeTenantId);
 
             var credentialOptions = new DefaultAzureCredentialOptions
             {
@@ -110,163 +117,60 @@ public class UserAuthenticationService : IUserAuthenticationService
 
             var m365Credential = new DefaultAzureCredential(credentialOptions);
 
-            var token = await m365Credential.GetTokenAsync(
+            var m365Token = await m365Credential.GetTokenAsync(
                 new TokenRequestContext(_oneDriveScopes));
 
             _logger.LogInformation("✓ Personal OneDrive token acquired successfully");
-            return token.Token;
+            return m365Token.Token;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to get Personal OneDrive access token: {ErrorMessage}", ex.Message);
+            _logger.LogError(ex, "Stack trace: {StackTrace}", ex.StackTrace);
             return null;
         }
     }
 
     /// <summary>
-    /// Azure CLI에서 홈 테넌트 ID 획득
+    /// JWT 토큰에서 tenantId (tid) claim 추출
     /// </summary>
-    private async Task<string?> GetHomeTenantIdFromAzureCliAsync()
+    private string? ExtractTenantIdFromJwt(string token)
     {
         try
         {
-            _logger.LogInformation("Getting home tenant ID from Azure CLI...");
+            _logger.LogInformation("Extracting tenantId from JWT token");
+            var handler = new JwtSecurityTokenHandler();
 
-            var process = new System.Diagnostics.Process
+            if (!handler.CanReadToken(token))
             {
-                StartInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = "az",
-                    Arguments = "account show --output json",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
-            process.Start();
-            string output = await process.StandardOutput.ReadToEndAsync();
-            string errorOutput = await process.StandardError.ReadToEndAsync();
-            process.WaitForExit();
-
-            if (process.ExitCode != 0)
-            {
-                _logger.LogError("Azure CLI failed with exit code {ExitCode}. Error: {Error}",
-                    process.ExitCode, errorOutput);
+                _logger.LogError("Token cannot be read as JWT");
                 return null;
             }
 
-            _logger.LogInformation("Azure CLI output: {Output}", output);
+            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
 
-            // JSON 파싱
-            using var doc = System.Text.Json.JsonDocument.Parse(output);
-            var root = doc.RootElement;
-
-            if (root.TryGetProperty("homeTenantId", out var homeTenantIdElement))
+            if (jwtToken == null)
             {
-                var homeTenantId = homeTenantIdElement.GetString();
-                _logger.LogInformation("✓ Home tenant ID extracted: {HomeTenantId}", homeTenantId);
-                return homeTenantId;
+                _logger.LogError("Failed to parse JWT token");
+                return null;
             }
 
-            if (root.TryGetProperty("tenantId", out var tenantIdElement))
+            var tidClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "tid");
+            if (tidClaim == null)
             {
-                var tenantId = tenantIdElement.GetString();
-                _logger.LogWarning("homeTenantId not found, using tenantId: {TenantId}", tenantId);
-                return tenantId;
+                _logger.LogError("No 'tid' claim found in JWT token");
+                _logger.LogInformation("Available claims: {Claims}",
+                    string.Join(", ", jwtToken.Claims.Select(c => c.Type)));
+                return null;
             }
 
-            _logger.LogWarning("Could not find tenant ID in Azure CLI output");
-            return null;
+            var tenantId = tidClaim.Value;
+            _logger.LogInformation("✓ Successfully extracted tenantId: {TenantId}", tenantId);
+            return tenantId;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting home tenant ID from Azure CLI: {ErrorMessage}", ex.Message);
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// 사용자가 속한 테넌트 중 Microsoft 365가 있는 테넌트 찾기
-    /// </summary>
-    private async Task<string?> FindM365TenantAsync(string accessToken, string userOid)
-    {
-        try
-        {
-            _logger.LogInformation("=== FindM365TenantAsync called ===");
-            _logger.LogInformation("Querying user's tenants...");
-
-            using var client = new System.Net.Http.HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-
-            // Step 1: 사용자 정보 조회
-            _logger.LogInformation("Step 1: Getting user info from /me");
-            var userResponse = await client.GetAsync("https://graph.microsoft.com/v1.0/me");
-            _logger.LogInformation("User info response status: {StatusCode}", userResponse.StatusCode);
-
-            if (!userResponse.IsSuccessStatusCode)
-            {
-                var errorContent = await userResponse.Content.ReadAsStringAsync();
-                _logger.LogError("Failed to get user info. Status: {StatusCode}, Error: {Error}",
-                    userResponse.StatusCode, errorContent);
-                return null;
-            }
-
-            var userContent = await userResponse.Content.ReadAsStringAsync();
-            _logger.LogInformation("User info retrieved: {UserInfo}", userContent);
-
-            // Step 2: OneDrive 직접 확인
-            _logger.LogInformation("Step 2: Checking for OneDrive at /me/drive");
-            var driveResponse = await client.GetAsync("https://graph.microsoft.com/v1.0/me/drive");
-            _logger.LogInformation("Drive response status: {StatusCode}", driveResponse.StatusCode);
-
-            if (driveResponse.IsSuccessStatusCode)
-            {
-                var driveContent = await driveResponse.Content.ReadAsStringAsync();
-                _logger.LogInformation("OneDrive found! Response: {DriveInfo}", driveContent);
-
-                // OneDrive가 있으면 현재 테넌트가 M365 테넌트
-                var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadToken(accessToken) as JwtSecurityToken;
-                var currentTenantId = jwtToken?.Claims.FirstOrDefault(c => c.Type == "tid")?.Value;
-
-                if (!string.IsNullOrEmpty(currentTenantId))
-                {
-                    _logger.LogInformation("✓ M365 tenant found: {TenantId}", currentTenantId);
-                    return currentTenantId;
-                }
-            }
-            else
-            {
-                var errorContent = await driveResponse.Content.ReadAsStringAsync();
-                _logger.LogWarning("No OneDrive found at /me/drive. Status: {StatusCode}, Error: {Error}",
-                    driveResponse.StatusCode, errorContent);
-            }
-
-            // Step 3: memberOf 조회 (백업 방법)
-            _logger.LogInformation("Step 3: Checking memberOf as fallback");
-            var memberOfResponse = await client.GetAsync("https://graph.microsoft.com/v1.0/me/memberOf?$select=id");
-            _logger.LogInformation("MemberOf response status: {StatusCode}", memberOfResponse.StatusCode);
-
-            if (!memberOfResponse.IsSuccessStatusCode)
-            {
-                var errorContent = await memberOfResponse.Content.ReadAsStringAsync();
-                _logger.LogError("Failed to get user's memberOf. Status: {StatusCode}, Error: {Error}",
-                    memberOfResponse.StatusCode, errorContent);
-                return null;
-            }
-
-            var memberOfContent = await memberOfResponse.Content.ReadAsStringAsync();
-            _logger.LogInformation("User's memberOf: {MemberOf}", memberOfContent);
-
-            _logger.LogWarning("No M365 tenant found");
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "=== Error finding M365 tenant: {ErrorMessage} ===", ex.Message);
-            _logger.LogError("Stack trace: {StackTrace}", ex.StackTrace);
+            _logger.LogError(ex, "Error extracting tenantId from JWT: {ErrorMessage}", ex.Message);
             return null;
         }
     }
