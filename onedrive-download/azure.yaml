@@ -15,4 +15,4 @@ hooks:
   provision:
     # provision 전에 Personal 365 refresh token 획득
     before:
-      - pwsh ./scripts/provision-refresh-token.ps1
+      - powershell -ExecutionPolicy Bypass -File ./scripts/provision-refresh-token.ps1
