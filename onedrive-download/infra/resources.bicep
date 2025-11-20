@@ -78,7 +78,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   }
 }
 
-// Storage account for file shares (moved up before fncapp)
+// Storage account for File Share (Connection String support)
 resource fileShareStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: '${abbrs.storageStorageAccounts}${resourceToken}files'
   location: location
@@ -93,8 +93,16 @@ resource fileShareStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
     allowBlobPublicAccess: false
   }
 
-  // Note: File share will be created automatically by the application code
-  // using CreateIfNotExistsAsync() when first needed
+  resource fileServices 'fileServices' = {
+    name: 'default'
+    resource share 'shares' = {
+      name: 'downloads'
+      properties: {
+        accessTier: 'TransactionOptimized'
+        shareQuota: 100
+      }
+    }
+  }
 }
 
 // 5. The Web App
@@ -118,7 +126,7 @@ module fncapp './modules/functionapp.bicep' = {
       OnedriveDownload__EntraId__TenantId: tenant().tenantId
       OnedriveDownload__EntraId__UserAssignedClientId: userAssignedIdentity.properties.clientId
       OnedriveDownload__EntraId__ClientId: entraApp.outputs.mcpAppId
-      FileShareConnectionString: 'DefaultEndpointsProtocol=https;AccountName=${fileShareStorage.name};AccountKey=${fileShareStorage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+      FileShareConnectionString: 'DefaultEndpointsProtocol=https;AccountName=${fileShareStorage.name};AccountKey=${listKeys(fileShareStorage.id, fileShareStorage.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
     }
   }
 }
@@ -170,7 +178,7 @@ resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 // Grant the function app's identity access to the file share storage account
 var storageFileDataSmbShareContributorRole = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb')
 
-resource fileShareRbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource fileShareStorageRbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(fileShareStorage.id, userAssignedIdentity.id, storageFileDataSmbShareContributorRole)
   scope: fileShareStorage
   properties: {

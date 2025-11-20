@@ -73,16 +73,15 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             Logger.LogInformation("=== OneDriveTool.DownloadFileFromUrlAsync called ===");
             Logger.LogInformation("sharingUrl: {SharingUrl}", sharingUrl);
 
-            // Step 1: Azure 자격증명에서 토큰 자동 획득 (azd auth login 포함)
+            // Step 1: Personal OneDrive 토큰 획득 (M365 테넌트 자동 검색)
             var userAuthService = serviceProvider.GetRequiredService<IUserAuthenticationService>();
-            var accessToken = await userAuthService.GetCurrentUserAccessTokenAsync();
-            Logger.LogInformation("User token status: {TokenStatus}", string.IsNullOrEmpty(accessToken) ? "NOT FOUND" : "FOUND");
+            var accessToken = await userAuthService.GetPersonalOneDriveAccessTokenAsync();
+            Logger.LogInformation("Personal OneDrive token status: {TokenStatus}", string.IsNullOrEmpty(accessToken) ? "NOT FOUND" : "FOUND");
 
-            // 사용자 토큰 확인
             if (string.IsNullOrEmpty(accessToken))
             {
-                result.ErrorMessage = "User not authenticated. Please run 'azd auth login' first.";
-                Logger.LogWarning("No user token found from Azure credentials");
+                result.ErrorMessage = "Failed to acquire Personal OneDrive token. Please ensure you are logged in with 'azd auth login'.";
+                Logger.LogWarning("No Personal OneDrive token found");
                 return result;
             }
 
@@ -94,197 +93,65 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 return result;
             }
 
-            // URL이 파일 경로인지 공유 URL인지 확인
-            bool isFilePath = sharingUrl.StartsWith("/") || sharingUrl.Contains(".itemPath");
-            bool isSharingUrl = Uri.TryCreate(sharingUrl, UriKind.Absolute, out var uri);
-
-            if (!isFilePath && !isSharingUrl)
+            if (!Uri.TryCreate(sharingUrl, UriKind.Absolute, out var uri))
             {
-                result.ErrorMessage = "Invalid URL format. Please provide a valid OneDrive sharing URL or file path.";
+                result.ErrorMessage = "Invalid URL format. Please provide a valid OneDrive sharing URL.";
                 Logger.LogWarning("Invalid URL format provided: {SharingUrl}", sharingUrl);
                 return result;
             }
 
-            // 공유 URL인 경우 도메인 검증
-            if (isSharingUrl && uri != null)
-            {
-                string host = uri.Host.ToLowerInvariant();
-                if (!host.EndsWith("1drv.ms") && !host.EndsWith("onedrive.live.com") &&
-                    !host.EndsWith("sharepoint.com") && !host.EndsWith("microsoft.com"))
-                {
-                    result.ErrorMessage = "The provided URL is not a recognized OneDrive or SharePoint sharing URL.";
-                    Logger.LogWarning("Unrecognized host for sharing URL: {Host}", host);
-                    return result;
-                }
-            }
+            Logger.LogInformation("URL validated successfully");
 
-            Logger.LogInformation("URL validated successfully. IsFilePath: {IsFilePath}", isFilePath);
-
-            // Step 2.5: 파일 경로 확인
-            if (isFilePath)
-            {
-                result.ErrorMessage = "File path access is not yet supported. Please use OneDrive sharing URL.";
-                Logger.LogWarning("File path not supported: {FilePath}", sharingUrl);
-                return result;
-            }
-
-            // Step 3: Graph API를 통한 파일 다운로드
+            // Step 3: Graph API를 통한 파일 다운로드 (Personal 365 테넌트)
             Stream? fileContent = null;
             string fileName = "unknown_file";
 
             try
             {
-                Logger.LogInformation("Attempting to download via Graph API with user token");
+                Logger.LogInformation("Attempting to download via Graph API with Personal OneDrive token");
 
-                // 공유 URL에서 itemId 추출
-                var itemId = ExtractItemIdFromUrl(sharingUrl);
+                // Encode sharing URL for Graph API
+                string encodedSharingUrl = System.Web.HttpUtility.UrlEncode(sharingUrl);
+                string base64EncodedUrl = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"u!{encodedSharingUrl}"))
+                    .TrimEnd('=').Replace('+', '-').Replace('/', '_');
 
-                if (string.IsNullOrEmpty(itemId))
-                {
-                    result.ErrorMessage = "Could not extract file ID from sharing URL.";
-                    Logger.LogWarning("Failed to extract item ID from URL: {SharingUrl}", sharingUrl);
-                    return result;
-                }
+                // Graph API endpoint for shared drive items
+                string graphUrl = $"https://graph.microsoft.com/v1.0/shares/{base64EncodedUrl}/driveItem/content";
 
-                Logger.LogInformation("Accessing file via Graph API with user token");
+                Logger.LogInformation("Graph API URL: {GraphUrl}", graphUrl);
 
-                // /content 엔드포인트로 파일 다운로드 (사용자 토큰 포함)
-                using var httpClient = new System.Net.Http.HttpClient();
-                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-
-                // Always use Graph API for downloads (more reliable)
-                // If itemId is a URL (1drv.ms), we'll use it but append ?download=1 for redirect handling
-                string contentUrl;
-                string? graphItemId = null;
-
-                // Configure HttpClient to follow redirects and handle file downloads properly
+                // Configure HttpClient
                 var handler = new System.Net.Http.HttpClientHandler
                 {
                     AllowAutoRedirect = true,
                     MaxAutomaticRedirections = 5
                 };
 
-                if (itemId != null && itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                {
-                    // itemId가 실제로 URL인 경우 (기타 공유 링크)
-                    // 직접 이 URL로 요청 (리다이렉트 자동 처리)
-                    contentUrl = itemId;
-                    Logger.LogInformation("Using direct URL for download: {ContentUrl}", contentUrl);
-                }
-                else
-                {
-                    // itemId를 추출한 경우 또는 1drv.ms에서 추출한 경우 Graph API 사용
-                    graphItemId = itemId;
-                    contentUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{itemId}/content";
-                    Logger.LogInformation("Downloading from Graph API endpoint: {ContentUrl}", contentUrl);
-                }
-
                 using var downloadClient = new System.Net.Http.HttpClient(handler);
-                downloadClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+                downloadClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+                downloadClient.Timeout = TimeSpan.FromMinutes(5);
 
-                // 1drv.ms URL은 공개 링크이므로 Authorization 헤더 불필요
-                // Graph API는 Authorization 헤더 필수
-                if (itemId.StartsWith("http", StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    downloadClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-                }
-                downloadClient.Timeout = TimeSpan.FromMinutes(5); // Allow more time for large files
-
-                var response = await downloadClient.GetAsync(contentUrl);
+                var response = await downloadClient.GetAsync(graphUrl);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     Logger.LogWarning("Failed to download file content. Status: {StatusCode}", response.StatusCode);
                     var errorContent = await response.Content.ReadAsStringAsync();
-
-                    if (errorContent.Contains("SPO license") || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                    {
-                        result.ErrorMessage = "Tenant does not have a SharePoint Online (SPO) license. " +
-                            "Please verify your license or use a public sharing link.";
-                    }
-                    else
-                    {
-                        result.ErrorMessage = $"Failed to download file. HTTP Status: {response.StatusCode}";
-                    }
+                    result.ErrorMessage = $"Failed to download file. HTTP Status: {response.StatusCode}. Error: {errorContent}";
                     return result;
                 }
 
-                // 파일명 추출 시도
+                // Extract filename from Content-Disposition header
                 fileName = ExtractFileName(response, uri!);
-
-                // Graph API itemId가 있으면 파일 메타데이터를 조회해서 실제 파일명 가져오기
-                if (!string.IsNullOrEmpty(graphItemId))
-                {
-                    try
-                    {
-                        var metadataUrl = $"https://graph.microsoft.com/v1.0/me/drive/items/{graphItemId}";
-                        var metadataResponse = await httpClient.GetAsync(metadataUrl);
-                        if (metadataResponse.IsSuccessStatusCode)
-                        {
-                            var metadataContent = await metadataResponse.Content.ReadAsStringAsync();
-                            Logger.LogInformation("File metadata response: {Metadata}", metadataContent);
-
-                            // JSON 파싱으로 name 필드 추출
-                            try
-                            {
-                                using (JsonDocument doc = JsonDocument.Parse(metadataContent))
-                                {
-                                    var root = doc.RootElement;
-                                    if (root.TryGetProperty("name", out JsonElement nameElement))
-                                    {
-                                        var extractedName = nameElement.GetString();
-                                        if (!string.IsNullOrEmpty(extractedName))
-                                        {
-                                            fileName = System.Net.WebUtility.HtmlDecode(extractedName);
-                                            Logger.LogInformation("Extracted filename from metadata: {FileName}", fileName);
-                                        }
-                                    }
-                                }
-                            }
-                            catch (JsonException ex)
-                            {
-                                Logger.LogWarning(ex, "Failed to parse metadata JSON, using extracted filename");
-                            }
-                        }
-                        else
-                        {
-                            Logger.LogWarning("Failed to fetch metadata. Status: {StatusCode}", metadataResponse.StatusCode);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogWarning(ex, "Failed to fetch file metadata, using extracted filename");
-                    }
-                }
-
-                // If filename still looks like an itemId, use default with extension
-                if (fileName.StartsWith("s!", StringComparison.OrdinalIgnoreCase) || fileName.Contains("!"))
-                {
-                    // Content-Type에서 확장자 추출
-                    string extension = ".bin";
-                    if (response.Content.Headers.ContentType?.MediaType != null)
-                    {
-                        extension = GetExtensionFromContentType(response.Content.Headers.ContentType.MediaType);
-                    }
-                    fileName = $"downloaded_file_{DateTime.UtcNow:yyyyMMdd_HHmmss}{extension}";
-                    Logger.LogInformation("Filename appears to be itemId, using default with extension: {FileName}", fileName);
-                }
 
                 Logger.LogInformation("Final filename: {FileName}", fileName);
 
-                // 파일 내용 다운로드
+                // Download file content
                 fileContent = new MemoryStream();
                 await response.Content.CopyToAsync(fileContent);
                 fileContent.Position = 0;
 
-                Logger.LogInformation("Successfully downloaded file via Graph API with user token. File name: {FileName}", fileName);
-            }
-            catch (Exception ex) when (ex.Message.Contains("BadRequest") || ex.Message.Contains("SPO license"))
-            {
-                Logger.LogError(ex, "SPO license error: {ErrorMessage}", ex.Message);
-                result.ErrorMessage = "Tenant does not have a SharePoint Online (SPO) license. " +
-                    "Please acquire SPO license or ensure it's properly assigned.";
-                return result;
+                Logger.LogInformation("Successfully downloaded file via Graph API. File name: {FileName}", fileName);
             }
             catch (Exception ex)
             {

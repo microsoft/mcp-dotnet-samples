@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(curl:*)",
+      "Bash(az storage account show-connection-string:*)",
+      "Bash(export AZURE_STORAGE_CONNECTION_STRING=\"DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=st34ugypgdcsh76files;AccountKey=kJvxLikJiqJYcgQIsx8ym2jd7R8VU69hVL7EKMb6qBkV5mwlwS6+CdtOysV+Lr8MxP+LF6UrqUXa+AStf2Lz+Q==;BlobEndpoint=https://st34ugypgdcsh76files.blob.core.windows.net/;FileEndpoint=https://st34ugypgdcsh76files.file.core.windows.net/;QueueEndpoint=https://st34ugypgdcsh76files.queue.core.windows.net/;TableEndpoint=https://st34ugypgdcsh76files.table.core.windows.net/\")",
+      "Bash(az storage file download:*)",
+      "Bash(az storage file:*)"
     ],
     "deny": [],
     "ask": []
