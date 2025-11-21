@@ -155,7 +155,7 @@ public class ProvisionRefreshToken
 
             // Step 6: 토큰 교환
             Console.WriteLine("Step 5: Exchanging authorization code for tokens...");
-            string? refreshToken = await ExchangeCodeForToken(pca, code, redirectUri);
+            string? refreshToken = await ExchangeCodeForToken(pca, code, redirectUri, clientId);
 
             if (string.IsNullOrEmpty(refreshToken))
             {
@@ -203,16 +203,16 @@ public class ProvisionRefreshToken
     /// <summary>
     /// Authorization Code를 Refresh Token으로 교환
     /// </summary>
-    private static async Task<string?> ExchangeCodeForToken(IPublicClientApplication pca, string code, string redirectUri)
+    private static async Task<string?> ExchangeCodeForToken(IPublicClientApplication pca, string code, string redirectUri, string clientId)
     {
         // 직접 REST API를 통해 token 교환
-        return await GetRefreshTokenDirectly(code, redirectUri);
+        return await GetRefreshTokenDirectly(code, redirectUri, clientId);
     }
 
     /// <summary>
     /// REST API를 통해 직접 Refresh Token 획득
     /// </summary>
-    private static async Task<string?> GetRefreshTokenDirectly(string code, string redirectUri)
+    private static async Task<string?> GetRefreshTokenDirectly(string code, string redirectUri, string clientId)
     {
         try
         {
@@ -220,7 +220,7 @@ public class ProvisionRefreshToken
 
             // Authorization code 교환 요청
             // scope은 authorization 단계에서 이미 설정되었으므로 여기서는 필요 없음
-            var requestBodyString = $"client_id={Uri.EscapeDataString(ClientId)}&" +
+            var requestBodyString = $"client_id={Uri.EscapeDataString(clientId)}&" +
                                    $"code={Uri.EscapeDataString(code)}&" +
                                    $"redirect_uri={Uri.EscapeDataString(redirectUri)}&" +
                                    $"grant_type=authorization_code";
