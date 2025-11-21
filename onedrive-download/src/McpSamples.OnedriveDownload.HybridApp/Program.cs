@@ -13,6 +13,19 @@ using Microsoft.Graph;
 
 using Constants = McpSamples.OnedriveDownload.HybridApp.Constants;
 
+// ============================================================
+// 1. [.env 로더 추가] 프로그램 시작하자마자 환경 변수 파일 로드
+// ============================================================
+LoadEnvFile(".env.local");
+
+// azd 환경(.azure/...)도 로드하려면 아래 로직 추가 가능 (선택)
+var azdEnvName = Environment.GetEnvironmentVariable("AZURE_ENV_NAME");
+if (!string.IsNullOrEmpty(azdEnvName))
+{
+    var azdPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), ".azure", azdEnvName, ".env");
+    LoadEnvFile(azdPath);
+}
+
 // Check if running in provisioning mode (during azd provision)
 var isProvisioning = args.Contains("--provision", StringComparer.InvariantCultureIgnoreCase);
 if (isProvisioning)
@@ -145,3 +158,34 @@ if (useStreamableHttp == true)
 }
 
 await app.RunAsync();
+
+// ============================================================
+// Helper 함수: .env 파일 로더
+// ============================================================
+static void LoadEnvFile(string filePath)
+{
+    if (!System.IO.File.Exists(filePath)) return;
+
+    foreach (var line in System.IO.File.ReadAllLines(filePath))
+    {
+        // 주석이나 빈 줄 무시
+        if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
+
+        // KEY=VALUE 분리
+        var parts = line.Split('=', 2);
+        if (parts.Length != 2) continue;
+
+        var key = parts[0].Trim();
+        var value = parts[1].Trim();
+
+        // 값에 따옴표가 있으면 제거 ("VALUE" -> VALUE)
+        if (value.StartsWith("\"") && value.EndsWith("\"") && value.Length >= 2)
+        {
+            value = value.Substring(1, value.Length - 2);
+        }
+
+        // 환경 변수 설정 (현재 프로세스 내에서만 유효)
+        Environment.SetEnvironmentVariable(key, value);
+    }
+    Console.WriteLine($"[INFO] 환경 변수 파일 로드 완료: {filePath}");
+}

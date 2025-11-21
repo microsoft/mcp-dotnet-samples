@@ -44,6 +44,10 @@ var queueSettings = enableQueue ? { AzureWebJobsStorage__queueServiceUri: stg.pr
 var tableSettings = enableTable ? { AzureWebJobsStorage__tableServiceUri: stg.properties.primaryEndpoints.table } : {}
 var fileSettings = enableFile ? { AzureWebJobsStorage__fileServiceUri: stg.properties.primaryEndpoints.file } : {}
 
+// 스토리지 연결 문자열 자동 생성
+var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${stg.name};AccountKey=${stg.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+var storageConnectionStringSettings = { AZURE_STORAGE_CONNECTION_STRING: storageConnectionString }
+
 // Merge all app settings
 var allAppSettings = union(
   appSettings,
@@ -51,6 +55,7 @@ var allAppSettings = union(
   queueSettings,
   tableSettings,
   fileSettings,
+  storageConnectionStringSettings,
   baseAppSettings
 )
 

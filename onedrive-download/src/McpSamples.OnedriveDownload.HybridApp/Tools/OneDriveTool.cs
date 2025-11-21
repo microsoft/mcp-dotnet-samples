@@ -67,8 +67,6 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
     public async Task<OneDriveDownloadResult> DownloadFileFromUrlAsync(
         [Description("The OneDrive sharing URL (e.g., https://1drv.ms/u/s!ABC... or https://onedrive.live.com/embed?resid=...)")] string sharingUrl)
     {
-        var result = new OneDriveDownloadResult();
-
         try
         {
             Logger.LogInformation("=== OneDriveTool.DownloadFileFromUrlAsync started ===");
@@ -77,187 +75,188 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             // Step 1: OneDrive 공유 URL 인코딩 (u!...)
             string base64Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(sharingUrl));
             string encodedUrl = "u!" + base64Value.TrimEnd('=').Replace('/', '_').Replace('+', '-');
-            Logger.LogInformation("Encoded URL: {EncodedUrl}", encodedUrl);
+            Logger.LogInformation("✓ 인코딩된 URL: {EncodedUrl}", encodedUrl);
 
-            // Step 2: Personal OneDrive 토큰 획득
-            Logger.LogInformation("Acquiring Personal OneDrive access token");
-            var accessToken = await UserAuthService.GetPersonalOneDriveAccessTokenAsync();
-
-            if (string.IsNullOrEmpty(accessToken))
-            {
-                result.ErrorMessage = "Failed to acquire Personal OneDrive token. Please ensure PERSONAL_365_REFRESH_TOKEN is set.";
-                Logger.LogError("Personal OneDrive token acquisition failed");
-                return result;
-            }
-            Logger.LogInformation("✓ Access token acquired");
-
-            // Step 3: Graph API를 사용하여 드라이브 아이템 메타데이터 및 다운로드 URL 획득
-            Logger.LogInformation("Fetching drive item metadata from Graph API");
+            // Step 2: Graph API 클라이언트 준비
+            Logger.LogInformation("Graph API 클라이언트 초기화 중");
             var graphClient = await UserAuthService.GetPersonalOneDriveGraphClientAsync();
 
+            // Step 3: 드라이브 아이템 메타데이터 조회 (파일명, 크기 확인용)
+            Logger.LogInformation("Graph API에서 드라이브 아이템 메타데이터 조회 중");
             var driveItem = await graphClient
                 .Shares[encodedUrl]
                 .DriveItem
                 .Request()
                 .GetAsync();
 
-            Logger.LogInformation("✓ Drive item retrieved: {FileName}", driveItem.Name);
+            Logger.LogInformation("✓ 드라이브 아이템 조회 완료: {FileName}", driveItem.Name);
 
-            // Step 4: @microsoft.graph.downloadUrl 직접 다운로드 URL 추출
-            if (!driveItem.AdditionalData.TryGetValue("@microsoft.graph.downloadUrl", out var downloadUrlObj) ||
-                downloadUrlObj is not string directDownloadUrl)
+            // 폴더인지 확인 (폴더는 다운로드 불가)
+            if (driveItem.Folder != null)
             {
-                result.ErrorMessage = "OneDrive download URL not found in response.";
-                Logger.LogError("Failed to extract download URL from drive item");
-                return result;
-            }
-            Logger.LogInformation("✓ Direct download URL obtained");
-
-            // Step 5: Graph API 제공 URL로부터 직접 스트림 다운로드 (메모리 로드 없음)
-            Logger.LogInformation("Starting file download stream from OneDrive");
-            using var httpClient = new HttpClient();
-            using var fileStream = await httpClient.GetStreamAsync(directDownloadUrl);
-            Logger.LogInformation("✓ File stream opened successfully");
-
-            // Step 6: Azure File Share에 스트리밍으로 업로드
-            Logger.LogInformation("Uploading file to Azure File Share: {FileName}", driveItem.Name);
-            var uploadResult = await UploadToFileShareAsync(fileStream, driveItem.Name, driveItem.Size ?? 0);
-
-            if (!uploadResult.Success)
-            {
-                result.ErrorMessage = uploadResult.ErrorMessage;
-                Logger.LogError("File Share upload failed: {Error}", uploadResult.ErrorMessage);
-                return result;
+                return new OneDriveDownloadResult
+                {
+                    ErrorMessage = "공유 링크가 파일이 아닌 폴더입니다."
+                };
             }
 
-            Logger.LogInformation("✓ File uploaded successfully");
-            result.FileName = uploadResult.FileName;
-            result.DownloadPath = uploadResult.SasUrl;
-            Logger.LogInformation("=== Download complete. SAS URL: {SasUrl}", uploadResult.SasUrl);
+            // Step 4: Azure File Share 준비
+            Logger.LogInformation("Azure File Share 준비 중");
+            var connectionString = Configuration["AZURE_STORAGE_CONNECTION_STRING"]
+                                   ?? Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
 
-            return result;
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Download failed with exception: {ErrorMessage}", ex.Message);
-            result.ErrorMessage = $"Error: {ex.Message}";
-            return result;
-        }
-    }
-
-    /// <summary>
-    /// Azure File Share에 스트림을 직접 업로드 (메모리에 로드하지 않음)
-    /// </summary>
-    private async Task<(bool Success, string FileName, string SasUrl, string? ErrorMessage)> UploadToFileShareAsync(
-        Stream fileStream,
-        string fileName,
-        long? fileSize)
-    {
-        try
-        {
-            Logger.LogInformation("=== Starting File Share Upload ===");
-            Logger.LogInformation("File: {FileName}, Size: {FileSize} bytes", fileName, fileSize);
-
-            var connectionString = Configuration["FileShareConnectionString"];
             if (string.IsNullOrEmpty(connectionString))
             {
-                Logger.LogError("FileShareConnectionString is not configured");
-                return (false, fileName, "", "File share connection string is not configured.");
+                Logger.LogError("AZURE_STORAGE_CONNECTION_STRING is not configured");
+                return new OneDriveDownloadResult
+                {
+                    ErrorMessage = "Azure Storage 연결 문자열이 구성되지 않았습니다."
+                };
             }
 
-            // ShareClient 생성 및 Share 존재 여부 확인
             var shareClient = new ShareClient(connectionString, FileShareName);
             await shareClient.CreateIfNotExistsAsync();
-            Logger.LogInformation("✓ File share ready");
-
-            // 루트 디렉토리 클라이언트
             var directoryClient = shareClient.GetRootDirectoryClient();
 
-            // 파일명 정규화 (시간 추가하여 중복 방지)
-            string safeFileName = $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{fileName}";
+            // 파일명 중복 방지를 위해 시간 추가
+            string safeFileName = $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{driveItem.Name}";
             var fileClient = directoryClient.GetFileClient(safeFileName);
 
-            // 기존 파일 삭제 시도
+            Logger.LogInformation("파일명: {FileName}, 크기: {FileSize} bytes", safeFileName, driveItem.Size);
+
+            // Step 5: ★★★ Graph SDK의 Content.Request().GetAsync() 사용 ★★★
+            // URL을 찾지 않고 SDK가 제공하는 콘텐츠 스트림 직접 요청
+            // 이 방식은 @microsoft.graph.downloadUrl이 없어도 작동합니다.
+            Logger.LogInformation("Graph API에서 파일 콘텐츠 스트림 요청 중");
+            using (var contentStream = await graphClient.Shares[encodedUrl].DriveItem.Content.Request().GetAsync())
+            {
+                Logger.LogInformation("✓ 파일 스트림 수신 완료");
+
+                // Step 6: Azure File Share에 스트리밍으로 업로드
+                Logger.LogInformation("Azure File Share에 파일 업로드 중: {FileName}", safeFileName);
+
+                // 파일 생성 (크기 지정)
+                await fileClient.CreateAsync(driveItem.Size ?? 0);
+                Logger.LogInformation("✓ 파일 생성 완료");
+
+                // 스트림 업로드
+                await fileClient.UploadAsync(contentStream);
+                Logger.LogInformation("✓ 파일 업로드 완료");
+            }
+
+            // Step 7: SAS 토큰 생성하여 다운로드 URL 생성
             try
             {
-                await fileClient.DeleteAsync();
-                Logger.LogInformation("Deleted existing file");
-            }
-            catch (Azure.RequestFailedException ex) when (ex.Status == 404)
-            {
-                Logger.LogInformation("File does not exist, creating new");
-            }
+                // 연결 문자열에서 계정 정보 추출
+                var accountName = ExtractAccountNameFromConnectionString(connectionString);
+                var accountKey = ExtractAccountKeyFromConnectionString(connectionString);
 
-            // 파일 생성 (크기 지정)
-            Logger.LogInformation("Creating file with size: {FileSize}", fileSize ?? 0);
-            await fileClient.CreateAsync(fileSize ?? 0);
+                if (string.IsNullOrEmpty(accountName) || string.IsNullOrEmpty(accountKey))
+                {
+                    Logger.LogWarning("SAS 토큰 생성을 위한 계정 정보를 추출할 수 없습니다. 일반 URI 반환");
+                    string downloadUrl = fileClient.Uri.AbsoluteUri;
+                    return new OneDriveDownloadResult
+                    {
+                        FileName = driveItem.Name,
+                        DownloadPath = downloadUrl,
+                        ErrorMessage = null
+                    };
+                }
 
-            // 스트림으로 직접 업로드 (메모리 버퍼링 없음)
-            Logger.LogInformation("Uploading file stream directly");
-            await fileClient.UploadAsync(fileStream);
-            Logger.LogInformation("✓ File uploaded successfully");
-
-            // SAS URI 생성 (24시간 유효)
-            try
-            {
-                // Azure.Storage.StorageSharedKeyCredential를 사용하여 SAS 생성
-                var accountName = GetAccountNameFromConnectionString(connectionString);
-                var accountKey = GetAccountKeyFromConnectionString(connectionString);
                 var credential = new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey);
 
-                // ShareFileSasBuilder 사용
-                var sasBuilder = new Azure.Storage.Files.Shares.ShareFileSasBuilder
+                // SAS 토큰 빌더 생성
+                var sasBuilder = new Azure.Storage.Sas.ShareSasBuilder()
                 {
                     ShareName = FileShareName,
                     FilePath = safeFileName,
-                    Resource = "f", // file
                     ExpiresOn = DateTimeOffset.UtcNow.AddHours(24)
                 };
-                sasBuilder.SetPermissions(Azure.Storage.Files.Shares.ShareFileSasPermissions.Read);
 
-                Uri sasUri = fileClient.GenerateSasUri(sasBuilder);
-                Logger.LogInformation("✓ SAS URL generated");
+                // Read 권한만 부여
+                sasBuilder.SetPermissions(Azure.Storage.Sas.ShareFileSasPermissions.Read);
 
-                return (true, safeFileName, sasUri.ToString(), null);
+                // SAS URI 생성
+                Uri sasUri = new Uri($"{fileClient.Uri}?{sasBuilder.ToSasQueryParameters(credential)}");
+                Logger.LogInformation("✓ SAS 토큰 생성 완료");
+                Logger.LogInformation("=== 다운로드 완료. SAS URL: {SasUrl}", sasUri.AbsoluteUri);
+
+                return new OneDriveDownloadResult
+                {
+                    FileName = driveItem.Name,
+                    DownloadPath = sasUri.AbsoluteUri,
+                    ErrorMessage = null
+                };
             }
-            catch (Exception saEx)
+            catch (Exception sasEx)
             {
-                Logger.LogWarning(saEx, "Failed to generate SAS URL, returning file URL without SAS");
-                return (true, safeFileName, fileClient.Uri.AbsoluteUri, null);
+                Logger.LogWarning(sasEx, "SAS 토큰 생성 실패, 일반 URI 반환");
+
+                // SAS 실패 시 일반 URI만 반환
+                string downloadUrl = fileClient.Uri.AbsoluteUri;
+                return new OneDriveDownloadResult
+                {
+                    FileName = driveItem.Name,
+                    DownloadPath = downloadUrl,
+                    ErrorMessage = null
+                };
             }
+        }
+        catch (ServiceException svEx)
+        {
+            // Graph API 관련 에러 디버깅용
+            Logger.LogError(svEx, "Graph API 에러: {StatusCode} - {ErrorMessage}", svEx.StatusCode, svEx.Message);
+            return new OneDriveDownloadResult
+            {
+                ErrorMessage = $"OneDrive 에러: {svEx.Message}"
+            };
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "File Share upload failed: {ErrorMessage}", ex.Message);
-            return (false, fileName, "", $"Failed to upload file: {ex.Message}");
+            Logger.LogError(ex, "파일 다운로드 실패: {ErrorMessage}", ex.Message);
+            return new OneDriveDownloadResult
+            {
+                ErrorMessage = $"시스템 에러: {ex.Message}"
+            };
         }
     }
 
     /// <summary>
-    /// 연결 문자열에서 계정 이름 추출
+    /// 연결 문자열에서 스토리지 계정 이름 추출
     /// </summary>
-    private string GetAccountNameFromConnectionString(string connectionString)
+    private static string? ExtractAccountNameFromConnectionString(string connectionString)
     {
+        if (string.IsNullOrEmpty(connectionString))
+            return null;
+
         var parts = connectionString.Split(';');
         foreach (var part in parts)
         {
-            if (part.StartsWith("AccountName="))
+            if (part.StartsWith("AccountName=", StringComparison.OrdinalIgnoreCase))
+            {
                 return part.Substring("AccountName=".Length);
+            }
         }
-        return "";
+        return null;
     }
 
     /// <summary>
-    /// 연결 문자열에서 계정 키 추출
+    /// 연결 문자열에서 스토리지 계정 키 추출
     /// </summary>
-    private string GetAccountKeyFromConnectionString(string connectionString)
+    private static string? ExtractAccountKeyFromConnectionString(string connectionString)
     {
+        if (string.IsNullOrEmpty(connectionString))
+            return null;
+
         var parts = connectionString.Split(';');
         foreach (var part in parts)
         {
-            if (part.StartsWith("AccountKey="))
+            if (part.StartsWith("AccountKey=", StringComparison.OrdinalIgnoreCase))
+            {
                 return part.Substring("AccountKey=".Length);
+            }
         }
-        return "";
+        return null;
     }
+
 }
