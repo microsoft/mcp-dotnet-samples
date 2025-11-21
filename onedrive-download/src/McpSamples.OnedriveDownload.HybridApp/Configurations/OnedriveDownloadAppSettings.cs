@@ -42,4 +42,9 @@ public class EntraIdSettings
     /// Gets or sets the value indicating whether to use the managed identity or not.
     /// </summary>
     public bool UseManagedIdentity { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Personal 365 refresh token for OneDrive access.
+    /// </summary>
+    public string? Personal365RefreshToken { get; set; }
 }
