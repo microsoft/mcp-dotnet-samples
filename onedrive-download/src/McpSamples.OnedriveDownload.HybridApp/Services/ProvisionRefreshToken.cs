@@ -17,10 +17,10 @@ using Microsoft.Identity.Client;
 /// </summary>
 public class ProvisionRefreshToken
 {
-    private const string ClientId = "44609b96-b8ed-48cd-ae81-75abbd52ffd1";
     private const string TenantId = "consumers"; // 개인 계정 필수
+    private static readonly string DefaultClientId = "44609b96-b8ed-48cd-ae81-75abbd52ffd1"; // 기본값
 
-    public static async Task ProvisionAsync()
+    public static async Task ProvisionAsync(IConfiguration? configuration = null)
     {
         Console.WriteLine("========================================");
         Console.WriteLine("Personal 365 Refresh Token Provisioning");
@@ -28,6 +28,12 @@ public class ProvisionRefreshToken
 
         try
         {
+            // Step 0: ClientId 설정에서 읽기
+            var clientId = configuration?["EntraId:ClientId"]
+                        ?? configuration?["OnedriveDownload:EntraId:ClientId"]
+                        ?? DefaultClientId;
+            Console.WriteLine($"Using ClientId: {clientId}\n");
+
             // Step 1: 환경 파일 경로 확인
             var envName = Environment.GetEnvironmentVariable("AZURE_ENV_NAME");
             string envFilePath;
@@ -85,7 +91,7 @@ public class ProvisionRefreshToken
             // Step 3: MSAL 공개 클라이언트 애플리케이션 생성
             Console.WriteLine("Step 3: Creating MSAL PublicClientApplication...");
             IPublicClientApplication pca = PublicClientApplicationBuilder
-                .Create(ClientId)
+                .Create(clientId)
                 .WithAuthority(AadAuthorityAudience.AzureAdAndPersonalMicrosoftAccount)
                 .Build();
 
@@ -94,7 +100,7 @@ public class ProvisionRefreshToken
             // Step 4: 인증 URL 생성
             Console.WriteLine("Step 4: Opening browser for authentication...");
             var authUrl = $"https://login.microsoftonline.com/{TenantId}/oauth2/v2.0/authorize?" +
-                         $"client_id={Uri.EscapeDataString(ClientId)}&" +
+                         $"client_id={Uri.EscapeDataString(clientId)}&" +
                          $"response_type=code&" +
                          $"redirect_uri={Uri.EscapeDataString(redirectUri)}&" +
                          $"response_mode=query&" +

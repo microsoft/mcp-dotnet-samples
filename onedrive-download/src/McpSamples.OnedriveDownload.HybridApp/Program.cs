@@ -17,7 +17,12 @@ using Constants = McpSamples.OnedriveDownload.HybridApp.Constants;
 var isProvisioning = args.Contains("--provision", StringComparer.InvariantCultureIgnoreCase);
 if (isProvisioning)
 {
-    await ProvisionRefreshToken.ProvisionAsync();
+    // Load configuration for provisioning
+    var configBuilder = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
+    var config = configBuilder.Build();
+
+    await ProvisionRefreshToken.ProvisionAsync(config);
     return;
 }
 
