@@ -10,13 +10,14 @@ public class OnedriveDownloadAppSettings : AppSettings
     /// <summary>
     /// Gets or sets the <see cref="EntraIdSettings"/> instance.
     /// </summary>
-    public EntraIdSettings EntraId { get; set; } = new EntraIdSettings();
+    public EntraIdSettings EntraId { get; set; } = new EntraIdSettings(Environment.GetEnvironmentVariable("AZURE_CLIENT_ID"));
 }
 
 /// <summary>
 /// This represents the Entra ID settings.
 /// </summary>
-public class EntraIdSettings
+/// <param name="userAssignedClientId">The user-assigned client ID from AZURE_CLIENT_ID environment variable.</param>
+public class EntraIdSettings(string? userAssignedClientId = default)
 {
     /// <summary>
     /// Gets or sets the tenant ID.
@@ -24,7 +25,7 @@ public class EntraIdSettings
     public string? TenantId { get; set; }
 
     /// <summary>
-    /// Gets or sets the client ID.
+    /// Gets or sets the client ID for Personal OneDrive OAuth.
     /// </summary>
     public string? ClientId { get; set; }
 
@@ -34,14 +35,14 @@ public class EntraIdSettings
     public string? ClientSecret { get; set; }
 
     /// <summary>
-    /// Gets or sets the user-assigned client ID.
+    /// Gets the user-assigned client ID from Azure Managed Identity.
     /// </summary>
-    public string? UserAssignedClientId { get; set; }
+    public string? UserAssignedClientId { get; } = userAssignedClientId;
 
     /// <summary>
-    /// Gets or sets the value indicating whether to use the managed identity or not.
+    /// Gets the value indicating whether to use the managed identity or not.
     /// </summary>
-    public bool UseManagedIdentity { get; set; }
+    public bool UseManagedIdentity { get; } = string.IsNullOrWhiteSpace(userAssignedClientId) == false;
 
     /// <summary>
     /// Gets or sets the Personal 365 refresh token for OneDrive access.

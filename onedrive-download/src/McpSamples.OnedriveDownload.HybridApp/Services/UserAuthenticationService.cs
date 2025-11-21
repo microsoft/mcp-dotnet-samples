@@ -139,9 +139,8 @@ public class UserAuthenticationService : IUserAuthenticationService
         {
             _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: Requesting new access token");
 
-            // Try multiple configuration key paths
-            var clientId = _configuration?["OnedriveDownload:EntraId:ClientId"]
-                        ?? _configuration?["EntraId:ClientId"];
+            // Get ClientId from configuration (bound from appsettings.json and environment variables)
+            var clientId = _configuration?["EntraId:ClientId"];
 
             _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: ClientId lookup result: {ClientId}",
                 string.IsNullOrEmpty(clientId) ? "NOT FOUND" : "FOUND");
