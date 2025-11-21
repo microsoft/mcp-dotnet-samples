@@ -153,7 +153,7 @@ public class UserAuthenticationService : IUserAuthenticationService
                 { "client_id", clientId },
                 { "refresh_token", refreshToken },
                 { "grant_type", "refresh_token" },
-                { "scope", "https://graph.microsoft.com/.default offline_access" }
+                { "scope", "Files.Read User.Read offline_access" }
             };
 
             var content = new System.Net.Http.FormUrlEncodedContent(requestBody);

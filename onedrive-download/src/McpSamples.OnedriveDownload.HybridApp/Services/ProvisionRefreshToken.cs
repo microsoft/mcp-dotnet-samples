@@ -105,14 +105,13 @@ public class ProvisionRefreshToken
             // 브라우저 실행 로직 개선 (URL 잘림 방지)
             try
             {
-                // Windows: cmd /c start 명령 사용 시 '&'를 '^&'로 이스케이프 해야 함
+                // Windows: URL을 따옴표로 감싸야 & 기호가 명령 구분자로 인식되지 않음
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    var escapedUrl = authUrl.Replace("&", "^&");
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                     {
                         FileName = "cmd.exe",
-                        Arguments = $"/c start {escapedUrl}",
+                        Arguments = $"/c start \"\" \"{authUrl}\"",
                         CreateNoWindow = true
                     });
                 }
