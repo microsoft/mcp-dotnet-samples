@@ -142,14 +142,17 @@ public class UserAuthenticationService : IUserAuthenticationService
             // Get ClientId from configuration (bound from appsettings.json and environment variables)
             var clientId = _configuration?["EntraId:ClientId"];
 
-            _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: ClientId lookup result: {ClientId}",
+            _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: Configuration lookup result: {ClientId}",
                 string.IsNullOrEmpty(clientId) ? "NOT FOUND" : "FOUND");
 
+            // Fallback to hardcoded value if configuration fails
             if (string.IsNullOrEmpty(clientId))
             {
-                _logger.LogError("GetAccessTokenFromRefreshTokenAsync: ClientId not found in configuration");
-                return null;
+                _logger.LogWarning("GetAccessTokenFromRefreshTokenAsync: ClientId not found in configuration, using fallback value");
+                clientId = "44609b96-b8ed-48cd-ae81-75abbd52ffd1";
             }
+
+            _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: Using ClientId: {ClientId}", clientId);
 
             using var httpClient = new System.Net.Http.HttpClient();
 
