@@ -473,6 +473,35 @@
       ]
     },
     {
+      "filename": "expert-nextjs-developer.chatmode.md",
+      "description": "Expert Next.js 16 developer specializing in App Router, Server Components, Cache Components, Turbopack, and modern React patterns with TypeScript",
+      "model": "GPT-4.1",
+      "tools": [
+        "changes",
+        "codebase",
+        "edit/editFiles",
+        "extensions",
+        "fetch",
+        "findTestFiles",
+        "githubRepo",
+        "new",
+        "openSimpleBrowser",
+        "problems",
+        "runCommands",
+        "runNotebooks",
+        "runTasks",
+        "runTests",
+        "search",
+        "searchResults",
+        "terminalLastCommand",
+        "terminalSelection",
+        "testFailure",
+        "usages",
+        "vscodeAPI",
+        "figma-dev-mode-mcp-server"
+      ]
+    },
+    {
       "filename": "expert-react-frontend-engineer.chatmode.md",
       "description": "Expert React 19.2 frontend engineer specializing in modern hooks, Server Components, Actions, TypeScript, and performance optimization",
       "tools": [
@@ -828,6 +857,20 @@
       "filename": "php-mcp-expert.chatmode.md",
       "description": "Expert assistant for PHP MCP server development using the official PHP SDK with attribute-based discovery",
       "model": "GPT-4.1"
+    },
+    {
+      "filename": "pimcore-expert.chatmode.md",
+      "description": "Expert Pimcore development assistant specializing in CMS, DAM, PIM, and E-Commerce solutions with Symfony integration",
+      "model": "GPT-4.1 | 'gpt-5' | 'Claude Sonnet 4.5'",
+      "tools": [
+        "codebase",
+        "terminalCommand",
+        "edit/editFiles",
+        "fetch",
+        "githubRepo",
+        "runTests",
+        "problems"
+      ]
     },
     {
       "filename": "plan.chatmode.md",
@@ -2109,6 +2152,13 @@
       "description": "Best practices for building Model Context Protocol servers in PHP using the official PHP SDK with attribute-based discovery and multiple transport options",
       "applyTo": [
         "**/*.php"
+      ]
+    },
+    {
+      "filename": "playwright-dotnet.instructions.md",
+      "description": "Playwright .NET test generation instructions",
+      "applyTo": [
+        "**"
       ]
     },
     {
@@ -4328,6 +4378,10 @@
           "kind": "agent"
         },
         {
+          "path": "agents/droid.agent.md",
+          "kind": "agent"
+        },
+        {
           "path": "agents/dynatrace-expert.agent.md",
           "kind": "agent"
         },
@@ -4968,6 +5022,11 @@
       ]
     },
     {
+      "filename": "arch.agent.md",
+      "name": "Senior Cloud Architect",
+      "description": "Expert in modern architecture design patterns, NFR requirements, and creating comprehensive architectural diagrams and documentation"
+    },
+    {
       "filename": "arm-migration.agent.md",
       "name": "arm-migration-agent",
       "description": "Arm Cloud Migration Assistant accelerates moving x86 workloads to Arm infrastructure. It scans the repository for architecture assumptions, portability issues, container base image and dependency incompatibilities, and recommends Arm-optimized changes. It can drive multi-arch container builds, validate performance, and guide optimization, enabling smooth cross-platform deployment directly inside GitHub.",
@@ -5016,6 +5075,61 @@
       "OPIK_SELF_HOSTED": "COPILOT_MCP_OPIK_SELF_HOSTED",
       "OPIK_TOOLSETS": "COPILOT_MCP_OPIK_TOOLSETS",
       "DEBUG_MODE": "COPILOT_MCP_OPIK_DEBUG"
+    },
+    {
+      "filename": "context7.agent.md",
+      "name": "Context7-Expert",
+      "description": "Expert in latest library versions, best practices, and correct syntax using up-to-date documentation",
+      "argument-hint": "Ask about specific libraries/frameworks (e.g., \"Next.js routing\", \"React hooks\", \"Tailwind CSS\")",
+      "tools": [
+        "get-library-docs",
+        "resolve-library-id"
+      ],
+      "mcp-servers": "",
+      "context7": "",
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": "{\"CONTEXT7_API_KEY\": \"${{ secrets.COPILOT_MCP_CONTEXT7 }}\"}",
+      "handoffs": [
+        "label: Implement with Context7"
+      ],
+      "agent": "agent",
+      "prompt": "Implement the solution using the Context7 best practices and documentation outlined above.",
+      "send": "false"
+    },
+    {
+      "filename": "diffblue-cover.agent.md",
+      "name": "DiffblueCover",
+      "description": "Expert agent for creating unit tests for java applications using Diffblue Cover.",
+      "tools": [
+        "*"
+      ],
+      "mcp-servers": "",
+      "DiffblueCover": "",
+      "type": "local",
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "fastmcp",
+        "fastmcp",
+        "run",
+        "/placeholder/path/to/cover-mcp/main.py"
+      ],
+      "env": "",
+      "DIFFBLUE_COVER_CLI": "/placeholder/path/to/dcover"
+    },
+    {
+      "filename": "droid.agent.md",
+      "name": "droid",
+      "description": "Provides installation guidance, usage examples, and automation patterns for the Droid CLI, with emphasis on droid exec for CI/CD and non-interactive automation",
+      "tools": [
+        "read",
+        "search",
+        "edit",
+        "shell"
+      ],
+      "model": "claude-sonnet-4-5-20250929"
     },
     {
       "filename": "dynatrace-expert.agent.md",
@@ -5204,6 +5318,22 @@
       ],
       "env": "",
       "STACKHAWK_API_KEY": "COPILOT_MCP_STACKHAWK_API_KEY"
+    },
+    {
+      "filename": "technical-content-evaluator.agent.md",
+      "name": "technical-content-evaluator",
+      "description": "Elite technical content editor and curriculum architect for evaluating technical training materials, documentation, and educational content. Reviews for technical accuracy, pedagogical excellence, content flow, code validation, and ensures A-grade quality standards.",
+      "tools": [
+        "edit",
+        "search",
+        "shell",
+        "fetch",
+        "runTasks",
+        "githubRepo",
+        "todos",
+        "runSubagent"
+      ],
+      "model": "Claude Sonnet 4.5 (copilot)"
     },
     {
       "filename": "terraform.agent.md",
