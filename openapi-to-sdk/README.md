@@ -3,9 +3,9 @@
 This is an MCP server that integrates with [Kiota](https://github.com/microsoft/kiota) to generate an SDK from OpenAPI documents.
 
 ```bash
-    docker run -i --rm -p 8080:8080 -v "$(pwd)/generated:/app/generated" openapi-to-sdk:latest
+    docker run -i --rm -p 8080:8080 openapi-to-sdk:latest
 ```
 
 ```bash
-    docker run -i --rm -p 8080:8080 -v "$(pwd)/generated:/app/wwwroot/generated" openapi-to-sdk:latest --http
+    docker run -i --rm -p 8080:8080 openapi-to-sdk:latest --http
 ```
