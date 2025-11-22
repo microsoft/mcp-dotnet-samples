@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Text;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Azure.Storage.Files.Shares;
 using Azure.Storage.Sas;
 using Microsoft.Graph;
@@ -181,6 +183,18 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 Logger.LogInformation("✓ SAS 토큰 생성 완료");
                 Logger.LogInformation("=== 다운로드 완료. SAS URL: {SasUrl}", sasUri.AbsoluteUri);
 
+                // Step 8: 볼륨 마운트 시도
+                try
+                {
+                    Logger.LogInformation("Step 8: Azure File Share 볼륨 마운트 시도 중");
+                    TryMountFileShare(connectionString);
+                    Logger.LogInformation("✓ Step 8: 볼륨 마운트 시도 완료");
+                }
+                catch (Exception mountEx)
+                {
+                    Logger.LogWarning(mountEx, "볼륨 마운트 실패 (계속 진행)");
+                }
+
                 return new OneDriveDownloadResult
                 {
                     FileName = driveItem.Name,
@@ -257,6 +271,129 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             }
         }
         return null;
+    }
+
+    /// <summary>
+    /// Azure File Share를 로컬에 마운트합니다.
+    /// Windows: Z: 드라이브, Mac/Linux: ~/downloads 폴더
+    /// </summary>
+    private void TryMountFileShare(string connectionString)
+    {
+        var accountName = ExtractAccountNameFromConnectionString(connectionString);
+        var accountKey = ExtractAccountKeyFromConnectionString(connectionString);
+
+        if (string.IsNullOrEmpty(accountName) || string.IsNullOrEmpty(accountKey))
+        {
+            Logger.LogWarning("마운트 실패: 연결 문자열에서 계정 정보를 추출할 수 없습니다.");
+            return;
+        }
+
+        try
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                MountWindowsDrive(accountName, accountKey);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                MountMacFolder(accountName, accountKey);
+            }
+            else
+            {
+                Logger.LogInformation("Linux는 sudo 권한이 필요하므로 자동 마운트를 건너뜁니다.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "마운트 시도 중 오류 발생");
+        }
+    }
+
+    /// <summary>
+    /// Windows에서 Z: 드라이브로 마운트
+    /// </summary>
+    private void MountWindowsDrive(string account, string key)
+    {
+        try
+        {
+            // 기존 연결 제거
+            RunCommand("net", $"use Z: /delete /y");
+
+            string uncPath = $@"\\{account}.file.core.windows.net\downloads";
+            string args = $"use Z: {uncPath} /u:AZURE\\{account} \"{key}\"";
+
+            RunCommand("net", args);
+
+            if (System.IO.Directory.Exists("Z:\\"))
+            {
+                Logger.LogInformation("✅ Windows 마운트 성공! [Z:] 드라이브를 확인하세요.");
+                try
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", "Z:");
+                }
+                catch { }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Windows 마운트 실패");
+        }
+    }
+
+    /// <summary>
+    /// Mac에서 ~/downloads 폴더로 마운트
+    /// </summary>
+    private void MountMacFolder(string account, string key)
+    {
+        try
+        {
+            string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string mountPath = Path.Combine(homeDir, "downloads_azure");
+
+            if (!System.IO.Directory.Exists(mountPath))
+            {
+                System.IO.Directory.CreateDirectory(mountPath);
+            }
+
+            string smbUrl = $"//AZURE;{account}:{key}@{account}.file.core.windows.net/downloads";
+            RunCommand("mount_smbfs", $"{smbUrl} {mountPath}");
+
+            Logger.LogInformation("✅ Mac 마운트 성공! [{MountPath}]를 확인하세요.", mountPath);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Mac 마운트 실패");
+        }
+    }
+
+    /// <summary>
+    /// 시스템 명령어 실행
+    /// </summary>
+    private void RunCommand(string command, string args)
+    {
+        var psi = new ProcessStartInfo
+        {
+            FileName = command,
+            Arguments = args,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using var process = System.Diagnostics.Process.Start(psi);
+        if (process == null)
+        {
+            throw new InvalidOperationException($"프로세스 시작 실패: {command}");
+        }
+
+        process.WaitForExit();
+
+        if (process.ExitCode != 0)
+        {
+            string error = process.StandardError.ReadToEnd();
+            Logger.LogWarning("명령어 실패 ({Command}): {Error}", command, error);
+        }
     }
 
 }
