@@ -204,3 +204,4 @@ output AZURE_USER_ASSIGNED_IDENTITY_PRINCIPAL_ID string = userAssignedIdentity.p
 output mcpAppId string = entraApp.outputs.mcpAppId
 // This output is no longer relevant, but keeping it to avoid breaking main.bicep for now. I will fix main.bicep next.
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = ''
+output AZURE_STORAGE_CONNECTION_STRING string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
