@@ -4,48 +4,87 @@
 Write-Host "🔄 Azure File Share 로컬 마운트 시작..." -ForegroundColor Cyan
 
 try {
-    # 1. azd 환경변수에서 연결 문자열 가져오기
-    Write-Host "📥 연결 문자열 추출 중..." -ForegroundColor Cyan
+    # 1. .env 파일 경로 찾기
+    Write-Host "📂 .env 파일 위치 탐색 중..." -ForegroundColor Cyan
 
-    $envValues = azd env get-values
-    $connStringLine = $envValues | Where-Object { $_ -match "AZURE_STORAGE_CONNECTION_STRING" }
+    $envFilePath = ""
+    $azdEnvName = $env:AZURE_ENV_NAME
 
-    if (-not $connStringLine) {
-        Write-Error "❌ 스토리지 연결 문자열을 찾을 수 없습니다."
+    if ($azdEnvName) {
+        # .azure/{env_name}/.env 경로
+        $envFilePath = ".\.azure\$azdEnvName\.env"
+    }
+    else {
+        Write-Host "⚠️  AZURE_ENV_NAME 환경변수가 설정되지 않았습니다." -ForegroundColor Yellow
+        Write-Host "   기본 경로 사용: .\.azure\main\.env" -ForegroundColor Yellow
+        $envFilePath = ".\.azure\main\.env"
+    }
+
+    if (-not (Test-Path $envFilePath)) {
+        Write-Error "❌ .env 파일을 찾을 수 없습니다."
+        Write-Error "   경로: $envFilePath"
+        Write-Host ""
+        Write-Host "👉 팁: infra/main.bicep 파일에서 appSettings 설정을 확인하세요." -ForegroundColor Cyan
         exit 1
     }
 
-    # "KEY=VALUE" 형태에서 VALUE만 추출 (따옴표 제거)
-    $connString = $connStringLine -split "=", 2 | Select-Object -Last 1
-    $connString = $connString.Trim('"').Trim()
+    Write-Host "✓ .env 파일 발견: $envFilePath" -ForegroundColor Green
 
-    if ([string]::IsNullOrWhiteSpace($connString)) {
-        Write-Error "❌ 연결 문자열이 비어 있습니다."
+    # 2. .env 파일에서 AZURE_STORAGE_CONNECTION_STRING 추출 (정규식)
+    Write-Host "📥 연결 문자열 추출 중..." -ForegroundColor Cyan
+
+    $content = Get-Content -Path $envFilePath -Raw -Encoding UTF8
+    $connString = ""
+
+    # 정규식으로 AZURE_STORAGE_CONNECTION_STRING="값" 또는 AZURE_STORAGE_CONNECTION_STRING=값 찾기
+    if ($content -match 'AZURE_STORAGE_CONNECTION_STRING\s*=\s*"?([^"\n\r]+)"?') {
+        $connString = $matches[1].Trim()
+    }
+
+    if (-not $connString) {
+        Write-Error "❌ .env 파일에 'AZURE_STORAGE_CONNECTION_STRING'이 없거나 형식이 잘못되었습니다."
+        Write-Host ""
+        Write-Host "파일 내용 (처음 10줄):" -ForegroundColor Gray
+        Get-Content -Path $envFilePath | Select-Object -First 10 | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
+        Write-Host ""
+        Write-Host "👉 팁: infra/ 폴더의 bicep 파일에 appSettings 설정을 추가했는지 확인하세요." -ForegroundColor Cyan
         exit 1
     }
 
     Write-Host "✓ 연결 문자열 추출 완료" -ForegroundColor Green
 
-    # 2. AccountName과 AccountKey 파싱
+    # 3. AccountName과 AccountKey 추출 (정규식)
     Write-Host "🔍 계정 정보 파싱 중..." -ForegroundColor Cyan
 
-    $parts = $connString -split ";"
-    $accountName = ($parts | Where-Object { $_ -match "AccountName=" }) -replace "AccountName=", ""
-    $accountKey = ($parts | Where-Object { $_ -match "AccountKey=" }) -replace "AccountKey=", ""
+    $accountName = ""
+    $accountKey = ""
+
+    if ($connString -match 'AccountName=([^;]+)') {
+        $accountName = $matches[1].Trim()
+    }
+
+    if ($connString -match 'AccountKey=([^;]+)') {
+        $accountKey = $matches[1].Trim()
+    }
 
     if (-not $accountName -or -not $accountKey) {
-        Write-Error "❌ 계정 정보를 파싱할 수 없습니다. 연결 문자열 형식이 올바른지 확인하세요."
+        Write-Error "❌ 연결 문자열 형식이 올바르지 않습니다."
+        Write-Error "   AccountName: $($accountName -or '(없음)')"
+        Write-Error "   AccountKey: $(if ($accountKey) { '(설정됨)' } else { '(없음)' })"
+        Write-Host ""
+        Write-Host "연결 문자열 형식 예:" -ForegroundColor Cyan
+        Write-Host "  DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=xxx;EndpointSuffix=core.windows.net" -ForegroundColor Gray
         exit 1
     }
 
     Write-Host "✓ 계정 정보 추출 완료 (Account: $accountName)" -ForegroundColor Green
 
-    # 3. 마운트 설정
+    # 4. 마운트 설정
     $driveLetter = "Z:"
     $shareName = "downloads"
     $uncPath = "\\$accountName.file.core.windows.net\$shareName"
 
-    # 4. 기존 연결 끊기
+    # 5. 기존 연결 끊기
     Write-Host "🔌 기존 연결 정리 중..." -ForegroundColor Cyan
 
     if (Test-Path $driveLetter) {
@@ -59,7 +98,7 @@ try {
         }
     }
 
-    # 5. 새로운 연결 실행
+    # 6. 새로운 연결 실행
     Write-Host ""
     Write-Host "⚡ 새로운 연결 시도 중..." -ForegroundColor Cyan
     Write-Host "  UNC 경로: $uncPath" -ForegroundColor Gray
@@ -77,16 +116,17 @@ try {
         Write-Host "⚠️  가능한 원인:" -ForegroundColor Yellow
         Write-Host "  1. 포트 445가 방화벽으로 차단됨" -ForegroundColor Yellow
         Write-Host "  2. VPN 또는 네트워크 설정 문제" -ForegroundColor Yellow
-        Write-Host "  3. 계정 정보 오류" -ForegroundColor Yellow
+        Write-Host "  3. 계정 정보 오류 (자격 증명 불일치)" -ForegroundColor Yellow
         Write-Host ""
         Write-Host "해결 방법:" -ForegroundColor Cyan
-        Write-Host "  • Windows 방화벽 설정 확인" -ForegroundColor Cyan
+        Write-Host "  • Windows 방화벽 설정에서 포트 445 활성화" -ForegroundColor Cyan
         Write-Host "  • VPN 연결 시도" -ForegroundColor Cyan
-        Write-Host "  • 연결 문자열 재확인" -ForegroundColor Cyan
+        Write-Host "  • .env 파일의 AZURE_STORAGE_CONNECTION_STRING 재확인" -ForegroundColor Cyan
+        Write-Host "  • 'net use * /delete /y'로 모든 연결 초기화 후 재시도" -ForegroundColor Cyan
         exit 1
     }
 
-    # 6. 마운트 검증
+    # 7. 마운트 검증
     Start-Sleep -Seconds 1
     if (Test-Path $driveLetter) {
         Write-Host ""
@@ -118,5 +158,6 @@ try {
 catch {
     Write-Error "❌ 스크립트 실행 중 오류 발생"
     Write-Error $_.Exception.Message
+    Write-Error "스택 추적: $($_.ScriptStackTrace)"
     exit 1
 }
