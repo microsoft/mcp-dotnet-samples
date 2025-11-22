@@ -40,28 +40,16 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         return result;
     }
 
-    public async Task<CommandExecutionResult> ExecuteTemplateCommandAsync(string command, string? workingDirectory = null, CancellationToken cancellationToken = default)
+    public async Task<ExecutionResult> ExecuteTemplateAsync(string srcPath, string workingDirectory, string envName, CancellationToken cancellationToken = default)
     {
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            logger.LogInformation("Executing command: {command}", command);
 
-            if (string.IsNullOrWhiteSpace(workingDirectory))
-            {
-                string current = Directory.GetCurrentDirectory();
-                logger.LogInformation("Initial CurrentDirectory = {path}", current);
+            string ownerRepo = ExtractOwnerRepo(srcPath);
 
-                string templateName = ExtractTemplateNameFromCommand(command);
-                logger.LogInformation("Parsed template name = {name}", templateName);
-
-                workingDirectory = Path.Combine(current, templateName);
-
-                if (!Directory.Exists(workingDirectory))
-                {
-                    Directory.CreateDirectory(workingDirectory);
-                }
-            }
+            string command = $"azd init -t {ownerRepo} --environment {envName}";
+            logger.LogInformation("Generated command: {cmd}", command);
 
             if (!Directory.Exists(workingDirectory))
             {
@@ -72,13 +60,27 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
             {
                 logger.LogInformation("Using existing directory: {dir}", workingDirectory);
             }
-            
+
+            string fileName;
+            string arguments;
+
+            if (OperatingSystem.IsWindows())
+            {
+                fileName = "cmd.exe";
+                arguments = $"/c {command}";
+            }
+            else
+            {
+                fileName = "/bin/bash";
+                arguments = $"-c \"{command}\"";
+            }
+
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "cmd.exe",
-                    Arguments = $"/c {command}",
+                    FileName = fileName,
+                    Arguments = arguments,
                     WorkingDirectory = workingDirectory,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -87,7 +89,7 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
                 }
             };
             
-            logger.LogInformation("Creating default directory: {dir}", workingDirectory);
+            logger.LogInformation("Executing: {file} {args}", fileName, arguments);
             process.Start();
 
             cancellationToken.Register(() =>
@@ -100,7 +102,7 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
 
             await process.WaitForExitAsync(cancellationToken);
 
-            return new CommandExecutionResult
+            return new ExecutionResult
             {
                 Success = process.ExitCode == 0,
                 Output = output,
@@ -110,17 +112,17 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         catch (OperationCanceledException)
         {
             logger.LogWarning("Command execution cancelled by user");
-            return new CommandExecutionResult
+            return new ExecutionResult
             {
                 Success = false,
                 Output = "",
-                Error = "Command execution cancelled"
+                Error = "Execution cancelled"
             };
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Exception occurred while executing command");
-            return new CommandExecutionResult
+            return new ExecutionResult
             {
                 Success = false,
                 Output = "",
@@ -167,39 +169,23 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         return searchTerms.Any(term => text.Contains(term, StringComparison.InvariantCultureIgnoreCase));
     }
 
-
-    private string ExtractTemplateNameFromCommand(string command)
+    private string ExtractOwnerRepo(string srcPath)
     {
-        if (string.IsNullOrWhiteSpace(command))
-            return "MyTemplate";
-
         try
         {
-            var parts = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-            for (int i = 0; i < parts.Length - 1; i++)
+            var uri = new Uri(srcPath);
+            var segments = uri.AbsolutePath.Trim('/').Split('/');
+            if (segments.Length >= 2)
             {
-                if (parts[i] == "-t")
-                {
-                    string path = parts[i + 1];
-
-                    if (path.Contains('/'))
-                    {
-                        string repo = path.Split('/').Last().Trim();
-                        if (!string.IsNullOrWhiteSpace(repo))
-                            return repo;
-                    }
-
-                    return path;
-                }
+                return $"{segments[0]}/{segments[1]}"; // owner/repo
             }
         }
-        catch
+        catch (Exception ex)
         {
-            
+            logger.LogError(ex, "Failed to parse srcPath as GitHub URL: {srcPath}", srcPath);
         }
 
-        return "MyTemplate";
+        return srcPath;
     }
 
 }
