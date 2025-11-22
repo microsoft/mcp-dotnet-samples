@@ -28,9 +28,9 @@ public interface IPptFontFixTool
     /// <param name="replacementFont">The font to replace all inconsistent fonts with.</param>
     /// <param name="inconsistentFontsToReplace">The list of inconsistent font names to be replaced.</param>
     /// <param name="locationsToRemove">The list of shape locations to be removed.</param>
-    /// <param name="newFilePath">The full path to save the new .pptx file.</param>
+    /// <param name="newFileName">The full path to save the new .pptx file.</param>
     /// <returns>Returns a success message with the new file path.</returns>
-    Task<string> UpdatePptFileAsync(string replacementFont, List<string> inconsistentFontsToReplace, List<FontUsageLocation> locationsToRemove, string newFilePath);
+    Task<string> UpdatePptFileAsync(string replacementFont, List<string> inconsistentFontsToReplace, List<FontUsageLocation> locationsToRemove, string newFileName);
 }
 
 /// <summary>
@@ -79,7 +79,7 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
         [Description("The replacement font")] string replacementFont,
         [Description("The fonts to be replaced")] List<string> inconsistentFontsToReplace,
         [Description("A list of shape locations (from analysis result) to be removed")] List<FontUsageLocation> locationsToRemove,
-        [Description("The full path to save the modified Ppt file")] string newFilePath)
+        [Description("The full path to save the modified Ppt file")] string newFileName)
     {
         try
         {
@@ -97,15 +97,14 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
             }
             logger.LogInformation("{Count} instances of inconsistent fonts replaced with '{ReplacementFont}'.", totalReplacementCount, replacementFont);
 
-            await service.SavePptFileAsync(newFilePath).ConfigureAwait(false);
-            logger.LogInformation("Ppt file saved successfully: {FilePath}", newFilePath);
+            string accessPath = await service.SavePptFileAsync(newFileName).ConfigureAwait(false);
+            logger.LogInformation("Ppt file saved successfully: {Path}", accessPath);
 
-            string successMessage = $"PPT update complete. {removalCount} shapes removed, {totalReplacementCount} fonts replaced. File saved to: {newFilePath}";
-            return successMessage;
+            return $"PPT update complete. Removed: {removalCount}, Replaced: {totalReplacementCount}. Result: {accessPath}";
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed during Ppt file update process. Save path: {FilePath}", newFilePath);
+            logger.LogError(ex, "Failed during Ppt file update process. Save name: {FileName}", newFileName);
             throw;
         }
     }

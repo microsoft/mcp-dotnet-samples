@@ -3,6 +3,13 @@ using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
 using System.Linq;
 using McpSamples.PptFontFix.HybridApp.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Azure.Storage.Blobs;
 
 namespace McpSamples.PptFontFix.HybridApp.Services;
 
@@ -27,7 +34,7 @@ public interface IPptFontFixService
     /// Save the modified Ppt file.
     /// </summary>
     /// <param name="newFilePath"></param>
-    Task SavePptFileAsync(string newFilePath);
+    Task<string> SavePptFileAsync(string newFilePath);
 
     /// <summary>
     /// Remove Unused Fonts from the presentation.
@@ -48,32 +55,78 @@ public interface IPptFontFixService
 /// This represents the service entity for Ppt font fixing.
 /// </summary>
 /// <param name="logger"></param>
-public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixService
+public class PptFontFixService : IPptFontFixService
 {
+    private readonly ILogger<PptFontFixService> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _hostEnvironment;
+    private readonly IWebHostEnvironment? _webHostEnvironment;
+    private readonly IHttpContextAccessor? _httpContextAccessor;
     private Presentation? _presentation;
 
     private HashSet<string>? _analyzedVisibleFonts;
+
+    public PptFontFixService(
+        ILogger<PptFontFixService> logger,
+        IConfiguration configuration,
+        IHostEnvironment hostEnvironment,
+        IServiceProvider serviceProvider)
+    {
+        _logger = logger;
+        _configuration = configuration;
+        _hostEnvironment = hostEnvironment;
+        _webHostEnvironment = serviceProvider.GetService<IWebHostEnvironment>();
+        _httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+    }
+
     /// <inheritdoc />
     public async Task OpenPptFileAsync(string filePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath, nameof(filePath));
-        if (File.Exists(filePath) == false)
+
+        var searchPaths = new List<string>();
+
+        searchPaths.Add(filePath);
+
+        string fileName = Path.GetFileName(filePath);
+        if (filePath.Contains('\\')) fileName = filePath.Split('\\').Last();
+        if (filePath.Contains('/')) fileName = filePath.Split('/').Last();
+        
+        searchPaths.Add(Path.Combine("/files", fileName));
+
+        string baseDir = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
+        searchPaths.Add(Path.Combine(baseDir, "generated", fileName));
+        
+        searchPaths.Add(Path.Combine(Path.GetTempPath(), fileName));
+
+        string? foundPath = null;
+        foreach (var path in searchPaths)
         {
-            throw new FileNotFoundException("Ppt file does not exist.", filePath);
+            if (File.Exists(path))
+            {
+                foundPath = path;
+                _logger.LogInformation("✅ File found at: {Path}", foundPath);
+                break;
+            }
+        }
+
+        if (foundPath == null)
+        {
+            _logger.LogError("❌ File not found. Searched in: {Paths}", string.Join(", ", searchPaths));
+            throw new FileNotFoundException($"Ppt file not found. Searched in /files, /generated, and /tmp inside container.", filePath);
         }
 
         try
         {
-            this._presentation = new Presentation(filePath);
-
-            this._analyzedVisibleFonts = null;
-            logger.LogInformation("Ppt file opened successfully and verified by ShapeCrawler: {FilePath}", filePath);
-
+            _presentation?.Dispose();
+            _presentation = new Presentation(foundPath);
+            _analyzedVisibleFonts = null;
+            _logger.LogInformation("Ppt file opened successfully: {FilePath}", foundPath);
             await Task.CompletedTask;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to open Ppt file with ShapeCrawler: {FilePath}", filePath);
+            _logger.LogError(ex, "Failed to open Ppt file.");
             throw;
         }
     }
@@ -126,7 +179,7 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
                 bool isEmptyBox = shape.TextBox != null && string.IsNullOrWhiteSpace(shape.TextBox.Text);
                 if (isEmptyBox)
                 {
-                    logger.LogWarning("[Empty Box Detected] Slide Number: {SlideNumber}, Shape Name: {ShapeName}",
+                    _logger.LogWarning("[Empty Box Detected] Slide Number: {SlideNumber}, Shape Name: {ShapeName}",
                         slide.Number, shape.Name);
                     result.UnusedFontLocations.Add(location);
                 }
@@ -138,7 +191,7 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
 
                 if (!isShapeVisible && shape.TextBox != null && !isEmptyBox)
                 {
-                    logger.LogWarning("[Text Shape Outside Slide] Slide Number: {SlideNumber}, Shape Name: {ShapeName}",
+                    _logger.LogWarning("[Text Shape Outside Slide] Slide Number: {SlideNumber}, Shape Name: {ShapeName}",
                         slide.Number, shape.Name);
                     result.UnusedFontLocations.Add(location);
                 }
@@ -178,34 +231,110 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
             .SelectMany(pair => pair.Value)
             .ToList();
 
-        logger.LogInformation("[Result] Used (Standard) Fonts: {Fonts}", string.Join(", ", result.UsedFonts));
-        logger.LogInformation("[Result] Unused Fonts: {Fonts}", string.Join(", ", result.UnusedFonts));
-        logger.LogInformation("[Result] Inconsistently Used Fonts: {Fonts}", string.Join(", ", result.InconsistentlyUsedFonts));
+        _logger.LogInformation("[Result] Used (Standard) Fonts: {Fonts}", string.Join(", ", result.UsedFonts));
+        _logger.LogInformation("[Result] Unused Fonts: {Fonts}", string.Join(", ", result.UnusedFonts));
+        _logger.LogInformation("[Result] Inconsistently Used Fonts: {Fonts}", string.Join(", ", result.InconsistentlyUsedFonts));
 
         return await Task.FromResult(result);
     }
 
     /// <inheritdoc />
-    public async Task SavePptFileAsync(string newFilePath)
+    public async Task<string> SavePptFileAsync(string desiredFileName)
     {
-        if (this._presentation == null)
-        {
-            throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before saving.");
-        }
+        if (this._presentation == null) throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before saving.");
+        ArgumentException.ThrowIfNullOrWhiteSpace(desiredFileName, nameof(desiredFileName));
 
-        ArgumentException.ThrowIfNullOrWhiteSpace(newFilePath, nameof(newFilePath));
+        string safeFileName = Path.GetFileName(desiredFileName);
+        if (safeFileName.Contains('\\')) safeFileName = safeFileName.Split('\\').Last();
+        if (safeFileName.Contains('/')) safeFileName = safeFileName.Split('/').Last();
+        safeFileName = safeFileName.Replace(":", "").Trim();
 
-        try
-        {
-            this._presentation.Save(newFilePath);
-            logger.LogInformation("Ppt file saved successfully: {FilePath}", newFilePath);
+        _logger.LogInformation("Save process started. Target: {SafeName}", safeFileName);
 
-            await Task.CompletedTask;
-        }
-        catch (Exception ex)
+        using (var memoryStream = new MemoryStream())
         {
-            logger.LogError(ex, "Failed to save Ppt file: {FilePath}", newFilePath);
-            throw;
+            await Task.Run(() => _presentation.Save(memoryStream));
+            memoryStream.Position = 0;
+
+            string? azureConnectionString = _configuration["AzureBlobConnectionString"];
+            if (!string.IsNullOrEmpty(azureConnectionString))
+            {
+                try 
+                {
+                    _logger.LogInformation("Environment detected: Azure Blob Storage");
+                    var blobServiceClient = new BlobServiceClient(azureConnectionString);
+                    var containerClient = blobServiceClient.GetBlobContainerClient("generated-files");
+                    await containerClient.CreateIfNotExistsAsync();
+                    var blobClient = containerClient.GetBlobClient(safeFileName);
+                    await blobClient.UploadAsync(memoryStream, overwrite: true);
+                    return blobClient.Uri.ToString();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Azure save failed. Falling back to local storage.");
+                    memoryStream.Position = 0;
+                }
+            }
+            string finalPhysicalPath = "";
+            string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
+            string generatedDir = Path.Combine(webRoot, "generated");
+            if (!Directory.Exists(generatedDir)) Directory.CreateDirectory(generatedDir);
+            string webStoragePath = Path.Combine(generatedDir, safeFileName);
+
+            bool isDocker = !OperatingSystem.IsWindows();
+
+            if (isDocker)
+            {
+                _logger.LogInformation("Environment detected: Docker Container");
+
+                try 
+                {
+                    string syncPath = Path.Combine("/files", safeFileName);
+                    using (var fs = new FileStream(syncPath, FileMode.Create, FileAccess.Write))
+                    {
+                        await memoryStream.CopyToAsync(fs);
+                    }
+                    File.SetUnixFileMode(syncPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
+                    
+                    finalPhysicalPath = syncPath;
+                }
+                catch (Exception ex) 
+                { 
+                    _logger.LogWarning("Could not save to /files volume: {Msg}", ex.Message);
+                    finalPhysicalPath = webStoragePath;
+                }
+
+                memoryStream.Position = 0;
+                using (var fs = new FileStream(webStoragePath, FileMode.Create, FileAccess.Write))
+                {
+                    await memoryStream.CopyToAsync(fs);
+                }
+                File.SetUnixFileMode(webStoragePath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.OtherRead);
+            }
+            else
+            {
+                _logger.LogInformation("Environment detected: Local Windows");
+
+                using (var fs = new FileStream(webStoragePath, FileMode.Create, FileAccess.Write))
+                {
+                    await memoryStream.CopyToAsync(fs);
+                }
+                
+                finalPhysicalPath = webStoragePath;
+            }
+
+            if (_httpContextAccessor?.HttpContext?.Request != null)
+            {
+                var request = _httpContextAccessor.HttpContext.Request;
+                string url = $"{request.Scheme}://{request.Host}/generated/{safeFileName}";
+                _logger.LogInformation("✅ Returning Web URL: {Url}", url);
+                return url;
+            }
+            else
+            {
+                _logger.LogInformation("✅ Returning Physical Path: {Path}", finalPhysicalPath);
+                return finalPhysicalPath;
+            }
         }
     }
 
@@ -219,7 +348,7 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
 
         if (locationsToRemove == null || locationsToRemove.Count == 0)
         {
-            logger.LogInformation("No locations provided for removal. Skipping removal process.");
+            _logger.LogInformation("No locations provided for removal. Skipping removal process.");
             return await Task.FromResult(0);
         }
 
@@ -230,23 +359,23 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
             var slide = this._presentation.Slides.FirstOrDefault(s => s.Number == location.SlideNumber);
             if (slide == null)
             {
-                logger.LogWarning("Slide number {SlideNumber} not found. Skipping.", location.SlideNumber);
+                _logger.LogWarning("Slide number {SlideNumber} not found. Skipping.", location.SlideNumber);
                 continue;
             }
 
             var shape = slide.Shapes.FirstOrDefault(sh => sh.Name == location.ShapeName);
             if (shape == null)
             {
-                logger.LogWarning("Shape name {ShapeName} not found in slide {SlideNumber}. Skipping.", location.ShapeName, location.SlideNumber);
+                _logger.LogWarning("Shape name {ShapeName} not found in slide {SlideNumber}. Skipping.", location.ShapeName, location.SlideNumber);
                 continue;
             }
 
             shape.Remove();
             removalCount++;
-            logger.LogInformation("Removed shape {ShapeName} from slide {SlideNumber}.", location.ShapeName, location.SlideNumber);
+            _logger.LogInformation("Removed shape {ShapeName} from slide {SlideNumber}.", location.ShapeName, location.SlideNumber);
         }
 
-        logger.LogInformation("Total shapes removed: {Count}", removalCount);
+        _logger.LogInformation("Total shapes removed: {Count}", removalCount);
         return await Task.FromResult(removalCount);
     }
     
@@ -294,7 +423,7 @@ public class PptFontFixService(ILogger<PptFontFixService> logger) : IPptFontFixS
             }
         }
 
-        logger.LogInformation("Total font replacements made: {Count}", replacementCount);
+        _logger.LogInformation("Total font replacements made: {Count}", replacementCount);
         return await Task.FromResult(replacementCount);
     }
 }

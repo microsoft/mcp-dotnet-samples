@@ -9,71 +9,72 @@ namespace McpSamples.PptFontFix.HybridApp.Prompts;
 public interface IPptFontFixPrompt
 {
     /// <summary>
-    /// Gets a prompt to call the 'analyze_ppt_file' tool.
+    /// Gets a prompt to start the PPT font fix workflow.
     /// </summary>
     /// <param name="filePath">The full path to the .pptx file to be analyzed.</param>
     /// <returns>A formatted prompt to start the font analysis.</returns>
     string GetAnalysisPrompt(string filePath);
-
-    /// <summary>
-    /// Gets a prompt to call the 'update_ppt_file' tool.
-    /// </summary>
-    /// <param name="replacementFont">The font to replace all inconsistent fonts with.</param>
-    /// <param name="newFilePath">The path to save the new file.</param>
-    /// <returns>A formatted prompt to apply all fixes and save.</returns>
-    string GetUpdatePrompt(string replacementFont, string newFilePath);
 }
 
 /// <summary>
-/// This represents the prompts entity for the PptFontFix 2-Tool system.
+/// This represents the prompts entity for the PptFontFix system.
 /// </summary>
 [McpServerPromptType]
 public class PptFontFixPrompt : IPptFontFixPrompt
 {
     /// <inheritdoc />
-    [McpServerPrompt(Name = "run_analysis", Title = "Prompt to run PPT font analysis tool")]
-    [Description("Get a prompt to call the 'analyze_ppt_file' tool, which opens and analyzes a PPT file.")]
+    [McpServerPrompt(Name = "fix_ppt_fonts", Title = "Start PPT Font Fix Workflow")]
+    [Description("Analyzes the PPT file and guides the user through the font replacement process.")]
     public string GetAnalysisPrompt(
-        [Description("The full path to the .pptx file to be analyzed")] string filePath)
+        [Description("The full path to the .pptx file (e.g. /files/test.pptx)")] string filePath)
     {
         return $"""
-        Please start the PPT font analysis process.
+        You are an expert assistant for fixing PowerPoint font issues.
+        Please execute the following workflow step-by-step:
 
-        Here's the process to follow:
+        ### PHASE 1: ANALYSIS
+        1. Call the `analyze_ppt_file` tool with the path: `{filePath}`.
+        2. Analyze the result (`PptFontAnalyzeResult`).
+        3. **Show the user** the list of `UsedFonts` and `InconsistentlyUsedFonts`.
+        4. **Check `UnusedFontLocations`**:
+           - If `UnusedFontLocations` is empty, skip the option selection and just ask for the Standard Font.
+           - If `UnusedFontLocations` has items, **Ask the user to make TWO choices**:
+             
+             **A. Select a Standard Font:** (Choose one from `UsedFonts`)
+             
+             **B. Select an Action Mode:**
+             1. **[Fix & Clean]**: Replace fonts AND remove unused/invisible text boxes (Specify the count of items found in `UnusedFontLocations`).
+             2. **[Fix Only]**: Replace fonts ONLY. Keep unused text boxes as is.
 
-        1.  Call the `analyze_ppt_file` tool using the provided file path: `{filePath}`.
-        2.  Receive the `PptFontAnalyzeResult` object from the tool.
-        3.  **Store this entire `PptFontAnalyzeResult` object in your context.** (This is essential for the update step).
-        4.  Present the `UsedFonts` and `InconsistentlyUsedFonts` lists from the result to the user.
-        5.  Ask the user to choose one (1) font from the `UsedFonts` list to be the new standard font.
-        """;
-    }
+        ### PHASE 2: UPDATE (Wait for user input)
+        Once the user replies with their choices, proceed to call `update_ppt_file`.
+        
+        **Parameter Logic:**
+        - `replacementFont`: The font selected by the user.
+        - `inconsistentFontsToReplace`: The list of inconsistent fonts found in Phase 1.
+        - `newFileName`: Generate a safe name like "result_fixed.pptx".
+        
+        **Critical Logic for `locationsToRemove`:**
+        - IF User chose **1 (Fix & Clean)**: Pass the `UnusedFontLocations` list found in Phase 1.
+        - IF User chose **2 (Fix Only)**: Pass an **empty list `[]`**. (Do NOT pass null, pass an empty JSON array).
 
-    /// <inheritdoc />
-    [McpServerPrompt(Name = "run_update_and_save", Title = "Prompt to run PPT font update tool")]
-    [Description("Get a prompt to call the 'update_ppt_file' tool, which fixes fonts and saves the file.")]
-    public string GetUpdatePrompt(
-        [Description("The chosen standard font to replace all inconsistent fonts")] string replacementFont,
-        [Description("The full path to save the new .pptx file")] string newFilePath)
-    {
-        return $"""
-        Please apply all font fixes and save the presentation.
+        ### PHASE 3: RESULT PRESENTATION (CRITICAL!)
+        The `update_ppt_file` tool will return a result string. Analyze it carefully.
 
-        Here's the process to follow:
+        **CASE A: The result starts with `http` (Web Mode)**
+        - Render it as a Clickable Markdown Link.
+        - Format: `👉 [Click here to Download Fixed File](URL)`
 
-        1.  **Recall the `PptFontAnalyzeResult` object** stored in your context from the analysis step.
-        2.  Extract the following lists from the recalled object:
-            * `UsedFonts`
-            * `InconsistentlyUsedFonts`
-            * `UnusedFontLocations`
-        3.  **Validate:** Check if the user's chosen `replacementFont` ("{replacementFont}") is present in the `UsedFonts` list.
-        4.  **If validation fails:** STOP. Inform the user that "{replacementFont}" is not a valid standard font and ask them to choose from the `UsedFonts` list again.
-        5.  **If validation succeeds:** Call the `update_ppt_file` tool with the following four arguments:
-            * `replacementFont`: "{replacementFont}"
-            * `inconsistentFontsToReplace`: The `InconsistentlyUsedFonts` list (from context)
-            * `locationsToRemove`: The `UnusedFontLocations` list (from context)
-            * `newFilePath`: "{newFilePath}"
-        6.  The tool will return a final success string. Present this string directly to the user.
+        **CASE B: The result is a File Path (e.g. `/files/...` or `C:\...`) (Stdio/Local Mode)**
+        - The user is using VS Code. VS Code automatically detects absolute paths.
+        - **DO NOT use Markdown syntax** (No `[]` or `()`).
+        - **DO NOT shorten the path.** Output the full string exactly as returned by the tool.
+        - Output format:
+          
+          ✅ **Task Completed.**
+          
+          **File:**
+          [Insert Raw Full Path Here]
         """;
     }
 }
