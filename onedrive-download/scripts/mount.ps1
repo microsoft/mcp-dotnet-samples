@@ -2,7 +2,8 @@
 # Azure File Share 자동 마운트 스크립트 (Windows)
 # azd postprovision 훅에서 자동으로 실행됩니다.
 
-# 1. 콘솔 인코딩 설정
+# 1. 에러 발생 시 즉시 중단 (Strict Mode)
+$ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host "🔄 [Post-Provision] Azure File Share 로컬 마운트 시작..."
@@ -25,7 +26,7 @@ if (-not (Test-Path $EnvFilePath)) {
 }
 
 if (-not (Test-Path $EnvFilePath)) {
-    Write-Error "❌ [Error] 환경 변수 파일을 찾을 수 없습니다."
+    Write-Host "❌ [Error] 환경 변수 파일을 찾을 수 없습니다."
     Write-Host "   경로: $EnvFilePath"
     exit 1
 }
@@ -43,7 +44,7 @@ if ($Content -match 'AZURE_STORAGE_CONNECTION_STRING="?([^"\r\n]+)"?') {
 }
 
 if (-not $ConnString) {
-    Write-Error "❌ [Error] 파일에 'AZURE_STORAGE_CONNECTION_STRING'이 없습니다."
+    Write-Host "❌ [Error] 파일에 'AZURE_STORAGE_CONNECTION_STRING'이 없습니다."
     exit 1
 }
 
@@ -62,7 +63,7 @@ Write-Host "   - Account: $AccountName"
 if ($AccountKey) { Write-Host "   - Key: [설정됨]" } else { Write-Host "   - Key: [누락]" }
 
 if (-not $AccountName -or -not $AccountKey) {
-    Write-Error "❌ [Error] 연결 문자열 형식이 잘못되었습니다. (AccountName 또는 AccountKey 누락)"
+    Write-Host "❌ [Error] 연결 문자열 형식이 잘못되었습니다. (AccountName 또는 AccountKey 누락)"
     exit 1
 }
 
@@ -87,7 +88,7 @@ $process = Start-Process -FilePath "net" `
     -Wait -NoNewWindow -PassThru
 
 if ($process.ExitCode -ne 0) {
-    Write-Error "❌ [Fatal Error] 'net use' 명령어 실패 (Exit Code: $($process.ExitCode))"
+    Write-Host "❌ [Fatal Error] 'net use' 명령어 실패 (Exit Code: $($process.ExitCode))"
     Write-Host ""
     Write-Host "   [원인 추정]"
     Write-Host "   1. 인터넷 통신사(ISP)가 SMB 포트(445)를 차단했을 가능성"
@@ -105,7 +106,7 @@ if ($process.ExitCode -ne 0) {
 # 6. 결과 검증
 # ---------------------------------------------------------
 if (-not (Test-Path $DriveLetter)) {
-    Write-Error "❌ [Fatal Error] 마운트 명령은 성공했지만 드라이브에 접근할 수 없습니다."
+    Write-Host "❌ [Fatal Error] 마운트 명령은 성공했지만 드라이브에 접근할 수 없습니다."
     Write-Host "   상태: $DriveLetter 드라이브를 찾을 수 없음"
     exit 1
 }

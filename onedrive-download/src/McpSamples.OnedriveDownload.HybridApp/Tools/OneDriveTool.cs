@@ -174,7 +174,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 };
 
                 // Read 권한만 부여
-                sasBuilder.SetPermissions(Azure.Storage.Sas.ShareFileSasPermissions.Read);
+                sasBuilder.SetPermissions(ShareFileSasPermissions.Read);
 
                 // SAS URI 생성
                 Uri sasUri = new Uri($"{fileClient.Uri}?{sasBuilder.ToSasQueryParameters(credential)}");
