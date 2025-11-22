@@ -83,9 +83,7 @@ if (Test-Path $DriveLetter) {
 Write-Host "⚡ 마운트 시도: $UncPath"
 
 # net use 실행 및 종료 코드 캡처
-$process = Start-Process -FilePath "net" `
-    -ArgumentList "use $DriveLetter $UncPath /u:AZURE\$AccountName $AccountKey" `
-    -Wait -NoNewWindow -PassThru
+$process = Start-Process -FilePath "net" -ArgumentList "use $DriveLetter $UncPath /u:AZURE\$AccountName $AccountKey" -Wait -NoNewWindow -PassThru
 
 if ($process.ExitCode -ne 0) {
     Write-Host "❌ [Fatal Error] 'net use' 명령어 실패 (Exit Code: $($process.ExitCode))"
