@@ -31,7 +31,7 @@ RUN chown $APP_UID /app
 
 USER $APP_UID
 
-RUN mkdir -p /app/generated /app/wwwroot/generated
+RUN mkdir -p /app/wwwroot/generated
 
 ENV PATH="/opt/kiota-tools:${PATH}"
 

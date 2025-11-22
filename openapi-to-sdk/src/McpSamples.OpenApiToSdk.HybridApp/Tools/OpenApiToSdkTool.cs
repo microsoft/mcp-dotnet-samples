@@ -130,18 +130,10 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
             string finalOutputDirectory;
             string zipFileName = $"{language}-{DateTime.Now:yyyyMMddHHmmss}.zip";
 
-            // HTTP: wwwroot/generated/
-            if (_httpContextAccessor?.HttpContext is not null && _hostEnvironment is not null)
-            {
-                finalOutputDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "generated");
-            }
-            // STDIO, 사용자가 경로를 지정하지 않은 경우: generated/
-            else
-            {
-                finalOutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "generated");
-            }
+            // Always use wwwroot/generated regardless of mode
+            finalOutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "generated");
 
-            // 사용자가 outputDir을 지정한 경우
+            // If user specifies outputDir, use that instead
             if (!string.IsNullOrWhiteSpace(outputDir))
             {
                 finalOutputDirectory = outputDir;
