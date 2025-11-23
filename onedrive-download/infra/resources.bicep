@@ -82,33 +82,6 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   }
 }
 
-// Storage account for File Share (Connection String support)
-resource fileShareStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
-  name: '${abbrs.storageStorageAccounts}${resourceToken}files'
-  location: location
-  tags: tags
-  sku: {
-    name: 'Standard_LRS'
-  }
-  kind: 'StorageV2'
-  properties: {
-    minimumTlsVersion: 'TLS1_2'
-    supportsHttpsTrafficOnly: true
-    allowBlobPublicAccess: false
-  }
-
-  resource fileServices 'fileServices' = {
-    name: 'default'
-    resource share 'shares' = {
-      name: 'downloads'
-      properties: {
-        accessTier: 'TransactionOptimized'
-        shareQuota: 100
-      }
-    }
-  }
-}
-
 // 5. The Web App
 module fncapp './modules/functionapp.bicep' = {
   name: 'functionapp'
@@ -132,7 +105,6 @@ module fncapp './modules/functionapp.bicep' = {
       OnedriveDownload__EntraId__ClientId: entraApp.outputs.mcpAppId
       OnedriveDownload__EntraId__Personal365RefreshToken: personal365RefreshToken
       PERSONAL_365_REFRESH_TOKEN: personal365RefreshToken
-      FileShareConnectionString: 'DefaultEndpointsProtocol=https;AccountName=${fileShareStorage.name};AccountKey=${fileShareStorage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
     }
   }
 }
@@ -180,20 +152,6 @@ resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     roleDefinitionId: storageBlobDataOwnerRole
   }
 }
-
-// Grant the function app's identity access to the file share storage account
-var storageFileDataSmbShareContributorRole = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb')
-
-resource fileShareStorageRbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(fileShareStorage.id, userAssignedIdentity.id, storageFileDataSmbShareContributorRole)
-  scope: fileShareStorage
-  properties: {
-    principalId: userAssignedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: storageFileDataSmbShareContributorRole
-  }
-}
-
 
 // Outputs for azd
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = fncapp.outputs.resourceId

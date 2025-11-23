@@ -102,6 +102,9 @@ if (!string.IsNullOrEmpty(keyVaultName))
 // Add authentication service (user-delegated with automatic token from HTTP context)
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 
+// Add Azure File Share Sync Service
+builder.Services.AddSingleton<AzureFileShareSyncService>();
+
 // Add controllers
 builder.Services.AddControllers();
 
@@ -142,6 +145,27 @@ foreach (System.Collections.DictionaryEntry envVar in Environment.GetEnvironment
     {
         logger.LogInformation("*** [ENV] {Key}={Value}", envVar.Key, envVar.Value);
     }
+}
+
+// ============================================================
+// ★ Azure File Share 자동 동기화 (프로그램 시작 시)
+// ============================================================
+try
+{
+    var connectionString = Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
+    if (!string.IsNullOrEmpty(connectionString))
+    {
+        var syncService = app.Services.GetRequiredService<AzureFileShareSyncService>();
+        string downloadPath = Environment.GetEnvironmentVariable("AZURE_FILE_SHARE_DOWNLOAD_PATH") ?? @"C:\cdp-downloads";
+
+        logger.LogInformation("[Startup] Starting Azure File Share sync...");
+        await syncService.SyncFilesAsync(connectionString, downloadPath);
+    }
+}
+catch (Exception syncEx)
+{
+    // 동기화 실패는 경고만 하고 계속 진행
+    logger.LogWarning(syncEx, "[Startup] File sync warning during startup (non-fatal)");
 }
 
 if (useStreamableHttp == true)
