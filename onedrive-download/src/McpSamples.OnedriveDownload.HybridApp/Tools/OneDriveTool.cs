@@ -38,11 +38,18 @@ public class OneDriveDownloadResult
 public interface IOneDriveTool
 {
     /// <summary>
-    /// Downloads a file from a OneDrive sharing URL using authenticated user's credentials and saves it to a file share.
+    /// Downloads a file from a OneDrive sharing URL using authenticated user's credentials.
+    /// Saves to Azure File Share (backup), then to specified local path or default 'generated' folder.
     /// </summary>
-    /// <param name="sharingUrl">The OneDrive sharing URL.</param>
+    /// <param name="sharingUrl">The OneDrive sharing URL (e.g., https://1drv.ms/u/s!ABC...).</param>
+    /// <param name="destinationPath">
+    /// Optional: Specific local path to save the file.
+    /// - If null/empty: Saves to '{project_root}/generated/{filename}'
+    /// - If directory path exists: Saves to '{destinationPath}/{filename}'
+    /// - If file path: Saves to exact path (creates parent directories if needed)
+    /// </param>
     /// <returns>Returns <see cref="OneDriveDownloadResult"/> instance.</returns>
-    Task<OneDriveDownloadResult> DownloadFileFromUrlAsync(string sharingUrl);
+    Task<OneDriveDownloadResult> DownloadFileFromUrlAsync(string sharingUrl, string? destinationPath = null);
 }
 
 /// <summary>
@@ -55,179 +62,208 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
     private IConfiguration? _configuration;
     private ILogger<OneDriveTool>? _logger;
     private IUserAuthenticationService? _userAuthService;
-    private AzureFileShareSyncService? _syncService;
 
     private IConfiguration Configuration => _configuration ??= serviceProvider.GetRequiredService<IConfiguration>();
     private ILogger<OneDriveTool> Logger => _logger ??= serviceProvider.GetRequiredService<ILogger<OneDriveTool>>();
     private IUserAuthenticationService UserAuthService => _userAuthService ??= serviceProvider.GetRequiredService<IUserAuthenticationService>();
-    private AzureFileShareSyncService SyncService => _syncService ??= serviceProvider.GetRequiredService<AzureFileShareSyncService>();
 
     private const string FileShareName = "downloads";
 
     /// <inheritdoc />
     [McpServerTool(Name = "download_file_from_onedrive_url", Title = "Download File from OneDrive URL")]
-    [Description("Downloads a file from a given OneDrive sharing URL using authenticated user's delegated credentials and saves it to a shared location.")]
+    [Description("Downloads a file from a given OneDrive sharing URL. If destination_path is provided, saves it there. Otherwise, saves to 'generated' folder in project root.")]
     public async Task<OneDriveDownloadResult> DownloadFileFromUrlAsync(
-        [Description("The OneDrive sharing URL (e.g., https://1drv.ms/u/s!ABC... or https://onedrive.live.com/embed?resid=...)")] string sharingUrl)
+        [Description("The OneDrive sharing URL (e.g., https://1drv.ms/u/s!ABC... or https://onedrive.live.com/embed?resid=...)")] string sharingUrl,
+        [Description("Optional: Specific local path to save the file (e.g., 'C:/Users/Me/Desktop' or 'C:/MyFolder/file.txt'). If not provided, saves to '{project_root}/generated/' folder.")] string? destinationPath = null)
     {
         try
         {
             Logger.LogInformation("=== OneDriveTool.DownloadFileFromUrlAsync started ===");
             Logger.LogInformation("Sharing URL: {SharingUrl}", sharingUrl);
+            Logger.LogInformation("Requested Destination: {Destination}", destinationPath ?? "(Default: generated folder)");
 
-            // Step 1: OneDrive 공유 URL 인코딩 (u!...)
+            // Step 1-3: URL 인코딩 & 메타데이터 조회
             string base64Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(sharingUrl));
             string encodedUrl = "u!" + base64Value.TrimEnd('=').Replace('/', '_').Replace('+', '-');
-            Logger.LogInformation("✓ 인코딩된 URL: {EncodedUrl}", encodedUrl);
 
-            // Step 2: Graph API 클라이언트 준비
-            Logger.LogInformation("Graph API 클라이언트 초기화 중");
             var graphClient = await UserAuthService.GetPersonalOneDriveGraphClientAsync();
+            var driveItem = await graphClient.Shares[encodedUrl].DriveItem.Request().GetAsync();
 
-            // Step 3: 드라이브 아이템 메타데이터 조회 (파일명, 크기 확인용)
-            Logger.LogInformation("Graph API에서 드라이브 아이템 메타데이터 조회 중");
-            var driveItem = await graphClient
-                .Shares[encodedUrl]
-                .DriveItem
-                .Request()
-                .GetAsync();
-
-            Logger.LogInformation("✓ 드라이브 아이템 조회 완료: {FileName}", driveItem.Name);
-
-            // 폴더인지 확인 (폴더는 다운로드 불가)
             if (driveItem.Folder != null)
             {
-                return new OneDriveDownloadResult
-                {
-                    ErrorMessage = "공유 링크가 파일이 아닌 폴더입니다."
-                };
+                return new OneDriveDownloadResult { ErrorMessage = "공유 링크가 파일이 아닌 폴더입니다." };
             }
 
+            string originalFileName = driveItem.Name;
+            Logger.LogInformation("✓ File Info: {FileName}, Size: {FileSize} bytes", originalFileName, driveItem.Size);
+
             // Step 4: Azure File Share 준비
-            Logger.LogInformation("Azure File Share 준비 중");
             var connectionString = Configuration["AZURE_STORAGE_CONNECTION_STRING"]
                                    ?? Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
 
             if (string.IsNullOrEmpty(connectionString))
             {
                 Logger.LogError("AZURE_STORAGE_CONNECTION_STRING is not configured");
-                return new OneDriveDownloadResult
-                {
-                    ErrorMessage = "Azure Storage 연결 문자열이 구성되지 않았습니다."
-                };
+                return new OneDriveDownloadResult { ErrorMessage = "Azure Storage 연결 문자열이 구성되지 않았습니다." };
             }
 
             var shareClient = new ShareClient(connectionString, FileShareName);
             await shareClient.CreateIfNotExistsAsync();
             var directoryClient = shareClient.GetRootDirectoryClient();
 
-            // 파일명 중복 방지를 위해 시간 추가
-            string safeFileName = $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{driveItem.Name}";
-            var fileClient = directoryClient.GetFileClient(safeFileName);
+            // Azure용 파일명 (중복 방지 타임스탬프)
+            string azureSafeFileName = $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{originalFileName}";
+            var fileClient = directoryClient.GetFileClient(azureSafeFileName);
 
-            Logger.LogInformation("파일명: {FileName}, 크기: {FileSize} bytes", safeFileName, driveItem.Size);
+            Logger.LogInformation("Azure File Name: {FileName}", azureSafeFileName);
 
-            // Step 5: ★★★ Graph SDK의 Content.Request().GetAsync() 사용 ★★★
-            // URL을 찾지 않고 SDK가 제공하는 콘텐츠 스트림 직접 요청
-            // 이 방식은 @microsoft.graph.downloadUrl이 없어도 작동합니다.
-            Logger.LogInformation("Graph API에서 파일 콘텐츠 스트림 요청 중");
+            // Step 5-6: Azure File Share에 업로드 (백업/감사용)
+            // 중요: Graph 스트림은 한 번 읽으면 끝이므로, MemoryStream에 복사하여 Azure와 로컬 양쪽에 저장합니다.
+            Logger.LogInformation("Downloading from OneDrive & uploading to Azure File Share...");
+
+            byte[] fileContent;
             using (var contentStream = await graphClient.Shares[encodedUrl].DriveItem.Content.Request().GetAsync())
             {
-                Logger.LogInformation("✓ 파일 스트림 수신 완료");
-
-                // Step 6: Azure File Share에 스트리밍으로 업로드
-                Logger.LogInformation("Azure File Share에 파일 업로드 중: {FileName}", safeFileName);
-
-                // 파일 생성 (크기 지정)
-                await fileClient.CreateAsync(driveItem.Size ?? 0);
-                Logger.LogInformation("✓ 파일 생성 완료");
-
-                // 스트림 업로드
-                await fileClient.UploadAsync(contentStream);
-                Logger.LogInformation("✓ 파일 업로드 완료");
-            }
-
-            // Step 7: SAS 토큰 생성하여 다운로드 URL 생성
-            try
-            {
-                // 연결 문자열에서 계정 정보 추출
-                var accountName = ExtractAccountNameFromConnectionString(connectionString);
-                var accountKey = ExtractAccountKeyFromConnectionString(connectionString);
-
-                if (string.IsNullOrEmpty(accountName) || string.IsNullOrEmpty(accountKey))
+                using (var memoryStream = new MemoryStream())
                 {
-                    Logger.LogWarning("SAS 토큰 생성을 위한 계정 정보를 추출할 수 없습니다. 일반 URI 반환");
-                    string downloadUrl = fileClient.Uri.AbsoluteUri;
-                    return new OneDriveDownloadResult
-                    {
-                        FileName = driveItem.Name,
-                        DownloadPath = downloadUrl,
-                        ErrorMessage = null
-                    };
+                    await contentStream.CopyToAsync(memoryStream);
+                    fileContent = memoryStream.ToArray();
                 }
-
-                var credential = new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey);
-
-                // SAS 토큰 빌더 생성
-                var sasBuilder = new Azure.Storage.Sas.ShareSasBuilder()
-                {
-                    ShareName = FileShareName,
-                    FilePath = safeFileName,
-                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(24)
-                };
-
-                // Read 권한만 부여
-                sasBuilder.SetPermissions(ShareFileSasPermissions.Read);
-
-                // SAS URI 생성
-                Uri sasUri = new Uri($"{fileClient.Uri}?{sasBuilder.ToSasQueryParameters(credential)}");
-                Logger.LogInformation("✓ SAS 토큰 생성 완료");
-                Logger.LogInformation("=== 다운로드 완료. SAS URL: {SasUrl}", sasUri.AbsoluteUri);
-
-                // Step 8: ★ 파일 다운로드 후 자동으로 로컬에 동기화
-                Logger.LogInformation("✓ Step 8: Azure File Share에서 로컬로 파일 동기화 중...");
-                await TriggerLocalSyncAsync();
-
-                return new OneDriveDownloadResult
-                {
-                    FileName = driveItem.Name,
-                    DownloadPath = sasUri.AbsoluteUri,
-                    ErrorMessage = null
-                };
             }
-            catch (Exception sasEx)
+
+            // Azure에 업로드
+            await fileClient.CreateAsync(fileContent.Length);
+            using (var uploadStream = new MemoryStream(fileContent))
             {
-                Logger.LogWarning(sasEx, "SAS 토큰 생성 실패, 일반 URI 반환");
-
-                // SAS 실패해도 파일은 업로드되었으니 동기화 실행
-                await TriggerLocalSyncAsync();
-
-                // 일반 URI 반환
-                string downloadUrl = fileClient.Uri.AbsoluteUri;
-                return new OneDriveDownloadResult
-                {
-                    FileName = driveItem.Name,
-                    DownloadPath = downloadUrl,
-                    ErrorMessage = null
-                };
+                await fileClient.UploadAsync(uploadStream);
             }
+            Logger.LogInformation("✓ Azure File Share upload completed");
+
+            // =========================================================
+            // ★★★ NEW: 로컬 저장 로직 ★★★
+            // =========================================================
+            string finalLocalPath = DetermineFinalLocalPath(destinationPath, originalFileName);
+            Logger.LogInformation("Local save path: {LocalPath}", finalLocalPath);
+
+            // 로컬에 저장
+            using (var fileStream = File.OpenWrite(finalLocalPath))
+            {
+                await fileStream.WriteAsync(fileContent, 0, fileContent.Length);
+                await fileStream.FlushAsync();
+            }
+            Logger.LogInformation("✓ Local file save completed");
+
+            // Step 7: SAS URL 생성 (Azure에서도 접근 가능하도록)
+            string sasUrl = GenerateSasUrl(connectionString, fileClient);
+
+            Logger.LogInformation("=== Download completed successfully ===");
+            return new OneDriveDownloadResult
+            {
+                FileName = originalFileName,
+                DownloadPath = finalLocalPath, // 로컬 경로 반환
+                ErrorMessage = null
+            };
         }
         catch (ServiceException svEx)
         {
-            // Graph API 관련 에러 디버깅용
-            Logger.LogError(svEx, "Graph API 에러: {StatusCode} - {ErrorMessage}", svEx.StatusCode, svEx.Message);
-            return new OneDriveDownloadResult
-            {
-                ErrorMessage = $"OneDrive 에러: {svEx.Message}"
-            };
+            Logger.LogError(svEx, "Graph API Error: {StatusCode} - {ErrorMessage}", svEx.StatusCode, svEx.Message);
+            return new OneDriveDownloadResult { ErrorMessage = $"OneDrive Error: {svEx.Message}" };
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "파일 다운로드 실패: {ErrorMessage}", ex.Message);
-            return new OneDriveDownloadResult
+            Logger.LogError(ex, "Download failed: {ErrorMessage}", ex.Message);
+            return new OneDriveDownloadResult { ErrorMessage = $"Error: {ex.Message}" };
+        }
+    }
+
+    /// <summary>
+    /// 최종 저장 경로를 결정합니다.
+    /// </summary>
+    private string DetermineFinalLocalPath(string? requestedPath, string fileName)
+    {
+        try
+        {
+            // 1. 경로가 지정되지 않은 경우 -> Root/generated 폴더 사용
+            if (string.IsNullOrWhiteSpace(requestedPath))
             {
-                ErrorMessage = $"시스템 에러: {ex.Message}"
+                string generatedDir = Path.Combine(Directory.GetCurrentDirectory(), "generated");
+
+                if (!Directory.Exists(generatedDir))
+                {
+                    Directory.CreateDirectory(generatedDir);
+                    Logger.LogInformation("[Path] Created 'generated' folder: {Path}", generatedDir);
+                }
+
+                return Path.Combine(generatedDir, fileName);
+            }
+
+            // 2. 경로가 지정된 경우
+            // 2-1. 기존에 존재하는 "폴더" 경로인 경우 -> 그 안에 파일명으로 저장
+            if (Directory.Exists(requestedPath))
+            {
+                Logger.LogInformation("[Path] Using existing directory: {Path}", requestedPath);
+                return Path.Combine(requestedPath, fileName);
+            }
+
+            // 2-2. 폴더가 없는데 확장자가 있는 파일 경로처럼 보이는 경우 (예: C:\data\myfile.pdf)
+            string? parentDir = Path.GetDirectoryName(requestedPath);
+            if (!string.IsNullOrEmpty(parentDir) && !Directory.Exists(parentDir))
+            {
+                // 부모 폴더가 없으면 생성 (사용자 편의)
+                Directory.CreateDirectory(parentDir);
+                Logger.LogInformation("[Path] Created parent directory: {Path}", parentDir);
+            }
+
+            // 입력된 경로를 그대로 파일 경로로 사용
+            Logger.LogInformation("[Path] Using requested file path: {Path}", requestedPath);
+            return requestedPath;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "[Path] Error determining path, falling back to generated folder");
+            // 오류 발생 시 generated 폴더로 폴백
+            string generatedDir = Path.Combine(Directory.GetCurrentDirectory(), "generated");
+            if (!Directory.Exists(generatedDir))
+            {
+                Directory.CreateDirectory(generatedDir);
+            }
+            return Path.Combine(generatedDir, fileName);
+        }
+    }
+
+    /// <summary>
+    /// Azure File Share에 저장된 파일의 SAS URL을 생성합니다.
+    /// </summary>
+    private string GenerateSasUrl(string connectionString, ShareFileClient fileClient)
+    {
+        try
+        {
+            var accountName = ExtractAccountNameFromConnectionString(connectionString);
+            var accountKey = ExtractAccountKeyFromConnectionString(connectionString);
+
+            if (string.IsNullOrEmpty(accountName) || string.IsNullOrEmpty(accountKey))
+            {
+                Logger.LogWarning("[SAS] Cannot extract account info, returning file URI");
+                return fileClient.Uri.AbsoluteUri;
+            }
+
+            var credential = new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey);
+            var sasBuilder = new ShareSasBuilder
+            {
+                ShareName = FileShareName,
+                FilePath = fileClient.Name,
+                ExpiresOn = DateTimeOffset.UtcNow.AddHours(24)
             };
+            sasBuilder.SetPermissions(ShareFileSasPermissions.Read);
+
+            string sasUrl = $"{fileClient.Uri}?{sasBuilder.ToSasQueryParameters(credential)}";
+            Logger.LogInformation("[SAS] Generated SAS URL: {SasUrl}", sasUrl);
+            return sasUrl;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "[SAS] Failed to generate SAS URL");
+            return fileClient.Uri.AbsoluteUri;
         }
     }
 
@@ -267,34 +303,6 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             }
         }
         return null;
-    }
-
-    /// <summary>
-    /// Azure File Share에서 로컬 'generated' 폴더로 파일을 동기화합니다.
-    /// (파일 다운로드 후 자동 호출)
-    /// </summary>
-    private async Task TriggerLocalSyncAsync()
-    {
-        try
-        {
-            var connectionString = Configuration["AZURE_STORAGE_CONNECTION_STRING"]
-                                   ?? Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
-
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                Logger.LogWarning("[Sync] Connection string not available, skipping sync.");
-                return;
-            }
-
-            Logger.LogInformation("[Sync] Starting file sync to local generated folder...");
-            await SyncService.SyncFilesAsync(connectionString);
-            Logger.LogInformation("[Sync] ✅ File sync completed!");
-        }
-        catch (Exception ex)
-        {
-            Logger.LogWarning(ex, "[Sync] Local sync warning (non-fatal): {Message}", ex.Message);
-            // 동기화 실패는 경고만 하고 계속 진행
-        }
     }
 
 }
