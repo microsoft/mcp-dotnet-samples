@@ -40,7 +40,7 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             Logger.LogInformation("=== Download Request Started ===");
 
             // 1. 저장할 경로 (환경변수 또는 기본값)
-            string mountPath = Environment.GetEnvironmentVariable("DOWNLOAD_DIR") ?? "/app/wwwroot/downloads";
+            string mountPath = Environment.GetEnvironmentVariable("DOWNLOAD_DIR") ?? "/mounts/downloads";
 
             // ★ 수정: Directory -> System.IO.Directory (모호함 해결)
             if (!System.IO.Directory.Exists(mountPath))

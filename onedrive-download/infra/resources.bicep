@@ -95,29 +95,91 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   }
 }
 
-// 5. The Web App
-module fncapp './modules/functionapp.bicep' = {
-  name: 'functionapp'
-  params: {
-    name: functionAppName
-    location: location
-    tags: tags
-    azdServiceName: azdServiceName
-    applicationInsightsName: monitoring.outputs.applicationInsightsName
-    appServicePlanId: appServicePlan.id
-    runtimeName: 'dotnet-isolated'
-    runtimeVersion: '9.0'
-    storageAccountName: storageAccount.name
-    deploymentStorageContainerName: deploymentStorageContainerName
-    identityId: userAssignedIdentity.id
-    identityClientId: userAssignedIdentity.properties.clientId
-    appSettings: {
-      OnedriveDownload__EntraId__UseManagedIdentity: 'true'
-      OnedriveDownload__EntraId__TenantId: tenant().tenantId
-      OnedriveDownload__EntraId__UserAssignedClientId: userAssignedIdentity.properties.clientId
-      OnedriveDownload__EntraId__ClientId: entraApp.outputs.mcpAppId
-      OnedriveDownload__EntraId__Personal365RefreshToken: personal365RefreshToken
-      PERSONAL_365_REFRESH_TOKEN: personal365RefreshToken
+// 5. The Function App (직접 정의 - 스토리지 마운트 포함)
+resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
+  name: functionAppName
+  location: location
+  kind: 'functionapp,linux'
+  tags: union(tags, { 'azd-service-name': azdServiceName })
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userAssignedIdentity.id}': {}
+    }
+  }
+  properties: {
+    serverFarmId: appServicePlan.id
+    httpsOnly: true
+
+    // ★★★ 핵심: 스토리지 마운트 설정 ★★★
+    azureStorageAccounts: {
+      'downloads-mount': {
+        type: 'AzureFiles'
+        accountName: storageAccount.name
+        shareName: 'downloads'
+        mountPath: '/mounts/downloads'
+        accessKey: storageAccount.listKeys().keys[0].value
+      }
+    }
+
+    siteConfig: {
+      linuxFxVersion: 'DOTNET-ISOLATED|9.0'
+      appSettings: [
+        {
+          name: 'AzureWebJobsStorage'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'dotnet-isolated'
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: monitoring.outputs.applicationInsightsConnectionString
+        }
+        {
+          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
+          value: '~3'
+        }
+        {
+          name: 'XDT_MicrosoftApplicationInsights_Mode'
+          value: 'recommended'
+        }
+        // ★ 다운로드 경로 설정 (마운트된 경로와 일치)
+        {
+          name: 'DOWNLOAD_DIR'
+          value: '/mounts/downloads'
+        }
+        // ★ OneDrive 인증 관련 설정
+        {
+          name: 'OnedriveDownload__EntraId__UseManagedIdentity'
+          value: 'true'
+        }
+        {
+          name: 'OnedriveDownload__EntraId__TenantId'
+          value: tenant().tenantId
+        }
+        {
+          name: 'OnedriveDownload__EntraId__UserAssignedClientId'
+          value: userAssignedIdentity.properties.clientId
+        }
+        {
+          name: 'OnedriveDownload__EntraId__ClientId'
+          value: entraApp.outputs.mcpAppId
+        }
+        {
+          name: 'OnedriveDownload__EntraId__Personal365RefreshToken'
+          value: personal365RefreshToken
+        }
+        {
+          name: 'PERSONAL_365_REFRESH_TOKEN'
+          value: personal365RefreshToken
+        }
+        {
+          name: 'AZURE_CLIENT_ID'
+          value: userAssignedIdentity.properties.clientId
+        }
+      ]
     }
   }
 }
@@ -149,7 +211,7 @@ module mcpApiModule './modules/mcp-api.bicep' = {
     mcpAppTenantId: entraApp.outputs.mcpAppTenantId
   }
   dependsOn: [
-    fncapp
+    functionApp
   ]
 }
 
@@ -167,9 +229,9 @@ resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 
 // Outputs for azd
-output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = fncapp.outputs.resourceId
-output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME string = fncapp.outputs.name
-output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = fncapp.outputs.fqdn
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_ID string = functionApp.id
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME string = functionApp.name
+output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = functionApp.properties.defaultHostName
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_GATEWAY_FQDN string = replace(apimService.outputs.gatewayUrl, 'https://', '')
 output AZURE_USER_ASSIGNED_IDENTITY_PRINCIPAL_ID string = userAssignedIdentity.properties.principalId
 output mcpAppId string = entraApp.outputs.mcpAppId
