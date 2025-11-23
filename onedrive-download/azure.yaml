@@ -13,13 +13,6 @@ hooks:
     posix:
       shell: sh
       run: dotnet run --project ./src/McpSamples.OnedriveDownload.HybridApp -- --provision
-  postprovision:
-    windows:
-      shell: pwsh
-      run: ./scripts/mount.ps1
-    posix:
-      shell: sh
-      run: ./scripts/mount.sh
   postdeploy:
     windows:
       shell: pwsh
