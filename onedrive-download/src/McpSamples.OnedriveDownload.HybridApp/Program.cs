@@ -150,6 +150,10 @@ foreach (System.Collections.DictionaryEntry envVar in Environment.GetEnvironment
 if (useStreamableHttp == true)
 {
     var webApp = (app as Microsoft.AspNetCore.Builder.WebApplication)!;
+
+    // ★ wwwroot 폴더의 정적 파일(HTML, CSS, 다운로드 파일 등)을 URL로 접근 가능하게 함
+    webApp.UseStaticFiles();
+
     webApp.MapOpenApi("/{documentName}.json");
     webApp.MapControllers();
 

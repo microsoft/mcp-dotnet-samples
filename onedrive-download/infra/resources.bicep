@@ -48,6 +48,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
     minimumTlsVersion: 'TLS1_2'
     supportsHttpsTrafficOnly: true
     allowBlobPublicAccess: false
+    largeFileSharesState: 'Enabled'
   }
 
   resource blobServices 'blobServices' = {
@@ -56,6 +57,18 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
       name: deploymentStorageContainerName
       properties: {
         publicAccess: 'None'
+      }
+    }
+  }
+
+  // ★ File Share 추가: downloads 폴더를 마운트 가능하게 함
+  resource fileServices 'fileServices' = {
+    name: 'default'
+    resource share 'shares' = {
+      name: 'downloads'
+      properties: {
+        shareQuota: 1024
+        enabledProtocols: 'SMB'
       }
     }
   }
