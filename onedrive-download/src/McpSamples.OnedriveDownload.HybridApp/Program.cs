@@ -156,10 +156,9 @@ try
     if (!string.IsNullOrEmpty(connectionString))
     {
         var syncService = app.Services.GetRequiredService<AzureFileShareSyncService>();
-        string downloadPath = Environment.GetEnvironmentVariable("AZURE_FILE_SHARE_DOWNLOAD_PATH") ?? @"C:\cdp-downloads";
 
         logger.LogInformation("[Startup] Starting Azure File Share sync...");
-        await syncService.SyncFilesAsync(connectionString, downloadPath);
+        await syncService.SyncFilesAsync(connectionString);
     }
 }
 catch (Exception syncEx)

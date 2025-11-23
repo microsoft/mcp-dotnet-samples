@@ -21,7 +21,11 @@ public class AzureFileShareSyncService
     /// Azure File Share에서 파일을 로컬 경로로 다운로드합니다.
     /// (HTTPS 기반, 포트 443 사용 - VPN/핫스팟 불필요)
     /// </summary>
-    public async Task SyncFilesAsync(string connectionString, string localFolderPath)
+    /// <remarks>
+    /// 다운로드 경로: {프로젝트루트}/generated/
+    /// 예: C:\Users\Woo_Ang\Desktop\cdp-mcp\onedrive-download\generated\
+    /// </remarks>
+    public async Task SyncFilesAsync(string connectionString)
     {
         try
         {
@@ -30,6 +34,12 @@ public class AzureFileShareSyncService
                 _logger.LogWarning("[Sync] AZURE_STORAGE_CONNECTION_STRING is not configured. Skipping sync.");
                 return;
             }
+
+            // 프로젝트 루트의 'generated' 폴더로 설정
+            // AppContext.BaseDirectory는 실행 파일 디렉토리
+            // bin/Debug(또는 Release)/net9.0/ 에서 ../../.. 올라가면 프로젝트 루트
+            string projectRoot = FindProjectRoot();
+            string localFolderPath = Path.Combine(projectRoot, "generated");
 
             _logger.LogInformation("[Sync] Starting Azure File Share sync...");
             _logger.LogInformation("[Sync] Share Name: {ShareName}, Local Path: {LocalPath}", ShareName, localFolderPath);
@@ -74,6 +84,59 @@ public class AzureFileShareSyncService
             _logger.LogWarning(ex, "[Sync] ⚠️ File sync warning (non-fatal): {Message}", ex.Message);
             // 동기화 실패는 경고만 하고 프로그램을 중단시키지 않음
         }
+    }
+
+    /// <summary>
+    /// 프로젝트 루트 디렉토리를 찾습니다.
+    /// bin/Debug(또는 Release)/net9.0/ 에서 상위 폴더로 이동하여 .csproj 파일을 찾습니다.
+    /// </summary>
+    private static string FindProjectRoot()
+    {
+        // 현재 실행 경로: bin/Debug(또는 Release)/net9.0/
+        string baseDir = AppContext.BaseDirectory;
+
+        // 상위 폴더로 이동
+        DirectoryInfo current = new DirectoryInfo(baseDir);
+
+        // .csproj 파일이 있는 디렉토리를 찾을 때까지 상위로 이동
+        while (current != null && current.Parent != null)
+        {
+            var csprojFiles = current.GetFiles("*.csproj");
+            if (csprojFiles.Length > 0)
+            {
+                // .csproj가 있는 폴더가 프로젝트 루트의 바로 위가 아니라
+                // 더 위에 있을 수 있으니 (예: src/McpSamples.OnedriveDownload.HybridApp/)
+                // 계속 올라가서 azure.yaml이나 .git가 있는 폴더를 찾자
+                return FindSolutionRoot(current);
+            }
+            current = current.Parent;
+        }
+
+        // 못 찾으면 기본값 반환
+        return baseDir;
+    }
+
+    /// <summary>
+    /// 솔루션 루트 디렉토리를 찾습니다 (azure.yaml이나 .git가 있는 폴더).
+    /// </summary>
+    private static string FindSolutionRoot(DirectoryInfo startDir)
+    {
+        DirectoryInfo current = startDir;
+
+        while (current != null)
+        {
+            // azure.yaml 또는 .git 폴더가 있으면 그것이 솔루션 루트
+            if (current.GetFiles("azure.yaml").Length > 0 ||
+                current.GetDirectories(".git").Length > 0 ||
+                current.GetFiles(".gitignore").Length > 0)
+            {
+                return current.FullName;
+            }
+            current = current.Parent;
+        }
+
+        // 못 찾으면 프로젝트 폴더 반환
+        return startDir.FullName;
     }
 
     /// <summary>
