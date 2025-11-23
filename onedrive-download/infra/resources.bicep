@@ -117,7 +117,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         type: 'AzureFiles'
         accountName: storageAccount.name
         shareName: 'downloads'
-        mountPath: '/mounts/downloads'
+        mountPath: '/home/mounts/downloads'
         accessKey: storageAccount.listKeys().keys[0].value
       }
     }
@@ -144,7 +144,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         // ★ 다운로드 경로 설정 (마운트된 경로와 일치)
         {
           name: 'DOWNLOAD_DIR'
-          value: '/mounts/downloads'
+          value: '/home/mounts/downloads'
         }
         // ★ OneDrive 인증 관련 설정
         {

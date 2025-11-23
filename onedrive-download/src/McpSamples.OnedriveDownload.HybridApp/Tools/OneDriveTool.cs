@@ -39,14 +39,16 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
         {
             Logger.LogInformation("=== Download Request Started ===");
 
-            // 1. 저장할 경로 (환경변수 또는 기본값)
-            string mountPath = Environment.GetEnvironmentVariable("DOWNLOAD_DIR") ?? "/mounts/downloads";
+            // 1. 환경변수에서 경로 가져오기 (Bicep에서 /home/mounts/downloads로 설정됨)
+            // ★ 주의: 마운트 경로는 Azure가 만들어주는 것이지, 우리가 만드는 게 아님
+            string mountPath = Environment.GetEnvironmentVariable("DOWNLOAD_DIR");
 
-            // ★ 수정: Directory -> System.IO.Directory (모호함 해결)
-            if (!System.IO.Directory.Exists(mountPath))
+            if (string.IsNullOrEmpty(mountPath))
             {
-                System.IO.Directory.CreateDirectory(mountPath);
+                return new OneDriveDownloadResult { ErrorMessage = "DOWNLOAD_DIR environment variable is not set." };
             }
+
+            Logger.LogInformation($"Mount path: {mountPath}");
 
             // 2. Graph API로 파일 정보 가져오기
             string base64Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(sharingUrl));
@@ -61,28 +63,23 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             }
 
             string fileName = driveItem.Name;
-            // ★ 수정: Path -> System.IO.Path
             string saveFilePath = System.IO.Path.Combine(mountPath, fileName);
 
             Logger.LogInformation($"Saving to: {saveFilePath}");
 
             // 3. 파일 저장
-            // ★ 수정: File -> System.IO.File (모호함 해결)
             using (var contentStream = await graphClient.Shares[encodedUrl].DriveItem.Content.Request().GetAsync())
             using (var fileStream = System.IO.File.Create(saveFilePath))
             {
                 await contentStream.CopyToAsync(fileStream);
             }
 
-            // 4. URL 생성
-            string downloadUrl = $"/downloads/{Uri.EscapeDataString(fileName)}";
-
-            Logger.LogInformation($"File ready at: {downloadUrl}");
+            Logger.LogInformation($"File downloaded successfully: {fileName}");
 
             return new OneDriveDownloadResult
             {
                 FileName = fileName,
-                DownloadUrl = downloadUrl,
+                DownloadUrl = null,
                 ErrorMessage = null
             };
         }
