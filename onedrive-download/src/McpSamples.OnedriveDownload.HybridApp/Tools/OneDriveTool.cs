@@ -7,6 +7,7 @@ using ModelContextProtocol.Server;
 using McpSamples.OnedriveDownload.HybridApp.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace McpSamples.OnedriveDownload.HybridApp.Tools;
 
@@ -54,10 +55,12 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
     private IConfiguration? _configuration;
     private ILogger<OneDriveTool>? _logger;
     private IUserAuthenticationService? _userAuthService;
+    private AzureFileShareSyncService? _syncService;
 
     private IConfiguration Configuration => _configuration ??= serviceProvider.GetRequiredService<IConfiguration>();
     private ILogger<OneDriveTool> Logger => _logger ??= serviceProvider.GetRequiredService<ILogger<OneDriveTool>>();
     private IUserAuthenticationService UserAuthService => _userAuthService ??= serviceProvider.GetRequiredService<IUserAuthenticationService>();
+    private AzureFileShareSyncService SyncService => _syncService ??= serviceProvider.GetRequiredService<AzureFileShareSyncService>();
 
     private const string FileShareName = "downloads";
 
@@ -181,12 +184,9 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
                 Logger.LogInformation("✓ SAS 토큰 생성 완료");
                 Logger.LogInformation("=== 다운로드 완료. SAS URL: {SasUrl}", sasUri.AbsoluteUri);
 
-                // Step 8: 안내 메시지
-                Logger.LogInformation("✓ Step 8: 파일 업로드 완료");
-                Logger.LogInformation("📌 참고: azd up이 완료되면 자동으로 드라이브가 마운트됩니다.");
-                Logger.LogInformation("   Windows: Z: 드라이브");
-                Logger.LogInformation("   Mac: ~/Downloads/azure 폴더");
-                Logger.LogInformation("   Linux: sudo mount 명령으로 마운트해주세요");
+                // Step 8: ★ 파일 다운로드 후 자동으로 로컬에 동기화
+                Logger.LogInformation("✓ Step 8: Azure File Share에서 로컬로 파일 동기화 중...");
+                await TriggerLocalSyncAsync();
 
                 return new OneDriveDownloadResult
                 {
@@ -199,7 +199,10 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             {
                 Logger.LogWarning(sasEx, "SAS 토큰 생성 실패, 일반 URI 반환");
 
-                // SAS 실패 시 일반 URI만 반환
+                // SAS 실패해도 파일은 업로드되었으니 동기화 실행
+                await TriggerLocalSyncAsync();
+
+                // 일반 URI 반환
                 string downloadUrl = fileClient.Uri.AbsoluteUri;
                 return new OneDriveDownloadResult
                 {
@@ -264,6 +267,34 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             }
         }
         return null;
+    }
+
+    /// <summary>
+    /// Azure File Share에서 로컬 'generated' 폴더로 파일을 동기화합니다.
+    /// (파일 다운로드 후 자동 호출)
+    /// </summary>
+    private async Task TriggerLocalSyncAsync()
+    {
+        try
+        {
+            var connectionString = Configuration["AZURE_STORAGE_CONNECTION_STRING"]
+                                   ?? Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                Logger.LogWarning("[Sync] Connection string not available, skipping sync.");
+                return;
+            }
+
+            Logger.LogInformation("[Sync] Starting file sync to local generated folder...");
+            await SyncService.SyncFilesAsync(connectionString);
+            Logger.LogInformation("[Sync] ✅ File sync completed!");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "[Sync] Local sync warning (non-fatal): {Message}", ex.Message);
+            // 동기화 실패는 경고만 하고 계속 진행
+        }
     }
 
 }
