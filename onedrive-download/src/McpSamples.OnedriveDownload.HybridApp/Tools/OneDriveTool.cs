@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.Graph;
 using ModelContextProtocol.Server;
 using McpSamples.OnedriveDownload.HybridApp.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -38,12 +39,14 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
         {
             Logger.LogInformation("=== Download Request Started ===");
 
-            // 1. 저장할 경로 (Bicep에서 마운트한 경로)
-            // 로컬 테스트를 위해 기본값도 설정
+            // 1. 저장할 경로 (환경변수 또는 기본값)
             string mountPath = Environment.GetEnvironmentVariable("DOWNLOAD_DIR") ?? "/app/wwwroot/downloads";
 
-            // 폴더가 없으면 생성 (로컬 테스트용)
-            if (!Directory.Exists(mountPath)) Directory.CreateDirectory(mountPath);
+            // ★ 수정: Directory -> System.IO.Directory (모호함 해결)
+            if (!System.IO.Directory.Exists(mountPath))
+            {
+                System.IO.Directory.CreateDirectory(mountPath);
+            }
 
             // 2. Graph API로 파일 정보 가져오기
             string base64Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(sharingUrl));
@@ -58,20 +61,20 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             }
 
             string fileName = driveItem.Name;
-            string saveFilePath = Path.Combine(mountPath, fileName);
+            // ★ 수정: Path -> System.IO.Path
+            string saveFilePath = System.IO.Path.Combine(mountPath, fileName);
 
             Logger.LogInformation($"Saving to: {saveFilePath}");
 
-            // 3. 파일 저장 (그냥 파일 시스템에 씁니다)
-            // Bicep이 Azure Storage랑 연결해놨기 때문에, 여기에 쓰면 자동으로 클라우드에 영구 저장됩니다.
+            // 3. 파일 저장
+            // ★ 수정: File -> System.IO.File (모호함 해결)
             using (var contentStream = await graphClient.Shares[encodedUrl].DriveItem.Content.Request().GetAsync())
-            using (var fileStream = File.Create(saveFilePath))
+            using (var fileStream = System.IO.File.Create(saveFilePath))
             {
                 await contentStream.CopyToAsync(fileStream);
             }
 
-            // 4. ★ URL 생성 ★
-            // Bicep에서 '/app/wwwroot/downloads' -> URL상 '/downloads' 로 매핑됨
+            // 4. URL 생성
             string downloadUrl = $"/downloads/{Uri.EscapeDataString(fileName)}";
 
             Logger.LogInformation($"File ready at: {downloadUrl}");
