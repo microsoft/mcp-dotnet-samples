@@ -2141,6 +2141,214 @@
       ]
     },
     {
+      "filename": "pcf-alm.instructions.md",
+      "description": "Application lifecycle management (ALM) for PCF code components",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj",
+        "sln}"
+      ]
+    },
+    {
+      "filename": "pcf-api-reference.instructions.md",
+      "description": "Complete PCF API reference with all interfaces and their availability in model-driven and canvas apps",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js}"
+      ]
+    },
+    {
+      "filename": "pcf-best-practices.instructions.md",
+      "description": "Best practices and guidance for developing PCF code components",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj",
+        "css",
+        "html}"
+      ]
+    },
+    {
+      "filename": "pcf-canvas-apps.instructions.md",
+      "description": "Code components for canvas apps implementation, security, and configuration",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-code-components.instructions.md",
+      "description": "Understanding code components structure and implementation",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-community-resources.instructions.md",
+      "description": "PCF community resources including gallery, videos, blogs, and development tools",
+      "applyTo": [
+        "**"
+      ]
+    },
+    {
+      "filename": "pcf-dependent-libraries.instructions.md",
+      "description": "Using dependent libraries in PCF components",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-events.instructions.md",
+      "description": "Define and handle custom events in PCF components",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-fluent-modern-theming.instructions.md",
+      "description": "Style components with modern theming using Fluent UI",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-limitations.instructions.md",
+      "description": "Limitations and restrictions of Power Apps Component Framework",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-manifest-schema.instructions.md",
+      "description": "Complete manifest schema reference for PCF components with all available XML elements",
+      "applyTo": [
+        "**/*.xml"
+      ]
+    },
+    {
+      "filename": "pcf-model-driven-apps.instructions.md",
+      "description": "Code components for model-driven apps implementation and configuration",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-overview.instructions.md",
+      "description": "Power Apps Component Framework overview and fundamentals",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-power-pages.instructions.md",
+      "description": "Using code components in Power Pages sites",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-react-platform-libraries.instructions.md",
+      "description": "React controls and platform libraries for PCF components",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-sample-components.instructions.md",
+      "description": "How to use and run PCF sample components from the PowerApps-Samples repository",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
+      "filename": "pcf-tooling.instructions.md",
+      "description": "Get Microsoft Power Platform CLI tooling for Power Apps Component Framework",
+      "applyTo": [
+        "**/*.{ts",
+        "tsx",
+        "js",
+        "json",
+        "xml",
+        "pcfproj",
+        "csproj}"
+      ]
+    },
+    {
       "filename": "performance-optimization.instructions.md",
       "applyTo": [
         "*"
@@ -4418,10 +4626,6 @@
           "kind": "agent"
         },
         {
-          "path": "agents/newrelic-deployment-observability.agent.md",
-          "kind": "agent"
-        },
-        {
           "path": "agents/octopus-deploy-release-notes-mcp.agent.md",
           "kind": "agent"
         },
@@ -4436,6 +4640,90 @@
         {
           "path": "agents/pagerduty-incident-responder.agent.md",
           "kind": "agent"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "pcf-development.collection.yml",
+      "id": "pcf-development",
+      "name": "Power Apps Component Framework (PCF) Development",
+      "description": "Complete toolkit for developing custom code components using Power Apps Component Framework for model-driven and canvas apps",
+      "tags": [
+        "power-apps",
+        "pcf",
+        "component-framework",
+        "typescript",
+        "power-platform"
+      ],
+      "items": [
+        {
+          "path": "instructions/pcf-overview.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-code-components.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-model-driven-apps.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-canvas-apps.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-power-pages.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-react-platform-libraries.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-fluent-modern-theming.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-dependent-libraries.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-events.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-tooling.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-limitations.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-alm.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-sample-components.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-api-reference.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-manifest-schema.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/pcf-community-resources.instructions.md",
+          "kind": "instruction"
         }
       ],
       "display": {}
@@ -5232,19 +5520,6 @@
       "filename": "neon-optimization-analyzer.agent.md",
       "name": "Neon Performance Analyzer",
       "description": "Identify and fix slow Postgres queries automatically using Neon's branching workflow. Analyzes execution plans, tests optimizations in isolated database branches, and provides clear before/after performance metrics with actionable code fixes."
-    },
-    {
-      "filename": "newrelic-deployment-observability.agent.md",
-      "name": "New Relic Deployment Observability Agent",
-      "description": "Assists engineers before and after deployments by optimizing New Relic instrumentation, linking code changes to telemetry via change tracking, validating alerts and dashboards, and summarizing production health and next steps.",
-      "tools": [
-        "*"
-      ],
-      "mcp-servers": "",
-      "newrelic": "",
-      "type": "http",
-      "url": "https://mcp.newrelic.com/mcp",
-      "headers": "{\"Api-Key\": \"$COPILOT_MCP_NEW_RELIC_API_KEY\"}"
     },
     {
       "filename": "octopus-deploy-release-notes-mcp.agent.md",
