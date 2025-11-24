@@ -18,7 +18,7 @@ using Microsoft.Identity.Client;
 public class ProvisionRefreshToken
 {
     private const string TenantId = "consumers"; // 개인 계정 필수
-    private static readonly string DefaultClientId = "44609b96-b8ed-48cd-ae81-75abbd52ffd1"; // 기본값
+    private static readonly string DefaultClientId = "14d82eec-204b-4c2f-b7e8-296a70dab67e"; // Microsoft 공개 Client ID
 
     public static async Task ProvisionAsync(IConfiguration? configuration = null)
     {
