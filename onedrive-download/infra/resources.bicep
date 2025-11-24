@@ -95,7 +95,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   }
 }
 
-// 5. The Function App (직접 정의 - 스토리지 마운트 포함)
+// 5. The Function App (Flex Consumption용)
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: functionAppName
   location: location
@@ -111,6 +111,28 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     serverFarmId: appServicePlan.id
     httpsOnly: true
 
+    // ★ Flex Consumption 필수: functionAppConfig
+    functionAppConfig: {
+      deployment: {
+        storage: {
+          type: 'blobContainer'
+          value: '${storageAccount.properties.primaryEndpoints.blob}${deploymentStorageContainerName}'
+          authentication: {
+            type: 'UserAssignedIdentity'
+            userAssignedIdentityResourceId: userAssignedIdentity.id
+          }
+        }
+      }
+      scaleAndConcurrency: {
+        instanceMemoryMB: 2048
+        maximumInstanceCount: 100
+      }
+      runtime: {
+        name: 'dotnet-isolated'
+        version: '9.0'
+      }
+    }
+
     // ★★★ 핵심: 스토리지 마운트 설정 ★★★
     azureStorageAccounts: {
       'downloads-mount': {
@@ -123,7 +145,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     }
 
     siteConfig: {
-      linuxFxVersion: 'DOTNET-ISOLATED|9.0'
+      alwaysOn: false
       appSettings: [
         {
           name: 'AzureWebJobsStorage'

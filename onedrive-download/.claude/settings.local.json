@@ -8,7 +8,9 @@
       "Bash(az storage file download:*)",
       "Bash(az storage file:*)",
       "Bash(powershell -ExecutionPolicy Bypass -Command \"& ''./scripts/provision-refresh-token.ps1''\")",
-      "Bash(az functionapp config appsettings list:*)"
+      "Bash(az functionapp config appsettings list:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

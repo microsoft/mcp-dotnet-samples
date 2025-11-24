@@ -2,51 +2,28 @@ using Azure.Core;
 using Azure.Identity;
 using Microsoft.Graph;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace McpSamples.OnedriveDownload.HybridApp.Services;
 
-/// <summary>
-/// Service for handling user authentication using Azure DefaultCredential and OAuth.
-/// Supports both Azure credentials (azd auth login) and Personal Microsoft account authentication.
-/// </summary>
 public interface IUserAuthenticationService
 {
-    /// <summary>
-    /// Gets the current user's access token from Azure credentials.
-    /// </summary>
     Task<string?> GetCurrentUserAccessTokenAsync();
-
-    /// <summary>
-    /// Gets the Personal OneDrive access token using OAuth (MSAL).
-    /// </summary>
     Task<string?> GetPersonalOneDriveAccessTokenAsync();
-
-    /// <summary>
-    /// Gets GraphServiceClient using Azure credentials.
-    /// </summary>
     Task<GraphServiceClient> GetUserGraphClientAsync();
-
-    /// <summary>
-    /// Gets GraphServiceClient using Personal OneDrive token.
-    /// </summary>
-    Task<GraphServiceClient> GetPersonalOneDriveGraphClientAsync();
+    // 튜플 반환 (Client, ErrorMessage)
+    Task<(GraphServiceClient? client, string? errorMessage)> GetPersonalOneDriveGraphClientAsync();
 }
 
-/// <summary>
-/// Implementation of user authentication service using Azure DefaultCredential and MSAL.
-/// Automatically retrieves tokens from azd auth login or other Azure credential sources.
-/// Also supports Personal OneDrive access via OAuth.
-/// </summary>
 public class UserAuthenticationService : IUserAuthenticationService
 {
     private readonly ILogger<UserAuthenticationService> _logger;
     private readonly IConfiguration _configuration;
-    private readonly string[] _scopes = { "https://graph.microsoft.com/.default" };
-    private readonly string[] _oneDriveScopes = { "https://graph.microsoft.com/Files.ReadWrite.All" };
+    private readonly string[] _scopes = new[] { "https://graph.microsoft.com/.default" };
 
-    public UserAuthenticationService(
-        ILogger<UserAuthenticationService> logger,
-        IConfiguration configuration)
+    public UserAuthenticationService(ILogger<UserAuthenticationService> logger, IConfiguration configuration)
     {
         _logger = logger;
         _configuration = configuration;
@@ -56,199 +33,91 @@ public class UserAuthenticationService : IUserAuthenticationService
     {
         try
         {
-            _logger.LogInformation("=== GetCurrentUserAccessTokenAsync called ===");
-            _logger.LogInformation("Attempting to get token from Azure DefaultCredential");
-
-            // Use DefaultAzureCredential which includes:
-            // - azd auth login token
-            // - Environment variables
-            // - Visual Studio credentials
-            // - Azure PowerShell credentials
-            // - Azure CLI credentials
             var credential = new DefaultAzureCredential();
-
-            var token = await credential.GetTokenAsync(
-                new TokenRequestContext(_scopes));
-
-            _logger.LogInformation("Access token acquired from Azure DefaultCredential");
+            var tokenRequestContext = new TokenRequestContext(_scopes);
+            var token = await credential.GetTokenAsync(tokenRequestContext);
             return token.Token;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get access token from Azure DefaultCredential: {ErrorMessage}", ex.Message);
-            return null;
-        }
-    }
-
-    public async Task<string?> GetPersonalOneDriveAccessTokenAsync()
-    {
-        try
-        {
-            _logger.LogInformation("=== GetPersonalOneDriveAccessTokenAsync called ===");
-
-            // Step 1: Refresh token 확인
-            _logger.LogInformation("Step 1: Checking for Personal 365 refresh token in configuration");
-            var refreshToken = _configuration?["EntraId:Personal365RefreshToken"];
-
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                _logger.LogError("Step 1 failed: No Personal 365 refresh token found in configuration");
-                _logger.LogError("Please run 'azd provision' to acquire a refresh token");
-                return null;
-            }
-
-            _logger.LogInformation("✓ Step 1 completed: Refresh token found");
-
-            // Step 2: Refresh token으로 새 access token 획득
-            _logger.LogInformation("Step 2: Acquiring access token using refresh token");
-            try
-            {
-                var accessToken = await GetAccessTokenFromRefreshTokenAsync(refreshToken);
-
-                if (string.IsNullOrEmpty(accessToken))
-                {
-                    _logger.LogError("Step 2 failed: Could not get access token from refresh token");
-                    return null;
-                }
-
-                _logger.LogInformation("✓ Step 2 completed: Access token acquired successfully");
-                return accessToken;
-            }
-            catch (Exception stepEx)
-            {
-                _logger.LogError(stepEx, "Step 2 failed: Exception while acquiring access token. Exception: {ExceptionType} - {Message}",
-                    stepEx.GetType().Name, stepEx.Message);
-                return null;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetPersonalOneDriveAccessTokenAsync failed: {ErrorMessage}", ex.Message);
-            _logger.LogError("Exception type: {ExceptionType}", ex.GetType().Name);
-            _logger.LogError("Stack trace: {StackTrace}", ex.StackTrace);
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// Refresh token으로 새 access token 획득 (consumers 테넌트)
-    /// </summary>
-    private async Task<string?> GetAccessTokenFromRefreshTokenAsync(string refreshToken)
-    {
-        try
-        {
-            _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: Requesting new access token");
-
-            // Get ClientId from configuration (bound from appsettings.json and environment variables)
-            var clientId = _configuration?["EntraId:ClientId"];
-
-            _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: Configuration lookup result: {ClientId}",
-                string.IsNullOrEmpty(clientId) ? "NOT FOUND" : "FOUND");
-
-            // Fallback to hardcoded value if configuration fails
-            if (string.IsNullOrEmpty(clientId))
-            {
-                _logger.LogWarning("GetAccessTokenFromRefreshTokenAsync: ClientId not found in configuration, using fallback value");
-                clientId = "44609b96-b8ed-48cd-ae81-75abbd52ffd1";
-            }
-
-            _logger.LogInformation("GetAccessTokenFromRefreshTokenAsync: Using ClientId: {ClientId}", clientId);
-
-            using var httpClient = new System.Net.Http.HttpClient();
-
-            var requestBody = new Dictionary<string, string>
-            {
-                { "client_id", clientId },
-                { "refresh_token", refreshToken },
-                { "grant_type", "refresh_token" },
-                { "scope", "Files.Read User.Read offline_access" }
-            };
-
-            var content = new System.Net.Http.FormUrlEncodedContent(requestBody);
-
-            var response = await httpClient.PostAsync(
-                "https://login.microsoftonline.com/consumers/oauth2/v2.0/token",
-                content);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogError("GetAccessTokenFromRefreshTokenAsync: Token endpoint returned error. Status: {StatusCode}, Error: {Error}",
-                    response.StatusCode, errorContent);
-                return null;
-            }
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            using var doc = System.Text.Json.JsonDocument.Parse(responseContent);
-            var root = doc.RootElement;
-
-            if (root.TryGetProperty("access_token", out var accessTokenElement))
-            {
-                var accessToken = accessTokenElement.GetString();
-                _logger.LogInformation("✓ GetAccessTokenFromRefreshTokenAsync: New access token acquired");
-                return accessToken;
-            }
-
-            _logger.LogError("GetAccessTokenFromRefreshTokenAsync: No access_token in response");
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GetAccessTokenFromRefreshTokenAsync: Exception: {ExceptionType} - {Message}",
-                ex.GetType().Name, ex.Message);
+            _logger.LogError(ex, "Failed to get Azure credential token");
             return null;
         }
     }
 
     public async Task<GraphServiceClient> GetUserGraphClientAsync()
     {
-        try
-        {
-            _logger.LogInformation("=== GetUserGraphClientAsync called ===");
-
-            var accessToken = await GetCurrentUserAccessTokenAsync();
-            if (string.IsNullOrEmpty(accessToken))
-            {
-                _logger.LogError("No access token available from Azure credentials");
-                throw new InvalidOperationException("No access token found. Please ensure you are authenticated via 'azd auth login'.");
-            }
-
-            _logger.LogInformation("Access token acquired successfully");
-
-            // Create GraphServiceClient with user's token
-            var authProvider = new DelegateAuthenticationProvider(request =>
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                return Task.CompletedTask;
-            });
-
-            var graphClient = new GraphServiceClient(authProvider);
-            _logger.LogInformation("GraphServiceClient created for authenticated user");
-            return graphClient;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to create GraphServiceClient: {ErrorMessage}", ex.Message);
-            throw;
-        }
+        var credential = new DefaultAzureCredential();
+        return new GraphServiceClient(credential, _scopes);
     }
 
-    public async Task<GraphServiceClient> GetPersonalOneDriveGraphClientAsync()
+    // ★★★ 여기가 핵심 수정됨: 실패 이유를 낱낱이 밝히는 로직 ★★★
+    public async Task<string?> GetPersonalOneDriveAccessTokenAsync()
+    {
+        // 1. 환경변수 뒤지기 (시스템 변수 우선)
+        var refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
+
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            // 백업: App Settings 확인
+            refreshToken = _configuration["PERSONAL_365_REFRESH_TOKEN"]
+                           ?? _configuration["OnedriveDownload:EntraId:Personal365RefreshToken"];
+        }
+
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            throw new Exception("CRITICAL: 환경변수 'PERSONAL_365_REFRESH_TOKEN'이 비어있습니다. Azure Portal 설정을 확인하세요.");
+        }
+
+        // 공백/따옴표 제거
+        refreshToken = refreshToken.Trim().Trim('"').Trim('\'');
+
+        var clientId = "14d82eec-204b-4c2f-b7e8-296a70dab67e"; // 개인용 공용 Client ID
+
+        using var httpClient = new HttpClient();
+        var body = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("client_id", clientId),
+            new KeyValuePair<string, string>("grant_type", "refresh_token"),
+            new KeyValuePair<string, string>("refresh_token", refreshToken),
+            // ★ 스코프: Files.Read.All 포함 확인
+            new KeyValuePair<string, string>("scope", "Files.Read.All User.Read offline_access")
+        });
+
+        // 2. Microsoft 서버로 요청 (consumers 엔드포인트)
+        var response = await httpClient.PostAsync("https://login.microsoftonline.com/consumers/oauth2/v2.0/token", body);
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            // ★ 에러를 삼키지 않고 그대로 던짐
+            throw new Exception($"[MS Login Failed] Status: {response.StatusCode} | Body: {responseContent}");
+        }
+
+        using var doc = JsonDocument.Parse(responseContent);
+        if (doc.RootElement.TryGetProperty("access_token", out var tokenElement))
+        {
+            return tokenElement.GetString();
+        }
+
+        throw new Exception($"[Token Parse Error] 응답에 access_token 없음. Body: {responseContent}");
+    }
+
+
+    // ★★★ 여기가 문제였음: 예외를 잡아서 'errorMessage'에 넣도록 수정 ★★★
+    public async Task<(GraphServiceClient? client, string? errorMessage)> GetPersonalOneDriveGraphClientAsync()
     {
         try
         {
-            _logger.LogInformation("=== GetPersonalOneDriveGraphClientAsync called ===");
-
+            // 위에서 에러가 나면 throw되므로 catch로 넘어감
             var accessToken = await GetPersonalOneDriveAccessTokenAsync();
+
+            // 혹시라도 null이면 (로직상 그럴 일 없지만)
             if (string.IsNullOrEmpty(accessToken))
             {
-                _logger.LogError("No access token available for Personal OneDrive");
-                throw new InvalidOperationException("Failed to acquire Personal OneDrive access token");
+                return (null, "Unknown Error: Access Token is null but no exception was thrown.");
             }
 
-            _logger.LogInformation("Personal OneDrive token acquired successfully");
-
-            // Create GraphServiceClient with Personal OneDrive token
             var authProvider = new DelegateAuthenticationProvider(request =>
             {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -256,13 +125,14 @@ public class UserAuthenticationService : IUserAuthenticationService
             });
 
             var graphClient = new GraphServiceClient(authProvider);
-            _logger.LogInformation("GraphServiceClient created for Personal OneDrive");
-            return graphClient;
+            return (graphClient, null); // 성공 시 에러 메시지 null
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to create Personal OneDrive GraphServiceClient: {ErrorMessage}", ex.Message);
-            throw;
+            // ★ 예외 내용을 그대로 리턴해서 사용자가 보게 함
+            var fullError = $"[Auth Error] {ex.Message}";
+            _logger.LogError(ex, fullError);
+            return (null, fullError);
         }
     }
 }

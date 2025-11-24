@@ -12,6 +12,19 @@
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Set Function App FQDN",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "& { $fqdn = Read-Host 'Enter Function App FQDN (e.g., func-app-name.azurewebsites.net)'; $appsettingsPath = '${workspaceFolder}/src/McpSamples.OnedriveDownload.HybridApp/appsettings.json'; $content = Get-Content $appsettingsPath | ConvertFrom-Json; $content | Add-Member -NotePropertyName 'FunctionAppFqdn' -NotePropertyValue $fqdn -Force; $content | ConvertTo-Json | Set-Content $appsettingsPath; Write-Host \"FQDN updated: $fqdn\" }"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
         }
     ]
 }
