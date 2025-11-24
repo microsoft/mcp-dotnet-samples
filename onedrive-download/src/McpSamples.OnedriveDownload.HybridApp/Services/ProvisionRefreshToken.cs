@@ -50,7 +50,6 @@ public class ProvisionRefreshToken
             Console.WriteLine($"Step 1: Checking for existing token in {envFilePath}");
 
             // Check both Azure env file and .env.local
-            var envName = Environment.GetEnvironmentVariable("AZURE_ENV_NAME");
             var filesToCheck = new List<string>();
 
             if (!string.IsNullOrEmpty(envName))
