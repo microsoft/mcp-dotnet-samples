@@ -133,6 +133,10 @@ public class AzureFileShareSyncService
                 return current.FullName;
             }
             current = current.Parent;
+            if (current == null)
+            {
+                break;
+            }
         }
 
         // 못 찾으면 프로젝트 폴더 반환
