@@ -3,7 +3,7 @@ namespace McpSamples.AwesomeAzd.HybridApp.Models;
 /// <summary>
 /// This represents a template from the awesome-azd API.
 /// </summary>
-public class AwesomeAzdTemplateModel
+public class AwesomeAzdTemplateDomain
 {
     /// <summary>
     /// Gets or sets the unique identifier for the awesome-azd template.
@@ -19,11 +19,6 @@ public class AwesomeAzdTemplateModel
     /// Gets or sets the description for the awesome-azd template.
     /// </summary>
     public string Description { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the preview image path for the awesome-azd template.
-    /// </summary>
-    public string Preview { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the author URL (e.g., GitHub profile or team page).
@@ -59,25 +54,3 @@ public class AwesomeAzdTemplateModel
     public List<string> Languages { get; set; } = new();
 }
 
-/// <summary>
-/// Represents the result of executing a terminal command.
-/// </summary>
-public class ExecutionResult
-{
-    /// <summary>
-    /// Gets or sets a value indicating whether the command executed successfully.
-    /// True if the command exited with code 0; otherwise, false.
-    /// </summary>
-    public bool Success { get; set; }
-
-    /// <summary>
-    /// Gets or sets the standard output produced by the executed command.
-    /// </summary>
-    public string Output { get; set; } = "";
-
-    /// <summary>
-    /// Gets or sets the standard error produced by the executed command.
-    /// If an exception occurred or the command failed, this may contain the error message.
-    /// </summary>
-    public string Error { get; set; } = "";
-}
