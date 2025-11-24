@@ -77,14 +77,24 @@ public class ProvisionRefreshToken
             // Check if token exists in any file
             foreach (var fileToCheck in filesToCheck)
             {
+                Console.WriteLine($"[DEBUG] Checking file: {fileToCheck}");
                 if (File.Exists(fileToCheck))
                 {
+                    Console.WriteLine($"[DEBUG] File exists, reading content...");
                     string envContent = File.ReadAllText(fileToCheck);
                     if (envContent.Contains("PERSONAL_365_REFRESH_TOKEN="))
                     {
                         Console.WriteLine($"✓ 이미 Refresh Token이 존재합니다 ({Path.GetFileName(fileToCheck)}). 건너뜁니다.\n");
                         return;
                     }
+                    else
+                    {
+                        Console.WriteLine($"[DEBUG] Token not found in {Path.GetFileName(fileToCheck)}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"[DEBUG] File does not exist");
                 }
             }
 
