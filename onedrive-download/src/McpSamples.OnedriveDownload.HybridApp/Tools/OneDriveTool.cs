@@ -80,14 +80,18 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Console.WriteLine($"✅ Uploaded to Azure: {fileName}");
 
-            // 6. SAS URL 생성 (수정된 부분)
-            // ★ 중요: ShareSasBuilder 사용 (ShareFileSasBuilder 아님!)
+            // 6. SAS URL 생성 (파일 레벨 SAS)
+            // ★ 중요: 파일 특정 SAS를 위해 ShareSasBuilder 직접 사용
             var sasBuilder = new ShareSasBuilder(ShareFileSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1))
             {
                 Protocol = SasProtocol.Https,
-                ContentType = "application/octet-stream",
-                ContentDisposition = $"attachment; filename=\"{fileName}\""
+                // ★ ContentDisposition은 한글 파일명 문제로 인해 제거
+                // 브라우저에서 다운로드 시 파일명 설정은 서버에서 처리하거나
+                // URL 경로의 파일명으로 자동 인식됨
             };
+
+            // 파일 경로를 명시적으로 설정하여 파일 레벨 SAS 생성
+            sasBuilder.FilePath = fileName;
 
             // 클라이언트 권한으로 서명 생성
             Uri sasUri = fileClient.GenerateSasUri(sasBuilder);
