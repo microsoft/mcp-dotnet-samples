@@ -49,13 +49,43 @@ public class ProvisionRefreshToken
 
             Console.WriteLine($"Step 1: Checking for existing token in {envFilePath}");
 
-            if (File.Exists(envFilePath))
+            // Check both Azure env file and .env.local
+            var envName = Environment.GetEnvironmentVariable("AZURE_ENV_NAME");
+            var filesToCheck = new List<string>();
+
+            if (!string.IsNullOrEmpty(envName))
             {
-                string envContent = File.ReadAllText(envFilePath);
-                if (envContent.Contains("PERSONAL_365_REFRESH_TOKEN="))
+                var possibleRoots = new[]
                 {
-                    Console.WriteLine("✓ 이미 Refresh Token이 존재합니다. 건너뜁니다.\n");
-                    return;
+                    Directory.GetCurrentDirectory(),
+                    Path.Combine(Directory.GetCurrentDirectory(), ".."),
+                    Path.Combine(Directory.GetCurrentDirectory(), "..", ".."),
+                };
+
+                foreach (var root in possibleRoots)
+                {
+                    var path = Path.Combine(root, ".azure", envName, ".env");
+                    if (File.Exists(path))
+                    {
+                        filesToCheck.Add(path);
+                        break;
+                    }
+                }
+            }
+
+            filesToCheck.Add(Path.Combine(Directory.GetCurrentDirectory(), ".env.local"));
+
+            // Check if token exists in any file
+            foreach (var fileToCheck in filesToCheck)
+            {
+                if (File.Exists(fileToCheck))
+                {
+                    string envContent = File.ReadAllText(fileToCheck);
+                    if (envContent.Contains("PERSONAL_365_REFRESH_TOKEN="))
+                    {
+                        Console.WriteLine($"✓ 이미 Refresh Token이 존재합니다 ({Path.GetFileName(fileToCheck)}). 건너뜁니다.\n");
+                        return;
+                    }
                 }
             }
 
@@ -172,6 +202,11 @@ public class ProvisionRefreshToken
             SaveRefreshToken(refreshToken);
             Console.WriteLine($"✓ Token saved to .env.local\n");
 
+            // Step 8: .azure/{env}/.env에도 복사
+            Console.WriteLine("Step 7: Copying refresh token to .azure environment file...");
+            CopyTokenToAzureEnv(refreshToken);
+            Console.WriteLine($"✓ Token copied to .azure environment\n");
+
             // 성공 응답
             SendResponse(context.Response, 200, "인증 성공! 터미널을 확인하고 이 창을 닫으세요.");
             listener.Stop();
@@ -262,48 +297,131 @@ public class ProvisionRefreshToken
 
 
     /// <summary>
-    /// Refresh token을 azd 환경 파일에 저장
+    /// Refresh token을 azd 환경 파일과 .env.local에 저장
     /// </summary>
     private static void SaveRefreshToken(string refreshToken)
     {
-        // AZURE_ENV_NAME 환경 변수에서 현재 azd 환경 이름 가져오기
         var envName = Environment.GetEnvironmentVariable("AZURE_ENV_NAME");
 
-        string envFilePath;
+        // 목표 경로들
+        List<string> targetPaths = new();
+
+        // 1. .azure/{env}/.env (주요 대상)
         if (!string.IsNullOrEmpty(envName))
         {
-            // azd가 관리하는 .azure/{환경이름}/.env 파일에 저장
-            string projectRoot = Directory.GetCurrentDirectory();
-            envFilePath = Path.Combine(projectRoot, ".azure", envName, ".env");
-        }
-        else
-        {
-            // Fallback: 프로젝트 루트의 .env.local (개발 시)
-            string projectRoot = Directory.GetCurrentDirectory();
-            envFilePath = Path.Combine(projectRoot, ".env.local");
+            var possibleRoots = new[]
+            {
+                Directory.GetCurrentDirectory(),
+                Path.Combine(Directory.GetCurrentDirectory(), ".."),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", ".."),
+            };
+
+            foreach (var root in possibleRoots)
+            {
+                var path = Path.Combine(root, ".azure", envName, ".env");
+                if (File.Exists(path))
+                {
+                    targetPaths.Add(path);
+                    break;
+                }
+            }
         }
 
-        // 디렉토리 생성
-        var dirPath = Path.GetDirectoryName(envFilePath);
-        if (!string.IsNullOrEmpty(dirPath) && !Directory.Exists(dirPath))
+        // 2. .env.local (개발 환경용)
+        targetPaths.Add(Path.Combine(Directory.GetCurrentDirectory(), ".env.local"));
+
+        // 모든 대상 경로에 토큰 저장
+        foreach (var envFilePath in targetPaths)
         {
-            Directory.CreateDirectory(dirPath);
+            try
+            {
+                // 디렉토리 생성
+                var dirPath = Path.GetDirectoryName(envFilePath);
+                if (!string.IsNullOrEmpty(dirPath) && !Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
+
+                // 파일에서 기존 PERSONAL_365_REFRESH_TOKEN 행 제거
+                if (File.Exists(envFilePath))
+                {
+                    var lines = File.ReadAllLines(envFilePath)
+                        .Where(line => !line.StartsWith("PERSONAL_365_REFRESH_TOKEN="))
+                        .ToList();
+
+                    File.WriteAllLines(envFilePath, lines);
+                }
+
+                // 새 토큰 추가
+                File.AppendAllText(envFilePath, $"PERSONAL_365_REFRESH_TOKEN={refreshToken}\n");
+
+                Console.WriteLine($"✓ Token saved to: {envFilePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WARN] Failed to save token to {envFilePath}: {ex.Message}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Refresh token을 .azure/{env}/.env에 복사
+    /// </summary>
+    private static void CopyTokenToAzureEnv(string refreshToken)
+    {
+        var envName = Environment.GetEnvironmentVariable("AZURE_ENV_NAME");
+        if (string.IsNullOrEmpty(envName))
+        {
+            Console.WriteLine("[SKIP] AZURE_ENV_NAME not set - skipping copy to .azure env");
+            return;
         }
 
-        // 파일에서 기존 PERSONAL_365_REFRESH_TOKEN 행 제거
-        if (File.Exists(envFilePath))
+        // 여러 경로에서 찾기: 현재 경로, 상위 경로들
+        string[] possibleRoots = new[]
         {
-            var lines = File.ReadAllLines(envFilePath)
+            Directory.GetCurrentDirectory(),
+            Path.Combine(Directory.GetCurrentDirectory(), ".."),
+            Path.Combine(Directory.GetCurrentDirectory(), "..", ".."),
+        };
+
+        Console.WriteLine($"[DEBUG] Looking for .azure env file with AZURE_ENV_NAME={envName}");
+        string? azureEnvPath = null;
+        foreach (var root in possibleRoots)
+        {
+            var path = Path.Combine(root, ".azure", envName, ".env");
+            Console.WriteLine($"[DEBUG] Checking: {Path.GetFullPath(path)}");
+            if (File.Exists(path))
+            {
+                azureEnvPath = path;
+                Console.WriteLine($"[DEBUG] Found at: {azureEnvPath}");
+                break;
+            }
+        }
+
+        if (azureEnvPath == null)
+        {
+            Console.WriteLine($"[ERROR] Azure env file not found in any possible location for env: {envName}");
+            return;
+        }
+
+        try
+        {
+            // 기존 PERSONAL_365_REFRESH_TOKEN 행 제거
+            var lines = File.ReadAllLines(azureEnvPath)
                 .Where(line => !line.StartsWith("PERSONAL_365_REFRESH_TOKEN="))
                 .ToList();
 
-            File.WriteAllLines(envFilePath, lines);
+            File.WriteAllLines(azureEnvPath, lines);
+
+            // 새 토큰 추가
+            File.AppendAllText(azureEnvPath, $"PERSONAL_365_REFRESH_TOKEN={refreshToken}\n");
+
+            Console.WriteLine($"✓ Token copied to: {azureEnvPath}");
         }
-
-        // 새 토큰 추가
-        File.AppendAllText(envFilePath, $"PERSONAL_365_REFRESH_TOKEN={refreshToken}\n");
-
-        Console.WriteLine($"✓ Token saved to: {envFilePath}");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[WARN] Failed to copy token to Azure env: {ex.Message}");
+        }
     }
 
     /// <summary>
