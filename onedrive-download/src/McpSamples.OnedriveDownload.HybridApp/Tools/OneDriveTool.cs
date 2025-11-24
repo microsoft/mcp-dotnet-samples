@@ -6,6 +6,9 @@ using McpSamples.OnedriveDownload.HybridApp.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Azure.Storage.Files.Shares;
+using Azure.Storage.Files.Shares.Models;
+using Azure.Storage.Sas;
 
 namespace McpSamples.OnedriveDownload.HybridApp.Tools;
 
@@ -14,6 +17,7 @@ public class OneDriveDownloadResult
     public string? FileName { get; set; }
     public string? DownloadUrl { get; set; }
     public string? ErrorMessage { get; set; }
+    public string? SavedLocation { get; set; }
 }
 
 public interface IOneDriveTool
@@ -26,67 +30,83 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 {
     private ILogger<OneDriveTool>? _logger;
     private IUserAuthenticationService? _userAuthService;
+    private IConfiguration? _configuration;
 
     private ILogger<OneDriveTool> Logger => _logger ??= serviceProvider.GetRequiredService<ILogger<OneDriveTool>>();
     private IUserAuthenticationService UserAuthService => _userAuthService ??= serviceProvider.GetRequiredService<IUserAuthenticationService>();
+    private IConfiguration Configuration => _configuration ??= serviceProvider.GetRequiredService<IConfiguration>();
 
     [McpServerTool(Name = "download_file_from_onedrive_url", Title = "Download File from OneDrive URL")]
-    [Description("Downloads a file from OneDrive and returns a direct download URL.")]
+    [Description("Downloads a file from OneDrive, saves to Azure Storage, and returns a public download link (SAS).")]
     public async Task<OneDriveDownloadResult> DownloadFileFromUrlAsync(
         [Description("The OneDrive sharing URL")] string sharingUrl)
     {
+        Console.WriteLine("@@@ ONEDRIVETOOL (SAS Mode) STARTED @@@");
+
         try
         {
-            Logger.LogInformation("=== Download Request Started ===");
+            // 1. 연결 문자열 확인
+            var connectionString = Configuration["AZURE_STORAGE_CONNECTION_STRING"];
+            if (string.IsNullOrEmpty(connectionString))
+                throw new InvalidOperationException("AZURE_STORAGE_CONNECTION_STRING 환경 변수가 없습니다.");
 
-            // 1. 환경변수에서 경로 가져오기 (Bicep에서 /home/mounts/downloads로 설정됨)
-            // ★ 주의: 마운트 경로는 Azure가 만들어주는 것이지, 우리가 만드는 게 아님
-            string mountPath = Environment.GetEnvironmentVariable("DOWNLOAD_DIR");
+            // 2. 인증 및 GraphClient
+            var (graphClient, authError) = await UserAuthService.GetPersonalOneDriveGraphClientAsync();
+            if (graphClient == null)
+                return new OneDriveDownloadResult { ErrorMessage = authError ?? "Auth Error" };
 
-            if (string.IsNullOrEmpty(mountPath))
-            {
-                return new OneDriveDownloadResult { ErrorMessage = "DOWNLOAD_DIR environment variable is not set." };
-            }
-
-            Logger.LogInformation($"Mount path: {mountPath}");
-
-            // 2. Graph API로 파일 정보 가져오기
+            // 3. 메타데이터 조회
             string base64Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(sharingUrl));
             string encodedUrl = "u!" + base64Value.TrimEnd('=').Replace('/', '_').Replace('+', '-');
 
-            var graphClient = await UserAuthService.GetPersonalOneDriveGraphClientAsync();
             var driveItem = await graphClient.Shares[encodedUrl].DriveItem.Request().GetAsync();
-
-            if (driveItem.Folder != null)
-            {
-                return new OneDriveDownloadResult { ErrorMessage = "Folders are not supported." };
-            }
-
             string fileName = driveItem.Name;
-            string saveFilePath = System.IO.Path.Combine(mountPath, fileName);
+            long fileSize = driveItem.Size ?? 0;
 
-            Logger.LogInformation($"Saving to: {saveFilePath}");
+            // 4. Azure File Share 업로드 준비
+            string shareName = "downloads";
+            var shareClient = new ShareClient(connectionString, shareName);
+            await shareClient.CreateIfNotExistsAsync();
 
-            // 3. 파일 저장
+            var directoryClient = shareClient.GetRootDirectoryClient();
+            var fileClient = directoryClient.GetFileClient(fileName);
+
+            // 5. 업로드 (있으면 덮어쓰기)
             using (var contentStream = await graphClient.Shares[encodedUrl].DriveItem.Content.Request().GetAsync())
-            using (var fileStream = System.IO.File.Create(saveFilePath))
             {
-                await contentStream.CopyToAsync(fileStream);
+                await fileClient.CreateAsync(fileSize); // 파일 크기 할당
+                await fileClient.UploadAsync(contentStream); // 내용 전송
             }
 
-            Logger.LogInformation($"File downloaded successfully: {fileName}");
+            Console.WriteLine($"✅ Uploaded to Azure: {fileName}");
+
+            // 6. SAS URL 생성 (수정된 부분)
+            // ★ 중요: ShareSasBuilder 사용 (ShareFileSasBuilder 아님!)
+            var sasBuilder = new ShareSasBuilder(ShareFileSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1))
+            {
+                Protocol = SasProtocol.Https,
+                ContentType = "application/octet-stream",
+                ContentDisposition = $"attachment; filename=\"{fileName}\""
+            };
+
+            // 클라이언트 권한으로 서명 생성
+            Uri sasUri = fileClient.GenerateSasUri(sasBuilder);
+
+            Console.WriteLine($"✅ Generated SAS URL: {sasUri}");
 
             return new OneDriveDownloadResult
             {
                 FileName = fileName,
-                DownloadUrl = null,
+                DownloadUrl = sasUri.ToString(),
+                SavedLocation = $"Azure File Share: {shareName}/{fileName}",
                 ErrorMessage = null
             };
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Download Failed");
-            return new OneDriveDownloadResult { ErrorMessage = ex.Message };
+            var msg = $"{ex.GetType().Name}: {ex.Message}";
+            Console.WriteLine($"❌ Error: {msg}");
+            return new OneDriveDownloadResult { ErrorMessage = msg };
         }
     }
 }

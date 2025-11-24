@@ -35,4 +35,11 @@
     </Content>
   </ItemGroup>
 
+  <!-- .env 파일 및 .azure 폴더를 빌드 출력 디렉토리로 복사 -->
+  <ItemGroup>
+    <None Update="..\..\..\.azure\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
