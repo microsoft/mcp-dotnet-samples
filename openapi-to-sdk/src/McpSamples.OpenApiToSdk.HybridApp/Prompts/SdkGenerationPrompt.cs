@@ -31,7 +31,7 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
     [McpServerPrompt(Name = "generate_sdk", Title = "Generate SDK from OpenAPI Spec with Kiota Parsing")]
     [Description("Provides a structured prompt for parsing Kiota options and generating an SDK.")]
     public string GetSdkGenerationPrompt(
-        [Description("The Location of the OpenAPI description.")] string openApiDocUrl,
+        [Description("The URL or local file path of the OpenAPI description.")] string openApiDocUrl,
         [Description("The target language for the SDK.")] string language,
         [Description("The class name to use for the core client class. Defaults to ApiClient.")] string? className = null,
         [Description("The namespace to use for the core client class. Defaults to ApiSdk.")] string? namespaceName = null,
@@ -40,7 +40,7 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
         return $"""
             Generate an SDK from the provided OpenAPI specification using Kiota.
 
-            OpenAPI Location: {openApiDocUrl}
+            OpenAPI Source: {openApiDocUrl}
             Language: {language}
             Class Name: {className ?? "Default (ApiClient)"}
             Namespace: {namespaceName ?? "Default (ApiSdk)"}

@@ -83,7 +83,7 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
     [McpServerTool(Name = "generate_sdk")]
     [Description("Generate an SDK from an OpenAPI specification using Kiota")]
     public async Task<OpenApiToSdkResult> GenerateSdkAsync(
-        [Description("URL of the OpenAPI specification")] string openApiUrl,
+        [Description("URL or local file path of the OpenAPI specification")] string openApiUrl,
         [Description("Target language for the SDK (e.g., csharp, typescript)")] string language,
         [Description("Optional: The class name to use for the core client class. Defaults to ApiClient.")] string? className = null,
         [Description("Optional: The namespace to use for the core client class. Defaults to ApiSdk.")] string? namespaceName = null,
@@ -96,10 +96,26 @@ public class OpenApiToSdkTool : IOpenApiToSdkTool
 
         try
         {
-            var specContent = await _openApiService.DownloadOpenApiSpecAsync(openApiUrl);
+            string specContent;
+            // Check if it's a URL (http or https)
+            if (Uri.TryCreate(openApiUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            {
+                specContent = await _openApiService.DownloadOpenApiSpecAsync(openApiUrl);
+            }
+            // Check if it's a local file that exists
+            else if (File.Exists(openApiUrl))
+            {
+                specContent = await File.ReadAllTextAsync(openApiUrl);
+            }
+            else
+            {
+                result.ErrorMessage = $"The provided OpenAPI specification path or URL is not valid or accessible: {openApiUrl}";
+                return result;
+            }
+
             if (string.IsNullOrWhiteSpace(specContent))
             {
-                result.ErrorMessage = "Failed to download or empty OpenAPI specification.";
+                result.ErrorMessage = "The OpenAPI specification content is empty.";
                 return result;
             }
 
