@@ -62,7 +62,7 @@ public class AwesomeAzdTemplateModel
 /// <summary>
 /// Represents the result of executing a terminal command.
 /// </summary>
-public class CommandExecutionResult
+public class ExecutionResult
 {
     /// <summary>
     /// Gets or sets a value indicating whether the command executed successfully.
