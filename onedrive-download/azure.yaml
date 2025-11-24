@@ -56,31 +56,52 @@ hooks:
       run: |
         # Read token from .azure/{env}/.env file
         $envFile = ".\.azure\$env:AZURE_ENV_NAME\.env"
+        Write-Host "[DEBUG] Looking for .env file at: $envFile"
+        Write-Host "[DEBUG] AZURE_ENV_NAME: $env:AZURE_ENV_NAME"
+        Write-Host "[DEBUG] AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME: $env:AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME"
+
         if (Test-Path $envFile) {
+          Write-Host "[DEBUG] .env file found"
           $content = Get-Content $envFile -Raw -Encoding UTF8
           $refreshToken = $null
           foreach ($line in $content -split "`n") {
             if ($line -match '^PERSONAL_365_REFRESH_TOKEN=(.*)$') {
-              $refreshToken = $matches[1].Trim('"')
+              $refreshToken = $matches[1].Trim('"').Trim("'")
+              Write-Host "[DEBUG] Token extracted, length: $($refreshToken.Length)"
               break
             }
           }
 
-          if ($refreshToken) {
+          if ($refreshToken -and $refreshToken.Length -gt 10) {
             $functionAppName = $env:AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME
             $resourceGroup = "rg-$env:AZURE_ENV_NAME"
-            Write-Host "[INFO] Setting refresh token to Azure Function App..."
-            az functionapp config appsettings set --name $functionAppName --resource-group $resourceGroup --settings "PERSONAL_365_REFRESH_TOKEN=$refreshToken" | Out-Null
-            Write-Host "[OK] Token set successfully: $functionAppName"
+            Write-Host "[INFO] Setting refresh token to Azure Function App: $functionAppName"
+            Write-Host "[DEBUG] Resource Group: $resourceGroup"
 
-            Write-Host "[INFO] Restarting Function App..."
-            az functionapp restart --name $functionAppName --resource-group $resourceGroup
-            Write-Host "[OK] Function App restart completed!"
+            # Execute the command with proper error handling
+            $result = az functionapp config appsettings set --name $functionAppName --resource-group $resourceGroup --settings "PERSONAL_365_REFRESH_TOKEN=$refreshToken" 2>&1
+            if ($LASTEXITCODE -eq 0) {
+              Write-Host "[OK] Token set successfully: $functionAppName"
+
+              Write-Host "[INFO] Waiting 10 seconds before restarting Function App..."
+              Start-Sleep -Seconds 10
+
+              Write-Host "[INFO] Restarting Function App..."
+              az functionapp stop --name $functionAppName --resource-group $resourceGroup
+              Start-Sleep -Seconds 5
+              az functionapp start --name $functionAppName --resource-group $resourceGroup
+              Write-Host "[OK] Function App restart completed!"
+            } else {
+              Write-Host "[ERROR] Failed to set token: $result"
+            }
           } else {
-            Write-Host "[WARN] PERSONAL_365_REFRESH_TOKEN not found in .env file"
+            Write-Host "[WARN] PERSONAL_365_REFRESH_TOKEN not found or empty in .env file"
           }
         } else {
           Write-Host "[ERROR] .env file not found: $envFile"
+          Write-Host "[DEBUG] Current directory: $(Get-Location)"
+          Write-Host "[DEBUG] Contents of .azure directory:"
+          Get-ChildItem -Path ".\.azure" -Recurse | Select-Object -Property FullName
         }
     posix:
       shell: sh
