@@ -9,10 +9,47 @@ hooks:
   postprovision:
     windows:
       shell: pwsh
-      run: dotnet run --project ./src/McpSamples.OnedriveDownload.HybridApp --configuration Release -- --provision
+      run: |
+        dotnet run --project ./src/McpSamples.OnedriveDownload.HybridApp --configuration Release -- --provision
+
+        # Copy refresh token from .env.local to .azure/{env}/.env
+        $envLocalPath = "./src/McpSamples.OnedriveDownload.HybridApp/.env.local"
+        $envName = $env:AZURE_ENV_NAME
+        $azureEnvPath = "./.azure/$envName/.env"
+
+        if (Test-Path $envLocalPath) {
+          $refreshToken = (Get-Content $envLocalPath | Select-String "^PERSONAL_365_REFRESH_TOKEN=" | ForEach-Object { $_.Line.Split("=", 2)[1] })
+          if ($refreshToken) {
+            Write-Host "[INFO] Copying refresh token to $azureEnvPath..."
+            # Remove existing PERSONAL_365_REFRESH_TOKEN line if it exists
+            $content = Get-Content $azureEnvPath | Where-Object { -not $_.StartsWith("PERSONAL_365_REFRESH_TOKEN=") }
+            $content | Set-Content $azureEnvPath
+            # Append new token
+            Add-Content $azureEnvPath "PERSONAL_365_REFRESH_TOKEN=$refreshToken"
+            Write-Host "[OK] Refresh token copied successfully"
+          }
+        }
     posix:
       shell: sh
-      run: dotnet run --project ./src/McpSamples.OnedriveDownload.HybridApp --configuration Release -- --provision
+      run: |
+        dotnet run --project ./src/McpSamples.OnedriveDownload.HybridApp --configuration Release -- --provision
+
+        # Copy refresh token from .env.local to .azure/{env}/.env
+        envLocalPath="./src/McpSamples.OnedriveDownload.HybridApp/.env.local"
+        envName="$AZURE_ENV_NAME"
+        azureEnvPath="./.azure/$envName/.env"
+
+        if [ -f "$envLocalPath" ]; then
+          refreshToken=$(grep "^PERSONAL_365_REFRESH_TOKEN=" "$envLocalPath" | cut -d'=' -f2-)
+          if [ -n "$refreshToken" ]; then
+            echo "[INFO] Copying refresh token to $azureEnvPath..."
+            # Remove existing PERSONAL_365_REFRESH_TOKEN line if it exists
+            grep -v "^PERSONAL_365_REFRESH_TOKEN=" "$azureEnvPath" > "$azureEnvPath.tmp" && mv "$azureEnvPath.tmp" "$azureEnvPath"
+            # Append new token
+            echo "PERSONAL_365_REFRESH_TOKEN=$refreshToken" >> "$azureEnvPath"
+            echo "[OK] Refresh token copied successfully"
+          fi
+        fi
   postdeploy:
     windows:
       shell: pwsh
