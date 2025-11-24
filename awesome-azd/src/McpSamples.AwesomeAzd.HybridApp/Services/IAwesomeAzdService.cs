@@ -16,17 +16,24 @@ namespace McpSamples.AwesomeAzd.HybridApp.Services
         Task<List<AwesomeAzdTemplateModel>> GetTemplateListAsync(string keywords, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Executes a given AZD template command asynchronously.
+        /// Executes a given AZD template asynchronously using the specified GitHub repository as the source.
         /// </summary>
-        /// <param name="command">The AZD command to execute (e.g., "azd init -t owner/repo --environment myenv").</param>
+        /// <param name="srcPath">
+        /// The GitHub repository URL of the template (e.g., "https://github.com/owner/repo").
+        /// This will be converted internally into the AZD command.
+        /// </param>
         /// <param name="workingDirectory">
-        /// The directory where the command should be executed. 
+        /// The directory where the command should be executed.
         /// Can be <c>null</c> if a default directory should be used internally.
+        /// </param>
+        /// <param name="envName">
+        /// The name of the environment to apply.
+        /// Can be <c>null</c> to use the default environment internally (e.g., "myenv").
         /// </param>
         /// <param name="cancellationToken">Cancellation token to cancel the async operation.</param>
         /// <returns>
-        /// A <see cref="CommandExecutionResult"/> containing the success status, output, and any error messages from the command execution.
+        /// A <see cref="ExecutionResult"/> containing the success status, output, and any error messages from the command execution.
         /// </returns>
-        Task<CommandExecutionResult> ExecuteTemplateCommandAsync(string command, string workingDirectory, CancellationToken cancellationToken = default);
+        Task<ExecutionResult> ExecuteTemplateAsync(string srcPath, string workingDirectory, string envName, CancellationToken cancellationToken = default);
     }
 }
