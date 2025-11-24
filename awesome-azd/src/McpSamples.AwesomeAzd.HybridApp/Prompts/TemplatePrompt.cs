@@ -48,26 +48,43 @@ public class TemplatePrompt : ITemplatePrompt
         2. **Working Directory** (optional; leave empty for default/null)
         3. **Environment Name** (optional; leave empty for default/null)
 
+        - If the user provides a **Selected Template Source**, you may proceed to execution immediately.
+
+        - If the user does NOT provide a working directory: Automatically determine the host machine's user profile directory by running a terminal command (Run in Terminal)
+
+        - On Windows:
+            echo %USERPROFILE%
+
+        - On macOS or Linux:
+            echo $HOME
+
+        Use the returned value as `hostUserProfile`.
+
         Example input:
 
-        https://github.com/Azure-Samples/azure-search-openai-demo-csharp ; C:\projects\agent ; AzureEnv
+        https://github.com/Azure-Samples/azure-search-openai-demo-csharp ; C:\Users\<UserProfile>\Projects ; AzureEnv
 
         ------------------------------------------------------------
         3. Backend execution
         ------------------------------------------------------------
-        - Call the execute_template tool with a JSON object like this:
-        
+        - Call the `make_command` MCP tool with a JSON object like this:
+
             "srcPath": "Selected Template Source",
+            "hostUserProfile": "<host user's profile path>",
             "workingDirectory": <user input or null>,
-            "envName": <user input or null>"
+            "envName": <user input or null>
+
+        - The tool will return an `AzdCommand` object.
+        - Use `run in terminal` to execute it:
         
+        1. `mkdir -p <AzdCommand.WorkingDirectory>` (Linux/macOS)  
+        or `New-Item -ItemType Directory -Force -Path <AzdCommand.WorkingDirectory>` (Windows PowerShell)
+        2. `cd <AzdCommand.WorkingDirectory>`
+        3. Run `<AzdCommand.Command>`
 
-
-        - If the user leaves **Working Directory** or **Environment Name** empty,
-          pass **null** for those values. The tool will handle defaults internally.
-
-        - The tool will generate and execute the appropriate AZD command and return
-          success status, output, and any errors.
+        - Once you receive the AzdCommand object, immediately execute it in the terminal.
+        - The command will initialize the template in the specified directory and return success status, output, and any errors.
         """;
+
     }
 }

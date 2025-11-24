@@ -11,11 +11,11 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
 {
     private const string AwesomeAzdTemplateFileUrl = "https://raw.githubusercontent.com/Azure/awesome-azd/main/website/static/templates.json";
 
-    public async Task<List<AwesomeAzdTemplateModel>> GetTemplateListAsync(string keywords, CancellationToken cancellationToken = default)
+    public async Task<List<AwesomeAzdTemplateResponse>> GetTemplateListAsync(string keywords, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(keywords))
         {
-            return new List<AwesomeAzdTemplateModel>();
+            return new List<AwesomeAzdTemplateResponse>();
         }
 
         var templates = await GetTemplatesAsync(cancellationToken).ConfigureAwait(false);
@@ -27,7 +27,7 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
 
         logger.LogInformation("Search terms: {terms}", string.Join(", ", searchTerms));
 
-        var result = templates
+        var searchResult = templates
             .Where(t => ContainsAnyKeyword(t.Title, searchTerms)
                     || ContainsAnyKeyword(t.Description, searchTerms)
                     || ContainsAnyKeyword(t.Author, searchTerms)
@@ -37,102 +37,19 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
                     || (t.AzureServices?.Any(svc => ContainsAnyKeyword(svc, searchTerms)) ?? false))
             .ToList();
 
-        return result;
-    }
-
-    public async Task<ExecutionResult> ExecuteTemplateAsync(string srcPath, string workingDirectory, string envName, CancellationToken cancellationToken = default)
-    {
-        try
+        var responseList = searchResult.Select(m => new AwesomeAzdTemplateResponse
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            Id = m.Id,
+            Title = m.Title,
+            Description = m.Description,
+            Source = m.Source
+        }).ToList();
 
-            string ownerRepo = ExtractOwnerRepo(srcPath);
-
-            string command = $"azd init -t {ownerRepo} --environment {envName}";
-            logger.LogInformation("Generated command: {cmd}", command);
-
-            if (!Directory.Exists(workingDirectory))
-            {
-                logger.LogInformation("Creating directory: {dir}", workingDirectory);
-                Directory.CreateDirectory(workingDirectory);
-            }
-            else
-            {
-                logger.LogInformation("Using existing directory: {dir}", workingDirectory);
-            }
-
-            string fileName;
-            string arguments;
-
-            if (OperatingSystem.IsWindows())
-            {
-                fileName = "cmd.exe";
-                arguments = $"/c {command}";
-            }
-            else
-            {
-                fileName = "/bin/bash";
-                arguments = $"-c \"{command}\"";
-            }
-
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = fileName,
-                    Arguments = arguments,
-                    WorkingDirectory = workingDirectory,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-            
-            logger.LogInformation("Executing: {file} {args}", fileName, arguments);
-            process.Start();
-
-            cancellationToken.Register(() =>
-            {
-                try { process.Kill(); } catch { }
-            });
-
-            string output = await process.StandardOutput.ReadToEndAsync();
-            string error = await process.StandardError.ReadToEndAsync();
-
-            await process.WaitForExitAsync(cancellationToken);
-
-            return new ExecutionResult
-            {
-                Success = process.ExitCode == 0,
-                Output = output,
-                Error = error
-            };
-        }
-        catch (OperationCanceledException)
-        {
-            logger.LogWarning("Command execution cancelled by user");
-            return new ExecutionResult
-            {
-                Success = false,
-                Output = "",
-                Error = "Execution cancelled"
-            };
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Exception occurred while executing command");
-            return new ExecutionResult
-            {
-                Success = false,
-                Output = "",
-                Error = ex.Message
-            };
-        }
+        return responseList;
     }
 
     
-    private async Task<List<AwesomeAzdTemplateModel>> GetTemplatesAsync(CancellationToken cancellationToken)
+    private async Task<List<AwesomeAzdTemplateDomain>> GetTemplatesAsync(CancellationToken cancellationToken)
     {
 
         try
@@ -144,9 +61,9 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
 
-            var result = JsonSerializer.Deserialize<List<AwesomeAzdTemplateModel>>(json,
+            var result = JsonSerializer.Deserialize<List<AwesomeAzdTemplateDomain>>(json,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
-                ?? new List<AwesomeAzdTemplateModel>();
+                ?? new List<AwesomeAzdTemplateDomain>();
 
             logger.LogInformation("Loaded {count} templates.", result.Count);
 
@@ -155,7 +72,7 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to fetch or deserialize templates.");
-            return new List<AwesomeAzdTemplateModel>();
+            return new List<AwesomeAzdTemplateDomain>();
         }
     }
 
