@@ -92,6 +92,8 @@ public class PptFontFixService : IPptFontFixService
         if (filePath.Contains('\\')) fileName = filePath.Split('\\').Last();
         if (filePath.Contains('/')) fileName = filePath.Split('/').Last();
         
+        searchPaths.Add(Path.Combine("/app/mounts", fileName));
+        searchPaths.Add(Path.Combine("/app", fileName));
         searchPaths.Add(Path.Combine("/files", fileName));
 
         string baseDir = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");

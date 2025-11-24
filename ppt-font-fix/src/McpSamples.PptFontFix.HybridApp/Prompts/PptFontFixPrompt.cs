@@ -65,16 +65,23 @@ public class PptFontFixPrompt : IPptFontFixPrompt
         - Render it as a Clickable Markdown Link.
         - Format: `👉 [Click here to Download Fixed File](URL)`
 
-        **CASE B: The result is a File Path (e.g. `/files/...` or `C:\...`) (Stdio/Local Mode)**
+        **CASE B: The result is a File Path (e.g. `/files/...`, `/app/...` or `C:\...`) (Stdio/Local Mode)**
         - The user is using VS Code. VS Code automatically detects absolute paths.
         - **DO NOT use Markdown syntax** (No `[]` or `()`).
         - **DO NOT shorten the path.** Output the full string exactly as returned by the tool.
+        
+        - **SPECIAL INSTRUCTION FOR CONTAINER PATHS:**
+          - If the returned path looks like a Linux path (e.g. starts with `/app/` or `/files/`), it is inside the Docker container.
+          - **Explicitly tell the user:** "This file is saved inside the container volume. Please check your mounted local folder."
+        
         - Output format:
           
           ✅ **Task Completed.**
           
           **File:**
           [Insert Raw Full Path Here]
+          
+          *(If container path, insert hint here)*
         """;
     }
 }
