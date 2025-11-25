@@ -46,20 +46,20 @@ namespace McpSamples.PptTranslator.HybridApp.Services
             string jsonContent = await File.ReadAllTextAsync(translatedJsonPath);
             var translated = JsonSerializer.Deserialize<TranslatedResult>(jsonContent);
 
-            if (translated?.Items == null)
-                throw new Exception("Invalid translated JSON structure.");
+            if (translated == null)
+                throw new Exception("Failed to parse translated JSON.");
+
+            ValidateTranslatedJson(translated);
 
             string outputPath = Path.Combine(
                 Path.GetDirectoryName(pptFilePath)!,
                 "translated_output.pptx"
             );
 
-            // Output PPT 파일 생성
             File.Copy(pptFilePath, outputPath, overwrite: true);
 
             var pres = new Presentation(outputPath);
 
-            // 각 텍스트 항목을 PPT에 적용
             foreach (var item in translated.Items)
             {
                 try
@@ -84,6 +84,7 @@ namespace McpSamples.PptTranslator.HybridApp.Services
 
             return outputPath;
         }
+
 
         /// <summary>
         /// Inserts translated text into a ShapeCrawler text box while preserving font styling.
@@ -160,6 +161,39 @@ namespace McpSamples.PptTranslator.HybridApp.Services
                 portionFont.LatinName = baseFont.LatinName;
 
             portionFont.EastAsianName = baseFont.EastAsianName;
+        }
+
+        /// <summary>
+        /// Validates the structure and values of translated JSON before applying to PPT.
+        /// </summary>
+        private void ValidateTranslatedJson(TranslatedResult json)
+        {
+            if (json.Items == null)
+                throw new Exception("Translated JSON 'Items' is missing or null.");
+
+            // TotalCount 검사
+            if (json.TotalCount != json.Items.Count)
+                throw new Exception($"TotalCount mismatch: Expected {json.TotalCount}, Actual {json.Items.Count}");
+
+            foreach (var item in json.Items)
+            {
+                // SlideIndex 검사
+                if (item.SlideIndex <= 0)
+                    throw new Exception($"Invalid SlideIndex: {item.SlideIndex}");
+
+                // ShapeId 검사
+                if (string.IsNullOrWhiteSpace(item.ShapeId))
+                    throw new Exception("ShapeId cannot be null or empty.");
+
+                // Text 검사
+                if (item.Text == null)
+                    throw new Exception($"Text value is null for Slide {item.SlideIndex}, ShapeId {item.ShapeId}");
+
+                if (!int.TryParse(item.ShapeId, out _))
+                {
+                    throw new Exception($"ShapeId must be a numeric string. Received: '{item.ShapeId}'");
+                }
+            }
         }
 
         /// <summary>
