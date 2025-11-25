@@ -80,24 +80,27 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Console.WriteLine($"✅ Uploaded to Azure: {fileName}");
 
-            // 6. SAS URL 생성 (Share 레벨 SAS로 한글 파일명 문제 해결)
+            // 6. SAS URL 생성 (인코딩된 파일명으로 직접 URL 구성)
+            // fileClient의 경로는 원본 파일명이므로, Share 레벨 SAS를 사용하고 URL에 인코딩된 파일명 추가
             var sasBuilder = new ShareSasBuilder(ShareFileSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1))
             {
                 Protocol = SasProtocol.Https
             };
 
-            // Share 전체에 대한 SAS 생성 (파일 특정 SAS 아님)
-            Uri shareSasUri = shareClient.GetRootDirectoryClient().GetFileClient(fileName).GetShareClient().GenerateSasUri(sasBuilder);
+            // Share 레벨 SAS 토큰 생성 (FilePath 없음)
+            string sasToken = shareClient.GenerateSasUri(sasBuilder).Query;
 
-            // URL에 파일명 추가
-            Uri sasUri = new Uri($"{shareSasUri.Scheme}://{shareSasUri.Host}{shareSasUri.AbsolutePath}/{Uri.EscapeDataString(fileName)}{shareSasUri.Query}");
+            // 인코딩된 파일명으로 전체 URL 구성
+            string encodedFileName = Uri.EscapeDataString(fileName);
+            string baseUri = shareClient.Uri.AbsoluteUri;
+            string sasUri = $"{baseUri}/{encodedFileName}{sasToken}";
 
             Console.WriteLine($"✅ Generated SAS URL: {sasUri}");
 
             return new OneDriveDownloadResult
             {
                 FileName = fileName,
-                DownloadUrl = sasUri.ToString(),
+                DownloadUrl = sasUri,
                 SavedLocation = $"Azure File Share: {shareName}/{fileName}",
                 ErrorMessage = null
             };
