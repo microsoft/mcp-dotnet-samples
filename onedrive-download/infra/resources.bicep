@@ -82,7 +82,7 @@ resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 }
 
 // 4. App Service plan (Flex Consumption)
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${abbrs.webServerFarms}${resourceToken}'
   location: location
   tags: tags
@@ -129,7 +129,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
       }
       runtime: {
         name: 'dotnet-isolated'
-        version: '9.0'
+        version: '9'
       }
     }
 
@@ -139,7 +139,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         type: 'AzureFiles'
         accountName: storageAccount.name
         shareName: 'downloads'
-        mountPath: '/home/mounts/downloads'
+        mountPath: '/mount/downloads'
         accessKey: storageAccount.listKeys().keys[0].value
       }
     }
@@ -166,7 +166,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         // ★ 다운로드 경로 설정 (마운트된 경로와 일치)
         {
           name: 'DOWNLOAD_DIR'
-          value: '/home/mounts/downloads'
+          value: '/mount/downloads'
         }
         // ★ OneDrive 인증 관련 설정
         {
