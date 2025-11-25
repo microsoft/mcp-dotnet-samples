@@ -185,7 +185,14 @@ public class ProvisionRefreshToken
             catch
             {
                 Console.WriteLine("브라우저를 자동으로 열 수 없습니다.");
-                Console.WriteLine($"아래 URL을 복사해서 직접 접속해주세요:\n{authUrl}\n");
+                Console.WriteLine($"아래 URL로 리디렉션됩니다:\n{authUrl}\n");
+
+                // ★ HTTP 리디렉션: Azure 환경에서 브라우저 자동 실행 불가능할 때
+                // 엔드포인트를 통해 로그인 URL로 리디렉션
+                app.MapGet("/auth/redirect", (HttpContext context) =>
+                {
+                    context.Response.Redirect(authUrl);
+                });
             }
 
             Console.WriteLine("대기 중... (브라우저에서 로그인해주세요)\n");
