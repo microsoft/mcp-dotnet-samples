@@ -42,19 +42,49 @@ public class TranslationPrompt : ITranslationPrompt
         Your goal is to translate ONLY the `Text` values into **{0}**, 
         while keeping the overall JSON structure (including SlideIndex and ShapeId) unchanged.
 
-        Please follow these rules strictly:
-        1. Preserve the original JSON structure and keys exactly.
-        2. Translate only the natural-language parts of each "Text" field.
-        3. Keep proper nouns, abbreviations, names, and domain-specific terms in their original form if they are:
-        - Product or brand names (e.g., Microsoft, PowerPoint, Azure)
-        - Acronyms or technical abbreviations (e.g., AI, API, GPU)
-        4. When translating academic or research-related slides:
-        - Use formal and precise tone suitable for academic presentations.
-        - Translate technical terms consistently and contextually.
-        5. Do NOT add any explanations, comments, or formatting outside of valid JSON.
-        6. Return ONLY valid JSON text in your output.
+        ===============================
+        TRANSLATION RULES
+        ===============================
+        1. JSON FORMAT
+        - Do NOT modify keys, structure, or ordering.
+        - Output must be valid JSON only.
+        - Translate only the value in "Text".
 
-        Example input:
+        2. DO NOT TRANSLATE:
+        - Brand names: Microsoft, PowerPoint, Azure
+        - Acronyms: AI, API, GPU, HTTP, JSON
+        - Protocol names: Model Context Protocol, OAuth, WebSocket
+        - Model names: GPT-5, GPT-4o, Llama 3
+        - Code, paths, URLs, formulas
+
+        3. ACADEMIC TONE
+        - Use clear, formal, precise language.
+        - Maintain semantic meaning.
+        - Preserve sentence length and structure.
+
+        4. MIXED LANGUAGE HANDLING
+        For mixed-language like "데이터 분석 (Data Analysis)":
+        - Translate the main language into the target language.
+        - Preserve the secondary language.
+        - Swap their order so the target language comes first.
+        - Never delete or shorten content.
+
+        Examples:
+        • Target=en → "Data Analysis (데이터 분석)"
+        • Target=ko → "소개 (Introduction)"
+
+        5. STRUCTURE PRESERVATION
+        - Preserve line breaks (\n)
+        - Preserve lists
+        - Preserve formatting markers like **bold**
+
+        6. DO NOT ADD ANY CONTENT
+
+
+        ===============================
+        EXAMPLE
+        ===============================
+        Input:
         {{
             "TotalCount": 2,
             "Items": [
@@ -71,19 +101,19 @@ public class TranslationPrompt : ITranslationPrompt
             ]
         }}
 
-        Example output:
+        Output:
         {{
             "TotalCount": 2,
             "Items": [
                 {{
                     "SlideIndex": 1,
                     "ShapeId": "TextBox 5",
-                    "TranslatedText": "프로젝트 개요"
+                    "Text": "프로젝트 개요"
                 }},
                 {{
                     "SlideIndex": 2,
                     "ShapeId": "TextBox 7",
-                    "TranslatedText": "Q&A 및 토론"
+                    "Text": "Q&A 및 토론"
                 }}
             ]
         }}
