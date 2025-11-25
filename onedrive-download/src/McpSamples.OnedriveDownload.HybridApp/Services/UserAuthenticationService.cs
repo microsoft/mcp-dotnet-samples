@@ -45,10 +45,10 @@ public class UserAuthenticationService : IUserAuthenticationService
         }
     }
 
-    public async Task<GraphServiceClient> GetUserGraphClientAsync()
+    public Task<GraphServiceClient> GetUserGraphClientAsync()
     {
         var credential = new DefaultAzureCredential();
-        return new GraphServiceClient(credential, _scopes);
+        return Task.FromResult(new GraphServiceClient(credential, _scopes));
     }
 
     // ★★★ 여기가 핵심 수정됨: 실패 이유를 낱낱이 밝히는 로직 ★★★

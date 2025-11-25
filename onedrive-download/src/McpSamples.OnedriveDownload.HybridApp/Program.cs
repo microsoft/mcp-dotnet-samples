@@ -127,9 +127,6 @@ builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService
 // Add Azure File Share Sync Service
 builder.Services.AddSingleton<AzureFileShareSyncService>();
 
-// Add controllers
-builder.Services.AddControllers();
-
 if (useStreamableHttp == true)
 {
     builder.Services.AddOpenApi("swagger", o =>
@@ -177,7 +174,6 @@ if (useStreamableHttp == true)
     webApp.UseStaticFiles();
 
     webApp.MapOpenApi("/{documentName}.json");
-    webApp.MapControllers();
 
     logger.LogInformation("╔════════════════════════════════════════════════════════════════╗");
     logger.LogInformation("║         MCP OneDrive Download Server 시작됨 (Started)         ║");
