@@ -91,11 +91,22 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
             };
 
             // 파일 경로를 명시적으로 설정하여 파일 레벨 SAS 생성
-            // ★ 한글 파일명 문제: URI.EscapeDataString으로 URL 인코딩 처리
-            sasBuilder.FilePath = Uri.EscapeDataString(fileName);
+            // ★ 주의: FilePath는 원본 파일명을 그대로 사용 (인코딩하면 안 됨)
+            sasBuilder.FilePath = fileName;
 
             // 클라이언트 권한으로 서명 생성
             Uri sasUri = fileClient.GenerateSasUri(sasBuilder);
+
+            // ★ 한글 파일명: SAS URL의 파일명 부분을 직접 인코딩
+            string encodedFileName = Uri.EscapeDataString(fileName);
+            string sasUriString = sasUri.ToString();
+
+            // URL에서 파일명 부분을 찾아 인코딩된 버전으로 교체
+            if (sasUriString.Contains(fileName))
+            {
+                sasUriString = sasUriString.Replace(fileName, encodedFileName);
+                sasUri = new Uri(sasUriString);
+            }
 
             Console.WriteLine($"✅ Generated SAS URL: {sasUri}");
 
