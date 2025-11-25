@@ -29,7 +29,7 @@ public interface IAwesomeAzdTool
     /// <returns>A task that resolves to an <see cref="AzdCommand"/>.</returns>
     Task<AzdCommand> CreateCommandAsync(
         [Description("GitHub repository URL for the template")] string srcPath,
-        [Description("Host user profile path")] string hostUserProfile,
+        [Description("Host user profile path")] string? hostUserProfile = null,
         [Description("Working directory where the command would run")] string? workingDirectory = null,
         [Description("Name of the environment to apply")] string? envName = null);
         
@@ -74,12 +74,20 @@ public class AwesomeAzdTool(IAwesomeAzdService service, ILogger<AwesomeAzdTool> 
     [Description("Generates an AzdCommand with default working directory and environment without executing it.")]
     public Task<AzdCommand> CreateCommandAsync(
         [Description("GitHub repository URL for the template")] string srcPath,
-        [Description("Host user profile path")] string hostUserProfile,
+        [Description("Host user profile path")] string? hostUserProfile = null,
         [Description("Working directory where the command would run")] string? workingDirectory = null,
         [Description("Name of the environment to apply")] string? envName = null)
     {
         var environment = string.IsNullOrWhiteSpace(envName) ? "myenv" : envName;
 
+        // workingDirectory와 hostUserProfile 둘 다 없으면 예외 처리
+        if (string.IsNullOrWhiteSpace(workingDirectory) && string.IsNullOrWhiteSpace(hostUserProfile))
+        {
+            var msg = "Both hostUserProfile and workingDirectory are null or empty. Please provide at least one valid path.";
+            logger.LogError(msg);
+            throw new ArgumentException(msg, nameof(workingDirectory));
+        }
+        
         // workingDirectory가 지정되지 않았다면, hostUserProfile 기준으로 경로 구성
         var directory = string.IsNullOrWhiteSpace(workingDirectory)
             ? Path.Combine(hostUserProfile, ExtractRepoName(srcPath))
