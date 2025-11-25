@@ -18,6 +18,7 @@ feature2.md
 .env.local
 .env*.local
 .azure/
+.claude/
 
 # Generated files from Azure File Share sync
 generated/
