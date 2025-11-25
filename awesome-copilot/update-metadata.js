@@ -26,13 +26,8 @@ const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
 
 // Define the directories to process
 const directories = {
-    chatmodes: path.join(__dirname, "src", "awesome-copilot", "chatmodes"),
-    instructions: path.join(
-        __dirname,
-        "src",
-        "awesome-copilot",
-        "instructions"
-    ),
+    // chatmodes: path.join(__dirname, "src", "awesome-copilot", "chatmodes"),
+    instructions: path.join(__dirname, "src", "awesome-copilot", "instructions"),
     prompts: path.join(__dirname, "src", "awesome-copilot", "prompts"),
     collections: path.join(__dirname, "src", "awesome-copilot", "collections"),
     agents: path.join(__dirname, "src", "awesome-copilot", "agents"),
@@ -663,11 +658,8 @@ function processCollectionDirectory(dirPath) {
 
 // Process all directories
 const metadata = {
-    chatmodes: processDirectory(directories.chatmodes, ".chatmode.md"),
-    instructions: processDirectory(
-        directories.instructions,
-        ".instructions.md"
-    ),
+    // chatmodes: processDirectory(directories.chatmodes, ".chatmode.md"),
+    instructions: processDirectory(directories.instructions, ".instructions.md"),
     prompts: processDirectory(directories.prompts, ".prompt.md"),
     collections: processCollectionDirectory(directories.collections),
     agents: processDirectory(directories.agents, ".agent.md"),
@@ -682,9 +674,9 @@ const outputPath = path.join(
 );
 fs.writeFileSync(outputPath, JSON.stringify(metadata, null, 2));
 
-console.log(
-    `Extracted frontmatter from ${metadata.chatmodes.length} chatmode files`
-);
+// console.log(
+//     `Extracted frontmatter from ${metadata.chatmodes.length} chatmode files`
+// );
 console.log(
     `Extracted frontmatter from ${metadata.instructions.length} instruction files`
 );
@@ -702,17 +694,17 @@ console.log(`Metadata written to ${outputPath}`);
 // Validate that required fields are present
 let hasErrors = false;
 
-// Check chatmodes
-metadata.chatmodes.forEach((chatmode) => {
-    if (!chatmode.filename || !chatmode.description) {
-        console.error(
-            `Error: Chatmode missing required fields: ${
-                chatmode.filename || "unknown"
-            }`
-        );
-        hasErrors = true;
-    }
-});
+// // Check chatmodes
+// metadata.chatmodes.forEach((chatmode) => {
+//     if (!chatmode.filename || !chatmode.description) {
+//         console.error(
+//             `Error: Chatmode missing required fields: ${
+//                 chatmode.filename || "unknown"
+//             }`
+//         );
+//         hasErrors = true;
+//     }
+// });
 
 // Check instructions
 metadata.instructions.forEach((instruction) => {
