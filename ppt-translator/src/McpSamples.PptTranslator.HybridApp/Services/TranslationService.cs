@@ -32,6 +32,7 @@ namespace McpSamples.PptTranslator.HybridApp.Services
         {
             _logger = logger;
             _prompt = prompt;
+            _http.Timeout = TimeSpan.FromSeconds(300); // Set timeout to 300 seconds
         }
 
         /// <inheritdoc />
