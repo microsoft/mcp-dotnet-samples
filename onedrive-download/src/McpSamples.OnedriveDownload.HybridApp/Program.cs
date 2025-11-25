@@ -59,6 +59,12 @@ if (string.IsNullOrEmpty(refreshToken))
     // token이 저장되었으니 환경변수 다시 로드
     refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
     Console.WriteLine($"\n✓ Token loaded successfully\n");
+
+    // ★ Azure Function App 설정에 token 저장 (Azure 배포 환경)
+    if (!string.IsNullOrEmpty(refreshToken))
+    {
+        await SaveTokenToAzureFunctionAppAsync(refreshToken);
+    }
 }
 
 var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
@@ -213,4 +219,101 @@ static void LoadEnvFile(string filePath)
         Environment.SetEnvironmentVariable(key, value);
     }
     Console.WriteLine($"[INFO] 환경 변수 파일 로드 완료: {filePath}");
+}
+
+// ============================================================
+// Helper 함수: Azure Function App 설정에 token 저장
+// ============================================================
+static async Task SaveTokenToAzureFunctionAppAsync(string refreshToken)
+{
+    try
+    {
+        // Azure 환경 변수 확인
+        var functionAppName = Environment.GetEnvironmentVariable("AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME");
+        var envName = Environment.GetEnvironmentVariable("AZURE_ENV_NAME");
+
+        // 로컬 개발 환경에서는 실행하지 않음
+        if (string.IsNullOrEmpty(functionAppName) || string.IsNullOrEmpty(envName))
+        {
+            Console.WriteLine("[INFO] Not in Azure environment - skipping Azure Function App settings update");
+            return;
+        }
+
+        Console.WriteLine("\n========================================");
+        Console.WriteLine("Saving token to Azure Function App...");
+        Console.WriteLine("========================================\n");
+
+        var resourceGroup = $"rg-{envName}";
+
+        // az CLI를 사용해 Function App 설정 업데이트
+        var processInfo = new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = "az",
+            Arguments = $"functionapp config appsettings set --name {functionAppName} --resource-group {resourceGroup} --settings PERSONAL_365_REFRESH_TOKEN={refreshToken}",
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };
+
+        using var process = System.Diagnostics.Process.Start(processInfo);
+        if (process != null)
+        {
+            var output = await process.StandardOutput.ReadToEndAsync();
+            var error = await process.StandardError.ReadToEndAsync();
+            await process.WaitForExitAsync();
+
+            if (process.ExitCode == 0)
+            {
+                Console.WriteLine($"✓ Token saved to Azure Function App: {functionAppName}");
+
+                // Function App 재시작
+                Console.WriteLine("[INFO] Restarting Function App...");
+                var restartInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "az",
+                    Arguments = $"functionapp stop --name {functionAppName} --resource-group {resourceGroup}",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using var restartProcess = System.Diagnostics.Process.Start(restartInfo);
+                if (restartProcess != null)
+                {
+                    await restartProcess.WaitForExitAsync();
+                }
+
+                await System.Threading.Tasks.Task.Delay(5000); // 5초 대기
+
+                var startInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "az",
+                    Arguments = $"functionapp start --name {functionAppName} --resource-group {resourceGroup}",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using var startProcess = System.Diagnostics.Process.Start(startInfo);
+                if (startProcess != null)
+                {
+                    await startProcess.WaitForExitAsync();
+                }
+
+                Console.WriteLine($"✓ Function App restarted successfully\n");
+            }
+            else
+            {
+                Console.WriteLine($"[WARN] Failed to save token to Azure: {error}");
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[WARN] Error saving token to Azure Function App: {ex.Message}");
+        // 에러가 발생해도 서버는 계속 실행
+    }
 }
