@@ -10,6 +10,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 /// <summary>
 /// Personal 365 Refresh Token 프로비저닝 도구 (MSAL 기반)
@@ -98,34 +100,45 @@ public class ProvisionRefreshToken
                 }
             }
 
-            // Step 2: HTTP 서버 시작 및 동적 포트 할당
-            Console.WriteLine("\nStep 2: Starting HTTP listener on dynamic port...");
-            var listener = new HttpListener();
-
-            // 포트 0을 사용해 동적 포트 할당
-            int port = 0;
-            HttpListenerContext? context = null;
-
-            // 동적 포트를 찾기 위해 여러 번 시도
-            for (int i = 0; i < 10; i++)
-            {
-                try
-                {
-                    port = GetAvailablePort();
-                    listener = new HttpListener();
-                    listener.Prefixes.Add($"http://localhost:{port}/");
-                    listener.Start();
-                    Console.WriteLine($"✓ Listening on port: {port}\n");
-                    break;
-                }
-                catch
-                {
-                    if (i == 9) throw;
-                }
-            }
-
+            // Step 2: HTTP 서버 시작 및 동적 포트 할당 (Kestrel - macOS/Linux/Windows 호환)
+            Console.WriteLine("\nStep 2: Starting HTTP server on dynamic port...");
+            int port = GetAvailablePort();
             string redirectUri = $"http://localhost:{port}";
+
+            Console.WriteLine($"✓ Will listen on port: {port}");
             Console.WriteLine($"Redirect URI: {redirectUri}\n");
+
+            // 인증 코드를 받을 TaskCompletionSource
+            var authCodeTaskSource = new TaskCompletionSource<string>();
+
+            // ASP.NET Core 최소 HTTP 서버 생성
+            var builder = WebApplication.CreateBuilder();
+            var app = builder.Build();
+
+            // 인증 콜백 엔드포인트
+            app.MapGet("/", async context =>
+            {
+                var code = context.Request.Query["code"].ToString();
+                var state = context.Request.Query["state"].ToString();
+
+                if (string.IsNullOrEmpty(code))
+                {
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsJsonAsync(new { error = "No authorization code received" });
+                    authCodeTaskSource.TrySetException(new Exception("No authorization code"));
+                    return;
+                }
+
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.WriteAsync("인증 성공! 터미널을 확인하고 이 창을 닫으세요.");
+
+                authCodeTaskSource.TrySetResult(code);
+            });
+
+            // 서버를 백그라운드에서 시작
+            var serverTask = app.RunAsync($"http://localhost:{port}");
+            await Task.Delay(500); // 서버가 시작될 때까지 대기
 
             // Step 3: MSAL 공개 클라이언트 애플리케이션 생성
             Console.WriteLine("Step 3: Creating MSAL PublicClientApplication...");
@@ -177,16 +190,30 @@ public class ProvisionRefreshToken
 
             Console.WriteLine("대기 중... (브라우저에서 로그인해주세요)\n");
 
-            // Step 5: 인증 콜백 대기
-            context = listener.GetContext();
-            var queryString = context.Request.QueryString;
-            var code = queryString["code"];
+            // Step 5: 인증 콜백 대기 (타임아웃 설정)
+            string code;
+            try
+            {
+                using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(5));
+                code = await authCodeTaskSource.Task;
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("✗ 인증 타임아웃 (5분 초과)");
+                await app.StopAsync();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"✗ Authorization code를 받지 못했습니다: {ex.Message}");
+                await app.StopAsync();
+                return;
+            }
 
             if (string.IsNullOrEmpty(code))
             {
-                Console.WriteLine("✗ Authorization code를 받지 못했습니다.");
-                SendResponse(context.Response, 400, "Error: No authorization code received");
-                listener.Stop();
+                Console.WriteLine("✗ Authorization code가 비어있습니다.");
+                await app.StopAsync();
                 return;
             }
 
@@ -199,8 +226,7 @@ public class ProvisionRefreshToken
             if (string.IsNullOrEmpty(refreshToken))
             {
                 Console.WriteLine("✗ Refresh token을 얻을 수 없습니다.");
-                SendResponse(context.Response, 400, "Error: Could not obtain refresh token");
-                listener.Stop();
+                await app.StopAsync();
                 return;
             }
 
@@ -216,9 +242,8 @@ public class ProvisionRefreshToken
             CopyTokenToAzureEnv(refreshToken);
             Console.WriteLine($"✓ Token copied to .azure environment\n");
 
-            // 성공 응답
-            SendResponse(context.Response, 200, "인증 성공! 터미널을 확인하고 이 창을 닫으세요.");
-            listener.Stop();
+            // 서버 정지
+            await app.StopAsync();
 
             Console.WriteLine("========================================");
             Console.WriteLine("✓ Provisioning completed successfully!");
@@ -431,22 +456,5 @@ public class ProvisionRefreshToken
         {
             Console.WriteLine($"[WARN] Failed to copy token to Azure env: {ex.Message}");
         }
-    }
-
-    /// <summary>
-    /// HTTP 응답 작성
-    /// </summary>
-    private static void SendResponse(HttpListenerResponse response, int statusCode, string message)
-    {
-        response.StatusCode = statusCode;
-        response.ContentType = "text/html; charset=utf-8";
-
-        var html = $"<html><body><h1>{message}</h1><script>window.close();</script></body></html>";
-        byte[] buffer = Encoding.UTF8.GetBytes(html);
-        response.ContentLength64 = buffer.Length;
-
-        using var output = response.OutputStream;
-        output.Write(buffer, 0, buffer.Length);
-        output.Close();
     }
 }
