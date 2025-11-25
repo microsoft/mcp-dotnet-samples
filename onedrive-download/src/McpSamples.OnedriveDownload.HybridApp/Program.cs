@@ -39,6 +39,28 @@ if (isProvisioning)
     return;
 }
 
+// ★ 서버 시작 전에 token 확인 - token이 없으면 로그인 화면 띄우기
+var refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
+if (string.IsNullOrEmpty(refreshToken))
+{
+    Console.WriteLine("\n========================================");
+    Console.WriteLine("Refresh Token not found!");
+    Console.WriteLine("Starting authentication flow...");
+    Console.WriteLine("========================================\n");
+
+    // 임시 configuration 생성
+    var tempConfigBuilder = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
+    var tempConfig = tempConfigBuilder.Build();
+
+    // 로그인 화면 띄우기
+    await ProvisionRefreshToken.ProvisionAsync(tempConfig);
+
+    // token이 저장되었으니 환경변수 다시 로드
+    refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
+    Console.WriteLine($"\n✓ Token loaded successfully\n");
+}
+
 var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
 // Force HTTP mode unless --stdio is explicitly passed
