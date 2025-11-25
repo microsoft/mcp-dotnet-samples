@@ -126,5 +126,6 @@ hooks:
 services:
   onedrive-download:
     project: ./src/McpSamples.OnedriveDownload.HybridApp
-    host: appservice
+    host: function
     language: csharp
+    dist: ./src/McpSamples.OnedriveDownload.HybridApp/bin/Release/net9.0/publish
