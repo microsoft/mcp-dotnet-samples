@@ -7,7 +7,8 @@
         "run",
         "-i",
         "--rm",
-        "-v", "${pwd}/wwwroot/generated:/app/wwwroot/generated",
+        "-v",
+        "${workspaceFolder}/generated:/app/wwwroot/generated",
         "openapi-to-sdk:latest"
       ]
     }

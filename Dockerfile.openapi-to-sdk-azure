@@ -2,6 +2,9 @@
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 
+# Install Kiota CLI
+RUN dotnet tool install --global Microsoft.OpenApi.Kiota
+
 COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
 COPY ./openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp /source/openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp
 
@@ -13,7 +16,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
 
 WORKDIR /app
 
+# Copy app and Kiota CLI
 COPY --from=build /app .
+COPY --from=build /root/.dotnet/tools /opt/kiota-tools
+
+# Add Kiota to PATH by creating a symlink in a standard bin directory
+RUN ln -s /opt/kiota-tools/kiota /usr/local/bin/kiota
 
 USER $APP_UID
 

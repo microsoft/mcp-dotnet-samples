@@ -43,7 +43,7 @@ module containerRegistry 'br/public:avm/res/container-registry/registry:0.1.1' =
   }
 }
 
-// Container apps environment
+// Container apps environment with Storage Profile
 module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.4.5' = {
   name: 'container-apps-environment'
   params: {
@@ -82,7 +82,7 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
     secrets: {
       secureList: [
       ]
-    }
+    }    
     containers: [
       {
         image: mcpOpenApiToSdkFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
@@ -91,9 +91,6 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
           cpu: json('0.5')
           memory: '1.0Gi'
         }
-        args: [
-          '--http'
-        ]
         env: [
           {
             name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -108,8 +105,12 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
             value: '8080'
           }
         ]
+        args: [
+          '--http'
+        ]
       }
     ]
+    
     managedIdentities: {
       systemAssigned: false
       userAssignedResourceIds: [
@@ -123,6 +124,16 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
       }
     ]
     environmentResourceId: containerAppsEnvironment.outputs.resourceId
+    corsPolicy: {
+      allowedOrigins: [
+        'https://make.preview.powerapps.com'
+        'https://make.powerapps.com'
+        'https://make.preview.powerautomate.com'
+        'https://make.powerautomate.com'
+        'https://copilotstudio.preview.microsoft.com'
+        'https://copilotstudio.microsoft.com'
+      ]
+    }
     location: location
     tags: union(tags, { 'azd-service-name': 'openapi-to-sdk' })
   }
