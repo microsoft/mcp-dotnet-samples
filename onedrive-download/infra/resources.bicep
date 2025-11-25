@@ -149,10 +149,6 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
       appSettings: [
         // ★ Flex Consumption 필수 설정
         {
-          name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet-isolated'
-        }
-        {
           name: 'WEBSITE_FUNCTIONS_MESSAGING_EXTENSION_VERSION'
           value: '~4'
         }
