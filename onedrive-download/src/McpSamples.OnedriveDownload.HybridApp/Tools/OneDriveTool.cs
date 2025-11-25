@@ -80,33 +80,17 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Console.WriteLine($"✅ Uploaded to Azure: {fileName}");
 
-            // 6. SAS URL 생성 (파일 레벨 SAS)
-            // ★ 중요: 파일 특정 SAS를 위해 ShareSasBuilder 직접 사용
+            // 6. SAS URL 생성 (Share 레벨 SAS로 한글 파일명 문제 해결)
             var sasBuilder = new ShareSasBuilder(ShareFileSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1))
             {
-                Protocol = SasProtocol.Https,
-                // ★ ContentDisposition은 한글 파일명 문제로 인해 제거
-                // 브라우저에서 다운로드 시 파일명 설정은 서버에서 처리하거나
-                // URL 경로의 파일명으로 자동 인식됨
+                Protocol = SasProtocol.Https
             };
 
-            // 파일 경로를 명시적으로 설정하여 파일 레벨 SAS 생성
-            // ★ 주의: FilePath는 원본 파일명을 그대로 사용 (인코딩하면 안 됨)
-            sasBuilder.FilePath = fileName;
+            // Share 전체에 대한 SAS 생성 (파일 특정 SAS 아님)
+            Uri shareSasUri = shareClient.GetRootDirectoryClient().GetFileClient(fileName).GetShareClient().GenerateSasUri(sasBuilder);
 
-            // 클라이언트 권한으로 서명 생성
-            Uri sasUri = fileClient.GenerateSasUri(sasBuilder);
-
-            // ★ 한글 파일명: SAS URL의 파일명 부분을 직접 인코딩
-            string encodedFileName = Uri.EscapeDataString(fileName);
-            string sasUriString = sasUri.ToString();
-
-            // URL에서 파일명 부분을 찾아 인코딩된 버전으로 교체
-            if (sasUriString.Contains(fileName))
-            {
-                sasUriString = sasUriString.Replace(fileName, encodedFileName);
-                sasUri = new Uri(sasUriString);
-            }
+            // URL에 파일명 추가
+            Uri sasUri = new Uri($"{shareSasUri.Scheme}://{shareSasUri.Host}{shareSasUri.AbsolutePath}/{Uri.EscapeDataString(fileName)}{shareSasUri.Query}");
 
             Console.WriteLine($"✅ Generated SAS URL: {sasUri}");
 
