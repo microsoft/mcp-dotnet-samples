@@ -129,24 +129,34 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
       }
       runtime: {
         name: 'dotnet-isolated'
-        version: '9'
-      }
-    }
-
-    // ★★★ 핵심: 스토리지 마운트 설정 ★★★
-    azureStorageAccounts: {
-      'downloads-mount': {
-        type: 'AzureFiles'
-        accountName: storageAccount.name
-        shareName: 'downloads'
-        mountPath: '/mount/downloads'
-        accessKey: storageAccount.listKeys().keys[0].value
+        version: '9.0'
       }
     }
 
     siteConfig: {
       alwaysOn: false
+
+      // ★★★ 핵심: 스토리지 마운트 설정 ★★★
+      azureStorageAccounts: {
+        'downloads-mount': {
+          type: 'AzureFiles'
+          accountName: storageAccount.name
+          shareName: 'downloads'
+          mountPath: '/mount/downloads'
+          accessKey: storageAccount.listKeys().keys[0].value
+        }
+      }
       appSettings: [
+        // ★ Flex Consumption 필수 설정
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'dotnet-isolated'
+        }
+        {
+          name: 'WEBSITE_FUNCTIONS_MESSAGING_EXTENSION_VERSION'
+          value: '~4'
+        }
+        // ★ AzureWebJobsStorage는 Full Connection String으로 제공
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
