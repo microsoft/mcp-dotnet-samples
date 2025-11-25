@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: awesome-azd
+
+metadata:
+  template: azd-init@1.14.0
+
+services:
+  awesome-azd:
+    project: src/McpSamples.AwesomeAzd.HybridApp
+    host: containerapp
+    language: dotnet
+    docker:
+      path: ../../../Dockerfile.awesome-azd-azure
+      context: ../../../
+      remoteBuild: false
