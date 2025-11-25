@@ -21,6 +21,10 @@ WORKDIR /app
 
 COPY --from=build /app .
 
+RUN mkdir -p /app/wwwroot/generated /files \
+    && chown -R $APP_UID:$APP_UID /app/wwwroot/generated /files \
+    && chmod 755 /app/wwwroot/generated
+
 USER $APP_UID
 
 ENTRYPOINT ["dotnet", "McpSamples.PptFontFix.HybridApp.dll"]
