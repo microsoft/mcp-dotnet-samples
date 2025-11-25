@@ -43,7 +43,7 @@ module containerRegistry 'br/public:avm/res/container-registry/registry:0.1.1' =
   }
 }
 
-// Container apps environment with Storage Profile
+// Container apps environment
 module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.4.5' = {
   name: 'container-apps-environment'
   params: {
@@ -82,7 +82,7 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
     secrets: {
       secureList: [
       ]
-    }    
+    }
     containers: [
       {
         image: mcpOpenApiToSdkFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
