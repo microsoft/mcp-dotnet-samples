@@ -40,7 +40,7 @@ public class TemplatePrompt : ITemplatePrompt
         - Only include templates whose metadata matches the keyword.
 
         ------------------------------------------------------------
-        2. Collect user input for execution
+        2. Collect user input for execution and Backend execution
         ------------------------------------------------------------
         After displaying the search results, ask the user to provide:
 
@@ -53,7 +53,7 @@ public class TemplatePrompt : ITemplatePrompt
         - If the user does NOT provide a working directory: Automatically determine the host machine's user profile directory by running a terminal command (Run in Terminal)
 
         - On Windows:
-            echo %USERPROFILE%
+            Write-Output $env:USERPROFILE
 
         - On macOS or Linux:
             echo $HOME
@@ -64,9 +64,7 @@ public class TemplatePrompt : ITemplatePrompt
 
         https://github.com/Azure-Samples/azure-search-openai-demo-csharp ; C:\Users\<UserProfile>\Projects ; AzureEnv
 
-        ------------------------------------------------------------
-        3. Backend execution
-        ------------------------------------------------------------
+
         - Call the `make_command` MCP tool with a JSON object like this:
 
             "srcPath": "Selected Template Source",
@@ -82,7 +80,7 @@ public class TemplatePrompt : ITemplatePrompt
         2. `cd <AzdCommand.WorkingDirectory>`
         3. Run `<AzdCommand.Command>`
 
-        - Once you receive the AzdCommand object, immediately execute it in the terminal.
+        - Once you receive the AzdCommand object, immediately execute it in the terminal — no additional steps required.
         - The command will initialize the template in the specified directory and return success status, output, and any errors.
         """;
 
