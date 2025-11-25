@@ -128,4 +128,5 @@ services:
     project: ./src/McpSamples.OnedriveDownload.HybridApp
     host: function
     language: csharp
-    dist: ./src/McpSamples.OnedriveDownload.HybridApp/bin/Release/net9.0/publish
+    package:
+      outputPath: bin/Release/net9.0/publish

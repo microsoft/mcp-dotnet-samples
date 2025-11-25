@@ -29,5 +29,9 @@
     </None>
   </ItemGroup>
 
+  <!-- .azurefunctions 디렉토리를 publish 폴더에 포함 -->
+  <ItemGroup>
+    <None Include=".azurefunctions/**" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 
 </Project>
