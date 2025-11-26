@@ -181,6 +181,57 @@ if (useStreamableHttp == true)
 
     webApp.MapOpenApi("/{documentName}.json");
 
+    // ★ OAuth 인증 상태 확인 엔드포인트 - Azure 환경에서 브라우저 로그인 불가능할 때 사용
+    webApp.MapGet("/auth/status", async (HttpContext context) =>
+    {
+        context.Response.ContentType = "text/html; charset=utf-8";
+        var token = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
+
+        if (!string.IsNullOrEmpty(token))
+        {
+            await context.Response.WriteAsync("""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>인증 완료</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 50px; text-align: center; }
+                        .success { color: green; font-size: 18px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>✓ 인증 완료 (Authentication Complete)</h1>
+                    <p class="success">Refresh Token이 이미 설정되었습니다.</p>
+                    <p>The Refresh Token is already configured.</p>
+                </body>
+                </html>
+                """);
+        }
+        else
+        {
+            await context.Response.WriteAsync("""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>인증 대기 중</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 50px; text-align: center; }
+                        .info { font-size: 16px; color: #333; }
+                    </style>
+                </head>
+                <body>
+                    <h1>OneDrive 인증 필요</h1>
+                    <p class="info">Refresh Token이 설정되지 않았습니다.</p>
+                    <p class="info">애플리케이션을 재시작하면 인증 화면이 표시됩니다.</p>
+                    <p class="info">로그를 확인해주세요.</p>
+                </body>
+                </html>
+                """);
+        }
+    });
+
     logger.LogInformation("╔════════════════════════════════════════════════════════════════╗");
     logger.LogInformation("║         MCP OneDrive Download Server 시작됨 (Started)         ║");
     logger.LogInformation("║     사용자 위임 방식으로 OneDrive에 접근합니다                 ║");
