@@ -4486,6 +4486,18 @@
       ]
     },
     {
+      "filename": "lingodotdev-i18n.agent.md",
+      "name": "Lingo.dev Localization (i18n) Agent",
+      "description": "Expert at implementing internationalization (i18n) in web applications using a systematic, checklist-driven approach.",
+      "tools": [
+        "*"
+      ],
+      "mcp-servers": "",
+      "lingo": "",
+      "type": "sse",
+      "url": "https://mcp.lingo.dev/main"
+    },
+    {
       "filename": "mentor.agent.md",
       "description": "Help mentor the engineer by providing guidance and support.",
       "tools": [
