@@ -7,9 +7,6 @@ param tags object = {}
 @description('The name of the service defined in azure.yaml.')
 param azdServiceName string
 
-@description('Personal 365 Refresh Token for OneDrive access (will be set via postdeploy hook)')
-@secure()
-param personal365RefreshToken string = ''
 
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
@@ -192,33 +189,12 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: '14d82eec-204b-4c2f-b7e8-296a70dab67e' // Microsoft 퍼블릭 클라이언트 ID
         }
         {
-          name: 'OnedriveDownload__EntraId__Personal365RefreshToken'
-          value: personal365RefreshToken
-        }
-        {
-          name: 'PERSONAL_365_REFRESH_TOKEN'
-          value: personal365RefreshToken
-        }
-        {
           name: 'AZURE_CLIENT_ID'
           value: userAssignedIdentity.properties.clientId
         }
         {
           name: 'AZURE_STORAGE_CONNECTION_STRING'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
-        }
-        // ★ OAuth2 토큰 환경 변수
-        {
-          name: 'OAUTH_ACCESS_TOKEN'
-          value: ''
-        }
-        {
-          name: 'OAUTH_REFRESH_TOKEN'
-          value: ''
-        }
-        {
-          name: 'OAUTH_EXPIRES_AT'
-          value: ''
         }
       ]
     }

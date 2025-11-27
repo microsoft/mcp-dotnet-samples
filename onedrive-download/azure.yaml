@@ -13,11 +13,3 @@ services:
     package:
       outputPath: bin/Release/net9.0/publish
 
-hooks:
-  postprovision:
-    windows:
-      shell: pwsh
-      run: ./scripts/Setup-Auth.ps1
-    posix:
-      shell: sh
-      run: ./scripts/setup-auth.sh
