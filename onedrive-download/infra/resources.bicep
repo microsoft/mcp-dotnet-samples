@@ -207,6 +207,19 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'AZURE_STORAGE_CONNECTION_STRING'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
         }
+        // ★ OAuth2 토큰 환경 변수
+        {
+          name: 'OAUTH_ACCESS_TOKEN'
+          value: ''
+        }
+        {
+          name: 'OAUTH_REFRESH_TOKEN'
+          value: ''
+        }
+        {
+          name: 'OAUTH_EXPIRES_AT'
+          value: ''
+        }
       ]
     }
   }

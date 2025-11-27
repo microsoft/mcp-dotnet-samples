@@ -10,6 +10,7 @@ using McpSamples.Shared.Extensions;
 using McpSamples.Shared.OpenApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Graph;
+using System.Text.Json;
 
 using Constants = McpSamples.OnedriveDownload.HybridApp.Constants;
 
@@ -39,33 +40,34 @@ if (isProvisioning)
     return;
 }
 
-// ★ 서버 시작 전에 token 확인 - token이 없으면 로그인 화면 띄우기
-var refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
-if (string.IsNullOrEmpty(refreshToken))
-{
-    Console.WriteLine("\n========================================");
-    Console.WriteLine("Refresh Token not found!");
-    Console.WriteLine("Starting authentication flow...");
-    Console.WriteLine("========================================\n");
-
-    // 임시 configuration 생성
-    var tempConfigBuilder = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
-    var tempConfig = tempConfigBuilder.Build();
-
-    // 로그인 화면 띄우기
-    await ProvisionRefreshToken.ProvisionAsync(tempConfig);
-
-    // token이 저장되었으니 환경변수 다시 로드
-    refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
-    Console.WriteLine($"\n✓ Token loaded successfully\n");
-
-    // ★ Azure Function App 설정에 token 저장 (Azure 배포 환경)
-    if (!string.IsNullOrEmpty(refreshToken))
-    {
-        await SaveTokenToAzureFunctionAppAsync(refreshToken);
-    }
-}
+// ★ [주석 처리] 서버 시작 전에 token 확인 - token이 없으면 로그인 화면 띄우기
+// 이 로직이 MCP 서버 시작을 막으므로 주석 처리
+// var refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
+// if (string.IsNullOrEmpty(refreshToken))
+// {
+//     Console.WriteLine("\n========================================");
+//     Console.WriteLine("Refresh Token not found!");
+//     Console.WriteLine("Starting authentication flow...");
+//     Console.WriteLine("========================================\n");
+//
+//     // 임시 configuration 생성
+//     var tempConfigBuilder = new ConfigurationBuilder()
+//         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
+//     var tempConfig = tempConfigBuilder.Build();
+//
+//     // 로그인 화면 띄우기
+//     await ProvisionRefreshToken.ProvisionAsync(tempConfig);
+//
+//     // token이 저장되었으니 환경변수 다시 로드
+//     refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
+//     Console.WriteLine($"\n✓ Token loaded successfully\n");
+//
+//     // ★ Azure Function App 설정에 token 저장 (Azure 배포 환경)
+//     if (!string.IsNullOrEmpty(refreshToken))
+//     {
+//         await SaveTokenToAzureFunctionAppAsync(refreshToken);
+//     }
+// }
 
 var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
@@ -81,17 +83,44 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
 
-// Map PERSONAL_365_REFRESH_TOKEN environment variable to configuration
+// ★ OAuthTokenStore 등록 (OAuth2 토큰 저장용)
+var tokenStore = new OAuthTokenStore();
+builder.Services.AddSingleton(tokenStore);
+
+// ★ 환경 변수에서 EntraId 설정값 로드
+// postprovision hook에서 설정한 값을 먼저 확인
+var tenantId = Environment.GetEnvironmentVariable("AZURE_TENANT_ID")
+    ?? builder.Configuration["EntraId:TenantId"]
+    ?? Environment.GetEnvironmentVariable("TENANT_ID");
+var clientId = builder.Configuration["EntraId:ClientId"]  // postprovision에서 설정한 ClientId
+    ?? Environment.GetEnvironmentVariable("OAUTH_CLIENT_ID");
+var clientSecret = builder.Configuration["EntraId:ClientSecret"]
+    ?? Environment.GetEnvironmentVariable("CLIENT_SECRET");
 var personal365RefreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
-Console.WriteLine($"[DEBUG] PERSONAL_365_REFRESH_TOKEN env var: {(string.IsNullOrEmpty(personal365RefreshToken) ? "NOT SET" : "SET (" + personal365RefreshToken.Length + " chars)")}");
+
+// Configuration에 환경 변수 값 설정
+if (!string.IsNullOrEmpty(tenantId))
+{
+    builder.Configuration["EntraId:TenantId"] = tenantId;
+    Console.WriteLine($"[DEBUG] EntraId:TenantId = {tenantId}");
+}
+
+if (!string.IsNullOrEmpty(clientId))
+{
+    builder.Configuration["EntraId:ClientId"] = clientId;
+    Console.WriteLine($"[DEBUG] EntraId:ClientId loaded");
+}
+
+if (!string.IsNullOrEmpty(clientSecret))
+{
+    builder.Configuration["EntraId:ClientSecret"] = clientSecret;
+    Console.WriteLine($"[DEBUG] EntraId:ClientSecret loaded");
+}
+
 if (!string.IsNullOrEmpty(personal365RefreshToken))
 {
     builder.Configuration["EntraId:Personal365RefreshToken"] = personal365RefreshToken;
-    Console.WriteLine($"[DEBUG] Set EntraId:Personal365RefreshToken in configuration");
-}
-else
-{
-    Console.WriteLine($"[DEBUG] PERSONAL_365_REFRESH_TOKEN is empty or null - not setting configuration");
+    Console.WriteLine($"[DEBUG] EntraId:Personal365RefreshToken loaded");
 }
 
 // Add Application Insights for proper Azure logging FIRST
@@ -129,6 +158,7 @@ if (!string.IsNullOrEmpty(keyVaultName))
 
 // Add authentication service (user-delegated with automatic token from HTTP context)
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+
 
 // Add Azure File Share Sync Service
 builder.Services.AddSingleton<AzureFileShareSyncService>();
@@ -179,7 +209,143 @@ if (useStreamableHttp == true)
     // ★ wwwroot 폴더의 정적 파일(HTML, CSS, 다운로드 파일 등)을 URL로 접근 가능하게 함
     webApp.UseStaticFiles();
 
+    // Azure Functions 환경에서 wwwroot 경로 무시 처리
+    if (!System.IO.Directory.Exists(webApp.Environment.WebRootPath))
+    {
+        logger.LogWarning($"WebRootPath not found: {webApp.Environment.WebRootPath}");
+    }
+
     webApp.MapOpenApi("/{documentName}.json");
+
+    // ★ OAuth2 Authorization Code Flow 로그인
+    webApp.MapGet("/login", (HttpContext context, IConfiguration config) =>
+    {
+        var settings = app.Services.GetRequiredService<OnedriveDownloadAppSettings>();
+        var tenantId = settings.EntraId?.TenantId ?? string.Empty;
+        var clientId = settings.EntraId?.ClientId ?? string.Empty;
+
+        // Always use HTTPS for Azure App Service
+        var scheme = context.Request.Host.Host.Contains("azurewebsites.net") ? "https" : context.Request.Scheme;
+        var redirectUri = $"{scheme}://{context.Request.Host}/auth/callback";
+        var scope = "Files.Read offline_access"; // ★ Delegated Scope (내 파일만 접근)
+
+        // Microsoft 로그인 페이지 주소 생성
+        var authUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize" +
+                      $"?client_id={Uri.EscapeDataString(clientId)}" +
+                      $"&response_type=code" +
+                      $"&redirect_uri={Uri.EscapeDataString(redirectUri)}" +
+                      $"&scope={Uri.EscapeDataString(scope)}" +
+                      $"&response_mode=query";
+
+        // 사용자를 Microsoft 로그인 페이지로 리디렉트
+        context.Response.Redirect(authUrl);
+        return Task.CompletedTask;
+    });
+
+    // ★ OAuth2 Callback (Microsoft에서 Authorization Code 받기)
+    webApp.MapGet("/auth/callback", async (HttpContext context, IConfiguration config, OAuthTokenStore store) =>
+    {
+        var code = context.Request.Query["code"];
+        var error = context.Request.Query["error"];
+
+        if (!string.IsNullOrEmpty(error))
+        {
+            logger.LogError($"❌ Microsoft 로그인 오류: {error}");
+            return Results.Content($"<h1>로그인 실패</h1><p>오류: {error}</p>", "text/html");
+        }
+
+        if (string.IsNullOrEmpty(code))
+        {
+            return Results.BadRequest("Authorization code가 없습니다.");
+        }
+
+        try
+        {
+            var settings = app.Services.GetRequiredService<OnedriveDownloadAppSettings>();
+            var tenantId = settings.EntraId?.TenantId ?? string.Empty;
+            var clientId = settings.EntraId?.ClientId ?? string.Empty;
+            var clientSecret = settings.EntraId?.ClientSecret ?? string.Empty;
+
+            // Always use HTTPS for Azure App Service
+            var scheme = context.Request.Host.Host.Contains("azurewebsites.net") ? "https" : context.Request.Scheme;
+            var redirectUri = $"{scheme}://{context.Request.Host}/auth/callback";
+
+            logger.LogInformation($"[DEBUG] TenantId: {tenantId}");
+            logger.LogInformation($"[DEBUG] ClientId: {clientId}");
+            logger.LogInformation($"[DEBUG] RedirectUri: {redirectUri}");
+
+            // ★ Authorization Code를 Token으로 교환
+            using var httpClient = new HttpClient();
+
+            // Client Secret이 있으면 기밀 클라이언트, 없으면 공개 클라이언트 흐름
+            var tokenParams = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("grant_type", "authorization_code"),
+                new KeyValuePair<string, string>("code", code.ToString()),
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("redirect_uri", redirectUri),
+                new KeyValuePair<string, string>("scope", "Files.Read offline_access")
+            };
+
+            // Client Secret이 있으면 추가
+            if (!string.IsNullOrEmpty(clientSecret))
+            {
+                tokenParams.Add(new KeyValuePair<string, string>("client_secret", clientSecret));
+            }
+
+            var tokenRequest = new FormUrlEncodedContent(tokenParams);
+
+            var tokenResponse = await httpClient.PostAsync(
+                $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token",
+                tokenRequest);
+
+            var tokenContent = await tokenResponse.Content.ReadAsStringAsync();
+
+            if (!tokenResponse.IsSuccessStatusCode)
+            {
+                logger.LogError($"❌ 토큰 교환 실패: {tokenContent}");
+                return Results.Content($"<h1>토큰 교환 실패</h1><p>{tokenContent}</p>", "text/html");
+            }
+
+            using var doc = JsonDocument.Parse(tokenContent);
+            var accessToken = doc.RootElement.GetProperty("access_token").GetString();
+            var refreshToken = doc.RootElement.GetProperty("refresh_token").GetString();
+            var expiresIn = doc.RootElement.GetProperty("expires_in").GetInt32();
+
+            // ★ 토큰을 저장소에 저장
+            store.AccessToken = accessToken ?? string.Empty;
+            store.RefreshToken = refreshToken ?? string.Empty;
+            store.ExpiresAt = DateTime.UtcNow.AddSeconds(expiresIn);
+
+            logger.LogInformation("✅ OAuth2 로그인 성공! 토큰 저장됨.");
+
+            return Results.Content(@"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>OneDrive MCP 로그인 성공</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+                        .success { color: green; font-size: 18px; }
+                        .info { margin-top: 20px; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <h1>✅ 로그인 성공!</h1>
+                    <p class='success'>Microsoft OneDrive 인증이 완료되었습니다.</p>
+                    <p class='info'>MCP 서버가 이제 OneDrive에 접근할 수 있습니다.</p>
+                    <p class='info'>이 창을 닫으셔도 됩니다.</p>
+                </body>
+                </html>
+            ", "text/html");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "❌ 콜백 처리 중 오류 발생");
+            return Results.Content($"<h1>오류 발생</h1><p>{ex.Message}</p>", "text/html");
+        }
+    });
 
     // ★ OAuth 인증 상태 확인 엔드포인트 - Azure 환경에서 브라우저 로그인 불가능할 때 사용
     webApp.MapGet("/auth/status", async (HttpContext context) =>
@@ -272,99 +438,32 @@ static void LoadEnvFile(string filePath)
     Console.WriteLine($"[INFO] 환경 변수 파일 로드 완료: {filePath}");
 }
 
-// ============================================================
-// Helper 함수: Azure Function App 설정에 token 저장
-// ============================================================
-static async Task SaveTokenToAzureFunctionAppAsync(string refreshToken)
+// ★ OAuth2 토큰을 환경 변수에 저장하는 클래스
+public class OAuthTokenStore
 {
-    try
+    public string? AccessToken
     {
-        // Azure 환경 변수 확인
-        var functionAppName = Environment.GetEnvironmentVariable("AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME");
-        var envName = Environment.GetEnvironmentVariable("AZURE_ENV_NAME");
-
-        // 로컬 개발 환경에서는 실행하지 않음
-        if (string.IsNullOrEmpty(functionAppName) || string.IsNullOrEmpty(envName))
-        {
-            Console.WriteLine("[INFO] Not in Azure environment - skipping Azure Function App settings update");
-            return;
-        }
-
-        Console.WriteLine("\n========================================");
-        Console.WriteLine("Saving token to Azure Function App...");
-        Console.WriteLine("========================================\n");
-
-        var resourceGroup = $"rg-{envName}";
-
-        // az CLI를 사용해 Function App 설정 업데이트
-        var processInfo = new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = "az",
-            Arguments = $"functionapp config appsettings set --name {functionAppName} --resource-group {resourceGroup} --settings PERSONAL_365_REFRESH_TOKEN={refreshToken}",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        };
-
-        using var process = System.Diagnostics.Process.Start(processInfo);
-        if (process != null)
-        {
-            var output = await process.StandardOutput.ReadToEndAsync();
-            var error = await process.StandardError.ReadToEndAsync();
-            await process.WaitForExitAsync();
-
-            if (process.ExitCode == 0)
-            {
-                Console.WriteLine($"✓ Token saved to Azure Function App: {functionAppName}");
-
-                // Function App 재시작
-                Console.WriteLine("[INFO] Restarting Function App...");
-                var restartInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = "az",
-                    Arguments = $"functionapp stop --name {functionAppName} --resource-group {resourceGroup}",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-
-                using var restartProcess = System.Diagnostics.Process.Start(restartInfo);
-                if (restartProcess != null)
-                {
-                    await restartProcess.WaitForExitAsync();
-                }
-
-                await System.Threading.Tasks.Task.Delay(5000); // 5초 대기
-
-                var startInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = "az",
-                    Arguments = $"functionapp start --name {functionAppName} --resource-group {resourceGroup}",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-
-                using var startProcess = System.Diagnostics.Process.Start(startInfo);
-                if (startProcess != null)
-                {
-                    await startProcess.WaitForExitAsync();
-                }
-
-                Console.WriteLine($"✓ Function App restarted successfully\n");
-            }
-            else
-            {
-                Console.WriteLine($"[WARN] Failed to save token to Azure: {error}");
-            }
-        }
+        get => Environment.GetEnvironmentVariable("OAUTH_ACCESS_TOKEN");
+        set => Environment.SetEnvironmentVariable("OAUTH_ACCESS_TOKEN", value);
     }
-    catch (Exception ex)
+
+    public string? RefreshToken
     {
-        Console.WriteLine($"[WARN] Error saving token to Azure Function App: {ex.Message}");
-        // 에러가 발생해도 서버는 계속 실행
+        get => Environment.GetEnvironmentVariable("OAUTH_REFRESH_TOKEN");
+        set => Environment.SetEnvironmentVariable("OAUTH_REFRESH_TOKEN", value);
+    }
+
+    public DateTime ExpiresAt
+    {
+        get
+        {
+            var expiresAtStr = Environment.GetEnvironmentVariable("OAUTH_EXPIRES_AT");
+            if (DateTime.TryParse(expiresAtStr, out var expiresAt))
+            {
+                return expiresAt;
+            }
+            return DateTime.MinValue;
+        }
+        set => Environment.SetEnvironmentVariable("OAUTH_EXPIRES_AT", value.ToString("O"));
     }
 }

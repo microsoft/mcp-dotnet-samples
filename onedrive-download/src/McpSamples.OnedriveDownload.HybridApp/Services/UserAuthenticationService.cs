@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using McpSamples.OnedriveDownload.HybridApp.Configurations;
 
 namespace McpSamples.OnedriveDownload.HybridApp.Services;
 
@@ -23,10 +24,17 @@ public class UserAuthenticationService : IUserAuthenticationService
     private readonly IConfiguration _configuration;
     private readonly string[] _scopes = new[] { "https://graph.microsoft.com/.default" };
 
-    public UserAuthenticationService(ILogger<UserAuthenticationService> logger, IConfiguration configuration)
+    // ★ OAuth2 토큰 저장소 (Program.cs에서 등록된 싱글톤)
+    private OAuthTokenStore? _tokenStore;
+
+    public UserAuthenticationService(
+        ILogger<UserAuthenticationService> logger,
+        IConfiguration configuration,
+        OAuthTokenStore? tokenStore = null)
     {
         _logger = logger;
         _configuration = configuration;
+        _tokenStore = tokenStore;
     }
 
     public async Task<string?> GetCurrentUserAccessTokenAsync()
@@ -51,57 +59,114 @@ public class UserAuthenticationService : IUserAuthenticationService
         return Task.FromResult(new GraphServiceClient(credential, _scopes));
     }
 
-    // ★★★ 여기가 핵심 수정됨: 실패 이유를 낱낱이 밝히는 로직 ★★★
+    // ★★★ OAuth2 Authorization Code Flow 토큰 획득 ★★★
     public async Task<string?> GetPersonalOneDriveAccessTokenAsync()
     {
-        // 1. 환경변수 뒤지기 (시스템 변수 우선)
-        var refreshToken = Environment.GetEnvironmentVariable("PERSONAL_365_REFRESH_TOKEN");
-
-        if (string.IsNullOrWhiteSpace(refreshToken))
+        try
         {
-            // 백업: App Settings 확인
-            refreshToken = _configuration["PERSONAL_365_REFRESH_TOKEN"]
-                           ?? _configuration["OnedriveDownload:EntraId:Personal365RefreshToken"];
+            // 저장된 토큰이 없으면 null 반환 (사용자가 /login으로 가야 함)
+            if (_tokenStore == null)
+            {
+                _logger.LogWarning("⚠️ OAuthTokenStore가 주입되지 않았습니다. /login으로 이동하세요.");
+                return null;
+            }
+
+            // 저장된 액세스 토큰이 있고 만료되지 않았으면 사용
+            if (!string.IsNullOrEmpty(_tokenStore.AccessToken) && DateTime.UtcNow < _tokenStore.ExpiresAt)
+            {
+                _logger.LogInformation("✓ 저장된 액세스 토큰 사용");
+                return _tokenStore.AccessToken;
+            }
+
+            // 리프레시 토큰이 있으면 새 액세스 토큰 획득
+            if (!string.IsNullOrEmpty(_tokenStore.RefreshToken))
+            {
+                _logger.LogInformation("🔄 리프레시 토큰으로 새 액세스 토큰 획득 중...");
+                var newAccessToken = await RefreshAccessTokenAsync(_tokenStore.RefreshToken);
+                if (!string.IsNullOrEmpty(newAccessToken))
+                {
+                    _logger.LogInformation("✓ 새 액세스 토큰 획득 성공");
+                    return newAccessToken;
+                }
+            }
+
+            // 토큰이 없으면 사용자에게 로그인 유도
+            _logger.LogError("❌ 저장된 토큰이 없습니다. /login으로 이동하여 인증하세요.");
+            return null;
         }
-
-        if (string.IsNullOrWhiteSpace(refreshToken))
+        catch (Exception ex)
         {
-            throw new Exception("CRITICAL: 환경변수 'PERSONAL_365_REFRESH_TOKEN'이 비어있습니다. Azure Portal 설정을 확인하세요.");
+            _logger.LogError(ex, "❌ 개인 OneDrive 액세스 토큰 획득 실패");
+            return null;
         }
-
-        // 공백/따옴표 제거
-        refreshToken = refreshToken.Trim().Trim('"').Trim('\'');
-
-        var clientId = "14d82eec-204b-4c2f-b7e8-296a70dab67e"; // 개인용 공용 Client ID
-
-        using var httpClient = new HttpClient();
-        var body = new FormUrlEncodedContent(new[]
-        {
-            new KeyValuePair<string, string>("client_id", clientId),
-            new KeyValuePair<string, string>("grant_type", "refresh_token"),
-            new KeyValuePair<string, string>("refresh_token", refreshToken),
-            // ★ 스코프: Files.Read.All 포함 확인
-            new KeyValuePair<string, string>("scope", "Files.Read.All User.Read offline_access")
-        });
-
-        // 2. Microsoft 서버로 요청 (consumers 엔드포인트)
-        var response = await httpClient.PostAsync("https://login.microsoftonline.com/consumers/oauth2/v2.0/token", body);
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-            // ★ 에러를 삼키지 않고 그대로 던짐
-            throw new Exception($"[MS Login Failed] Status: {response.StatusCode} | Body: {responseContent}");
-        }
-
-        using var doc = JsonDocument.Parse(responseContent);
-        if (doc.RootElement.TryGetProperty("access_token", out var tokenElement))
-        {
-            return tokenElement.GetString();
-        }
-
-        throw new Exception($"[Token Parse Error] 응답에 access_token 없음. Body: {responseContent}");
     }
+
+    // ★★★ 리프레시 토큰으로 새 액세스 토큰 획득 ★★★
+    private async Task<string?> RefreshAccessTokenAsync(string refreshToken)
+    {
+        try
+        {
+            var settings = _configuration.Get<OnedriveDownloadAppSettings>();
+            if (settings?.EntraId == null)
+            {
+                _logger.LogError("❌ EntraId 설정을 찾을 수 없습니다.");
+                return null;
+            }
+
+            var tenantId = settings.EntraId?.TenantId ?? string.Empty;
+            var clientId = settings.EntraId?.ClientId ?? string.Empty;
+            var clientSecret = settings.EntraId?.ClientSecret ?? string.Empty;
+
+            using var httpClient = new HttpClient();
+            var tokenRequest = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                new KeyValuePair<string, string>("refresh_token", refreshToken),
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("client_secret", clientSecret),
+                new KeyValuePair<string, string>("scope", "https://graph.microsoft.com/.default")
+            });
+
+            var response = await httpClient.PostAsync(
+                $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token",
+                tokenRequest);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("❌ 토큰 리프레시 실패: {StatusCode}", response.StatusCode);
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(responseContent);
+            var root = doc.RootElement;
+
+            var accessToken = root.GetProperty("access_token").GetString();
+            var expiresIn = root.GetProperty("expires_in").GetInt32();
+
+            // 새로운 리프레시 토큰이 있으면 갱신 (없으면 기존 것 유지)
+            var newRefreshToken = root.TryGetProperty("refresh_token", out var refreshTokenElement)
+                ? refreshTokenElement.GetString()
+                : refreshToken;
+
+            // 토큰 저장소 갱신
+            if (_tokenStore != null)
+            {
+                _tokenStore.AccessToken = accessToken;
+                _tokenStore.RefreshToken = newRefreshToken;
+                _tokenStore.ExpiresAt = DateTime.UtcNow.AddSeconds(expiresIn);
+            }
+
+            _logger.LogInformation("✓ 토큰 리프레시 성공");
+            return accessToken;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ 토큰 리프레시 중 오류 발생");
+            return null;
+        }
+    }
+
 
 
     // ★★★ 여기가 문제였음: 예외를 잡아서 'errorMessage'에 넣도록 수정 ★★★
