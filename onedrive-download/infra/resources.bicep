@@ -173,24 +173,12 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         // ★ OneDrive 인증 관련 설정
         {
-          name: 'OnedriveDownload__EntraId__UseManagedIdentity'
-          value: 'true'
-        }
-        {
           name: 'OnedriveDownload__EntraId__TenantId'
           value: tenant().tenantId
         }
         {
-          name: 'OnedriveDownload__EntraId__UserAssignedClientId'
-          value: userAssignedIdentity.properties.clientId
-        }
-        {
           name: 'OnedriveDownload__EntraId__ClientId'
           value: '14d82eec-204b-4c2f-b7e8-296a70dab67e' // Microsoft 퍼블릭 클라이언트 ID
-        }
-        {
-          name: 'AZURE_CLIENT_ID'
-          value: userAssignedIdentity.properties.clientId
         }
         {
           name: 'AZURE_STORAGE_CONNECTION_STRING'
@@ -254,4 +242,3 @@ output AZURE_USER_ASSIGNED_IDENTITY_PRINCIPAL_ID string = userAssignedIdentity.p
 output mcpAppId string = entraApp.outputs.mcpAppId
 // This output is no longer relevant, but keeping it to avoid breaking main.bicep for now. I will fix main.bicep next.
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = ''
-output AZURE_STORAGE_CONNECTION_STRING string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'

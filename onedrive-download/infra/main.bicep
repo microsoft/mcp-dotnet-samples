@@ -37,7 +37,6 @@ module resources 'resources.bicep' = {
     location: location
     tags: tags
     azdServiceName: 'onedrive-download'
-    personal365RefreshToken: ''
   }
 }
 
@@ -46,4 +45,3 @@ output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_NAME string = resources.outputs.AZUR
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_GATEWAY_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_GATEWAY_FQDN
 output AZURE_CLIENT_ID string = resources.outputs.mcpAppId
-output AZURE_STORAGE_CONNECTION_STRING string = resources.outputs.AZURE_STORAGE_CONNECTION_STRING

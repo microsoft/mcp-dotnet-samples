@@ -28,20 +28,22 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
 
-// ★ GraphServiceClient 등록 (InteractiveBrowserCredential 기반)
+// ★ GraphServiceClient 등록
+// VSCode 명령 팔레트에서 인증하여 365 토큰 획득
+// 로컬 + Azure 모두 동일한 방식
 builder.Services.AddScoped<GraphServiceClient>(sp =>
 {
     var settings = sp.GetRequiredService<OnedriveDownloadAppSettings>();
     var entraId = settings.EntraId;
 
-    TokenCredential credential = entraId.UseManagedIdentity
-                                   ? new ManagedIdentityCredential(ManagedIdentityId.FromUserAssignedClientId(entraId.UserAssignedClientId))
-                                   : new InteractiveBrowserCredential(new InteractiveBrowserCredentialOptions
-                                   {
-                                       TenantId = entraId.TenantId,
-                                       ClientId = entraId.ClientId,
-                                       AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
-                                   });
+    // VSCode 명령 팔레트에서 사용자 로그인
+    // 첫 호출 시 팝업 → 로그인 → 토큰 저장
+    TokenCredential credential = new InteractiveBrowserCredential(new InteractiveBrowserCredentialOptions
+    {
+        TenantId = entraId.TenantId,
+        ClientId = entraId.ClientId,
+        AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
+    });
 
     string[] scopes = [ Constants.DefaultScope ];
     var client = new GraphServiceClient(credential, scopes);
