@@ -178,7 +178,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'OnedriveDownload__EntraId__ClientId'
-          value: '14d82eec-204b-4c2f-b7e8-296a70dab67e' // Microsoft 퍼블릭 클라이언트 ID
+          value: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
         }
         {
           name: 'AZURE_STORAGE_CONNECTION_STRING'

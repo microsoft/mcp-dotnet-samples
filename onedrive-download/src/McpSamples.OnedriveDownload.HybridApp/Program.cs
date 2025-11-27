@@ -1,5 +1,6 @@
 using Azure.Core;
 using Azure.Identity;
+using System.Text.Json;
 
 using McpSamples.OnedriveDownload.HybridApp.Configurations;
 using Microsoft.Extensions.Logging;
@@ -28,28 +29,39 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
 
-// ★ GraphServiceClient 등록
-// VSCode 명령 팔레트에서 인증하여 365 토큰 획득
-// 로컬 + Azure 모두 동일한 방식
-builder.Services.AddScoped<GraphServiceClient>(sp =>
+// ★ GraphServiceClient 등록 (Singleton으로 미리 생성)
+// VSCode 명령 팔레트에서 인증 팝업을 띄우기 위해 서버 시작 시 미리 생성
+var sp = builder.Services.BuildServiceProvider();
+var settings = sp.GetRequiredService<OnedriveDownloadAppSettings>();
+
+// 환경 변수에서 직접 읽기 (appsettings.json 보다 우선)
+var tenantId = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__TenantId")
+    ?? settings.EntraId?.TenantId;
+var clientId = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientId")
+    ?? settings.EntraId?.ClientId;
+var clientSecret = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientSecret")
+    ?? settings.EntraId?.ClientSecret;
+
+Console.WriteLine($"[DEBUG] TenantId: {tenantId}");
+Console.WriteLine($"[DEBUG] ClientId: {clientId}");
+Console.WriteLine($"[DEBUG] ClientSecret: {(string.IsNullOrEmpty(clientSecret) ? "NOT SET" : "SET")}");
+
+// ClientSecret 없으면 VSCode 명령 팔레트에서 인증 팝업
+if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(clientId))
 {
-    var settings = sp.GetRequiredService<OnedriveDownloadAppSettings>();
-    var entraId = settings.EntraId;
+    throw new InvalidOperationException($"EntraId settings are missing. TenantId={tenantId}, ClientId={clientId}");
+}
 
-    // VSCode 명령 팔레트에서 사용자 로그인
-    // 첫 호출 시 팝업 → 로그인 → 토큰 저장
-    TokenCredential credential = new InteractiveBrowserCredential(new InteractiveBrowserCredentialOptions
-    {
-        TenantId = entraId.TenantId,
-        ClientId = entraId.ClientId,
-        AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
-    });
+TokenCredential credential = new ClientSecretCredential(
+    tenantId,
+    clientId,
+    clientSecret ?? "");  // ClientSecret 없으면 "" (빈 문자열)
 
-    string[] scopes = [ Constants.DefaultScope ];
-    var client = new GraphServiceClient(credential, scopes);
+string[] scopes = [ Constants.DefaultScope ];
+var graphClient = new GraphServiceClient(credential, scopes);
 
-    return client;
-});
+// Singleton으로 등록
+builder.Services.AddSingleton(graphClient);
 
 // Add Application Insights for proper Azure logging
 if (useStreamableHttp == true)
