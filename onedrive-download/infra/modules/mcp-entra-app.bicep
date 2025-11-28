@@ -89,7 +89,15 @@ resource mcpEntraApp 'Microsoft.Graph/applications@v1.0' = {
     redirectUris: [
       'https://${functionAppName}.azurewebsites.net/auth/callback'
       'http://127.0.0.1:33418'
+      'http://localhost'
       'https://vscode.dev/redirect'
+    ]
+  }
+
+  // ★ 모바일/데스크톱 앱도 지원 (Public Client)
+  publicClient: {
+    redirectUris: [
+      'http://localhost'
     ]
   }
 

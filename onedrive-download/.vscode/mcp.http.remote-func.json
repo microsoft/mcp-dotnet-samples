@@ -9,7 +9,11 @@
   "servers": {
     "onedrive-download": {
       "type": "http",
-      "url": "https://${input:functionAppFqdn}/mcp"
+      "url": "https://${input:functionAppFqdn}/mcp",
+      "env": {
+        "AZURE_CLIENT_ID": "8a63cafc-d935-48a2-a591-dfda3fe89815",
+        "AZURE_TENANT_ID": "common"
+      }
     }
   }
 }

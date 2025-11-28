@@ -234,14 +234,15 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
           // ★ 여기가 제일 중요합니다! ★
           // entraApp.outputs.mcpAppId로 자동으로 생성된 앱의 ID를 가져옵니다
           clientId: entraApp.outputs.mcpAppId
-          // Client Secret은 앱 설정(AppSettings)에서 가져옵니다
-          clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
-          // ★ v2.0 엔드포인트 사용 (resource 파라미터 미지원 문제 해결)
-          openIdIssuer: 'https://login.microsoftonline.com/${tenant().tenantId}/v2.0'
+          // 만약 Secret이 없다면 이 줄은 주석 처리해도 됨 (VS Code 팝업 로그인에는 Secret 불필요)
+          // clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
+
+          openIdIssuer: 'https://sts.windows.net/common/v2.0'
         }
         validation: {
           allowedAudiences: [
-            entraApp.outputs.mcpAppId  // 마찬가지로 자동으로 mcpAppId 사용
+            'api://${entraApp.outputs.mcpAppId}'
+            entraApp.outputs.mcpAppId  // ★ VS Code 호환성을 위해 둘 다 추가
           ]
         }
       }
