@@ -213,8 +213,8 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
         enabled: true
         registration: {
           // ★ 여기가 제일 중요합니다! ★
-          // entraApp.outputs.appId로 자동으로 생성된 앱의 ID를 가져옵니다
-          clientId: entraApp.outputs.appId
+          // entraApp.outputs.mcpAppId로 자동으로 생성된 앱의 ID를 가져옵니다
+          clientId: entraApp.outputs.mcpAppId
           // Client Secret은 앱 설정(AppSettings)에서 가져옵니다
           clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
           // 개인 계정 로그인을 위해 공개 엔드포인트 사용
@@ -222,7 +222,7 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
         }
         validation: {
           allowedAudiences: [
-            entraApp.outputs.appId  // 마찬가지로 자동으로 appId 사용
+            entraApp.outputs.mcpAppId  // 마찬가지로 자동으로 mcpAppId 사용
           ]
         }
       }
