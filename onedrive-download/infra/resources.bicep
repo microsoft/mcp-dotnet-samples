@@ -186,33 +186,49 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
       ]
     }
+  }
+}
 
-    // ★ Built-in Authentication 설정 (VSCode 팝업을 위해 필수)
-    authSettings: {
+// ★ Built-in Authentication 설정 (VSCode 팝업을 위해 필수)
+// authSettingsV2를 별도의 자식 리소스로 정의
+resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
+  parent: functionApp
+  name: 'authsettingsV2'
+  properties: {
+    // 1. 인증 기능 활성화
+    platform: {
       enabled: true
-      globalValidation: {
-        requireAuthentication: true
-        unauthenticatedClientAction: 'Return401'  // ← 중요! 302 Redirect 대신 401 반환
-      }
-      identityProviders: {
-        azureActiveDirectory: {
-          enabled: true
-          registration: {
-            clientId: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
-            openIdIssuer: 'https://login.microsoftonline.com/${tenant().tenantId}/v2.0'
-          }
-          validation: {
-            allowedAudiences: [
-              'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
-            ]
-          }
+    }
+    // 2. 전역 유효성 검사 설정
+    globalValidation: {
+      requireAuthentication: true
+      // ★★★ 여기가 제일 중요! 302(Redirect) 말고 401(Unauthorized)로 설정 ★★★
+      // 그래야 VS Code가 "아, 토큰 필요하네?" 하고 팝업을 띄웁니다.
+      unauthenticatedClientAction: 'Return401'
+    }
+    // 3. ID 공급자 (Microsoft) 설정
+    identityProviders: {
+      azureActiveDirectory: {
+        enabled: true
+        registration: {
+          // 앱 등록 ID
+          clientId: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
+          // Client Secret은 KeyVault나 앱 설정(AppSettings)을 참조
+          clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
+          // 공개 엔드포인트 사용 (개인 계정 허용)
+          openIdIssuer: 'https://sts.windows.net/common/v2.0'
+        }
+        validation: {
+          allowedAudiences: [
+            'api://b70e28fe-c34a-4518-81b0-27d04c65f0fd'  // 내 앱 ID를 타겟으로 한 토큰만 허용
+          ]
         }
       }
-      login: {
-        tokenStore: {
-          enabled: true
-          tokenRefreshExtensionHours: 72
-        }
+    }
+    // 4. 로그인 설정
+    login: {
+      tokenStore: {
+        enabled: true
       }
     }
   }
