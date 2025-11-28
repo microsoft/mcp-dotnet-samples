@@ -60,6 +60,19 @@ TokenCredential credential = new ClientSecretCredential(
 string[] scopes = [ Constants.DefaultScope ];
 var graphClient = new GraphServiceClient(credential, scopes);
 
+// ★ 서버 시작 시 강제로 token 요청 (VSCode 팝업 트리거)
+try
+{
+    var tokenRequestContext = new Azure.Core.TokenRequestContext(new[] { "https://graph.microsoft.com/.default" });
+    var token = await credential.GetTokenAsync(tokenRequestContext, CancellationToken.None);
+    Console.WriteLine($"[INFO] Successfully authenticated. Token acquired at startup.");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"[WARNING] Failed to acquire token at startup: {ex.Message}");
+    Console.WriteLine($"[INFO] Token will be acquired on first API call.");
+}
+
 // Singleton으로 등록
 builder.Services.AddSingleton(graphClient);
 
