@@ -3,6 +3,7 @@ using Azure.Identity;
 using System.Text.Json;
 
 using McpSamples.OnedriveDownload.HybridApp.Configurations;
+using McpSamples.OnedriveDownload.HybridApp.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.ApplicationInsights.DependencyCollector;
 using McpSamples.OnedriveDownload.HybridApp.Services;
@@ -29,31 +30,29 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
 
-// ★ GraphServiceClient 등록 (Scoped - 각 요청마다 새로 생성)
-// VSCode 팝업은 첫 인증 시도 때만 나타나므로 Scoped로 등록해야 함
+// ★ Token Passthrough: 클라이언트(VSCode)가 보낸 Authorization 헤더에서 토큰을 꺼내 사용
+// VSCode에서 Microsoft 인증을 하면 팝업이 뜨고, 토큰을 요청 헤더에 포함시켜 보냄
 builder.Services.AddScoped<GraphServiceClient>(sp =>
 {
-    var settings = sp.GetRequiredService<OnedriveDownloadAppSettings>();
-    var entraId = settings.EntraId;
+    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    var httpContext = httpContextAccessor.HttpContext;
 
-    // 환경 변수에서 직접 읽기 (appsettings.json 보다 우선)
-    var tenantId = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__TenantId")
-        ?? entraId?.TenantId;
-    var clientId = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientId")
-        ?? entraId?.ClientId;
-    var clientSecret = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientSecret")
-        ?? entraId?.ClientSecret;
+    // 요청 헤더에서 Authorization: Bearer <token> 형태로 토큰을 꺼냄
+    string? authHeader = httpContext?.Request.Headers.Authorization.ToString();
+    string? accessToken = null;
 
-    if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(clientId))
+    if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
     {
-        throw new InvalidOperationException($"EntraId settings are missing. TenantId={tenantId}, ClientId={clientId}");
+        accessToken = authHeader.Substring("Bearer ".Length).Trim();
     }
 
-    TokenCredential credential = new ClientSecretCredential(
-        tenantId,
-        clientId,
-        clientSecret ?? "");  // ClientSecret 없으면 "" (빈 문자열)
+    if (string.IsNullOrEmpty(accessToken))
+    {
+        throw new InvalidOperationException("Authorization header with Bearer token is required. Please authenticate through VS Code first.");
+    }
 
+    // 헤더에서 꺼낸 토큰을 사용하여 GraphServiceClient 생성
+    TokenCredential credential = new BearerTokenCredential(accessToken);
     string[] scopes = [ Constants.DefaultScope ];
     var client = new GraphServiceClient(credential, scopes);
 
