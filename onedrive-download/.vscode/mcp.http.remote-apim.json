@@ -9,12 +9,7 @@
   "servers": {
     "onedrive-download": {
       "type": "http",
-      "url": "https://${input:apim-fqdn}/mcp",
-      "auth": {
-        "type": "bearer",
-        "token": "${command:getAzureAuthToken}",
-        "scopes": ["https://graph.microsoft.com/.default"]
-      }
+      "url": "https://${input:apim-fqdn}/mcp"
     }
   }
 }
