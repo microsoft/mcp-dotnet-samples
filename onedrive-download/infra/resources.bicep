@@ -236,8 +236,8 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
           clientId: entraApp.outputs.mcpAppId
           // Client Secret은 앱 설정(AppSettings)에서 가져옵니다
           clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
-          // 개인 계정 로그인을 위해 공개 엔드포인트 사용
-          openIdIssuer: 'https://sts.windows.net/common/v2.0'
+          // ★ v2.0 엔드포인트 사용 (resource 파라미터 미지원 문제 해결)
+          openIdIssuer: 'https://login.microsoftonline.com/${tenant().tenantId}/v2.0'
         }
         validation: {
           allowedAudiences: [
