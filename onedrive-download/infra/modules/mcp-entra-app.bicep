@@ -86,6 +86,8 @@ resource mcpEntraApp 'Microsoft.Graph/applications@v1.0' = {
   spa: {
     redirectUris: [
       'https://${functionAppName}.azurewebsites.net/auth/callback'
+      'http://127.0.0.1:33418'
+      'https://vscode.dev/redirect'
     ]
   }
 
