@@ -29,52 +29,36 @@ IHostApplicationBuilder builder = useStreamableHttp
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
 
-// ★ GraphServiceClient 등록 (Singleton으로 미리 생성)
-// VSCode 명령 팔레트에서 인증 팝업을 띄우기 위해 서버 시작 시 미리 생성
-var sp = builder.Services.BuildServiceProvider();
-var settings = sp.GetRequiredService<OnedriveDownloadAppSettings>();
-
-// 환경 변수에서 직접 읽기 (appsettings.json 보다 우선)
-var tenantId = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__TenantId")
-    ?? settings.EntraId?.TenantId;
-var clientId = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientId")
-    ?? settings.EntraId?.ClientId;
-var clientSecret = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientSecret")
-    ?? settings.EntraId?.ClientSecret;
-
-Console.WriteLine($"[DEBUG] TenantId: {tenantId}");
-Console.WriteLine($"[DEBUG] ClientId: {clientId}");
-Console.WriteLine($"[DEBUG] ClientSecret: {(string.IsNullOrEmpty(clientSecret) ? "NOT SET" : "SET")}");
-
-// ClientSecret 없으면 VSCode 명령 팔레트에서 인증 팝업
-if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(clientId))
+// ★ GraphServiceClient 등록 (Scoped - 각 요청마다 새로 생성)
+// VSCode 팝업은 첫 인증 시도 때만 나타나므로 Scoped로 등록해야 함
+builder.Services.AddScoped<GraphServiceClient>(sp =>
 {
-    throw new InvalidOperationException($"EntraId settings are missing. TenantId={tenantId}, ClientId={clientId}");
-}
+    var settings = sp.GetRequiredService<OnedriveDownloadAppSettings>();
+    var entraId = settings.EntraId;
 
-TokenCredential credential = new ClientSecretCredential(
-    tenantId,
-    clientId,
-    clientSecret ?? "");  // ClientSecret 없으면 "" (빈 문자열)
+    // 환경 변수에서 직접 읽기 (appsettings.json 보다 우선)
+    var tenantId = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__TenantId")
+        ?? entraId?.TenantId;
+    var clientId = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientId")
+        ?? entraId?.ClientId;
+    var clientSecret = Environment.GetEnvironmentVariable("OnedriveDownload__EntraId__ClientSecret")
+        ?? entraId?.ClientSecret;
 
-string[] scopes = [ Constants.DefaultScope ];
-var graphClient = new GraphServiceClient(credential, scopes);
+    if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(clientId))
+    {
+        throw new InvalidOperationException($"EntraId settings are missing. TenantId={tenantId}, ClientId={clientId}");
+    }
 
-// ★ 서버 시작 시 강제로 token 요청 (VSCode 팝업 트리거)
-try
-{
-    var tokenRequestContext = new Azure.Core.TokenRequestContext(new[] { "https://graph.microsoft.com/.default" });
-    var token = await credential.GetTokenAsync(tokenRequestContext, CancellationToken.None);
-    Console.WriteLine($"[INFO] Successfully authenticated. Token acquired at startup.");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"[WARNING] Failed to acquire token at startup: {ex.Message}");
-    Console.WriteLine($"[INFO] Token will be acquired on first API call.");
-}
+    TokenCredential credential = new ClientSecretCredential(
+        tenantId,
+        clientId,
+        clientSecret ?? "");  // ClientSecret 없으면 "" (빈 문자열)
 
-// Singleton으로 등록
-builder.Services.AddSingleton(graphClient);
+    string[] scopes = [ Constants.DefaultScope ];
+    var client = new GraphServiceClient(credential, scopes);
+
+    return client;
+});
 
 // Add Application Insights for proper Azure logging
 if (useStreamableHttp == true)
