@@ -191,6 +191,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
 
 // ★ Built-in Authentication 설정 (VSCode 팝업을 위해 필수)
 // authSettingsV2를 별도의 자식 리소스로 정의
+// registration 블록 제거 (dynamic client registration 에러 방지)
 resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
   parent: functionApp
   name: 'authsettingsV2'
@@ -206,21 +207,16 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
       // 그래야 VS Code가 "아, 토큰 필요하네?" 하고 팝업을 띄웁니다.
       unauthenticatedClientAction: 'Return401'
     }
-    // 3. ID 공급자 (Microsoft) 설정
+    // 3. ID 공급자 (Microsoft) 설정 - 수동 등록 방식
     identityProviders: {
       azureActiveDirectory: {
         enabled: true
-        registration: {
-          // 앱 등록 ID
-          clientId: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
-          // Client Secret은 KeyVault나 앱 설정(AppSettings)을 참조
-          clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
-          // 특정 Tenant 엔드포인트 (Dynamic Client Registration 지원)
-          openIdIssuer: 'https://sts.windows.net/${tenant().tenantId}/v2.0'
-        }
+        clientId: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
+        // clientSecretSettingName 제거 - dynamic registration 에러 방지
+        openIdIssuer: 'https://login.microsoftonline.com/${tenant().tenantId}/v2.0'
         validation: {
           allowedAudiences: [
-            'b70e28fe-c34a-4518-81b0-27d04c65f0fd'  // v2.0 엔드포인트는 api:// 프리픽스 없이
+            'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
           ]
         }
       }
