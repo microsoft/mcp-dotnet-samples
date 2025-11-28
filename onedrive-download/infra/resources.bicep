@@ -189,12 +189,31 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   }
 }
 
+// MCP Entra App
+module entraApp './modules/mcp-entra-app.bicep' = {
+  name: 'mcpEntraApp'
+  params: {
+    mcpAppUniqueName: 'mcp-onedrivedownload-${resourceToken}'
+    mcpAppDisplayName: 'MCP-OneDriveDownload-${resourceToken}'
+    userAssignedIdentityPrincipleId: userAssignedIdentity.properties.principalId
+    functionAppName: functionAppName
+    appScopes: [
+      'User.Read'
+      'Files.Read.All'
+      'offline_access'
+    ]
+    appRoles: []
+  }
+}
+
 // ★ Built-in Authentication 설정 (VSCode 팝업을 위해 필수)
-// authSettingsV2를 별도의 자식 리소스로 정의
-// registration 블록 제거 (dynamic client registration 에러 방지)
+// authSettingsV2를 entraApp 이후에 정의 (dependency 순서)
 resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
   parent: functionApp
   name: 'authsettingsV2'
+  dependsOn: [
+    entraApp  // entraApp이 먼저 생성되어야 함
+  ]
   properties: {
     // 1. 인증 기능 활성화
     platform: {
@@ -233,23 +252,6 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
         enabled: true
       }
     }
-  }
-}
-
-// MCP Entra App
-module entraApp './modules/mcp-entra-app.bicep' = {
-  name: 'mcpEntraApp'
-  params: {
-    mcpAppUniqueName: 'mcp-onedrivedownload-${resourceToken}'
-    mcpAppDisplayName: 'MCP-OneDriveDownload-${resourceToken}'
-    userAssignedIdentityPrincipleId: userAssignedIdentity.properties.principalId
-    functionAppName: functionAppName
-    appScopes: [
-      'User.Read'
-      'Files.Read.All'
-      'offline_access'
-    ]
-    appRoles: []
   }
 }
 
