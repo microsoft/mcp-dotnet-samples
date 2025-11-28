@@ -215,12 +215,12 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
           clientId: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
           // Client Secret은 KeyVault나 앱 설정(AppSettings)을 참조
           clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
-          // 공개 엔드포인트 사용 (개인 계정 허용)
-          openIdIssuer: 'https://sts.windows.net/common/v2.0'
+          // 특정 Tenant 엔드포인트 (Dynamic Client Registration 지원)
+          openIdIssuer: 'https://sts.windows.net/${tenant().tenantId}/v2.0'
         }
         validation: {
           allowedAudiences: [
-            'api://b70e28fe-c34a-4518-81b0-27d04c65f0fd'  // 내 앱 ID를 타겟으로 한 토큰만 허용
+            'b70e28fe-c34a-4518-81b0-27d04c65f0fd'  // v2.0 엔드포인트는 api:// 프리픽스 없이
           ]
         }
       }
