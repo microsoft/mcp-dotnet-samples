@@ -186,6 +186,35 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
       ]
     }
+
+    // ★ Built-in Authentication 설정 (VSCode 팝업을 위해 필수)
+    authSettings: {
+      enabled: true
+      globalValidation: {
+        requireAuthentication: true
+        unauthenticatedClientAction: 'Return401'  // ← 중요! 302 Redirect 대신 401 반환
+      }
+      identityProviders: {
+        azureActiveDirectory: {
+          enabled: true
+          registration: {
+            clientId: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
+            openIdIssuer: 'https://login.microsoftonline.com/${tenant().tenantId}/v2.0'
+          }
+          validation: {
+            allowedAudiences: [
+              'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
+            ]
+          }
+        }
+      }
+      login: {
+        tokenStore: {
+          enabled: true
+          tokenRefreshExtensionHours: 72
+        }
+      }
+    }
   }
 }
 

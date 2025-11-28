@@ -30,3 +30,21 @@ public class BearerTokenCredential : TokenCredential
         return new ValueTask<AccessToken>(GetToken(requestContext, cancellationToken));
     }
 }
+
+/// <summary>
+/// Anonymous 인증: 토큰이 없을 때 사용
+/// VSCode가 "이 서버는 토큰이 필요하다"고 감지하게 하는 신호 역할
+/// </summary>
+public class AnonymousTokenCredential : TokenCredential
+{
+    public override AccessToken GetToken(TokenRequestContext requestContext, CancellationToken cancellationToken)
+    {
+        // 빈 토큰 반환 - 이것으로 VSCode가 인증이 필요함을 알게 됨
+        return new AccessToken(string.Empty, DateTimeOffset.UtcNow);
+    }
+
+    public override ValueTask<AccessToken> GetTokenAsync(TokenRequestContext requestContext, CancellationToken cancellationToken)
+    {
+        return new ValueTask<AccessToken>(GetToken(requestContext, cancellationToken));
+    }
+}

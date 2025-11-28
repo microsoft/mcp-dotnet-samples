@@ -46,10 +46,14 @@ builder.Services.AddScoped<GraphServiceClient>(sp =>
         accessToken = authHeader.Substring("Bearer ".Length).Trim();
     }
 
+    // 토큰이 없으면 Anonymous credential 사용 (VSCode가 인증 필요를 감지)
     if (string.IsNullOrEmpty(accessToken))
     {
-        throw new InvalidOperationException("Authorization header with Bearer token is required. Please authenticate through VS Code first.");
+        Console.WriteLine("[인증 대기] 클라이언트로부터 토큰을 기다리는 중...");
+        return new GraphServiceClient(new AnonymousTokenCredential());
     }
+
+    Console.WriteLine("[인증 성공] 클라이언트가 토큰을 보냈습니다!");
 
     // 헤더에서 꺼낸 토큰을 사용하여 GraphServiceClient 생성
     TokenCredential credential = new BearerTokenCredential(accessToken);
