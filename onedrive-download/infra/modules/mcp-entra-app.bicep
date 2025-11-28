@@ -53,6 +53,8 @@ var permissionId = guid(mcpAppUniqueName, 'user_impersonation')
 resource mcpEntraApp 'Microsoft.Graph/applications@v1.0' = {
   displayName: mcpAppDisplayName
   uniqueName: mcpAppUniqueName
+  // ★ 모든 Microsoft 사용자가 로그인할 수 있도록 설정
+  signInAudience: 'AzureADandPersonalMicrosoftAccount'
   api: {
     oauth2PermissionScopes: [
       {
