@@ -207,16 +207,22 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
       // 그래야 VS Code가 "아, 토큰 필요하네?" 하고 팝업을 띄웁니다.
       unauthenticatedClientAction: 'Return401'
     }
-    // 3. ID 공급자 (Microsoft) 설정 - 수동 등록 방식
+    // 3. ID 공급자 (Microsoft) 설정 - entraApp에서 자동으로 clientId 가져오기
     identityProviders: {
       azureActiveDirectory: {
         enabled: true
-        clientId: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
-        // clientSecretSettingName 제거 - dynamic registration 에러 방지
-        openIdIssuer: 'https://login.microsoftonline.com/${tenant().tenantId}/v2.0'
+        registration: {
+          // ★ 여기가 제일 중요합니다! ★
+          // entraApp.outputs.appId로 자동으로 생성된 앱의 ID를 가져옵니다
+          clientId: entraApp.outputs.appId
+          // Client Secret은 앱 설정(AppSettings)에서 가져옵니다
+          clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
+          // 개인 계정 로그인을 위해 공개 엔드포인트 사용
+          openIdIssuer: 'https://sts.windows.net/common/v2.0'
+        }
         validation: {
           allowedAudiences: [
-            'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
+            entraApp.outputs.appId  // 마찬가지로 자동으로 appId 사용
           ]
         }
       }
