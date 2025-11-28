@@ -10,12 +10,10 @@
     "onedrive-download": {
       "type": "http",
       "url": "https://${input:apim-fqdn}/mcp",
-      "env": {
-        "AZD_AUTH_TOKEN": "azd auth token"
-      },
       "auth": {
         "type": "bearer",
-        "token": "${env:AZD_AUTH_TOKEN}"
+        "token": "${command:getAzureAuthToken}",
+        "scopes": ["https://graph.microsoft.com/.default"]
       }
     }
   }

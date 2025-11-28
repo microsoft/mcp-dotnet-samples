@@ -12,7 +12,8 @@
       "url": "https://${input:functionAppFqdn}/mcp",
       "auth": {
         "type": "bearer",
-        "token": "${command:getAzureAuthToken}"
+        "token": "${command:getAzureAuthToken}",
+        "scopes": ["https://graph.microsoft.com/.default"]
       }
     }
   }
