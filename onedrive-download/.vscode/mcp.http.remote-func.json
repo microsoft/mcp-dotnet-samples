@@ -12,9 +12,9 @@
       "url": "https://${input:functionAppFqdn}/mcp",
       "auth": {
         "type": "oauth2",
-        "client_id": "4446b888-18c6-4739-99e7-663e14fb338e",
-        "authorization_url": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-        "token_url": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+        "clientId": "4446b888-18c6-4739-99e7-663e14fb338e",
+        "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+        "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
         "scopes": ["https://graph.microsoft.com/.default"]
       },
       "env": {
@@ -24,6 +24,8 @@
     }
   }
 }
+
+
 
 
 

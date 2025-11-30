@@ -169,6 +169,84 @@ if (useStreamableHttp == true)
         logger.LogWarning($"[WARNING] WebRootPath not found: {webApp.Environment.WebRootPath}");
     }
 
+    // ★ OAuth2 콜백 엔드포인트: Microsoft에서 code를 받으면 여기로 리다이렉트됨
+    webApp.MapGet("/", async (HttpContext context) =>
+    {
+        var code = context.Request.Query["code"].ToString();
+
+        if (string.IsNullOrEmpty(code))
+        {
+            await context.Response.WriteAsync("OAuth2 callback endpoint. Waiting for authorization code...");
+            return;
+        }
+
+        // 인증 코드를 토큰으로 교환
+        using var client = new HttpClient();
+        var clientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "4446b888-18c6-4739-99e7-663e14fb338e";
+        var clientSecret = Environment.GetEnvironmentVariable("AZURE_CLIENT_SECRET") ?? "";
+
+        var tokenRequest = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            { "client_id", clientId },
+            { "client_secret", clientSecret },
+            { "code", code },
+            { "redirect_uri", "http://localhost" },
+            { "grant_type", "authorization_code" },
+            { "scope", "https://graph.microsoft.com/.default" }
+        });
+
+        try
+        {
+            var response = await client.PostAsync(
+                "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+                tokenRequest);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonDoc = System.Text.Json.JsonDocument.Parse(content);
+                var accessToken = jsonDoc.RootElement.GetProperty("access_token").GetString();
+
+                // VSCode로 토큰 반환 (로컬 저장소 또는 HTTP 헤더로)
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync($@"
+                    <html>
+                    <head><title>인증 성공</title></head>
+                    <body>
+                        <h1>인증 성공!</h1>
+                        <p>이제 VSCode에서 MCP 요청을 사용할 수 있습니다.</p>
+                        <p style='color: green; font-weight: bold;'>토큰이 획득되었습니다.</p>
+                        <script>
+                            // 토큰을 localStorage에 저장하거나 parent window에 전달
+                            if (window.opener) {{
+                                window.opener.postMessage({{
+                                    type: 'oauth_token',
+                                    token: '{accessToken}'
+                                }}, '*');
+                                window.close();
+                            }} else {{
+                                localStorage.setItem('accessToken', '{accessToken}');
+                                console.log('Token saved to localStorage');
+                            }}
+                        </script>
+                    </body>
+                    </html>
+                ");
+            }
+            else
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync($"Token exchange failed: {content}");
+            }
+        }
+        catch (Exception ex)
+        {
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsync($"Error: {ex.Message}");
+        }
+    });
+
     webApp.MapOpenApi("/{documentName}.json");
 
     var logger2 = app.Services.GetRequiredService<ILogger<Program>>();
