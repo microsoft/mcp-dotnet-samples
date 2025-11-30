@@ -46,11 +46,10 @@ builder.Services.AddScoped<GraphServiceClient>(sp =>
         accessToken = authHeader.Substring("Bearer ".Length).Trim();
     }
 
-    // 토큰이 없으면 Anonymous credential 사용 (VSCode가 인증 필요를 감지)
+    // 토큰이 없으면 401 Unauthorized 응답
     if (string.IsNullOrEmpty(accessToken))
     {
-        Console.WriteLine("[인증 대기] 클라이언트로부터 토큰을 기다리는 중...");
-        return new GraphServiceClient(new AnonymousTokenCredential());
+        throw new UnauthorizedAccessException("Access Token is missing.");
     }
 
     Console.WriteLine("[인증 성공] 클라이언트가 토큰을 보냈습니다!");

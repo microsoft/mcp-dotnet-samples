@@ -221,20 +221,15 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
     }
     // 2. 전역 유효성 검사 설정
     globalValidation: {
-      requireAuthentication: true
-      // ★★★ 여기가 제일 중요! 302(Redirect) 말고 401(Unauthorized)로 설정 ★★★
-      unauthenticatedClientAction: 'Return401'
+      requireAuthentication: false
+      unauthenticatedClientAction: 'AllowAnonymous'
     }
     // 3. ID 공급자 (Microsoft) 설정 - entraApp에서 자동으로 clientId 가져오기
     identityProviders: {
       azureActiveDirectory: {
         enabled: true
-        // ★ registration 블록 제거 (Dynamic client registration 에러 해결)
-        // clientId와 openIdIssuer만 직접 지정
-        registration: {
-          clientId: entraApp.outputs.mcpAppId
-          openIdIssuer: 'https://sts.windows.net/common/v2.0'
-        }
+        clientId: entraApp.outputs.mcpAppId
+        openIdIssuer: 'https://sts.windows.net/common/v2.0'
         validation: {
           allowedAudiences: [
             'api://${entraApp.outputs.mcpAppId}'

@@ -3,7 +3,7 @@
     {
       "type": "promptString",
       "id": "functionAppFqdn",
-      "description": "Azure 함수 앱의 FQDN을 입력하세요 (예: func-onedrive-download-34ugypgdcsh76.azurewebsites.net)"
+      "description": "Azure Function App FQDN"
     }
   ],
   "servers": {
@@ -11,7 +11,7 @@
       "type": "http",
       "url": "https://${input:functionAppFqdn}/mcp",
       "env": {
-        "AZURE_CLIENT_ID": "8a63cafc-d935-48a2-a591-dfda3fe89815",
+        "AZURE_CLIENT_ID": "4446b888-18c6-4739-99e7-663e14fb338e",
         "AZURE_TENANT_ID": "common"
       }
     }
