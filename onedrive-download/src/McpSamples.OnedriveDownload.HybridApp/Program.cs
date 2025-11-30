@@ -3,7 +3,6 @@ using Azure.Identity;
 using System.Text.Json;
 
 using McpSamples.OnedriveDownload.HybridApp.Configurations;
-using McpSamples.OnedriveDownload.HybridApp.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.ApplicationInsights.DependencyCollector;
 using McpSamples.OnedriveDownload.HybridApp.Services;
