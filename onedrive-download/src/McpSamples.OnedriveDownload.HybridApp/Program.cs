@@ -37,6 +37,12 @@ builder.Services.AddScoped<GraphServiceClient>(sp =>
     var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
     var httpContext = httpContextAccessor.HttpContext;
 
+    // ★★★ [핵심] /authorize 요청이면 토큰 검사 건너뛰기 (리다이렉트 될 것이므로)
+    if (httpContext != null && httpContext.Request.Path.Value!.StartsWith("/authorize", StringComparison.OrdinalIgnoreCase))
+    {
+        return new GraphServiceClient(new AnonymousTokenCredential());
+    }
+
     // 요청 헤더에서 Authorization: Bearer <token> 형태로 토큰을 꺼냄
     string? authHeader = httpContext?.Request.Headers.Authorization.ToString();
     string? accessToken = null;
@@ -121,10 +127,29 @@ if (useStreamableHttp == true)
 {
     var webApp = (app as Microsoft.AspNetCore.Builder.WebApplication)!;
 
-    // ★ 토큰 검증 미들웨어: Authorization 헤더가 없으면 401 반환
+    // ★ 토큰 검증 미들웨어: /authorize는 MS 로그인으로 리다이렉트, 나머지는 401 반환
     webApp.Use(async (context, next) =>
     {
         string? authHeader = context.Request.Headers.Authorization.ToString();
+
+        // /authorize로 오는 요청이면 Microsoft 로그인 페이지로 리다이렉트
+        if (context.Request.Path.Value!.StartsWith("/authorize", StringComparison.OrdinalIgnoreCase))
+        {
+            var clientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "4446b888-18c6-4739-99e7-663e14fb338e";
+            var redirectUri = "http://localhost";
+            var scopes = "https://graph.microsoft.com/.default";
+
+            var authUrl = $"https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" +
+                $"client_id={clientId}&" +
+                $"redirect_uri={Uri.EscapeDataString(redirectUri)}&" +
+                $"response_type=code&" +
+                $"scope={Uri.EscapeDataString(scopes)}";
+
+            context.Response.Redirect(authUrl);
+            return;
+        }
+
+        // 일반 요청은 토큰 검사
         if (string.IsNullOrEmpty(authHeader))
         {
             context.Response.StatusCode = 401;
