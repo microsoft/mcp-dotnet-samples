@@ -28,9 +28,10 @@ public interface IPptFontFixTool
     /// <param name="replacementFont">The font to replace all inconsistent fonts with.</param>
     /// <param name="inconsistentFontsToReplace">The list of inconsistent font names to be replaced.</param>
     /// <param name="locationsToRemove">The list of shape locations to be removed.</param>
+    /// <param name="outputDirectory">The directory path on the host machine to save the modified file.</param> // ✅ 신규 추가
     /// <param name="newFileName">The full path to save the new .pptx file.</param>
     /// <returns>Returns a success message with the new file path.</returns>
-    Task<string> UpdatePptFileAsync(string replacementFont, List<string> inconsistentFontsToReplace, List<FontUsageLocation> locationsToRemove, string newFileName);
+    Task<string> UpdatePptFileAsync(string replacementFont, List<string> inconsistentFontsToReplace, List<FontUsageLocation> locationsToRemove, string outputDirectory, string newFileName); // ✅ 시그니처 변경
 }
 
 /// <summary>
@@ -74,12 +75,13 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
 
     /// <inheritdoc />
     [McpServerTool(Name = "update_ppt_file", Title = "Update and Save PPT File")]
-    [Description("Removes unused fonts, replaces inconsistently used fonts with another font defined within the Ppt file, and saves the file.")]
+    [Description("Removes unused fonts, replaces inconsistently used fonts with another font defined within the Ppt file, and saves the file to a user-specified path.")]
     public async Task<string> UpdatePptFileAsync(
         [Description("The replacement font")] string replacementFont,
         [Description("The fonts to be replaced")] List<string> inconsistentFontsToReplace,
         [Description("A list of shape locations (from analysis result) to be removed")] List<FontUsageLocation> locationsToRemove,
-        [Description("The full path to save the modified Ppt file")] string newFileName)
+        [Description("The directory path on the host machine to save the modified file (e.g., C:\\Users\\Downloads)")] string outputDirectory, // ✅ 신규 파라미터
+        [Description("The filename for the modified Ppt file.")] string newFileName) 
     {
         try
         {
@@ -97,7 +99,8 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
             }
             logger.LogInformation("{Count} instances of inconsistent fonts replaced with '{ReplacementFont}'.", totalReplacementCount, replacementFont);
 
-            string accessPath = await service.SavePptFileAsync(newFileName).ConfigureAwait(false);
+            string accessPath = await service.SavePptFileAsync(newFileName, outputDirectory).ConfigureAwait(false); 
+            
             logger.LogInformation("Ppt file saved successfully: {Path}", accessPath);
 
             return $"PPT update complete. Removed: {removalCount}, Replaced: {totalReplacementCount}. Result: {accessPath}";
