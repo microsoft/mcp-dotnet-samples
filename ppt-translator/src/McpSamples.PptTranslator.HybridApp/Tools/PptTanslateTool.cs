@@ -49,51 +49,48 @@ namespace McpSamples.PptTranslator.HybridApp.Tools
 
             try
             {
-                _logger.LogInformation("PPT translation started.");
-                _logger.LogInformation("File: {File}", filePath);
-                _logger.LogInformation("Target language: {Lang}", targetLang);
-
                 if (string.IsNullOrWhiteSpace(targetLang))
                     targetLang = "ko";
 
                 if (!File.Exists(filePath))
                     throw new FileNotFoundException("PPT file not found.", filePath);
 
-                string directory = Path.GetDirectoryName(filePath)!;
-
-                // Extract text
+                // STEP 1: Extract
                 step = "TEXT_EXTRACTION";
-                _logger.LogInformation("==========[ STEP 1: TEXT EXTRACTION ]==========");
+                _logger.LogInformation("[STEP 1] Extracting text...");
+
                 await _extractService.OpenPptFileAsync(filePath);
                 var extracted = await _extractService.TextExtractAsync();
 
+                string directory = Path.GetDirectoryName(filePath)!;
                 string extractedJsonPath = Path.Combine(directory, "extracted.json");
                 await _extractService.ExtractToJsonAsync(extracted, extractedJsonPath);
-                _logger.LogInformation("Text extraction completed.");
 
-                // Translation
+                _logger.LogInformation("[STEP 1] Extraction completed.");
+
+                // STEP 2: Translate
                 step = "TRANSLATION";
-                _logger.LogInformation("==========[ STEP 2: TRANSLATION ]==========");
+                _logger.LogInformation("[STEP 2] Translating text...");
+
                 string translatedJsonPath =
                     await _translationService.TranslateJsonFileAsync(extractedJsonPath, targetLang);
-                _logger.LogInformation("Translation completed.");
 
-                // Rebuild PPT
+                _logger.LogInformation("[STEP 2] Translation completed.");
+
+                // STEP 3: Rebuild
                 step = "REBUILD";
-                _logger.LogInformation("==========[ STEP 3: REBUILD PPT ]==========");
-                string outputPptPath =
-                    await _rebuildService.RebuildPptFromJsonAsync(filePath, translatedJsonPath);
+                _logger.LogInformation("[STEP 3] Rebuilding PPT...");
 
-                _logger.LogInformation("PPT translation finished: {Output}", outputPptPath);
+                string outputPptPath =
+                    await _rebuildService.RebuildPptFromJsonAsync(filePath, translatedJsonPath, targetLang);
+
+                _logger.LogInformation("[STEP 3] Rebuild completed: {Output}", outputPptPath);
+
                 return $"Translated PPT generated: {outputPptPath}";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
-                    "Error occurred. Step = {Step}, File = {FilePath}",
-                    step,
-                    filePath);
-
+                _logger.LogError(ex, "[ERROR] STEP={Step}: {Message}", step, ex.Message);
                 return $"Error at step '{step}': {ex.Message}";
             }
         }

@@ -5,12 +5,11 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using McpSamples.PptTranslator.HybridApp.Prompts;
 
 namespace McpSamples.PptTranslator.HybridApp.Services
 {
     /// <summary>
-    /// Provides translation using an external LLM.
+    /// Sends extracted JSON text to an LLM and returns translated JSON.
     /// </summary>
     public interface ITranslationService
     {
@@ -23,85 +22,80 @@ namespace McpSamples.PptTranslator.HybridApp.Services
     public class TranslationService : ITranslationService
     {
         private readonly ILogger<TranslationService> _logger;
-        private readonly ITranslationPrompt _prompt;
         private readonly HttpClient _http = new();
 
-        public TranslationService(
-            ILogger<TranslationService> logger,
-            ITranslationPrompt prompt)
+        public TranslationService(ILogger<TranslationService> logger)
         {
             _logger = logger;
-            _prompt = prompt;
-            _http.Timeout = TimeSpan.FromSeconds(300); // Set timeout to 300 seconds
+            _http.Timeout = TimeSpan.FromSeconds(300);
         }
 
-        /// <inheritdoc />
         public async Task<string> TranslateJsonFileAsync(string extractedJsonPath, string targetLang)
         {
+            _logger.LogInformation("[STEP 2] Sending translation request.");
+
             if (!File.Exists(extractedJsonPath))
-                throw new FileNotFoundException("Extracted JSON file not found.", extractedJsonPath);
+                throw new FileNotFoundException("Extracted JSON not found.", extractedJsonPath);
 
-            string extractedJsonText = await File.ReadAllTextAsync(extractedJsonPath);
-            string directory = Path.GetDirectoryName(extractedJsonPath)!;
-            string outputPath = Path.Combine(directory, "translated.json");
+            string extractedJson = await File.ReadAllTextAsync(extractedJsonPath);
 
-            // Build prompt
-            string translationPrompt = _prompt.GetTranslationPrompt(targetLang) + "\n\n" + extractedJsonText;
+            // 🔥 FIX: Always load prompt from Prompts folder located in output directory
+            string promptPath = Path.Combine(AppContext.BaseDirectory, "Prompts", "translation_prompt.txt");
 
-            _logger.LogInformation("Sending translation request...");
+            if (!File.Exists(promptPath))
+                throw new FileNotFoundException($"Prompt file not found: {promptPath}");
 
-            // Load OpenAI config
+            string promptText = await File.ReadAllTextAsync(promptPath);
+
+            string prompt =
+                promptText +
+                $"\n\nTARGET_LANG={targetLang}\n\n" +
+                extractedJson;
+
             string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
-                ?? throw new Exception("Environment variable OPENAI_API_KEY is not set.");
+                ?? throw new Exception("OPENAI_API_KEY not set.");
 
             string model = Environment.GetEnvironmentVariable("OPENAI_MODEL") ?? "gpt-5-nano";
             string endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT")
                 ?? "https://api.openai.com/v1/chat/completions";
 
-            _logger.LogInformation("Using model: {Model}", model);
-
-            // Build request body
             var body = new
             {
                 model,
-                messages = new[]
-                {
-                    new { role = "user", content = translationPrompt }
-                }
+                messages = new[] { new { role = "user", content = prompt } }
             };
 
-            var httpContent = new StringContent(
-                JsonSerializer.Serialize(body),
-                Encoding.UTF8,
-                "application/json");
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
 
             _http.DefaultRequestHeaders.Clear();
             _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
 
-            // Send request
-            HttpResponseMessage response = await _http.PostAsync(endpoint, httpContent);
-            string rawResponse = await response.Content.ReadAsStringAsync();
+            HttpResponseMessage res = await _http.PostAsync(endpoint, content);
+            string raw = await res.Content.ReadAsStringAsync();
 
-            if (!response.IsSuccessStatusCode)
+            if (!res.IsSuccessStatusCode)
             {
-                _logger.LogError("Translation failed: {Response}", rawResponse);
-                throw new Exception($"LLM Error: {response.StatusCode}");
+                _logger.LogError("[ERROR] LLM response failed: {Status} / {Body}", res.StatusCode, raw);
+                throw new Exception($"Translation failed: {res.StatusCode}");
             }
 
-            // Extract translated content
-            using var doc = JsonDocument.Parse(rawResponse);
-            string translatedText =
-                doc.RootElement
-                   .GetProperty("choices")[0]
-                   .GetProperty("message")
-                   .GetProperty("content")
-                   .GetString()
-                   ?? throw new Exception("LLM returned empty content.");
+            using var doc = JsonDocument.Parse(raw);
 
-            // Save output
+            string translatedText =
+                doc.RootElement.GetProperty("choices")[0]
+                    .GetProperty("message")
+                    .GetProperty("content")
+                    .GetString()
+                ?? throw new Exception("LLM returned empty content.");
+
+            string outputPath = Path.Combine(
+                Path.GetDirectoryName(extractedJsonPath)!,
+                "translated.json"
+            );
+
             await File.WriteAllTextAsync(outputPath, translatedText, Encoding.UTF8);
 
-            _logger.LogInformation("Translated JSON saved: {Path}", outputPath);
+            _logger.LogInformation("[STEP 2] Translation completed.");
 
             return outputPath;
         }

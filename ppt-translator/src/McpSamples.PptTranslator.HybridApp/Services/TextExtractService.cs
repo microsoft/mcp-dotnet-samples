@@ -19,18 +19,18 @@ public interface ITextExtractService
     Task OpenPptFileAsync(string filePath);
 
     /// <summary>
-    /// Extracts text from the opened PPT file.
+    /// Extracts all text items from the opened PPT file.
     /// </summary>
     Task<PptTextExtractResult> TextExtractAsync();
 
     /// <summary>
-    /// Saves the extracted text to a JSON file.
+    /// Saves extracted text into a JSON file.
     /// </summary>
     Task<string> ExtractToJsonAsync(PptTextExtractResult extracted, string outputPath);
 }
 
 /// <summary>
-/// Provides functionalities for extracting text from PPT files.
+/// Extracts text content from PPT files.
 /// </summary>
 public class TextExtractService : ITextExtractService
 {
@@ -42,32 +42,31 @@ public class TextExtractService : ITextExtractService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public Task OpenPptFileAsync(string filePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath, nameof(filePath));
+
         if (!File.Exists(filePath))
             throw new FileNotFoundException("PPT file not found.", filePath);
 
         try
         {
             _presentation = new Presentation(filePath);
-            _logger.LogInformation("PPT file opened: {FilePath}", filePath);
+            _logger.LogInformation("[INFO] PPT file opened.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to open PPT file: {FilePath}", filePath);
+            _logger.LogError(ex, "[ERROR] Failed to open PPT file.");
             throw;
         }
 
         return Task.CompletedTask;
     }
 
-    /// <inheritdoc />
     public Task<PptTextExtractResult> TextExtractAsync()
     {
         if (_presentation == null)
-            throw new InvalidOperationException("PPT file is not opened. Call OpenPptFileAsync() first.");
+            throw new InvalidOperationException("PPT file must be opened before extraction.");
 
         var result = new PptTextExtractResult();
         var items = new List<PptTextExtractItem>();
@@ -97,11 +96,11 @@ public class TextExtractService : ITextExtractService
             result.Items = items;
             result.TotalCount = items.Count;
 
-            _logger.LogInformation("Extracted {Count} text items.", result.TotalCount);
+            _logger.LogInformation("[INFO] Extracted {Count} items.", result.TotalCount);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred during text extraction.");
+            _logger.LogError(ex, "[ERROR] Failed during text extraction.");
             throw;
         }
 
@@ -123,10 +122,19 @@ public class TextExtractService : ITextExtractService
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
-        var json = JsonSerializer.Serialize(extracted, options);
-        await File.WriteAllTextAsync(outputPath, json);
+        try
+        {
+            var json = JsonSerializer.Serialize(extracted, options);
+            await File.WriteAllTextAsync(outputPath, json);
 
-        _logger.LogInformation("JSON saved: {Path}", Path.GetFullPath(outputPath));
+            _logger.LogInformation("[INFO] Extracted JSON saved.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[ERROR] Failed to save extracted JSON.");
+            throw;
+        }
+
         return Path.GetFullPath(outputPath);
     }
 }

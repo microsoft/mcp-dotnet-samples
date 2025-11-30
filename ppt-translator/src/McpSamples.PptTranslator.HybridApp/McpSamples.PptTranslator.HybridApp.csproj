@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
 
     <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
+    <None Include="Prompts/translation_prompt.txt" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>
