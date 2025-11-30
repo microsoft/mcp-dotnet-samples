@@ -15,4 +15,4 @@ services:
 
 hooks:
   postprovision:
-    - run: pwsh ./infra/hooks/postprovision.ps1
+    - run: powershell -NoProfile -ExecutionPolicy Bypass -File ./infra/hooks/postprovision.ps1
