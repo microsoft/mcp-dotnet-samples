@@ -15,4 +15,4 @@ services:
 
 hooks:
   postprovision:
-    - pwsh ./infra/hooks/postprovision.ps1
+    - pwsh: ./infra/hooks/postprovision.ps1
