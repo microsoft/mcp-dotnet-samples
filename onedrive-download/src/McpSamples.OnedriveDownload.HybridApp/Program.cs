@@ -46,11 +46,10 @@ builder.Services.AddScoped<GraphServiceClient>(sp =>
         accessToken = authHeader.Substring("Bearer ".Length).Trim();
     }
 
-    // 토큰이 없으면 401 Unauthorized 응답 (VSCode 팝업 트리거)
+    // 토큰이 없으면 Anonymous 반환 (미들웨어에서 검증)
     if (string.IsNullOrEmpty(accessToken))
     {
-        httpContext!.Response.StatusCode = 401;
-        throw new UnauthorizedAccessException("Access Token is missing.");
+        return new GraphServiceClient(new AnonymousTokenCredential());
     }
 
     Console.WriteLine("[인증 성공] 클라이언트가 토큰을 보냈습니다!");
@@ -121,6 +120,19 @@ IHost app = builder.BuildApp(useStreamableHttp);
 if (useStreamableHttp == true)
 {
     var webApp = (app as Microsoft.AspNetCore.Builder.WebApplication)!;
+
+    // ★ 토큰 검증 미들웨어: Authorization 헤더가 없으면 401 반환
+    webApp.Use(async (context, next) =>
+    {
+        string? authHeader = context.Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader))
+        {
+            context.Response.StatusCode = 401;
+            await context.Response.WriteAsync("Unauthorized: Access Token is required.");
+            return;
+        }
+        await next();
+    });
 
     // ★ wwwroot 폴더의 정적 파일(HTML, CSS 등)을 URL로 접근 가능하게 함
     webApp.UseStaticFiles();
