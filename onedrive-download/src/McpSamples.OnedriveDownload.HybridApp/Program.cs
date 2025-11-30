@@ -13,6 +13,7 @@ using McpSamples.Shared.Extensions;
 using McpSamples.Shared.OpenApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Graph;
+using Microsoft.AspNetCore.WebUtilities;
 
 using Constants = McpSamples.OnedriveDownload.HybridApp.Constants;
 
@@ -29,6 +30,9 @@ IHostApplicationBuilder builder = useStreamableHttp
                                 : Host.CreateApplicationBuilder(args);
 
 builder.Services.AddAppSettings<OnedriveDownloadAppSettings>(builder.Configuration, args);
+
+// ★ HttpClient 등록 (토큰 교환 프록시용)
+builder.Services.AddHttpClient();
 
 // ★ Token Passthrough: 클라이언트(VSCode)가 보낸 Authorization 헤더에서 토큰을 꺼내 사용
 // VSCode에서 Microsoft 인증을 하면 팝업이 뜨고, 토큰을 요청 헤더에 포함시켜 보냄
@@ -127,126 +131,126 @@ if (useStreamableHttp == true)
 {
     var webApp = (app as Microsoft.AspNetCore.Builder.WebApplication)!;
 
-    // ★ 토큰 검증 미들웨어: /authorize는 MS 로그인으로 리다이렉트, 나머지는 401 반환
+    // =========================================================================
+    // 1. 미들웨어 설정 (인증, CORS, 로깅)
+    // =========================================================================
     webApp.Use(async (context, next) =>
     {
-        string? authHeader = context.Request.Headers.Authorization.ToString();
+        var path = context.Request.Path.Value!;
+        var method = context.Request.Method;
 
-        // /authorize로 오는 요청이면 Microsoft 로그인 페이지로 리다이렉트
-        if (context.Request.Path.Value!.StartsWith("/authorize", StringComparison.OrdinalIgnoreCase))
+        // (1) CORS 헤더 강제 주입 (VS Code 연결 허용)
+        context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+        // (2) OPTIONS (노크) 요청은 무조건 통과
+        if (method.Equals("OPTIONS", StringComparison.OrdinalIgnoreCase))
         {
-            var clientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "4446b888-18c6-4739-99e7-663e14fb338e";
-            var redirectUri = "http://localhost";
-            var scopes = "https://graph.microsoft.com/.default";
-
-            var authUrl = $"https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" +
-                $"client_id={clientId}&" +
-                $"redirect_uri={Uri.EscapeDataString(redirectUri)}&" +
-                $"response_type=code&" +
-                $"scope={Uri.EscapeDataString(scopes)}";
-
-            context.Response.Redirect(authUrl);
+            context.Response.StatusCode = 200;
             return;
         }
 
-        // 일반 요청은 토큰 검사
+        // (3) 인증 제외 경로 설정 (로그인, 토큰교환, 웰노운 등)
+        if (path.StartsWith("/authorize", StringComparison.OrdinalIgnoreCase) ||
+            path.StartsWith("/token", StringComparison.OrdinalIgnoreCase) ||
+            (path == "/" && context.Request.Query.ContainsKey("code")) ||
+            path.StartsWith("/.well-known", StringComparison.OrdinalIgnoreCase))
+        {
+            await next();
+            return;
+        }
+
+        // (4) 토큰 검사 (API 요청)
+        string? authHeader = context.Request.Headers.Authorization.ToString();
         if (string.IsNullOrEmpty(authHeader))
         {
+            Console.WriteLine($"❌ [토큰 없음] {method} {path}");
+            // "토큰 내놔" (Challenge) 헤더 발송
+            context.Response.Headers.Append("WWW-Authenticate", "Bearer realm=\"mcp\"");
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Unauthorized: Access Token is required.");
             return;
         }
+
+        Console.WriteLine($"🔑 [토큰 수신] {authHeader.Substring(0, Math.Min(authHeader.Length, 15))}...");
         await next();
     });
 
-    // ★ wwwroot 폴더의 정적 파일(HTML, CSS 등)을 URL로 접근 가능하게 함
-    webApp.UseStaticFiles();
-
-    // Azure Functions 환경에서 wwwroot 경로 무시 처리
-    if (!System.IO.Directory.Exists(webApp.Environment.WebRootPath))
+    // =========================================================================
+    // 2. [핵심] 토큰 교환 대행 (Proxy) 엔드포인트 (/token)
+    // VS Code가 서버로 잘못 보낸 토큰 요청을 MS로 대신 전달해 줍니다.
+    // =========================================================================
+    webApp.MapPost("/token", async (HttpContext context, IHttpClientFactory httpClientFactory) =>
     {
-        var logger = app.Services.GetRequiredService<ILogger<Program>>();
-        logger.LogWarning($"[WARNING] WebRootPath not found: {webApp.Environment.WebRootPath}");
-    }
-
-    // ★ OAuth2 콜백 엔드포인트: Microsoft에서 code를 받으면 여기로 리다이렉트됨
-    webApp.MapGet("/", async (HttpContext context) =>
-    {
-        var code = context.Request.Query["code"].ToString();
-
-        if (string.IsNullOrEmpty(code))
-        {
-            await context.Response.WriteAsync("OAuth2 callback endpoint. Waiting for authorization code...");
-            return;
-        }
-
-        // 인증 코드를 토큰으로 교환
-        using var client = new HttpClient();
-        var clientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID") ?? "4446b888-18c6-4739-99e7-663e14fb338e";
-        var clientSecret = Environment.GetEnvironmentVariable("AZURE_CLIENT_SECRET") ?? "";
-
-        var tokenRequest = new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            { "client_id", clientId },
-            { "client_secret", clientSecret },
-            { "code", code },
-            { "redirect_uri", "http://localhost" },
-            { "grant_type", "authorization_code" },
-            { "scope", "https://graph.microsoft.com/.default" }
-        });
-
+        Console.WriteLine("🔄 [Proxy] VS Code가 보낸 토큰 요청을 MS로 전달합니다...");
         try
         {
-            var response = await client.PostAsync(
-                "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-                tokenRequest);
+            // 폼 데이터 읽기
+            var form = await context.Request.ReadFormAsync();
+            var formDict = form.ToDictionary(x => x.Key, x => x.Value.ToString());
 
-            var content = await response.Content.ReadAsStringAsync();
+            // Microsoft로 요청 전달
+            var client = httpClientFactory.CreateClient();
+            var msTokenUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
+            var requestContent = new FormUrlEncodedContent(formDict);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonDoc = System.Text.Json.JsonDocument.Parse(content);
-                var accessToken = jsonDoc.RootElement.GetProperty("access_token").GetString();
+            var response = await client.PostAsync(msTokenUrl, requestContent);
+            var responseString = await response.Content.ReadAsStringAsync();
 
-                // VSCode로 토큰 반환 (로컬 저장소 또는 HTTP 헤더로)
-                context.Response.ContentType = "text/html";
-                await context.Response.WriteAsync($@"
-                    <html>
-                    <head><title>인증 성공</title></head>
-                    <body>
-                        <h1>인증 성공!</h1>
-                        <p>이제 VSCode에서 MCP 요청을 사용할 수 있습니다.</p>
-                        <p style='color: green; font-weight: bold;'>토큰이 획득되었습니다.</p>
-                        <script>
-                            // 토큰을 localStorage에 저장하거나 parent window에 전달
-                            if (window.opener) {{
-                                window.opener.postMessage({{
-                                    type: 'oauth_token',
-                                    token: '{accessToken}'
-                                }}, '*');
-                                window.close();
-                            }} else {{
-                                localStorage.setItem('accessToken', '{accessToken}');
-                                console.log('Token saved to localStorage');
-                            }}
-                        </script>
-                    </body>
-                    </html>
-                ");
-            }
-            else
-            {
-                context.Response.StatusCode = 400;
-                await context.Response.WriteAsync($"Token exchange failed: {content}");
-            }
+            // 결과 반환
+            context.Response.StatusCode = (int)response.StatusCode;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(responseString);
+            Console.WriteLine($"✅ [Proxy] 토큰 교환 완료! 상태: {response.StatusCode}");
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"💥 [Proxy 실패] {ex.Message}");
             context.Response.StatusCode = 500;
-            await context.Response.WriteAsync($"Error: {ex.Message}");
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = ex.Message }));
         }
     });
 
+    // =========================================================================
+    // 3. [복구됨] 로그인 리다이렉트 엔드포인트 (/authorize)
+    // 아까 이 부분이 지워져서 404가 떴던 겁니다.
+    // =========================================================================
+    webApp.MapGet("/authorize", (HttpContext context) =>
+    {
+        var queryString = context.Request.QueryString.ToString();
+
+        // 안전장치: scope 강제 주입
+        if (!queryString.Contains("scope=", StringComparison.OrdinalIgnoreCase) &&
+            !queryString.Contains("scope%3D", StringComparison.OrdinalIgnoreCase))
+        {
+            queryString += string.IsNullOrEmpty(queryString) ? "?" : "&";
+            queryString += "scope=https%3A%2F%2Fgraph.microsoft.com%2F.default";
+        }
+
+        // MS 로그인 페이지로 리다이렉트 (VS Code가 보낸 포트 정보 유지)
+        var authUrl = $"https://login.microsoftonline.com/common/oauth2/v2.0/authorize{queryString}";
+
+        Console.WriteLine($"🔐 [인증] 리다이렉트: {authUrl}");
+        context.Response.Redirect(authUrl);
+        return Task.CompletedTask;
+    });
+
+    // =========================================================================
+    // 4. 인증 성공 화면 (/)
+    // =========================================================================
+    webApp.MapGet("/", async (HttpContext context) =>
+    {
+        context.Response.ContentType = "text/html; charset=utf-8";
+        await context.Response.WriteAsync(@"
+            <html><body>
+            <h1>✓ 인증 성공!</h1>
+            <p>VS Code로 돌아가세요.</p>
+            <script>setTimeout(function(){ window.location.href='vscode://'; }, 1000);</script>
+            </body></html>");
+    });
+
+    // 5. 기타 필수 설정
     webApp.MapOpenApi("/{documentName}.json");
 
     var logger2 = app.Services.GetRequiredService<ILogger<Program>>();

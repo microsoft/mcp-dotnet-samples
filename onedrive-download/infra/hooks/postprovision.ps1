@@ -22,9 +22,11 @@ Write-Host "mcp.http.remote-func.json path: $funcJsonPath" -ForegroundColor Gray
 
 if (Test-Path $funcJsonPath) {
     $funcContent = Get-Content $funcJsonPath -Raw
+    # Update both clientId and AZURE_CLIENT_ID
+    $funcContent = $funcContent -replace '"clientId":\s*"[^"]*"', ('"clientId": "' + $clientId + '"')
     $funcContent = $funcContent -replace '"AZURE_CLIENT_ID":\s*"[^"]*"', ('"AZURE_CLIENT_ID": "' + $clientId + '"')
     Set-Content $funcJsonPath -Value $funcContent -Encoding UTF8
-    Write-Host "mcp.http.remote-func.json updated" -ForegroundColor Green
+    Write-Host "mcp.http.remote-func.json updated (clientId + env)" -ForegroundColor Green
 } else {
     Write-Host "ERROR: mcp.http.remote-func.json not found at $funcJsonPath" -ForegroundColor Red
 }
@@ -35,9 +37,11 @@ Write-Host "mcp.http.remote-apim.json path: $apimJsonPath" -ForegroundColor Gray
 
 if (Test-Path $apimJsonPath) {
     $apimContent = Get-Content $apimJsonPath -Raw
+    # Update both clientId and AZURE_CLIENT_ID
+    $apimContent = $apimContent -replace '"clientId":\s*"[^"]*"', ('"clientId": "' + $clientId + '"')
     $apimContent = $apimContent -replace '"AZURE_CLIENT_ID":\s*"[^"]*"', ('"AZURE_CLIENT_ID": "' + $clientId + '"')
     Set-Content $apimJsonPath -Value $apimContent -Encoding UTF8
-    Write-Host "mcp.http.remote-apim.json updated" -ForegroundColor Green
+    Write-Host "mcp.http.remote-apim.json updated (clientId + env)" -ForegroundColor Green
 } else {
     Write-Host "ERROR: mcp.http.remote-apim.json not found at $apimJsonPath" -ForegroundColor Red
 }
