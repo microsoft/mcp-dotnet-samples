@@ -156,6 +156,7 @@ public class PptFontFixService : IPptFontFixService
 
         searchPaths.Add(Path.Combine("/app", fileName));
         searchPaths.Add(Path.Combine("/files", fileName));
+        searchPaths.Add(Path.Combine("/app/mounts", fileName));
 
         string baseDir = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
         searchPaths.Add(Path.Combine(baseDir, "generated", fileName));

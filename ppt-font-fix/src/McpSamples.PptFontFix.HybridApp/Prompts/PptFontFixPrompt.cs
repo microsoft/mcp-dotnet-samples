@@ -28,6 +28,7 @@ public class PptFontFixPrompt : IPptFontFixPrompt
     private const string ContainerName = "ppt-font-fix";
     private const string ContainerInputPathBase = "/files";
     private const string AzureDefaultContainer = "generated-files";
+    private const string AzureFileShareName = "ppt-files";
     
     /// <inheritdoc />
     [McpServerPrompt(Name = "fix_ppt_fonts", Title = "Start PPT Font Fix Workflow")]
@@ -55,22 +56,32 @@ public class PptFontFixPrompt : IPptFontFixPrompt
              `{hostFilePath}`
 
            **If Azure:**
-           - Inform the user that the file must be uploaded to Azure Blob Storage.
-           - Ask for:
-             - Storage Account Name → `azureAccountName`
-             - Container Name → `azureContainerName` (default: `{AzureDefaultContainer}`)
-           - Ask the user whether to allow running the following upload command:
-             ```bash
-             az storage blob upload \
-                 --account-name [azureAccountName] \
-                 --container-name [azureContainerName] \
-                 --file "{hostFilePath}" \
-                 --name "{actualFileName}" \
-                 --overwrite true
-             ```
-           - If the user allows it, execute the command.
-           - Use the resulting blob URL:
-             `https://[azureAccountName].blob.core.windows.net/[azureContainerName]/{actualFileName}`
+           - Inform the user: "**The server cannot directly access your local file path in the Azure environment. You must upload the file to Azure Blob Storage or a File Share and provide the accessible path.**"
+           - Ask the user: **"Have you already uploaded the file to Azure storage? (Yes/No)"**
+           - Store the answer as `isUploaded`.
+
+           - **IF `isUploaded` is "No":**
+             - Inform the user: "**You must run the following command in your terminal to upload the file to Blob Storage.**"
+             - Ask for:
+               - Storage Account Name → `azureAccountName`
+               - Account Key → `azureAccountKey`
+               - Container Name → `azureContainerName` (default: `{AzureDefaultContainer}`)
+             - Present the upload command and ask for permission to run it:
+               ```bash
+               az storage blob upload \
+                   --account-name [azureAccountName] \
+                   --account-key [azureAccountKey] \
+                   --container-name [azureContainerName] \
+                   --file "{hostFilePath}" \
+                   --name "{actualFileName}" \
+                   --overwrite true
+               ```
+             - If the user allows it, execute the command.
+             - **Wait for confirmation** that the upload has executed successfully.
+
+           - **FINAL CRITICAL ACTION (Execute regardless of `isUploaded`):** Request the final access path for the server to read the file.
+           - Ask the user: "**If the file has been uploaded, please provide one of the following:** 1) **Blob URL (including SAS)**, 2) **Blob Path (e.g., `[azureContainerName]/{actualFileName}`)** or 3) **File Share File Name (e.g., `{actualFileName}`)**"
+           - Store the final input path for the tool as `FINAL_INPUT_PATH = "[User-Provided Path/URL/File Name]"`
 
            **If Docker:**
            - Ask the user for the running container ID or name for **{ContainerName}**.
@@ -108,10 +119,14 @@ public class PptFontFixPrompt : IPptFontFixPrompt
         ### STEP 2 — Modify the File
         1. Ask the user where to save the updated file:
 
-           **If Local / Azure Execution:**
+           **If Local Execution:**
            - Ask for an output directory path (optional).
            - Store as `outputDirectory`.
            - If omitted, the server will save to its default directory and return a URL.
+
+           **If Azure Execution:**
+           - Inform the user: "**The modified file will be saved to Blob Storage and provided as a secure download URL.**" 
+           - Set `outputDirectory = null`.
 
            **If Docker Execution:**
            - Set `outputDirectory = null`.

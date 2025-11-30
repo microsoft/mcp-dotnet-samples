@@ -252,3 +252,4 @@ output AZURE_RESOURCE_MCP_PPT_FONT_FIX_NAME string = mcpPptFontFix.outputs.name
 output AZURE_RESOURCE_MCP_PPT_FONT_FIX_FQDN string = mcpPptFontFix.outputs.fqdn
 output AZURE_STORAGE_ACCOUNT_NAME string = storage.name
 output AZURE_FILE_SHARE_NAME string = storageFileShare.name
+output AZURE_BLOB_CONTAINER_NAME string = generatedFilesContainer.name
