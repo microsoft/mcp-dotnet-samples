@@ -46,9 +46,10 @@ builder.Services.AddScoped<GraphServiceClient>(sp =>
         accessToken = authHeader.Substring("Bearer ".Length).Trim();
     }
 
-    // 토큰이 없으면 401 Unauthorized 응답
+    // 토큰이 없으면 401 Unauthorized 응답 (VSCode 팝업 트리거)
     if (string.IsNullOrEmpty(accessToken))
     {
+        httpContext!.Response.StatusCode = 401;
         throw new UnauthorizedAccessException("Access Token is missing.");
     }
 

@@ -1,4 +1,4 @@
-{
+﻿{
   "inputs": [
     {
       "type": "promptString",
@@ -17,3 +17,4 @@
     }
   }
 }
+
