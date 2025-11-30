@@ -13,3 +13,6 @@ services:
     package:
       outputPath: bin/Release/net9.0/publish
 
+hooks:
+  postprovision:
+    - pwsh ./infra/hooks/postprovision.ps1

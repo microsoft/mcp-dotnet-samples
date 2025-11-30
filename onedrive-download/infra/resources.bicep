@@ -223,26 +223,22 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
     globalValidation: {
       requireAuthentication: true
       // ★★★ 여기가 제일 중요! 302(Redirect) 말고 401(Unauthorized)로 설정 ★★★
-      // 그래야 VS Code가 "아, 토큰 필요하네?" 하고 팝업을 띄웁니다.
       unauthenticatedClientAction: 'Return401'
     }
     // 3. ID 공급자 (Microsoft) 설정 - entraApp에서 자동으로 clientId 가져오기
     identityProviders: {
       azureActiveDirectory: {
         enabled: true
+        // ★ registration 블록 제거 (Dynamic client registration 에러 해결)
+        // clientId와 openIdIssuer만 직접 지정
         registration: {
-          // ★ 여기가 제일 중요합니다! ★
-          // entraApp.outputs.mcpAppId로 자동으로 생성된 앱의 ID를 가져옵니다
           clientId: entraApp.outputs.mcpAppId
-          // 만약 Secret이 없다면 이 줄은 주석 처리해도 됨 (VS Code 팝업 로그인에는 Secret 불필요)
-          // clientSecretSettingName: 'OnedriveDownload__EntraId__ClientSecret'
-
           openIdIssuer: 'https://sts.windows.net/common/v2.0'
         }
         validation: {
           allowedAudiences: [
             'api://${entraApp.outputs.mcpAppId}'
-            entraApp.outputs.mcpAppId  // ★ VS Code 호환성을 위해 둘 다 추가
+            entraApp.outputs.mcpAppId
           ]
         }
       }
@@ -290,5 +286,8 @@ output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_FQDN string = functionApp.properties
 output AZURE_RESOURCE_MCP_ONEDRIVE_DOWNLOAD_GATEWAY_FQDN string = replace(apimService.outputs.gatewayUrl, 'https://', '')
 output AZURE_USER_ASSIGNED_IDENTITY_PRINCIPAL_ID string = userAssignedIdentity.properties.principalId
 output mcpAppId string = entraApp.outputs.mcpAppId
+// ★ postprovision 훅에서 mcp.json에 주입할 Client ID
+// 이 이름(AZURE_CLIENT_ID)이 스크립트에서 $env:AZURE_CLIENT_ID 가 됩니다.
+output AZURE_CLIENT_ID string = entraApp.outputs.mcpAppId
 // This output is no longer relevant, but keeping it to avoid breaking main.bicep for now. I will fix main.bicep next.
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = ''
