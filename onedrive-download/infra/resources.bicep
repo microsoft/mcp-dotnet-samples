@@ -133,6 +133,11 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     siteConfig: {
       alwaysOn: false
 
+      // ★★★ CORS 설정 (VS Code 접속 허용) ★★★
+      cors: {
+        allowedOrigins: ['*']
+      }
+
       // ★★★ 핵심: 스토리지 마운트 설정 ★★★
       azureStorageAccounts: {
         'downloads-mount': {
@@ -208,6 +213,9 @@ module entraApp './modules/mcp-entra-app.bicep' = {
 
 // ★ Built-in Authentication 설정 (VSCode 팝업을 위해 필수)
 // authSettingsV2를 entraApp 이후에 정의 (dependency 순서)
+// ★★★ [토큰 패스스루 방식] Easy Auth 완전 해제 ★★★
+// 인증은 Program.cs의 미들웨어에서 처리하므로, Azure 서버 레벨의 문지기는 끕니다.
+// 이렇게 하면 VS Code가 받은 Graph용 토큰이 서버 코드까지 무사히 도착합니다.
 resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
   parent: functionApp
   name: 'authsettingsV2'
@@ -215,34 +223,9 @@ resource authSettingsV2 'Microsoft.Web/sites/config@2023-12-01' = {
     entraApp  // entraApp이 먼저 생성되어야 함
   ]
   properties: {
-    // 1. 인증 기능 활성화
+    // 1. 인증 기능 비활성화 (서버 레벨 인증 끔)
     platform: {
-      enabled: true
-    }
-    // 2. 전역 유효성 검사 설정
-    globalValidation: {
-      requireAuthentication: false
-      unauthenticatedClientAction: 'AllowAnonymous'
-    }
-    // 3. ID 공급자 (Microsoft) 설정 - entraApp에서 자동으로 clientId 가져오기
-    identityProviders: {
-      azureActiveDirectory: {
-        enabled: true
-        clientId: entraApp.outputs.mcpAppId
-        openIdIssuer: 'https://sts.windows.net/common/v2.0'
-        validation: {
-          allowedAudiences: [
-            'api://${entraApp.outputs.mcpAppId}'
-            entraApp.outputs.mcpAppId
-          ]
-        }
-      }
-    }
-    // 4. 로그인 설정
-    login: {
-      tokenStore: {
-        enabled: true
-      }
+      enabled: false
     }
   }
 }

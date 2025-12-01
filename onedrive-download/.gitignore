@@ -20,5 +20,9 @@ feature2.md
 .azure/
 .claude/
 
+# Development settings with sensitive data (use .example template instead)
+appsettings.Development.json
+appsettings.*.json
+
 # Generated files from Azure File Share sync
 generated/

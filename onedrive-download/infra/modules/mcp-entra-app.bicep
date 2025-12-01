@@ -90,9 +90,13 @@ resource mcpEntraApp 'Microsoft.Graph/applications@v1.0' = {
   publicClient: {
     redirectUris: [
       'http://localhost'
+      'http://127.0.0.1'
       'https://vscode.dev/redirect'
     ]
   }
+
+  // ★★★ 공용 클라이언트 흐름 허용 (OAuth2 Authorization Code Flow for Public Clients)
+  isFallbackPublicClient: true
 
   resource fic 'federatedIdentityCredentials@v1.0' = {
     name: '${mcpEntraApp.uniqueName}/msiAsFic'
