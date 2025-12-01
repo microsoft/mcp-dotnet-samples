@@ -2961,6 +2961,10 @@
           "kind": "agent"
         },
         {
+          "path": "agents/diffblue-cover.agent.md",
+          "kind": "agent"
+        },
+        {
           "path": "agents/droid.agent.md",
           "kind": "agent"
         },
