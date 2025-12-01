@@ -158,8 +158,6 @@ public class PptFontFixPrompt : IPptFontFixPrompt
             ```bash
             docker cp {ContainerName}:[EXTRACTED_CONTAINER_PATH] "[HOST_DESTINATION_PATH]"
             ```
-
-        Task complete.
         """;
     }
 }

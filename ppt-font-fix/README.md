@@ -140,6 +140,8 @@ PPT Font Fix MCP server includes:
      azd env get-value AZURE_RESOURCE_MCP_PPT_FONT_FIX_FQDN
      ```
 
+     If you want to use Azure, you must copy the account key or upload the file to the blob storage on the running server, and copy the URL of the uploaded file.
+
 ### Connect MCP server to an MCP host/client
 
 #### VS Code + Agent Mode + Local MCP server
