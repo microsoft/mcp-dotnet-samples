@@ -1,0 +1,23 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "ppt-folder-path",
+      "description": "Absolute path of the folder that contains your PPT files"
+    }
+  ],
+  "servers": {
+    "ppt-translator-stdio-container": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e", "OPENAI_API_KEY=${env:OPENAI_API_KEY}",
+        "-v", "${input:ppt-folder-path}:/files",
+        "ppt-translator:latest"
+      ]
+    }
+  }
+}
