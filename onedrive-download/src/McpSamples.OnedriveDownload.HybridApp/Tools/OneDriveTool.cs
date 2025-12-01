@@ -92,10 +92,21 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             // 인코딩된 파일명으로 전체 URL 구성
             string encodedFileName = Uri.EscapeDataString(fileName);
-            string baseUri = shareClient.Uri.AbsoluteUri;
-            string sasUri = $"{baseUri}/{encodedFileName}{sasToken}";
 
-            Console.WriteLine($"✅ Generated SAS URL: {sasUri}");
+            // APIM 게이트웨이를 통한 프록시 URL
+            string apimFqdn = Environment.GetEnvironmentVariable("APIM_FQDN")
+                ?? throw new InvalidOperationException("APIM_FQDN 환경 변수가 없습니다.");
+
+            // 직접 스토리지에서 SAS URL 생성 (내부용)
+            string baseUri = shareClient.Uri.AbsoluteUri;
+            string storageDirectUrl = $"{baseUri}/{encodedFileName}{sasToken}";
+
+            // 클라이언트에 반환할 URL: APIM을 통한 프록시
+            // 쿼리 파라미터로 SAS 토큰 전달
+            string sasUri = $"https://{apimFqdn}/mcp/downloads?file={encodedFileName}&{sasToken.TrimStart('?')}";
+
+            Console.WriteLine($"✅ Generated APIM Proxy URL: {sasUri}");
+            Console.WriteLine($"   (Internal Storage URL: {storageDirectUrl})");
 
             return new OneDriveDownloadResult
             {

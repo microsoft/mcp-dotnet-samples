@@ -1,19 +1,59 @@
-{
+﻿{
   "inputs": [
     {
       "type": "promptString",
-      "id": "functionAppFqdn",
-      "description": "Azure 함수 앱의 FQDN을 입력하세요 (예: func-onedrive-download-34ugypgdcsh76.azurewebsites.net)"
+      "id": "apim-fqdn",
+      "description": "Azure API Management FQDN"
     }
   ],
   "servers": {
     "onedrive-download": {
       "type": "http",
-      "url": "https://${input:functionAppFqdn}/mcp",
+      "url": "https://${input:apim-fqdn}/mcp",
       "auth": {
-        "type": "bearer",
-        "token": "${command:getAzureAuthToken}"
+        "type": "oauth2",
+        "clientId": "4c834ff3-d821-4105-a7e5-464dd2524916",
+        "authorization_url": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+        "token_url": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+        "scopes": ["https://graph.microsoft.com/.default"],
+        "redirectUri": "http://127.0.0.1"
+      },
+      "env": {
+        "AZURE_CLIENT_ID": "4c834ff3-d821-4105-a7e5-464dd2524916",
+        "AZURE_TENANT_ID": "common"
       }
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
