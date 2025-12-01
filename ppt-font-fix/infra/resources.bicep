@@ -13,6 +13,9 @@ var containerAppName = 'ppt-font-fix'
 
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
+var storageKey = storage.listKeys().keys[0].value
+var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${storageKey};EndpointSuffix=core.windows.net'
+
 
 // Monitor application with Azure Monitor
 module monitoring 'br/public:avm/ptn/azd/monitoring:0.1.0' = {
@@ -37,6 +40,19 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   }
   properties: {
     largeFileSharesState: 'Enabled'
+  }
+}
+
+resource storageBlobService 'Microsoft.Storage/storageAccounts/blobServices@2022-09-01' = {
+  parent: storage
+  name: 'default'
+}
+
+resource generatedFilesContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
+  parent: storageBlobService
+  name: 'generated-files'
+  properties: {
+    publicAccess: 'None'
   }
 }
 
@@ -134,6 +150,7 @@ module mcpPptFontFix 'br/public:avm/res/app/container-app:0.8.0' = {
   
   dependsOn: [
     explicitStorageLink 
+    storage
   ]
 
   params: {
@@ -172,6 +189,10 @@ module mcpPptFontFix 'br/public:avm/res/app/container-app:0.8.0' = {
           {
             name: 'PORT'
             value: '8080'
+          }
+          {
+            name: 'AzureBlobConnectionString' 
+            value: storageConnectionString
           }
         ]
         args: [ '--http' ]
@@ -229,3 +250,6 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.outputs.logi
 output AZURE_RESOURCE_MCP_PPT_FONT_FIX_ID string = mcpPptFontFix.outputs.resourceId
 output AZURE_RESOURCE_MCP_PPT_FONT_FIX_NAME string = mcpPptFontFix.outputs.name
 output AZURE_RESOURCE_MCP_PPT_FONT_FIX_FQDN string = mcpPptFontFix.outputs.fqdn
+output AZURE_STORAGE_ACCOUNT_NAME string = storage.name
+output AZURE_FILE_SHARE_NAME string = storageFileShare.name
+output AZURE_BLOB_CONTAINER_NAME string = generatedFilesContainer.name

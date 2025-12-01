@@ -1,11 +1,4 @@
 {
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "your-ppt-file-path",
-      "description": "The absolute path where the PPT file you want to modify is located"
-    }
-  ],
   "servers": {
     "ppt-font-fix": {
       "type": "stdio",
@@ -14,7 +7,7 @@
         "run",
         "-i",
         "--rm",
-        "-v", "${input:your-ppt-file-path}:/files",
+        "--name", "ppt-font-fix",
         "ppt-font-fix:latest"
       ]
     }

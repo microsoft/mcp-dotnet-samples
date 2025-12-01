@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Azure.Storage.Blobs;
+using Azure.Storage.Sas;
+using Azure.Storage.Blobs.Specialized;
 
 namespace McpSamples.PptFontFix.HybridApp.Services;
 
@@ -33,8 +35,9 @@ public interface IPptFontFixService
     /// <summary>
     /// Save the modified Ppt file.
     /// </summary>
-    /// <param name="newFilePath"></param>
-    Task<string> SavePptFileAsync(string newFilePath);
+    /// <param name="desiredFileName">The desired file name to save as.</param>
+    /// <param name="outputDirectory">The directory path on the host machine to save the modified file.</param> // ✅ 신규 추가
+    Task<string> SavePptFileAsync(string desiredFileName, string? outputDirectory = null);
 
     /// <summary>
     /// Remove Unused Fonts from the presentation.
@@ -63,6 +66,7 @@ public class PptFontFixService : IPptFontFixService
     private readonly IWebHostEnvironment? _webHostEnvironment;
     private readonly IHttpContextAccessor? _httpContextAccessor;
     private Presentation? _presentation;
+    private readonly BlobServiceClient? _blobServiceClient;
 
     private HashSet<string>? _analyzedVisibleFonts;
 
@@ -77,6 +81,13 @@ public class PptFontFixService : IPptFontFixService
         _hostEnvironment = hostEnvironment;
         _webHostEnvironment = serviceProvider.GetService<IWebHostEnvironment>();
         _httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+
+        // Azure Connection String을 사용하여 BlobServiceClient 초기화 시도
+        string? azureConnectionString = configuration["AzureBlobConnectionString"];
+        if (!string.IsNullOrEmpty(azureConnectionString))
+        {
+            _blobServiceClient = new BlobServiceClient(azureConnectionString);
+        }
     }
 
     /// <inheritdoc />
@@ -84,21 +95,64 @@ public class PptFontFixService : IPptFontFixService
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath, nameof(filePath));
 
+        if (Uri.TryCreate(filePath, UriKind.Absolute, out Uri? uriResult) &&
+        (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+        {
+            _logger.LogInformation("✅ Detected URL path. Attempting to open from Blob Storage: {Url}", filePath);
+
+            if (_blobServiceClient == null)
+            {
+                throw new InvalidOperationException("Cannot open from URL. AzureBlobConnectionString is not configured.");
+            }
+
+            try
+            {
+                string containerSegment = uriResult.Segments.Skip(1).FirstOrDefault()?.TrimEnd('/') ?? throw new ArgumentException("Invalid Blob URL format: Container name not found.", nameof(filePath));
+                string blobName = string.Join("", uriResult.Segments.Skip(2));
+
+                if (string.IsNullOrEmpty(blobName))
+                {
+                    throw new ArgumentException("Invalid Blob URL format: Blob name not found.", nameof(filePath));
+                }
+
+                var containerClient = _blobServiceClient.GetBlobContainerClient(containerSegment);
+                var blobClient = containerClient.GetBlobClient(blobName);
+
+                if (!await blobClient.ExistsAsync())
+                {
+                    throw new FileNotFoundException($"Blob file not found in container '{containerSegment}': {blobName}");
+                }
+
+                _presentation?.Dispose();
+                var memoryStream = new MemoryStream();
+                await blobClient.DownloadToAsync(memoryStream);
+                memoryStream.Position = 0;
+
+                _presentation = new ShapeCrawler.Presentation(memoryStream);
+                _analyzedVisibleFonts = null;
+                _logger.LogInformation("Ppt file opened successfully from Blob.");
+                return;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "❌ Failed to open Ppt file from URL.");
+                throw new InvalidOperationException($"Failed to open Blob file at {filePath}.", ex);
+            }
+        }
+
         var searchPaths = new List<string>();
 
-        searchPaths.Add(filePath);
+        searchPaths.Add(filePath); 
 
-        string fileName = Path.GetFileName(filePath);
-        if (filePath.Contains('\\')) fileName = filePath.Split('\\').Last();
-        if (filePath.Contains('/')) fileName = filePath.Split('/').Last();
-        
-        searchPaths.Add(Path.Combine("/app/mounts", fileName));
+        string safePath = filePath.Replace('\\', '/');
+        string fileName = safePath.Split('/').Last();
+
         searchPaths.Add(Path.Combine("/app", fileName));
         searchPaths.Add(Path.Combine("/files", fileName));
+        searchPaths.Add(Path.Combine("/app/mounts", fileName));
 
         string baseDir = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
         searchPaths.Add(Path.Combine(baseDir, "generated", fileName));
-        
         searchPaths.Add(Path.Combine(Path.GetTempPath(), fileName));
 
         string? foundPath = null;
@@ -115,13 +169,13 @@ public class PptFontFixService : IPptFontFixService
         if (foundPath == null)
         {
             _logger.LogError("❌ File not found. Searched in: {Paths}", string.Join(", ", searchPaths));
-            throw new FileNotFoundException($"Ppt file not found. Searched in /files, /generated, and /tmp inside container.", filePath);
+            throw new FileNotFoundException($"Ppt file not found. File must be accessible at the host path OR successfully copied to the container volume.", filePath);
         }
 
         try
         {
             _presentation?.Dispose();
-            _presentation = new Presentation(foundPath);
+            _presentation = new ShapeCrawler.Presentation(foundPath);
             _analyzedVisibleFonts = null;
             _logger.LogInformation("Ppt file opened successfully: {FilePath}", foundPath);
             await Task.CompletedTask;
@@ -149,9 +203,29 @@ public class PptFontFixService : IPptFontFixService
 
         Action<IParagraphPortion, bool, bool, FontUsageLocation> processPortion = (portion, isShapeVisible, isSlideVisible, location) =>
         {
+            if (portion.GetType().Name == "ParagraphLineBreak") 
+            {
+                return; 
+            }
             if (portion.Font == null) return;
-            string? fontName = portion.Font.LatinName;
-            if (string.IsNullOrEmpty(fontName)) return;
+            string? fontName = null;
+    
+            try
+            {
+                fontName = portion.Font.LatinName; 
+            }
+            catch (NullReferenceException ex)
+            {
+                _logger.LogWarning(ex, 
+                    "NullReferenceException occurred while getting LatinName for Shape: {ShapeName} in Slide: {SlideNumber}. Skipping portion.", 
+                    location.ShapeName, location.SlideNumber);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(fontName)) 
+            {
+                return; 
+            }
 
             totalFontsInSlides.Add(fontName);
 
@@ -241,7 +315,7 @@ public class PptFontFixService : IPptFontFixService
     }
 
     /// <inheritdoc />
-    public async Task<string> SavePptFileAsync(string desiredFileName)
+    public async Task<string> SavePptFileAsync(string desiredFileName, string? outputDirectory = null)
     {
         if (this._presentation == null) throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before saving.");
         ArgumentException.ThrowIfNullOrWhiteSpace(desiredFileName, nameof(desiredFileName));
@@ -269,40 +343,53 @@ public class PptFontFixService : IPptFontFixService
                     await containerClient.CreateIfNotExistsAsync();
                     var blobClient = containerClient.GetBlobClient(safeFileName);
                     await blobClient.UploadAsync(memoryStream, overwrite: true);
-                    return blobClient.Uri.ToString();
+                    var sasBuilder = new BlobSasBuilder()
+                    {
+                        ExpiresOn = DateTimeOffset.UtcNow.AddHours(1), 
+                        BlobName = safeFileName, 
+                        BlobContainerName = "generated-files", 
+                    };
+                    sasBuilder.SetPermissions(BlobSasPermissions.Read); 
+
+                    Uri sasUri = blobClient.GenerateSasUri(sasBuilder);
+        
+                    _logger.LogInformation("✅ Returning Blob URL with SAS token.");
+                    return sasUri.ToString();
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Azure save failed. Falling back to local storage.");
                     memoryStream.Position = 0;
                 }
-            }
+            }   
             string finalPhysicalPath = "";
             string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
             string generatedDir = Path.Combine(webRoot, "generated");
             if (!Directory.Exists(generatedDir)) Directory.CreateDirectory(generatedDir);
-            string webStoragePath = Path.Combine(generatedDir, safeFileName);
-
+            string webStoragePath = Path.Combine(generatedDir, safeFileName); 
             bool isDocker = !OperatingSystem.IsWindows();
 
             if (isDocker)
             {
                 _logger.LogInformation("Environment detected: Docker Container");
-
+                
                 try 
                 {
                     string syncPath = Path.Combine("/files", safeFileName);
+                    
+                    memoryStream.Position = 0; 
                     using (var fs = new FileStream(syncPath, FileMode.Create, FileAccess.Write))
                     {
                         await memoryStream.CopyToAsync(fs);
+                        await fs.FlushAsync(); 
                     }
                     File.SetUnixFileMode(syncPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
                     
-                    finalPhysicalPath = syncPath;
+                    finalPhysicalPath = syncPath; 
                 }
                 catch (Exception ex) 
                 { 
-                    _logger.LogWarning("Could not save to /files volume: {Msg}", ex.Message);
+                    _logger.LogError(ex, "FATAL: Could not save to /files volume. Falling back to internal web root.");
                     finalPhysicalPath = webStoragePath;
                 }
 
@@ -317,12 +404,31 @@ public class PptFontFixService : IPptFontFixService
             {
                 _logger.LogInformation("Environment detected: Local Windows");
 
-                using (var fs = new FileStream(webStoragePath, FileMode.Create, FileAccess.Write))
+                string finalPathToSave;
+
+                if (!string.IsNullOrEmpty(outputDirectory) && Directory.Exists(outputDirectory))
                 {
-                    await memoryStream.CopyToAsync(fs);
+                    finalPathToSave = Path.Combine(outputDirectory, safeFileName);
+                    _logger.LogInformation("Saving to user-specified path: {Path}", finalPathToSave);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(outputDirectory))
+                    {
+                        _logger.LogWarning("Specified output directory '{Dir}' does not exist or is invalid. Falling back to default.", outputDirectory);
+                    }
+                    
+                    finalPathToSave = webStoragePath;
+                    _logger.LogInformation("Saving to default webroot path: {Path}", finalPathToSave);
                 }
                 
-                finalPhysicalPath = webStoragePath;
+                using (var fs = new FileStream(finalPathToSave, FileMode.Create, FileAccess.Write)) // 👈 finalPathToSave 사용
+                {
+                    memoryStream.Position = 0;
+                    await memoryStream.CopyToAsync(fs);
+                }
+
+                finalPhysicalPath = finalPathToSave; 
             }
 
             if (_httpContextAccessor?.HttpContext?.Request != null)
