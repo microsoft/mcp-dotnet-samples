@@ -1,0 +1,46 @@
+# syntax=docker/dockerfile:1
+
+### 1) Debian 기반 SDK 이미지 사용
+FROM mcr.microsoft.com/dotnet/sdk:9.0-bookworm-slim AS build
+
+# Shared
+COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
+
+# 프로젝트 소스 복사
+COPY ./ppt-translator/src/McpSamples.PptTranslator.HybridApp /source/ppt-translator/src/McpSamples.PptTranslator.HybridApp
+
+# Prompts 폴더
+COPY ./ppt-translator/src/McpSamples.PptTranslator.HybridApp/Prompts \
+     /source/ppt-translator/src/McpSamples.PptTranslator.HybridApp/Prompts
+
+# TestFiles 폴더
+COPY ./ppt-translator/TestFiles /source/ppt-translator/TestFiles
+
+WORKDIR /source/ppt-translator/src/McpSamples.PptTranslator.HybridApp
+
+# 필요한 native dependency 설치
+RUN apt-get update && apt-get install -y \
+    libfontconfig1 \
+    libfreetype6 \
+    libpng16-16 \
+    libjpeg62-turbo \
+    libtiff6 \
+    libgif7 \
+    libwebp7 \
+    libx11-6 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Restore & Publish
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app --self-contained false
+
+
+
+### 2) Debian 기반 ASP.NET 런타임 이미지
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-bookworm-slim AS final
+
+WORKDIR /app
+COPY --from=build /app .
+
+ENTRYPOINT ["dotnet", "McpSamples.PptTranslator.HybridApp.dll", "--http"]
+

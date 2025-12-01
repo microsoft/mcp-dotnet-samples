@@ -6,6 +6,7 @@
     <RootNamespace>McpSamples.PptTranslator.HybridApp</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>    
+    <UserSecretsId>5e4ba7bc-008d-4689-8311-3be925ba73a8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +19,7 @@
 
     <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
     <None Include="Prompts/translation_prompt.txt" CopyToOutputDirectory="Always" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.20.0" />
   </ItemGroup>
 
 </Project>

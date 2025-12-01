@@ -18,6 +18,7 @@ namespace McpSamples.PptTranslator.HybridApp.Tools
 
     /// <summary>
     /// Default implementation of PPT translation workflow tool.
+    /// Supports: local file, container volume, Azure Blob URL
     /// </summary>
     [McpServerToolType]
     public class PptTranslateTool : IPptTranslateTool
@@ -40,9 +41,9 @@ namespace McpSamples.PptTranslator.HybridApp.Tools
         }
 
         [McpServerTool(Name = "translate_ppt_file", Title = "Translate PPT file")]
-        [Description("Extracts text from a PPT, translates it using an LLM, and generates a translated PPT file.")]
+        [Description("Extracts text from a PPT (local or blob), translates it using an LLM, and generates a translated PPT file.")]
         public async Task<string> TranslateAsync(
-            [Description("Full path of the PPT file to translate")] string filePath,
+            [Description("Full path or Blob URL of the PPT file to translate")] string filePath,
             [Description("Target language code (e.g., 'ko', 'en', 'ja')")] string targetLang)
         {
             string step = "INITIAL";
@@ -52,23 +53,34 @@ namespace McpSamples.PptTranslator.HybridApp.Tools
                 if (string.IsNullOrWhiteSpace(targetLang))
                     targetLang = "ko";
 
-                if (!File.Exists(filePath))
-                    throw new FileNotFoundException("PPT file not found.", filePath);
+                bool isBlobUrl =
+                    Uri.TryCreate(filePath, UriKind.Absolute, out var uriResult) &&
+                    (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
+                // -----------------------------
                 // STEP 1: Extract
+                // -----------------------------
                 step = "TEXT_EXTRACTION";
                 _logger.LogInformation("[STEP 1] Extracting text...");
 
                 await _extractService.OpenPptFileAsync(filePath);
                 var extracted = await _extractService.TextExtractAsync();
 
-                string directory = Path.GetDirectoryName(filePath)!;
-                string extractedJsonPath = Path.Combine(directory, "extracted.json");
+                // Blob URL에는 파일 시스템 경로가 없음 → temp 디렉토리 사용
+                string workDir = isBlobUrl
+                    ? Path.Combine(Path.GetTempPath(), "ppt-translator")
+                    : Path.GetDirectoryName(filePath)!;
+
+                Directory.CreateDirectory(workDir);
+
+                string extractedJsonPath = Path.Combine(workDir, "extracted.json");
                 await _extractService.ExtractToJsonAsync(extracted, extractedJsonPath);
 
                 _logger.LogInformation("[STEP 1] Extraction completed.");
 
+                // -----------------------------
                 // STEP 2: Translate
+                // -----------------------------
                 step = "TRANSLATION";
                 _logger.LogInformation("[STEP 2] Translating text...");
 
@@ -77,7 +89,9 @@ namespace McpSamples.PptTranslator.HybridApp.Tools
 
                 _logger.LogInformation("[STEP 2] Translation completed.");
 
-                // STEP 3: Rebuild
+                // -----------------------------
+                // STEP 3: Rebuild PPT
+                // -----------------------------
                 step = "REBUILD";
                 _logger.LogInformation("[STEP 3] Rebuilding PPT...");
 
