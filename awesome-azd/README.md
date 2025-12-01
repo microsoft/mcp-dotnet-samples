@@ -16,7 +16,7 @@ This is an MCP server that provides search functionality for Awesome AZD templat
 
 ## What's Included
 
-Awesome Copilot MCP server includes:
+Awesome Azd MCP server includes:
 
 | Building Block | Name                           | Description                                                           | Usage                                         |
 |----------------|--------------------------------|-----------------------------------------------------------------------|-----------------------------------------------|
