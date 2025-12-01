@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 using McpSamples.AwesomeAzd.HybridApp.Services;
 using McpSamples.AwesomeAzd.HybridApp.Models;
@@ -46,7 +47,7 @@ public class AwesomeAzdTool(IAwesomeAzdService service, ILogger<AwesomeAzdTool> 
         [Description("The keyword to search templates for")] string keywords)
     {
         var result = new List<AwesomeAzdTemplateResponse>();
-
+        
         try
         {
             var templates = await service.GetTemplateListAsync(keywords).ConfigureAwait(false);
@@ -75,10 +76,17 @@ public class AwesomeAzdTool(IAwesomeAzdService service, ILogger<AwesomeAzdTool> 
         [Description("Working directory where the command would run")] string workingDirectory,
         [Description("Name of the environment to apply")] string envName)
     {
-        
-        var command = $"azd init -t {srcPath} --environment {envName}";
+        string ownerRepo = srcPath;
 
-        logger.LogInformation("Generated AzdCommand for srcPath '{srcPath}' at directory '{workingDirectory}'", srcPath, workingDirectory);
+        var match = Regex.Match(srcPath, @"github\.com/([^/]+/[^/]+)");
+        if (match.Success)
+        {
+            ownerRepo = match.Groups[1].Value;
+        }
+
+        var command = $"azd init -t {ownerRepo} --environment {envName}";
+
+        logger.LogInformation("Generated AzdCommand for ownerRepo '{ownerRepo}' at directory '{workingDirectory}'", ownerRepo, workingDirectory);
 
         var azdCommand = new AzdCommand
         {
