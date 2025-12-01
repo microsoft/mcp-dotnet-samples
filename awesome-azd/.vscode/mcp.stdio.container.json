@@ -1,6 +1,6 @@
 {
   "servers": {
-    "awesome-copilot": {
+    "awesome-azd": {
       "type": "stdio",
       "command": "docker",
       "args": [

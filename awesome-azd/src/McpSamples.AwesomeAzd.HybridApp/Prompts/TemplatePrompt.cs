@@ -50,15 +50,7 @@ public class TemplatePrompt : ITemplatePrompt
 
         - If the user provides a **Selected Template Source**, you may proceed to execution immediately.
 
-        - If the user does NOT provide a working directory: Automatically determine the host machine's user profile directory by running a terminal command (Run in Terminal)
-
-        - On Windows:
-            Write-Output $env:USERPROFILE
-
-        - On macOS or Linux:
-            echo $HOME
-
-        Use the returned value as `hostUserProfile`.
+        **IMPORTANT** - If the user does not provide a working directory or an environment name, keep asking repeatedly until they provide one.
 
         Example input:
 
@@ -68,19 +60,16 @@ public class TemplatePrompt : ITemplatePrompt
         - Call the `make_command` MCP tool with a JSON object like this:
 
             "srcPath": "Selected Template Source",
-            "hostUserProfile": "<host user's profile path>",
-            "workingDirectory": <user input or null>,
-            "envName": <user input or null>
+            "workingDirectory",
+            "envName"
 
         - The tool will return an `AzdCommand` object.
         - Use `run in terminal` to execute it:
         
-        1. `mkdir -p <AzdCommand.WorkingDirectory>` (Linux/macOS)  
-        or `New-Item -ItemType Directory -Force -Path <AzdCommand.WorkingDirectory>` (Windows PowerShell)
-        2. `cd <AzdCommand.WorkingDirectory>`
-        3. Run `<AzdCommand.Command>`
+        - mkdir "<AzdCommand.WorkingDirectory>" -Force; cd "<AzdCommand.WorkingDirectory>"; <AzdCommand.Command> (Window)
+        - mkdir -p "<AzdCommand.WorkingDirectory>" && cd "<AzdCommand.WorkingDirectory>" && <AzdCommand.Command> (MacOS, Linux)
 
-        - Once you receive the AzdCommand object, immediately execute it in the terminal — no additional steps required.
+        - Once the command is generated, execute it immediately without further confirmation.
         - The command will initialize the template in the specified directory and return success status, output, and any errors.
         """;
 

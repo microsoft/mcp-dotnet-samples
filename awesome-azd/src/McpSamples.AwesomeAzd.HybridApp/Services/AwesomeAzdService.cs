@@ -86,23 +86,4 @@ public class AwesomeAzdService(HttpClient http, ILogger<AwesomeAzdService> logge
         return searchTerms.Any(term => text.Contains(term, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    private string ExtractOwnerRepo(string srcPath)
-    {
-        try
-        {
-            var uri = new Uri(srcPath);
-            var segments = uri.AbsolutePath.Trim('/').Split('/');
-            if (segments.Length >= 2)
-            {
-                return $"{segments[0]}/{segments[1]}"; // owner/repo
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to parse srcPath as GitHub URL: {srcPath}", srcPath);
-        }
-
-        return srcPath;
-    }
-
 }
