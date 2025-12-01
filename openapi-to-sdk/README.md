@@ -14,6 +14,7 @@ This is an MCP server that generates client SDKs from OpenAPI specifications usi
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
 - [Docker Desktop](https://docs.docker.com/get-started/get-docker/)
+- [Kiota](https://learn.microsoft.com/en-us/openapi/kiota/install?tabs=bash)
 
 ## What's Included
 
@@ -50,9 +51,6 @@ OpenAPI to SDK MCP server includes:
 ### Running MCP server
 
 #### On a local machine
-
-##### Prerequisites
-- [Kiota](https://learn.microsoft.com/en-us/openapi/kiota/install?tabs=bash)
 
 1. Run the MCP server app.
 
