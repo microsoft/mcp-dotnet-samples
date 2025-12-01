@@ -9,60 +9,8 @@
   "servers": {
     "onedrive-download": {
       "type": "http",
-      "url": "https://${input:apim-fqdn}/mcp",
-      "auth": {
-        "type": "oauth2",
-        "clientId": "4c834ff3-d821-4105-a7e5-464dd2524916",
-        "authorization_url": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-        "token_url": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-        "scopes": ["https://graph.microsoft.com/.default"],
-        "redirectUri": "http://127.0.0.1"
-      },
-      "env": {
-        "AZURE_CLIENT_ID": "4c834ff3-d821-4105-a7e5-464dd2524916",
-        "AZURE_TENANT_ID": "common"
-      }
+      "url": "https://${input:apim-fqdn}/mcp"
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

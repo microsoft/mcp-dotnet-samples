@@ -176,14 +176,14 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'DOWNLOAD_DIR'
           value: '/mount/downloads'
         }
-        // ★ OneDrive 인증 관련 설정
+        // ★ RFC 9728 OAuth Protected Resource Metadata를 위한 인증 설정
         {
-          name: 'OnedriveDownload__EntraId__TenantId'
+          name: 'OnedriveDownload__Auth__TenantId'
           value: tenant().tenantId
         }
         {
-          name: 'OnedriveDownload__EntraId__ClientId'
-          value: 'b70e28fe-c34a-4518-81b0-27d04c65f0fd'
+          name: 'OnedriveDownload__Auth__ClientId'
+          value: entraApp.outputs.mcpAppId
         }
         {
           name: 'AZURE_STORAGE_CONNECTION_STRING'

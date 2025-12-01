@@ -318,7 +318,39 @@ if (useStreamableHttp == true)
         }
     });
 
-    // 6. 기타 필수 설정
+    // ★ [RFC 9728] 클라이언트에게 OAuth 설정을 동적으로 알려주기
+    webApp.MapGet("/.well-known/oauth-protected-resource", (IConfiguration config) =>
+    {
+        var clientId = config["OnedriveDownload__Auth__ClientId"];
+        var tenantId = "common"; // 개인 계정용
+
+        if (string.IsNullOrEmpty(clientId))
+        {
+            return Results.Problem("Server Config Error: ClientId missing");
+        }
+
+        return Results.Json(new
+        {
+            // OAuth 엔드포인트
+            authorization_endpoint = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize",
+            token_endpoint = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token",
+            revocation_endpoint = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/revoke",
+
+            // 앱 식별자
+            client_id = clientId,
+
+            // 지원하는 권한
+            scopes = new[] { "https://graph.microsoft.com/.default", "offline_access" },
+
+            // RFC 9728 필수 필드: OAuth 2.0 설정
+            response_types_supported = new[] { "code" },
+            code_challenge_methods_supported = new[] { "S256" },
+            token_endpoint_auth_methods_supported = new[] { "none" },
+            grant_types_supported = new[] { "authorization_code", "refresh_token" }
+        });
+    });
+
+    // 7. 기타 필수 설정
     webApp.MapOpenApi("/{documentName}.json");
 
     var logger2 = app.Services.GetRequiredService<ILogger<Program>>();

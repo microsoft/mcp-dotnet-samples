@@ -12,7 +12,3 @@ services:
     language: csharp
     package:
       outputPath: bin/Release/net9.0/publish
-
-hooks:
-  postprovision:
-    - run: powershell -NoProfile -ExecutionPolicy Bypass -File ./infra/hooks/postprovision.ps1
