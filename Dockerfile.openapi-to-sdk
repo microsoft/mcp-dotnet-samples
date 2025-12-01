@@ -27,12 +27,11 @@ COPY --from=build /root/.dotnet/tools /opt/kiota-tools
 RUN chmod -R 755 /opt/kiota-tools && \
     ln -s /opt/kiota-tools/kiota /usr/local/bin/kiota
 
-RUN chown $APP_UID /app
+ENV PATH="/opt/kiota-tools:${PATH}"
+
+RUN mkdir -p /app/wwwroot/generated && \
+    chown -R $APP_UID:$APP_UID /app/wwwroot
 
 USER $APP_UID
-
-RUN mkdir -p /app/wwwroot/generated
-
-ENV PATH="/opt/kiota-tools:${PATH}"
 
 ENTRYPOINT ["dotnet", "McpSamples.OpenApiToSdk.HybridApp.dll"]

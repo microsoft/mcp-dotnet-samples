@@ -7,7 +7,7 @@
         "run",
         "-i",
         "--rm",
-        "-v",
+        "--volume",
         "${workspaceFolder}/generated:/app/wwwroot/generated",
         "openapi-to-sdk:latest"
       ]
