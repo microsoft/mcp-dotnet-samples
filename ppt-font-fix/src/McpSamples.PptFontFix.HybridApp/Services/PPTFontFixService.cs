@@ -107,12 +107,6 @@ public class PptFontFixService : IPptFontFixService
 
             try
             {
-                // URL에서 컨테이너 이름과 Blob 이름 추출
-                // 예: https://stzbfq6f2xfezko.blob.core.windows.net/ppt-files/test2.pptx
-                // [0] = "", [1] = "ppt-files/", [2] = "test2.pptx"
-                
-                // URL Segment는 '/'로 분리되며, 첫 번째는 항상 비어있습니다.
-                // 컨테이너 이름은 일반적으로 두 번째 세그먼트입니다.
                 string containerSegment = uriResult.Segments.Skip(1).FirstOrDefault()?.TrimEnd('/') ?? throw new ArgumentException("Invalid Blob URL format: Container name not found.", nameof(filePath));
                 string blobName = string.Join("", uriResult.Segments.Skip(2));
 
@@ -129,7 +123,6 @@ public class PptFontFixService : IPptFontFixService
                     throw new FileNotFoundException($"Blob file not found in container '{containerSegment}': {blobName}");
                 }
 
-                // 메모리 스트림으로 Blob 다운로드
                 _presentation?.Dispose();
                 var memoryStream = new MemoryStream();
                 await blobClient.DownloadToAsync(memoryStream);
