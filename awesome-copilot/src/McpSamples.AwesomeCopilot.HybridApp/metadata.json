@@ -2985,6 +2985,10 @@
           "kind": "agent"
         },
         {
+          "path": "agents/lingodotdev-i18n.agent.md",
+          "kind": "agent"
+        },
+        {
           "path": "agents/monday-bug-fixer.agent.md",
           "kind": "agent"
         },
