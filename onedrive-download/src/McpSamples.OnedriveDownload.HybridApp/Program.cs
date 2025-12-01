@@ -1,5 +1,7 @@
 using Azure.Core;
 using Azure.Identity;
+using Azure.Storage.Files.Shares;
+using Azure.Storage.Sas;
 using System.Text.Json;
 
 using McpSamples.OnedriveDownload.HybridApp.Configurations;
@@ -138,34 +140,37 @@ if (useStreamableHttp == true)
         var path = context.Request.Path.Value!;
         var method = context.Request.Method;
 
-        // (1) CORS 헤더 강제 주입 (VS Code 연결 허용)
+        // 1. CORS 헤더 강제 주입 (필수)
         context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
         context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-        // (2) OPTIONS (노크) 요청은 무조건 통과
+        // 2. OPTIONS (노크) 요청은 무조건 통과
         if (method.Equals("OPTIONS", StringComparison.OrdinalIgnoreCase))
         {
             context.Response.StatusCode = 200;
             return;
         }
 
-        // (3) 인증 제외 경로 설정 (로그인, 토큰교환, 웰노운 등)
+        // 3. ★★★ [핵심 수정] 토큰 검사 면제 목록에 '/download' 추가 ★★★
+        // 이 줄이 없어서 브라우저가 다운로드하러 들어갔다가 쫓겨난(401/404) 겁니다.
         if (path.StartsWith("/authorize", StringComparison.OrdinalIgnoreCase) ||
             path.StartsWith("/token", StringComparison.OrdinalIgnoreCase) ||
+            path.StartsWith("/download", StringComparison.OrdinalIgnoreCase) || // <--- ★ 여기 추가됨!
+            path.StartsWith("/list-files", StringComparison.OrdinalIgnoreCase) || // <--- ★ 디버깅용도 추가
             (path == "/" && context.Request.Query.ContainsKey("code")) ||
-            path.StartsWith("/.well-known", StringComparison.OrdinalIgnoreCase))
+            path.StartsWith("/.well-known", StringComparison.OrdinalIgnoreCase) ||
+            path == "/")
         {
             await next();
             return;
         }
 
-        // (4) 토큰 검사 (API 요청)
+        // 4. 나머지 API 요청(MCP 등)은 토큰 검사
         string? authHeader = context.Request.Headers.Authorization.ToString();
         if (string.IsNullOrEmpty(authHeader))
         {
             Console.WriteLine($"❌ [토큰 없음] {method} {path}");
-            // "토큰 내놔" (Challenge) 헤더 발송
             context.Response.Headers.Append("WWW-Authenticate", "Bearer realm=\"mcp\"");
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Unauthorized: Access Token is required.");
@@ -249,7 +254,71 @@ if (useStreamableHttp == true)
             </body></html>");
     });
 
-    // 5. 기타 필수 설정
+    // =========================================================================
+    // 5. 다운로드 리다이렉트 핸들러 (/download)
+    // =========================================================================
+    webApp.MapGet("/download", async (HttpContext context) =>
+    {
+        var fileName = context.Request.Query["file"].ToString();
+        if (string.IsNullOrEmpty(fileName))
+        {
+            context.Response.StatusCode = 400;
+            await context.Response.WriteAsync("Error: 'file' parameter is missing.");
+            return;
+        }
+
+        try
+        {
+            var config = context.RequestServices.GetRequiredService<IConfiguration>();
+            var connectionString = config["AZURE_STORAGE_CONNECTION_STRING"];
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                await context.Response.WriteAsync("Error: Storage connection string not configured.");
+                return;
+            }
+
+            var shareClient = new ShareClient(connectionString, "downloads");
+            var fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+
+            // 1. 파일이 진짜 있는지 서버에서 먼저 확인 (없으면 여기서 404)
+            if (!await fileClient.ExistsAsync())
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync($"Error: File '{fileName}' not found in 'downloads' share.");
+                return;
+            }
+
+            // 2. ★★★ [핵심] 10분짜리 임시 출입증(SAS) 생성 ★★★
+            // 이 부분이 없어서 아까 404가 떴던 겁니다.
+            var sasBuilder = new ShareSasBuilder
+            {
+                ShareName = "downloads",
+                FilePath = fileName,
+                Resource = "f", // f = file
+                ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(10), // 10분 유효
+                Protocol = SasProtocol.Https
+            };
+            sasBuilder.SetPermissions(ShareFileSasPermissions.Read); // 읽기 권한 부여
+
+            // 3. 토큰이 포함된 진짜 다운로드 주소 생성
+            // 결과 예시: https://스토리지.file.../abc.pdf?sv=2022-11-02&sig=알수없는긴문자열...
+            Uri sasUri = fileClient.GenerateSasUri(sasBuilder);
+
+            Console.WriteLine($"🔗 [Download Success] SAS Token Generated. Redirecting...");
+
+            // 4. 리다이렉트 (이제 스토리지 문이 열립니다)
+            context.Response.Redirect(sasUri.ToString(), permanent: false);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ [Download Error] {ex.Message}");
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsync($"Internal Server Error: {ex.Message}");
+        }
+    });
+
+    // 6. 기타 필수 설정
     webApp.MapOpenApi("/{documentName}.json");
 
     var logger2 = app.Services.GetRequiredService<ILogger<Program>>();

@@ -80,33 +80,22 @@ public class OneDriveTool(IServiceProvider serviceProvider) : IOneDriveTool
 
             Console.WriteLine($"✅ Uploaded to Azure: {fileName}");
 
-            // 6. SAS URL 생성 (인코딩된 파일명으로 직접 URL 구성)
-            // fileClient의 경로는 원본 파일명이므로, Share 레벨 SAS를 사용하고 URL에 인코딩된 파일명 추가
-            var sasBuilder = new ShareSasBuilder(ShareFileSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1))
-            {
-                Protocol = SasProtocol.Https
-            };
+            // ------------------------------------------------------------------
+            // [수정] APIM 말고 Function App 진짜 주소로 링크 만들기
+            // ------------------------------------------------------------------
 
-            // Share 레벨 SAS 토큰 생성 (FilePath 없음)
-            string sasToken = shareClient.GenerateSasUri(sasBuilder).Query;
+            // 1. Function App의 실제 호스트명 가져오기 (Azure 환경 변수)
+            string funcHostname = Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")
+                                  ?? "localhost:7071"; // 로컬 테스트용 기본값
 
-            // 인코딩된 파일명으로 전체 URL 구성
-            string encodedFileName = Uri.EscapeDataString(fileName);
+            // 2. HTTPS 프로토콜 붙이기
+            string funcBaseUrl = $"https://{funcHostname}";
 
-            // APIM 게이트웨이를 통한 프록시 URL
-            string apimFqdn = Environment.GetEnvironmentVariable("APIM_FQDN")
-                ?? throw new InvalidOperationException("APIM_FQDN 환경 변수가 없습니다.");
+            // 3. 다운로드 링크 조합 (이제 APIM 주소가 아니라 func 주소가 됩니다)
+            // 예: https://func-onedrive-download-....azurewebsites.net/download?file=abc.pdf
+            string sasUri = $"{funcBaseUrl}/download?file={Uri.EscapeDataString(fileName)}";
 
-            // 직접 스토리지에서 SAS URL 생성 (내부용)
-            string baseUri = shareClient.Uri.AbsoluteUri;
-            string storageDirectUrl = $"{baseUri}/{encodedFileName}{sasToken}";
-
-            // 클라이언트에 반환할 URL: APIM을 통한 프록시
-            // 쿼리 파라미터로 SAS 토큰 전달
-            string sasUri = $"https://{apimFqdn}/mcp/downloads?file={encodedFileName}&{sasToken.TrimStart('?')}";
-
-            Console.WriteLine($"✅ Generated APIM Proxy URL: {sasUri}");
-            Console.WriteLine($"   (Internal Storage URL: {storageDirectUrl})");
+            Console.WriteLine($"🔗 Created Direct Function Link: {sasUri}");
 
             return new OneDriveDownloadResult
             {

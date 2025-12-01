@@ -122,21 +122,21 @@ resource mcpStreamablePostOperation 'Microsoft.ApiManagement/service/apis/operat
   }
 }
 
-// Create the Downloads proxy endpoint (bypass token validation)
-resource downloadsOperation 'Microsoft.ApiManagement/service/apis/operations@2023-05-01-preview' = {
+// Create the Download proxy endpoint (bypass token validation)
+resource downloadOperation 'Microsoft.ApiManagement/service/apis/operations@2023-05-01-preview' = {
   parent: mcpApi
-  name: 'downloads-get'
+  name: 'download-get'
   properties: {
     displayName: 'Download File'
     method: 'GET'
-    urlTemplate: '/downloads'
-    description: 'Proxy endpoint for Azure File Share downloads'
+    urlTemplate: '/download'
+    description: 'Proxy endpoint for Azure File Share download with SAS token generation'
   }
 }
 
-// Apply policy to bypass token validation for downloads
-resource downloadsPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2023-05-01-preview' = {
-  parent: downloadsOperation
+// Apply policy to bypass token validation for download
+resource downloadPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2023-05-01-preview' = {
+  parent: downloadOperation
   name: 'policy'
   properties: {
     format: 'rawxml'
