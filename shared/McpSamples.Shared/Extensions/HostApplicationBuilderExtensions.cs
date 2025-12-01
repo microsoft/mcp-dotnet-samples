@@ -29,8 +29,11 @@ public static class HostApplicationBuilderExtensions
 
             var webApp = (builder as WebApplicationBuilder)!.Build();
 
-            // Configure the HTTP request pipeline.
-            webApp.UseHttpsRedirection();
+            // Disable HTTPS redirection in development environment to avoid issues with self-signed certificates
+            if (!webApp.Environment.IsDevelopment())
+            {
+                webApp.UseHttpsRedirection();
+            }
 
             webApp.MapMcp("/mcp");
 
