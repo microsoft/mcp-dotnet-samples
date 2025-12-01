@@ -13,4 +13,4 @@ services:
     docker:
       path: ../../../Dockerfile.awesome-azd-azure
       context: ../../../
-      remoteBuild: false
+      remoteBuild: true
