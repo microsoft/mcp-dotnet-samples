@@ -132,6 +132,16 @@
       ]
     },
     {
+      "filename": "code-review-generic.instructions.md",
+      "description": "Generic code review instructions that can be customized for any project using GitHub Copilot",
+      "applyTo": [
+        "**"
+      ],
+      "excludeAgent": [
+        "coding-agent"
+      ]
+    },
+    {
       "filename": "codexer.instructions.md",
       "description": "Advanced Python research assistant with Context 7 MCP integration, focusing on speed, reliability, and 10+ years of software development expertise"
     },
@@ -1012,6 +1022,21 @@
       ]
     },
     {
+      "filename": "springboot-4-migration.instructions.md",
+      "description": "Comprehensive guide for migrating Spring Boot applications from 3.x to 4.0, focusing on Gradle Kotlin DSL and version catalogs",
+      "applyTo": [
+        "**/*.java",
+        "**/*.kt",
+        "**/build.gradle.kts",
+        "**/build.gradle",
+        "**/settings.gradle.kts",
+        "**/gradle/libs.versions.toml",
+        "**/*.properties",
+        "**/*.yml",
+        "**/*.yaml"
+      ]
+    },
+    {
       "filename": "springboot.instructions.md",
       "description": "Guidelines for building Spring Boot base applications",
       "applyTo": [
@@ -1166,7 +1191,7 @@
   "prompts": [
     {
       "filename": "add-educational-comments.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Add educational comments to the file specified, or prompt asking for file to comment if one is not provided.",
       "tools": [
         "edit/editFiles",
@@ -1177,16 +1202,16 @@
     {
       "filename": "ai-prompt-engineering-safety-review.prompt.md",
       "description": "Comprehensive AI prompt engineering safety review and improvement prompt. Analyzes prompts for safety, bias, security vulnerabilities, and effectiveness while providing detailed improvement recommendations with extensive frameworks, testing methodologies, and educational content.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "architecture-blueprint-generator.prompt.md",
       "description": "Comprehensive project architecture blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks and architectural patterns, generates visual diagrams, documents implementation patterns, and provides extensible blueprints for maintaining architectural consistency and guiding new development.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "aspnet-minimal-api-openapi.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1197,62 +1222,62 @@
     },
     {
       "filename": "az-cost-optimize.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Analyze Azure resources used in the app (IaC files and/or resources in a target rg) and optimize costs - creating GitHub issues for identified optimizations."
     },
     {
       "filename": "azure-resource-health-diagnose.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Analyze Azure resource health, diagnose issues from logs and telemetry, and create a remediation plan for identified problems."
     },
     {
       "filename": "boost-prompt.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Interactive prompt refinement workflow: interrogates scope, deliverables, constraints; copies final markdown to clipboard; never writes code. Requires the Joyride extension."
     },
     {
       "filename": "breakdown-epic-arch.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Prompt for creating the high-level technical architecture for an Epic, based on a Product Requirements Document."
     },
     {
       "filename": "breakdown-epic-pm.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Prompt for creating an Epic Product Requirements Document (PRD) for a new epic. This PRD will be used as input for generating a technical architecture specification."
     },
     {
       "filename": "breakdown-feature-implementation.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Prompt for creating detailed feature implementation plans, following Epoch monorepo structure."
     },
     {
       "filename": "breakdown-feature-prd.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Prompt for creating Product Requirements Documents (PRDs) for new features, based on an Epic."
     },
     {
       "filename": "breakdown-plan.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Issue Planning and Automation prompt that generates comprehensive project plans with Epic > Feature > Story/Enabler > Test hierarchy, dependencies, priorities, and automated tracking."
     },
     {
       "filename": "breakdown-test.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Test Planning and Quality Assurance prompt that generates comprehensive test strategies, task breakdowns, and quality validation plans for GitHub projects."
     },
     {
       "filename": "code-exemplars-blueprint-generator.prompt.md",
       "description": "Technology-agnostic prompt generator that creates customizable AI prompts for scanning codebases and identifying high-quality code exemplars. Supports multiple programming languages (.NET, Java, JavaScript, TypeScript, React, Angular, Python) with configurable analysis depth, categorization methods, and documentation formats to establish coding standards and maintain consistency across development teams.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "comment-code-generate-a-tutorial.prompt.md",
       "description": "Transform this Python script into a polished, beginner-friendly project by refactoring the code, adding clear instructional comments, and generating a complete markdown tutorial.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "containerize-aspnet-framework.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "search/codebase",
         "edit/editFiles",
@@ -1262,7 +1287,7 @@
     },
     {
       "filename": "containerize-aspnetcore.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "search/codebase",
         "edit/editFiles",
@@ -1281,22 +1306,22 @@
     {
       "filename": "copilot-instructions-blueprint-generator.prompt.md",
       "description": "Technology-agnostic blueprint generator for creating comprehensive copilot-instructions.md files that guide GitHub Copilot to produce code consistent with project standards, architecture patterns, and exact technology versions by analyzing existing codebase patterns and avoiding assumptions.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "cosmosdb-datamodeling.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Step-by-step guide for capturing key application requirements for NoSQL use-case and produce Azure Cosmos DB Data NoSQL Model design using best practices and common patterns, artifacts_produced: \"cosmosdb_requirements.md\" file and \"cosmosdb_data_model.md\" file",
       "model": "Claude Sonnet 4"
     },
     {
       "filename": "create-agentsmd.prompt.md",
       "description": "Prompt for generating an AGENTS.md file for a repository",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "create-architectural-decision-record.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create an Architectural Decision Record (ADR) document for AI-optimized decision documentation.",
       "tools": [
         "changes",
@@ -1319,7 +1344,7 @@
     },
     {
       "filename": "create-github-action-workflow-specification.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create a formal specification for an existing GitHub Actions CI/CD workflow, optimized for AI consumption and workflow maintenance.",
       "tools": [
         "changes",
@@ -1351,7 +1376,7 @@
     },
     {
       "filename": "create-github-issue-feature-from-specification.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create GitHub Issue for feature request from specification file using feature_request.yml template.",
       "tools": [
         "search/codebase",
@@ -1364,7 +1389,7 @@
     },
     {
       "filename": "create-github-issues-feature-from-implementation-plan.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create GitHub Issues from implementation plan phases using feature_request.yml or chore_request.yml templates.",
       "tools": [
         "search/codebase",
@@ -1377,7 +1402,7 @@
     },
     {
       "filename": "create-github-issues-for-unmet-specification-requirements.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create GitHub Issues for unimplemented requirements from specification files using feature_request.yml template.",
       "tools": [
         "search/codebase",
@@ -1390,7 +1415,7 @@
     },
     {
       "filename": "create-github-pull-request-from-specification.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create GitHub Pull Request for feature request from specification file using pull_request_template.md template.",
       "tools": [
         "search/codebase",
@@ -1403,7 +1428,7 @@
     },
     {
       "filename": "create-implementation-plan.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create a new implementation plan file for new features, refactoring existing code or upgrading packages, design, architecture or infrastructure.",
       "tools": [
         "changes",
@@ -1426,7 +1451,7 @@
     },
     {
       "filename": "create-llms.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create an llms.txt file from scratch based on repository structure following the llms.txt specification at https://llmstxt.org/",
       "tools": [
         "changes",
@@ -1449,7 +1474,7 @@
     },
     {
       "filename": "create-oo-component-documentation.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create comprehensive, standardized documentation for object-oriented components following industry best practices and architectural documentation standards.",
       "tools": [
         "changes",
@@ -1472,12 +1497,12 @@
     },
     {
       "filename": "create-readme.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create a README.md file for the project"
     },
     {
       "filename": "create-specification.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create a new specification file for the solution, optimized for Generative AI consumption.",
       "tools": [
         "changes",
@@ -1500,17 +1525,17 @@
     },
     {
       "filename": "create-spring-boot-java-project.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create Spring Boot Java Project Skeleton"
     },
     {
       "filename": "create-spring-boot-kotlin-project.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create Spring Boot Kotlin Project Skeleton"
     },
     {
       "filename": "create-technical-spike.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Create time-boxed technical spike documents for researching and resolving critical development decisions before implementation.",
       "tools": [
         "runCommands",
@@ -1534,7 +1559,7 @@
     },
     {
       "filename": "csharp-async.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1545,7 +1570,7 @@
     },
     {
       "filename": "csharp-docs.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1556,12 +1581,12 @@
     },
     {
       "filename": "csharp-mcp-server-generator.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Generate a complete MCP server project in C# with tools, prompts, and proper configuration"
     },
     {
       "filename": "csharp-mstest.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1573,7 +1598,7 @@
     },
     {
       "filename": "csharp-nunit.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1585,7 +1610,7 @@
     },
     {
       "filename": "csharp-tunit.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1597,7 +1622,7 @@
     },
     {
       "filename": "csharp-xunit.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1613,7 +1638,7 @@
     },
     {
       "filename": "documentation-writer.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "edit/editFiles",
         "search",
@@ -1623,12 +1648,12 @@
     },
     {
       "filename": "dotnet-best-practices.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Ensure .NET/C# code meets best practices for the solution/project."
     },
     {
       "filename": "dotnet-design-pattern-review.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Review the C#/.NET code for design pattern implementation and suggest improvements."
     },
     {
@@ -1641,11 +1666,11 @@
       "filename": "editorconfig.prompt.md",
       "title": "EditorConfig Expert",
       "description": "Generates a comprehensive and best-practice-oriented .editorconfig file based on project analysis and user preferences.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "ef-core.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1657,7 +1682,7 @@
     },
     {
       "filename": "finalize-agent-prompt.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Finalize prompt file using the role of an AI agent to polish the prompt for the end user.",
       "tools": [
         "edit/editFiles"
@@ -1670,17 +1695,17 @@
     {
       "filename": "folder-structure-blueprint-generator.prompt.md",
       "description": "Comprehensive technology-agnostic prompt for analyzing and documenting project folder structures. Auto-detects project types (.NET, Java, React, Angular, Python, Node.js, Flutter), generates detailed blueprints with visualization options, naming conventions, file placement patterns, and extension templates for maintaining consistent code organization across diverse technology stacks.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "gen-specs-as-issues.prompt.md",
       "description": "This workflow guides you through a systematic approach to identify missing features, prioritize them, and create detailed specifications for implementation.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "generate-custom-instructions-from-codebase.prompt.md",
       "description": "Migration and code evolution instructions generator for GitHub Copilot. Analyzes differences between two project versions (branches, commits, or releases) to create precise instructions allowing Copilot to maintain consistency during technology migrations, major refactoring, or framework version upgrades.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "git-flow-branch-creator.prompt.md",
@@ -1689,11 +1714,11 @@
         "runCommands/runInTerminal",
         "runCommands/getTerminalOutput"
       ],
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "github-copilot-starter.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "model": "Claude Sonnet 4",
       "tools": [
         "edit",
@@ -1708,12 +1733,12 @@
     },
     {
       "filename": "go-mcp-server-generator.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Generate a complete Go MCP server project with proper structure, dependencies, and implementation using the official github.com/modelcontextprotocol/go-sdk."
     },
     {
       "filename": "java-docs.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1724,7 +1749,7 @@
     },
     {
       "filename": "java-junit.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1737,23 +1762,23 @@
     {
       "filename": "java-mcp-server-generator.prompt.md",
       "description": "Generate a complete Model Context Protocol server project in Java using the official MCP Java SDK with reactive streams and optional Spring Boot integration.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "java-refactoring-extract-method.prompt.md",
       "title": "Refactoring Java Methods with Extract Method",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Refactoring using Extract Methods in Java Language"
     },
     {
       "filename": "java-refactoring-remove-parameter.prompt.md",
       "title": "Refactoring Java Methods with Remove Parameter",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Refactoring using Remove Parameter in Java Language"
     },
     {
       "filename": "java-springboot.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1766,16 +1791,16 @@
     {
       "filename": "javascript-typescript-jest.prompt.md",
       "description": "Best practices for writing JavaScript/TypeScript tests using Jest, including mocking strategies, test structure, and common patterns.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "kotlin-mcp-server-generator.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Generate a complete Kotlin MCP server project with proper structure, dependencies, and implementation using the official io.modelcontextprotocol:kotlin-sdk library."
     },
     {
       "filename": "kotlin-springboot.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1788,7 +1813,7 @@
     {
       "filename": "mcp-copilot-studio-server-generator.prompt.md",
       "description": "Generate a complete MCP server implementation optimized for Copilot Studio integration with proper schema constraints and streamable HTTP support",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "memory-merger.prompt.md",
@@ -1796,7 +1821,7 @@
     },
     {
       "filename": "mkdocs-translations.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Generate a language translation for a mkdocs documentation stack.",
       "tools": [
         "search/codebase",
@@ -1817,7 +1842,7 @@
     {
       "filename": "model-recommendation.prompt.md",
       "description": "Analyze chatmode or prompt files and recommend optimal AI models based on task complexity, required capabilities, and cost-efficiency",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "search/codebase",
         "fetch",
@@ -1827,7 +1852,7 @@
     },
     {
       "filename": "multi-stage-dockerfile.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "search/codebase"
       ],
@@ -1835,7 +1860,7 @@
     },
     {
       "filename": "my-issues.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "githubRepo",
         "github",
@@ -1848,7 +1873,7 @@
     },
     {
       "filename": "my-pull-requests.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "githubRepo",
         "github",
@@ -1866,7 +1891,7 @@
     },
     {
       "filename": "next-intl-add-language.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1880,12 +1905,12 @@
     {
       "filename": "php-mcp-server-generator.prompt.md",
       "description": "Generate a complete PHP Model Context Protocol server project with tools, resources, prompts, and tests using the official PHP SDK",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "playwright-automation-fill-in-form.prompt.md",
       "description": "Automate filling in a form using Playwright MCP",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "playwright"
       ],
@@ -1893,7 +1918,7 @@
     },
     {
       "filename": "playwright-explore-website.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Website exploration for testing using Playwright MCP",
       "tools": [
         "changes",
@@ -1916,7 +1941,7 @@
     },
     {
       "filename": "playwright-generate-test.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Generate a Playwright test based on a scenario using Playwright MCP",
       "tools": [
         "changes",
@@ -1938,7 +1963,7 @@
     },
     {
       "filename": "postgresql-code-review.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1950,7 +1975,7 @@
     },
     {
       "filename": "postgresql-optimization.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1963,7 +1988,7 @@
     {
       "filename": "power-apps-code-app-scaffold.prompt.md",
       "description": "Scaffold a complete Power Apps Code App project with PAC CLI setup, SDK integration, and connector configuration",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -1975,7 +2000,7 @@
     },
     {
       "filename": "power-bi-dax-optimization.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Comprehensive Power BI DAX formula optimization prompt for improving performance, readability, and maintainability of DAX calculations.",
       "model": "gpt-4.1",
       "tools": [
@@ -1984,7 +2009,7 @@
     },
     {
       "filename": "power-bi-model-design-review.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Comprehensive Power BI data model design review prompt for evaluating model architecture, relationships, and optimization opportunities.",
       "model": "gpt-4.1",
       "tools": [
@@ -1993,7 +2018,7 @@
     },
     {
       "filename": "power-bi-performance-troubleshooting.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Systematic Power BI performance troubleshooting prompt for identifying, diagnosing, and resolving performance issues in Power BI models, reports, and queries.",
       "model": "gpt-4.1",
       "tools": [
@@ -2002,7 +2027,7 @@
     },
     {
       "filename": "power-bi-report-design-consultation.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Power BI report visualization design prompt for creating effective, user-friendly, and accessible reports with optimal chart selection and layout design.",
       "model": "gpt-4.1",
       "tools": [
@@ -2012,16 +2037,16 @@
     {
       "filename": "power-platform-mcp-connector-suite.prompt.md",
       "description": "Generate complete Power Platform custom connector with MCP integration for Copilot Studio - includes schema generation, troubleshooting, and validation",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "project-workflow-analysis-blueprint-generator.prompt.md",
       "description": "Comprehensive technology-agnostic prompt generator for documenting end-to-end application workflows. Automatically detects project architecture patterns, technology stacks, and data flow patterns to generate detailed implementation blueprints covering entry points, service layers, data access, error handling, and testing approaches across multiple technologies including .NET, Java/Spring, React, and microservices architectures.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "prompt-builder.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "search/codebase",
         "edit/editFiles",
@@ -2036,13 +2061,13 @@
     },
     {
       "filename": "python-mcp-server-generator.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Generate a complete MCP server project in Python with tools, resources, and proper configuration"
     },
     {
       "filename": "readme-blueprint-generator.prompt.md",
       "description": "Intelligent README.md generation prompt that analyzes project documentation structure and creates comprehensive repository documentation. Scans .github/copilot directory files and copilot-instructions.md to extract project information, technology stack, architecture, development workflow, coding standards, and testing approaches while generating well-structured markdown documentation with proper formatting, cross-references, and developer-focused content.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "remember-interactive-programming.prompt.md",
@@ -2055,7 +2080,7 @@
     },
     {
       "filename": "repo-story-time.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Generate a comprehensive repository summary and narrative story from commit history",
       "tools": [
         "changes",
@@ -2072,23 +2097,23 @@
     },
     {
       "filename": "review-and-refactor.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Review and refactor code in your project according to defined instructions"
     },
     {
       "filename": "ruby-mcp-server-generator.prompt.md",
       "description": "Generate a complete Model Context Protocol server project in Ruby using the official MCP Ruby SDK gem.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "rust-mcp-server-generator.prompt.md",
       "name": "rust-mcp-server-generator",
       "description": "Generate a complete Rust Model Context Protocol server project with tools, prompts, resources, and tests using the official rmcp SDK",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "shuffle-json-data.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Shuffle repetitive JSON objects safely by validating schema consistency before randomising entries.",
       "tools": [
         "edit/editFiles",
@@ -2098,7 +2123,7 @@
     },
     {
       "filename": "sql-code-review.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -2110,7 +2135,7 @@
     },
     {
       "filename": "sql-optimization.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "tools": [
         "changes",
         "search/codebase",
@@ -2139,7 +2164,7 @@
     },
     {
       "filename": "suggest-awesome-github-copilot-chatmodes.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Suggest relevant GitHub Copilot Custom Chat Modes files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing custom chat modes in this repository.",
       "tools": [
         "edit",
@@ -2158,7 +2183,7 @@
     },
     {
       "filename": "suggest-awesome-github-copilot-collections.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Suggest relevant GitHub Copilot collections from the awesome-copilot repository based on current repository context and chat history, providing automatic download and installation of collection assets.",
       "tools": [
         "edit",
@@ -2177,7 +2202,7 @@
     },
     {
       "filename": "suggest-awesome-github-copilot-instructions.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Suggest relevant GitHub Copilot instruction files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing instructions in this repository.",
       "tools": [
         "edit",
@@ -2196,7 +2221,7 @@
     },
     {
       "filename": "suggest-awesome-github-copilot-prompts.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Suggest relevant GitHub Copilot prompt files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing prompts in this repository.",
       "tools": [
         "edit",
@@ -2216,21 +2241,21 @@
     {
       "filename": "swift-mcp-server-generator.prompt.md",
       "description": "Generate a complete Model Context Protocol server project in Swift using the official MCP Swift SDK package.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "technology-stack-blueprint-generator.prompt.md",
       "description": "Comprehensive technology stack blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks, programming languages, and implementation patterns across multiple platforms (.NET, Java, JavaScript, React, Python). Generates configurable blueprints with version information, licensing details, usage patterns, coding conventions, and visual diagrams. Provides implementation-ready templates and maintains architectural consistency for guided development.",
-      "mode": "agent"
+      "agent": "agent"
     },
     {
       "filename": "typescript-mcp-server-generator.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Generate a complete MCP server project in TypeScript with tools, resources, and proper configuration"
     },
     {
       "filename": "update-avm-modules-in-bicep.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Update Azure Verified Modules (AVM) to latest versions in Bicep files.",
       "tools": [
         "search/codebase",
@@ -2248,7 +2273,7 @@
     },
     {
       "filename": "update-implementation-plan.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Update an existing implementation plan file with new or update requirements to provide new features, refactoring existing code or upgrading packages, design, architecture or infrastructure.",
       "tools": [
         "changes",
@@ -2271,7 +2296,7 @@
     },
     {
       "filename": "update-llms.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Update the llms.txt file in the root folder to reflect changes in documentation or specifications following the llms.txt specification at https://llmstxt.org/",
       "tools": [
         "changes",
@@ -2294,7 +2319,7 @@
     },
     {
       "filename": "update-markdown-file-index.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Update a markdown file section with an index/table of files from a specified folder.",
       "tools": [
         "changes",
@@ -2320,7 +2345,7 @@
     },
     {
       "filename": "update-oo-component-documentation.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Update existing object-oriented component documentation following industry best practices and architectural documentation standards.",
       "tools": [
         "changes",
@@ -2343,7 +2368,7 @@
     },
     {
       "filename": "update-specification.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Update an existing specification file for the solution, optimized for Generative AI consumption based on new requirements or updates to any existing code.",
       "tools": [
         "changes",
@@ -2366,7 +2391,7 @@
     },
     {
       "filename": "write-coding-standards-from-file.prompt.md",
-      "mode": "agent",
+      "agent": "agent",
       "description": "Write a coding standards document for a project using the coding styles from the file(s) and/or folder(s) passed as arguments in the prompt.",
       "tools": [
         "createFile",
@@ -4484,6 +4509,18 @@
         "--api-key",
         "$LD_ACCESS_TOKEN"
       ]
+    },
+    {
+      "filename": "lingodotdev-i18n.agent.md",
+      "name": "Lingo.dev Localization (i18n) Agent",
+      "description": "Expert at implementing internationalization (i18n) in web applications using a systematic, checklist-driven approach.",
+      "tools": [
+        "*"
+      ],
+      "mcp-servers": "",
+      "lingo": "",
+      "type": "sse",
+      "url": "https://mcp.lingo.dev/main"
     },
     {
       "filename": "mentor.agent.md",
