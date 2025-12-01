@@ -5,6 +5,7 @@ using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 using McpSamples.Shared.OpenApi;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
 
 var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
@@ -34,10 +35,9 @@ if (useStreamableHttp == true)
 
 IHost app = builder.BuildApp(useStreamableHttp);
 
-if (useStreamableHttp == true)
+if (app is WebApplication webApp)
 {
-    (app as WebApplication)!.MapOpenApi("/{documentName}.json");
-    (app as WebApplication)!.UseStaticFiles();
+    webApp.UseStaticFiles();
 }
 
 await app.RunAsync();

@@ -1,196 +1,62 @@
-using System;
 using System.ComponentModel;
-using System.IO;
-using System.IO.Compression;
-using System.Text;
-using System.Threading.Tasks;
-
 using McpSamples.OpenApiToSdk.HybridApp.Models;
 using McpSamples.OpenApiToSdk.HybridApp.Services;
-
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
 using ModelContextProtocol.Server;
 
 namespace McpSamples.OpenApiToSdk.HybridApp.Tools;
 
 /// <summary>
-/// This provides interfaces for the OpenAPI to SDK tool.
+/// Represents the tool for generating an SDK from an OpenAPI specification.
 /// </summary>
-public interface IOpenApiToSdkTool
-{
-    /// <summary>
-    /// Downloads OpenAPI specification from a URL.
-    /// </summary>
-    /// <param name="openApiUrl">The URL of the OpenAPI specification.</param>
-    /// <returns>A <see cref="DownloadResult"/> containing the downloaded content or an error message.</returns>
-    Task<DownloadResult> DownloadOpenApiSpecAsync(string openApiUrl);
-
-    /// <summary>
-    /// Generates an SDK from an OpenAPI specification using Kiota.
-    /// </summary>
-    /// <param name="openApiUrl">The URL of the OpenAPI specification.</param>
-    /// <param name="language">The target language for the SDK (e.g., "csharp", "typescript").</param>
-    /// <param name="className">Optional: The class name to use for the core client class.</param>
-    /// <param name="namespaceName">Optional: The namespace to use for the core client class.</param>
-    /// <param name="additionalOptions">Additional Kiota CLI options.</param>
-    /// <param name="outputDir">Optional: The directory where the generated SDK ZIP file will be saved. If not provided, a default 'generated' folder will be used.</param>
-    /// <returns>An <see cref="OpenApiToSdkResult"/> containing the path to the generated SDK ZIP file or an error message.</returns>
-    Task<OpenApiToSdkResult> GenerateSdkAsync(string openApiUrl, string language, string? className = null, string? namespaceName = null, string? additionalOptions = null, string? outputDir = null);
-}
-
-/// <summary>
-/// This represents the tool entity for OpenAPI to SDK operations.
-/// </summary>
+/// <param name="openApiService">The service for handling OpenAPI operations.</param>
+/// <param name="logger">The logger for this tool.</param>
 [McpServerToolType]
-public class OpenApiToSdkTool : IOpenApiToSdkTool
+public class OpenApiToSdkTool(IOpenApiService openApiService, ILogger<OpenApiToSdkTool> logger)
 {
-    private readonly IOpenApiService _openApiService;
-    private readonly ILogger<OpenApiToSdkTool> _logger;
-    private readonly IHostEnvironment? _hostEnvironment;
-    private readonly IHttpContextAccessor? _httpContextAccessor;
-
-    public OpenApiToSdkTool(IOpenApiService openApiService, ILogger<OpenApiToSdkTool> logger, IHostEnvironment? hostEnvironment = null, IHttpContextAccessor? httpContextAccessor = null)
-    {
-        _openApiService = openApiService ?? throw new ArgumentNullException(nameof(openApiService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _hostEnvironment = hostEnvironment;
-        _httpContextAccessor = httpContextAccessor;
-    }
-
-    /// <inheritdoc />
-    [McpServerTool(Name = "download_openapi_spec")]
-    [Description("Download OpenAPI specification from a URL")]
-    public async Task<DownloadResult> DownloadOpenApiSpecAsync(
-        [Description("URL of the OpenAPI specification")] string openApiUrl)
-    {
-        var result = new DownloadResult();
-        try
-        {
-            result.Content = await _openApiService.DownloadOpenApiSpecAsync(openApiUrl);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error downloading OpenAPI spec from {Url}", openApiUrl);
-            result.ErrorMessage = ex.Message;
-        }
-        return result;
-    }
-
-    /// <inheritdoc />
-    [McpServerTool(Name = "generate_sdk")]
-    [Description("Generate an SDK from an OpenAPI specification using Kiota")]
+    /// <summary>
+    /// Generates a client SDK from an OpenAPI specification provided as a URL or raw content.
+    /// </summary>
+    /// <param name="specSource">The URL or raw text content of the OpenAPI specification (JSON/YAML).</param>
+    /// <param name="language">The target language for the SDK (e.g., CSharp, Java, Python).</param>
+    /// <param name="className">The name for the client class (optional).</param>
+    /// <param name="namespaceName">The namespace for the generated client code (optional).</param>
+    /// <param name="additionalOptions">Additional command-line options to pass to the Kiota tool (optional).</param>
+    /// <returns>An <see cref="OpenApiToSdkResult"/> containing the result of the generation process.</returns>
+    [McpServerTool(Name = "generate_sdk", Title = "Generate SDK from OpenAPI")]
+    [Description("Generates a client SDK. Accepts either a URL or raw OpenAPI Content (JSON/YAML).")]
     public async Task<OpenApiToSdkResult> GenerateSdkAsync(
-        [Description("URL or local file path of the OpenAPI specification")] string openApiUrl,
-        [Description("Target language for the SDK (e.g., csharp, typescript)")] string language,
-        [Description("Optional: The class name to use for the core client class. Defaults to ApiClient.")] string? className = null,
-        [Description("Optional: The namespace to use for the core client class. Defaults to ApiSdk.")] string? namespaceName = null,
-        [Description("Optional extra Kiota options (e.g., --include-path Paths)")] string? additionalOptions = null,
-        [Description("Optional: The directory where the generated SDK ZIP file will be saved. If not provided, a default 'generated' folder will be used.")] string? outputDir = null)
+        [Description("The OpenAPI source. Provide a URL (http://...) OR the raw content text (JSON/YAML).")] string specSource,
+        [Description("The target language (e.g., CSharp, Java, Python).")] string language,
+        [Description("The class name for the client (optional).")] string? className = null,
+        [Description("The namespace for the client (optional).")] string? namespaceName = null,
+        [Description("Additional Kiota CLI options (optional).")] string? additionalOptions = null)
     {
-        var result = new OpenApiToSdkResult();
-        var tempSpecPath = string.Empty;
-        var sdkOutputDir = string.Empty;
+        // Validate input
+        if (string.IsNullOrWhiteSpace(specSource))
+        {
+            return new OpenApiToSdkResult
+            {
+                ErrorMessage = "The 'specSource' parameter is required. It must be a URL or OpenAPI content."
+            };
+        }
+
+        logger.LogInformation("Generating SDK for language: {Language}", language);
 
         try
         {
-            string specContent;
-            // Check if it's a URL (http or https)
-            if (Uri.TryCreate(openApiUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
-            {
-                specContent = await _openApiService.DownloadOpenApiSpecAsync(openApiUrl);
-            }
-            // Check if it's a local file that exists
-            else if (File.Exists(openApiUrl))
-            {
-                specContent = await File.ReadAllTextAsync(openApiUrl);
-            }
-            else
-            {
-                result.ErrorMessage = $"The provided OpenAPI specification path or URL is not valid or accessible: {openApiUrl}";
-                return result;
-            }
-
-            if (string.IsNullOrWhiteSpace(specContent))
-            {
-                result.ErrorMessage = "The OpenAPI specification content is empty.";
-                return result;
-            }
-
-            var tempDir = Path.GetTempPath();
-            tempSpecPath = Path.Combine(tempDir, $"openapi-spec-{Guid.NewGuid():N}.json");
-            await File.WriteAllTextAsync(tempSpecPath, specContent);
-
-            sdkOutputDir = Path.Combine(tempDir, $"sdk-output-{Guid.NewGuid():N}");
-            Directory.CreateDirectory(sdkOutputDir);
-
-            var kiotaOptions = new StringBuilder(additionalOptions ?? "");
-            if (!string.IsNullOrWhiteSpace(className))
-            {
-                kiotaOptions.Append($" --class-name {className}");
-            }
-            if (!string.IsNullOrWhiteSpace(namespaceName))
-            {
-                kiotaOptions.Append($" --namespace-name {namespaceName}");
-            }
-
-            var error = await _openApiService.RunKiotaAsync(tempSpecPath, language, sdkOutputDir, kiotaOptions.ToString().Trim());
-            if (!string.IsNullOrEmpty(error))
-            {
-                result.ErrorMessage = $"SDK generation failed: {error}";
-                return result;
-            }
-
-            string finalOutputDirectory;
-            string zipFileName = $"{language}-{DateTime.Now:yyyyMMddHHmmss}.zip";
-
-            // Always use wwwroot/generated regardless of mode
-            finalOutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "generated");
-
-            // If user specifies outputDir, use that instead
-            if (!string.IsNullOrWhiteSpace(outputDir))
-            {
-                finalOutputDirectory = outputDir;
-            }
-
-            Directory.CreateDirectory(finalOutputDirectory);
-            string finalZipPath = Path.Combine(finalOutputDirectory, zipFileName);
-
-            // Compress generated SDK to ZIP
-            ZipFile.CreateFromDirectory(sdkOutputDir, finalZipPath);
-
-            // HTTP 모드에서는 URI를, 그렇지 않으면 로컬 경로를 반환
-            if (_httpContextAccessor?.HttpContext is not null && _hostEnvironment is not null)
-            {
-                var request = _httpContextAccessor.HttpContext.Request;
-                var baseUrl = $"{request.Scheme}://{request.Host}";
-                result.ZipPath = $"{baseUrl}/generated/{zipFileName}";
-            }
-            else
-            {
-                result.ZipPath = finalZipPath;
-            }
+            // Call the service to perform the generation
+            return await openApiService.GenerateSdkAsync(
+                specSource,
+                language,
+                className,
+                namespaceName,
+                additionalOptions);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An exception occurred during SDK generation.");
-            result.ErrorMessage = ex.Message;
+            logger.LogError(ex, "Failed to execute generate_sdk tool.");
+            return new OpenApiToSdkResult { ErrorMessage = $"Tool execution error: {ex.Message}" };
         }
-        finally
-        {
-            // Cleanup temporary files and directories
-            if (!string.IsNullOrEmpty(tempSpecPath) && File.Exists(tempSpecPath))
-            {
-                File.Delete(tempSpecPath);
-            }
-            if (!string.IsNullOrEmpty(sdkOutputDir) && Directory.Exists(sdkOutputDir))
-            {
-                Directory.Delete(sdkOutputDir, true);
-            }
-        }
-
-        return result;
     }
 }

@@ -9,7 +9,7 @@
         "value": "${AZURE_LOCATION}"
       },
       "mcpOpenApiToSdkExists": {
-        "value": "${SERVICE_MCP_OPENAPI_TO_SDK_RESOURCE_EXISTS=false}"
+        "value": "${SERVICE_OPENAPI_TO_SDK_RESOURCE_EXISTS=false}"
       },
       "principalId": {
         "value": "${AZURE_PRINCIPAL_ID}"
