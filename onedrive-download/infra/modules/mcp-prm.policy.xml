@@ -6,29 +6,32 @@
 -->
 <policies>
     <inbound>
-        <!-- Return Protected Resource Metadata according to RFC 9728 -->
+        <base />
+
+        <set-variable name="prm_client_id" value="{{McpClientId}}" />
+        <set-variable name="prm_tenant_id" value="{{McpTenantId}}" />
+
         <return-response>
-            <set-status code="200" reason="OK" />
+            <set-status code="200" />
             <set-header name="Content-Type" exists-action="override">
                 <value>application/json</value>
             </set-header>
-            <set-header name="Cache-Control" exists-action="override">
-                <value>public, max-age=3600</value>
-            </set-header>
-            <set-body>@{
-                return JsonConvert.SerializeObject(new {
-                    resource = "{{APIMGatewayURL}}/mcp",
-                    authorization_endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-                    token_endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-                    revocation_endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/revoke",
-                    client_id = "{{McpClientId}}",
-                    scopes = new[] { "https://graph.microsoft.com/.default", "offline_access" },
-                    response_types_supported = new[] { "code" },
-                    code_challenge_methods_supported = new[] { "S256" },
-                    token_endpoint_auth_methods_supported = new[] { "none" },
-                    grant_types_supported = new[] { "authorization_code", "refresh_token" }
-                });
-            }</set-body>
+
+            <set-body template="liquid">
+            {
+                "authorization_endpoint": "https://login.microsoftonline.com/{{context.Variables["prm_tenant_id"]}}/oauth2/v2.0/authorize",
+                "token_endpoint": "https://login.microsoftonline.com/{{context.Variables["prm_tenant_id"]}}/oauth2/v2.0/token",
+
+                "client_id": "{{context.Variables["prm_client_id"]}}",
+
+                "scopes_supported": ["https://graph.microsoft.com/.default", "offline_access"],
+                "scopes_required": ["https://graph.microsoft.com/.default"],
+                "response_types_supported": ["code"],
+                "code_challenge_methods_supported": ["S256"],
+                "token_endpoint_auth_methods_supported": ["none"],
+                "grant_types_supported": ["authorization_code", "refresh_token"]
+            }
+            </set-body>
         </return-response>
     </inbound>
     <backend>
