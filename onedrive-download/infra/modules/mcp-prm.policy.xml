@@ -18,15 +18,15 @@
             <set-body>@{
                 return JsonConvert.SerializeObject(new {
                     resource = "{{APIMGatewayURL}}/mcp",
-                    authorization_servers = new[] {
-                        $"https://login.microsoftonline.com/{{McpTenantId}}/v2.0"
-                    },
-                    bearer_methods_supported = new[] {
-                        "header"
-                    },
-                    scopes_supported = new[] {
-                        "{{McpClientId}}/user_impersonation"
-                    }
+                    authorization_endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+                    token_endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+                    revocation_endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/revoke",
+                    client_id = "{{McpClientId}}",
+                    scopes = new[] { "https://graph.microsoft.com/.default", "offline_access" },
+                    response_types_supported = new[] { "code" },
+                    code_challenge_methods_supported = new[] { "S256" },
+                    token_endpoint_auth_methods_supported = new[] { "none" },
+                    grant_types_supported = new[] { "authorization_code", "refresh_token" }
                 });
             }</set-body>
         </return-response>
