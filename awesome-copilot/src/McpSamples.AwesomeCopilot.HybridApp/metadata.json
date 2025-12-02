@@ -1558,6 +1558,15 @@
       ]
     },
     {
+      "filename": "create-tldr-page.prompt.md",
+      "agent": "agent",
+      "description": "Create a tldr page from documentation URLs and command examples, requiring both URL and command name.",
+      "tools": [
+        "edit/createFile",
+        "fetch"
+      ]
+    },
+    {
       "filename": "csharp-async.prompt.md",
       "agent": "agent",
       "tools": [
@@ -2247,6 +2256,18 @@
       "filename": "technology-stack-blueprint-generator.prompt.md",
       "description": "Comprehensive technology stack blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks, programming languages, and implementation patterns across multiple platforms (.NET, Java, JavaScript, React, Python). Generates configurable blueprints with version information, licensing details, usage patterns, coding conventions, and visual diagrams. Provides implementation-ready templates and maintains architectural consistency for guided development.",
       "agent": "agent"
+    },
+    {
+      "filename": "tldr-prompt.prompt.md",
+      "agent": "agent",
+      "description": "Create tldr summaries for GitHub Copilot files (prompts, agents, instructions, collections), MCP servers, or documentation from URLs and queries.",
+      "tools": [
+        "fetch",
+        "search/readFile",
+        "search",
+        "search/textSearch"
+      ],
+      "model": "claude-sonnet-4"
     },
     {
       "filename": "typescript-mcp-server-generator.prompt.md",
