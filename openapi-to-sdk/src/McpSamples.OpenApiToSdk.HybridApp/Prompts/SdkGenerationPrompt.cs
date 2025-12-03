@@ -32,7 +32,7 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
       [Description("The URL or local file path of the OpenAPI specification.")]
         string specSource,
 
-      [Description("The target programming language. Supported values: csharp, go, java, php, python, ruby, shell, swift, typescript.")]
+      [Description("The target programming language. Supported values: CSharp, Java, TypeScript, PHP, Python, Go, Ruby, Dart, HTTP.")]
         string language,
 
       [Description("The name of the generated client class. Default: 'ApiClient'.")]
@@ -58,16 +58,27 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
         ---
         ### Execution Rules (Follow Strictly)
 
-        1. **Validate & Normalize Language**:
-           The `generate_sdk` tool ONLY accepts the following lowercase language identifiers:
-           [ **csharp**, **go**, **java**, **php**, **python**, **ruby**, **shell**, **swift**, **typescript** ]
+        1. **Smart Language Normalization**:
+           The `generate_sdk` tool ONLY accepts the following language identifiers:
+           [ CSharp, Java, TypeScript, PHP, Python, Go, Ruby, Dart, HTTP ]
 
-           - If the user input is "C#", ".NET", or "csharp", you MUST use **`csharp`**.
-           - If the user input is "TypeScript", "ts", or "TS", you MUST use **`typescript`**.
-           - If the input is not in the list (e.g., "Rust", "C++"), STOP and inform the user it is not supported.
+           You MUST intelligently map the user's input to one of these valid identifiers.
+           
+           - **Handle Aliases & Variations**:
+             - "C#", "c#", ".NET", "dotnet", "chsarp" (typo) -> Use **CSharp**
+             - "TS", "Ts", "ts", "node", "typoscript" (typo) -> Use **TypeScript**
+             - "Golang", "Goo" (typo) -> Use **Go**
+             - "py", "pyton" (typo), "python3" -> Use **Python**
+             - "jav", "Jave" (typo) -> Use **Java**
+           
+           - **Auto-Correction**:
+             - If the user makes a minor typo or uses a common abbreviation, automatically correct it to the nearest valid identifier from the list above.
+
+           - **Validation**:
+             - If the input refers to a completely unsupported language (e.g., "Rust", "C++", "Assembly"), STOP and politely inform the user that it is not currently supported by Kiota.
 
         2. **Call the Tool**:
-           Use the `generate_sdk` tool with the normalized language and provided parameters.
+           Use the `generate_sdk` tool with the **normalized lowercase language** (from Step 1) and provided parameters.
            
         3. **Report**:
            Provide the download link or file path returned by the tool.

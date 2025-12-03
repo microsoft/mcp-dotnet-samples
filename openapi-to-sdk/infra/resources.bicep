@@ -12,6 +12,37 @@ param principalId string
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
 
+// [추가] 1. 스토리지 계정 및 파일 공유 생성
+resource storage 'Microsoft.Storage/storageAccounts@2025-01-01' = {
+  name: '${abbrs.storageStorageAccounts}${resourceToken}'
+  location: location
+  tags: tags
+  kind: 'StorageV2'
+  sku: {
+    name: 'Standard_LRS'
+  }
+  properties: {
+    minimumTlsVersion: 'TLS1_2'
+    allowBlobPublicAccess: false
+    publicNetworkAccess: 'Enabled'
+  }
+}
+
+resource storageFileService 'Microsoft.Storage/storageAccounts/fileServices@2025-01-01' = {
+  parent: storage
+  name: 'default'
+}
+
+resource storageFileShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2025-01-01' = {
+  parent: storageFileService
+  name: 'workspace'
+  properties: {
+    accessTier: 'TransactionOptimized'
+    shareQuota: 1024
+    enabledProtocols: 'SMB'
+  }
+}
+
 // Monitor application with Azure Monitor
 module monitoring 'br/public:avm/ptn/azd/monitoring:0.1.0' = {
   name: 'monitoring'
@@ -54,24 +85,46 @@ module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.4.5
   }
 }
 
+// [추가] 2. 환경과 스토리지 연결
+resource env 'Microsoft.App/managedEnvironments@2025-01-01' existing = {
+  name: '${abbrs.appManagedEnvironments}${resourceToken}'
+}
+
+resource envStorage 'Microsoft.App/managedEnvironments/storages@2025-01-01' = {
+  parent: env
+  name: 'workspace'
+  properties: {
+    azureFile: {
+      accountName: storage.name
+      accountKey: storage.listKeys().keys[0].value
+      shareName: storageFileShare.name
+      accessMode: 'ReadWrite'
+    }
+  }
+  dependsOn: [
+    containerAppsEnvironment
+  ]
+}
+
 // User assigned identity
 module mcpOpenApiToSdkIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
   name: 'mcpOpenApiToSdkIdentity'
   params: {
-    name: '${abbrs.managedIdentityUserAssignedIdentities}mcpopenapitosdk-${resourceToken}'
+    name: '${abbrs.managedIdentityUserAssignedIdentities}mcp-openapi-to-sdk-${resourceToken}'
     location: location
   }
 }
 
-// Azure Container Apps
+// Azure Container Apps - Image Fetching
 module mcpOpenApiToSdkFetchLatestImage './modules/fetch-container-image.bicep' = {
-  name: 'mcpOpenApiToSdk-fetch-image'
+  name: 'mcpOpenApiToSdkFetchLatestImage'
   params: {
     exists: mcpOpenApiToSdkExists
     name: 'openapi-to-sdk'
   }
 }
 
+// Azure Container Apps - Main App
 module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
   name: 'mcpOpenApiToSdk'
   params: {
@@ -83,6 +136,16 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
       secureList: [
       ]
     }
+    
+    // [추가] 3. 볼륨 정의 (위에서 만든 envStorage의 이름을 참조)
+    volumes: [
+      {
+        name: 'workspace-vol' // 앱 내부에서 쓸 볼륨 식별자
+        storageType: 'AzureFile'
+        storageName: 'workspace' // envStorage 리소스의 name과 일치해야 함
+      }
+    ]
+
     containers: [
       {
         image: mcpOpenApiToSdkFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
@@ -108,9 +171,16 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
         args: [
           '--http'
         ]
+        
+        // [추가] 4. 컨테이너 내부 경로에 마운트
+        volumeMounts: [
+          {
+            volumeName: 'workspace-vol'
+            mountPath: '/app/workspace'
+          }
+        ]
       }
     ]
-    
     managedIdentities: {
       systemAssigned: false
       userAssignedResourceIds: [
@@ -143,3 +213,5 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.outputs.logi
 output AZURE_RESOURCE_MCP_OPENAPI_TO_SDK_ID string = mcpOpenApiToSdk.outputs.resourceId
 output AZURE_RESOURCE_MCP_OPENAPI_TO_SDK_NAME string = mcpOpenApiToSdk.outputs.name
 output AZURE_RESOURCE_MCP_OPENAPI_TO_SDK_FQDN string = mcpOpenApiToSdk.outputs.fqdn
+output AZURE_STORAGE_ACCOUNT_NAME string = storage.name
+output AZURE_FILE_SHARE_NAME string = storageFileShare.name

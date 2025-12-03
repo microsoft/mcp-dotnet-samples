@@ -66,6 +66,29 @@ if (useStreamableHttp)
         ServeUnknownFileTypes = true
     });
 
+    // [신규] 파일 업로드 엔드포인트 추가 (/upload)
+    webApp.MapPost("/upload", async (IFormFile file, OpenApiToSdkAppSettings settings) =>
+    {
+        if (file == null || file.Length == 0)
+            return Results.BadRequest("No file uploaded.");
+
+        // 저장 경로: workspace/specs/{파일명}
+        if (!Directory.Exists(settings.SpecsPath))
+            Directory.CreateDirectory(settings.SpecsPath);
+
+        // 보안상 파일명만 추출 (경로 조작 방지)
+        var fileName = Path.GetFileName(file.FileName);
+        var filePath = Path.Combine(settings.SpecsPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        return Results.Ok(new { Message = "File uploaded successfully.", SavedPath = filePath });
+    })
+    .DisableAntiforgery(); // 외부(Agent/Curl)에서 호출하기 쉽도록 CSRF 비활성화
+
 }
 
 // 6. 앱 실행
@@ -111,7 +134,6 @@ void InitializeRuntimeSettings(OpenApiToSdkAppSettings settings, bool isHttp)
     settings.IsContainer = isContainer;
     settings.IsAzure = isAzure;
 
-    // 필수 폴더 생성
     if (!Directory.Exists(settings.WorkspacePath)) Directory.CreateDirectory(settings.WorkspacePath);
     if (!Directory.Exists(settings.SpecsPath)) Directory.CreateDirectory(settings.SpecsPath);
     if (!Directory.Exists(settings.GeneratedPath)) Directory.CreateDirectory(settings.GeneratedPath);

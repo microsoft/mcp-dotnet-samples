@@ -44,39 +44,70 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                 // 2. 파일이 마운트된 경로에 없으면 에이전트에게 복사를 요청합니다. (에러 처리 X)
                 if (!File.Exists(inputPath))
                 {
-                    // 기본 안내 경로 (환경변수 누락 시 대비)
-                    string targetHostPath = $"workspace/specs/{fileName}";
-
-                    // 도커 실행 시 주입된 HOST_ROOT_PATH 환경 변수 확인
-                    // 옵션: -e HOST_ROOT_PATH=${env:REPOSITORY_ROOT}/openapi-to-sdk
-                    string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
-
-                    if (!string.IsNullOrEmpty(hostRootPath))
+                    if (settings.IsAzure) // [수정] Azure 환경 처리: HTTP 업로드 안내
                     {
-                        // 1. 경로 정규화: 윈도우(\)와 리눅스(/) 구분자를 모두 포워드 슬래시('/')로 통일
-                        // 이렇게 하면 어떤 OS의 Agent라도 경로를 오해 없이 인식합니다.
-                        string normalizedHostRoot = hostRootPath.Replace('\\', '/').TrimEnd('/');
+                        // 현재 서버의 업로드 URL 계산
+                        string uploadUrl = "/upload"; // Fallback
+                        var request = httpContextAccessor.HttpContext?.Request;
+                        if (request != null)
+                        {
+                            // 예: https://myapp.azurecontainerapps.io/upload
+                            uploadUrl = $"{request.Scheme}://{request.Host}/upload";
+                        }
 
-                        // 2. 최종 호스트 타겟 경로 조립
-                        // 예: D:/Projects/openapi-to-sdk/workspace/specs/petstore.json
-                        targetHostPath = $"{normalizedHostRoot}/workspace/specs/{fileName}";
+                        // Agent에게 'curl' 명령어를 실행하라고 지시
+                        return $"""
+                        ⚠️ Action Required: File Upload Needed (Azure)
+
+                        I am running in an Azure environment and cannot access your local file `{specSource}` directly.
+                        To proceed, you need to upload the file to the server.
+
+                        Please execute the appropriate command for your operating system (OS) using your terminal or shell tool:
+
+                        ### 🍎/🐧 macOS & Linux
+
+                        curl -F "file=@{specSource}" {uploadUrl}
+
+                        ### 💻 Windows (PowerShell/CMD)
+
+                        curl.exe -F "file=@{specSource}" {uploadUrl}
+
+                        After the command completes successfully, please call this `generate_sdk` tool again.
+                        """;
                     }
+                    if (settings.IsContainer)
+                    {
+                        // 기본 안내 경로 (환경변수 누락 시 대비)
+                        string targetHostPath = $"workspace/specs/{fileName}";
 
-                    // [핵심] 에러가 아닌 '조치 요청' 메시지 반환
-                    // 문구가 [Error]로 시작하지 않으므로 Agent는 이를 '성공적인 응답'으로 인식하고,
-                    // 내용에 포함된 지시사항(파일 복사)을 수행하려고 시도합니다.
-                    return $"""
-                    ⚠️ Action Required: File Synchronization Needed
+                        // 도커 실행 시 주입된 HOST_ROOT_PATH 환경 변수 확인
+                        // 옵션: -e HOST_ROOT_PATH=${env:REPOSITORY_ROOT}/openapi-to-sdk
+                        string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
 
-                    The file '{fileName}' is not currently in the shared volume visible to the container.
-                    To proceed with SDK generation, I need access to this file.
+                        if (!string.IsNullOrEmpty(hostRootPath))
+                        {
+                            // 1. 경로 정규화: 윈도우(\)와 리눅스(/) 구분자를 모두 포워드 슬래시('/')로 통일
+                            string normalizedHostRoot = hostRootPath.Replace('\\', '/').TrimEnd('/');
 
-                    Please perform the following steps using your filesystem tools:
-                    1. COPY the file from: `{specSource}`
-                    2. PASTE it to: `{targetHostPath}`
+                            // 2. 최종 호스트 타겟 경로 조립
+                            // 예: D:/Projects/openapi-to-sdk/workspace/specs/petstore.json
+                            targetHostPath = $"{normalizedHostRoot}/workspace/specs/{fileName}";
+                        }
 
-                    After copying the file, please call this 'generate_sdk' tool again with the same arguments.
-                    """;
+                        // 에러가 아닌 '조치 요청' 메시지 반환
+                        return $"""
+                        ⚠️ Action Required: File Synchronization Needed
+
+                        The file '{fileName}' is not currently in the shared volume visible to the container.
+                        To proceed with SDK generation, I need access to this file.
+
+                        Please perform the following steps using your filesystem tools:
+                        1. COPY the file from: `{specSource}`
+                        2. PASTE it to: `{targetHostPath}`
+
+                        After copying the file, please call this 'generate_sdk' tool again with the same arguments.
+                        """;
+                    }
                 }
             }
             else
