@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace McpSamples.OpenApiToSdk.HybridApp.Models;
 
 /// <summary>
@@ -6,29 +8,20 @@ namespace McpSamples.OpenApiToSdk.HybridApp.Models;
 public class OpenApiToSdkResult
 {
     /// <summary>
-    /// Gets or sets the accessible path or URL to the generated ZIP file.
-    /// (e.g., "http://localhost:8080/generated/sdk.zip" or "C:\...\sdk.zip")
+    /// Gets or sets a value indicating whether the generation was successful.
     /// </summary>
-    public string? ZipPath { get; set; }
+    [JsonPropertyName("isSuccess")]
+    public bool IsSuccess { get; set; }
 
     /// <summary>
-    /// Gets or sets the absolute internal file path on the server.
-    /// Useful for debugging or server-side logs.
+    /// Gets or sets the message or output path.
     /// </summary>
-    public string? ServerFilePath { get; set; }
+    [JsonPropertyName("message")]
+    public string Message { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets a user-friendly message describing the outcome.
+    /// Gets or sets the download URL (if applicable).
     /// </summary>
-    public string? Message { get; set; }
-
-    /// <summary>
-    /// Gets or sets the error message if the operation failed.
-    /// </summary>
-    public string? ErrorMessage { get; set; }
-
-    /// <summary>
-    /// Gets a value indicating whether the operation was successful.
-    /// </summary>
-    public bool IsSuccess => string.IsNullOrEmpty(ErrorMessage);
+    [JsonPropertyName("downloadUrl")]
+    public string? DownloadUrl { get; set; }
 }

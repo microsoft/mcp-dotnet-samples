@@ -1,20 +1,8 @@
 {
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "consoleapp-project-path",
-      "description": "The absolute path to the console app project Directory"
-    }
-  ],
   "servers": {
     "openapi-to-sdk": {
-      "type": "stdio",
-      "command": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "${input:consoleapp-project-path}"
-      ]
+      "type": "http",
+      "url": "http://localhost:5222/mcp"
     }
   }
 }
