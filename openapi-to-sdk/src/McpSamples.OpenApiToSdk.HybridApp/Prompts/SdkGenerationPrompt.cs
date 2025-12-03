@@ -77,10 +77,18 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
            - **Validation**:
              - If the input refers to a completely unsupported language (e.g., "Rust", "C++", "Assembly"), STOP and politely inform the user that it is not currently supported by Kiota.
 
-        2. **Call the Tool**:
-           Use the `generate_sdk` tool with the **normalized lowercase language** (from Step 1) and provided parameters.
+        2. **Handle Output Path**:
+           - The `generate_sdk` tool manages the output path internally to create a ZIP file.
+           - **NEVER** pass `-o` or `--output` in the `additionalOptions` argument, even if the user asks to save it to a specific location (e.g., "Generate to D:/Work").
+           - Instead, follow this workflow:
+             1. Call `generate_sdk` WITHOUT the output path option.
+             2. Once the tool returns the ZIP file path (or download link), tell the user: "I have generated the SDK. Would you like me to move/extract it to [User's Requested Path]?"
+             3. If the user agrees, use your filesystem tools to move the file.
+
+        3. **Call the Tool**:
+           Use the `generate_sdk` tool with the normalized language and filtered options (excluding -o).
            
-        3. **Report**:
+        4. **Report**:
            Provide the download link or file path returned by the tool.
         """;
   }

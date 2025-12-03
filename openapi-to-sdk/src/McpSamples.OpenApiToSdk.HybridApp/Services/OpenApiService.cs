@@ -17,6 +17,19 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
         var finalNamespace = string.IsNullOrWhiteSpace(namespaceName) ? "ApiSdk" : namespaceName;
         var finalOptions = additionalOptions ?? string.Empty;
 
+        if (finalOptions.Contains("-o ") || finalOptions.Contains("--output "))
+        {
+            // -o 옵션 또는 --output 옵션이 포함된 경우 에러로 반환하여 에이전트에게 "옵션 빼고 다시 요청해"라고 가르침 (방어 코드)
+            return """
+            ⚠️ Input Error: Invalid Option Detected
+            
+            Please DO NOT include the `-o` or `--output` option in 'additionalOptions'.
+            The output path is managed automatically by the server.
+            
+            If you want to save the file to a specific location, please generate it first, and then move the resulting ZIP file to your desired destination.
+            """;
+        }
+
         // 1. 입력 소스 판별 (URL vs 파일 경로)
         string inputPath;
         bool isUrl = Uri.TryCreate(specSource, UriKind.Absolute, out var uriResult)
@@ -101,11 +114,9 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                         The file '{fileName}' is not currently in the shared volume visible to the container.
                         To proceed with SDK generation, I need access to this file.
 
-                        Please perform the following steps using your filesystem tools:
-                        1. COPY the file from: `{specSource}`
-                        2. PASTE it to: `{targetHostPath}`
-
-                        After copying the file, please call this 'generate_sdk' tool again with the same arguments.
+                        EXECUTION PLAN (Follow Strictly):
+                        1. COPY the file from `{specSource}` to `{targetHostPath}`.
+                        2. RETRY the `generate_sdk` tool immediately with the same arguments.
                         """;
                     }
                 }
@@ -237,7 +248,7 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                     finalPath = $"{hostPathNormalized}/{relativePathFromApp}";
                 }
             }
-            // Stdio 모드 (기존 동일)
+            // Stdio 모드
             return $"✅ SDK Generation Successful!\n\n" +
                    $"File Saved At: {localZipPath}\n\n" +
                    $"The file is currently in the workspace. Please check if this location is correct.\n" +

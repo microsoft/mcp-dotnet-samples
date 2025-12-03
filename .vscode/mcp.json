@@ -8,9 +8,9 @@
         "-i",
         "--rm",
         "-v",
-        "${env:REPOSITORY_ROOT}/openapi-to-sdk/workspace:/app/workspace",
+        "${workspaceFolder}/openapi-to-sdk/workspace:/app/workspace",
         "-e",
-        "HOST_ROOT_PATH=${env:REPOSITORY_ROOT}/openapi-to-sdk",
+        "HOST_ROOT_PATH=${workspaceFolder}/openapi-to-sdk",
         "openapi-to-sdk:latest"
       ]
     }
