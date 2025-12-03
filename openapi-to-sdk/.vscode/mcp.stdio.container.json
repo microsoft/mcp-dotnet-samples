@@ -7,8 +7,10 @@
         "run",
         "-i",
         "--rm",
-        "--volume",
-        "${workspaceFolder}/generated:/app/wwwroot/generated",
+        "-v",
+        "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace",
+        "-e",
+        "HOST_ROOT_PATH=${env:REPOSITORY_ROOT}/openapi-to-sdk",
         "openapi-to-sdk:latest"
       ]
     }

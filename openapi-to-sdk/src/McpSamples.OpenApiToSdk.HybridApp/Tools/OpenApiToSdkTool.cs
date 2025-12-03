@@ -43,7 +43,7 @@ public class OpenApiToSdkTool(IOpenApiService service) : IOpenApiToSdkTool
       [Description("The namespace for the generated code. Default is 'ApiSdk'.")]
         string? namespaceName = null,
 
-      [Description("Additional Kiota command line options (e.g., --clean-output).")]
+      [Description("Additional Kiota command line options (e.g., --version).")]
         string? additionalOptions = null)
   {
     // Service 호출 (복잡한 파라미터 파싱 로직이 사라지고 바로 호출 가능)

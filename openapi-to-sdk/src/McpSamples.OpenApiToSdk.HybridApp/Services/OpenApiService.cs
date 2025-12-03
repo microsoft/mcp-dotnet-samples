@@ -1,15 +1,18 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using McpSamples.OpenApiToSdk.HybridApp.Configurations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace McpSamples.OpenApiToSdk.HybridApp.Services;
 
-public class OpenApiService(OpenApiToSdkAppSettings settings, ILogger<OpenApiService> logger) : IOpenApiService
+public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccessor httpContextAccessor, ILogger<OpenApiService> logger) : IOpenApiService
 {
     public async Task<string> GenerateSdkAsync(string specSource, string language, string? clientClassName, string? namespaceName, string? additionalOptions, CancellationToken cancellationToken = default)
     {
         // 0. 기본값 설정 및 옵션 처리
+        if (string.IsNullOrWhiteSpace(specSource))
+            throw new ArgumentException("Spec source cannot be empty.", nameof(specSource));
         var finalClassName = string.IsNullOrWhiteSpace(clientClassName) ? "ApiClient" : clientClassName;
         var finalNamespace = string.IsNullOrWhiteSpace(namespaceName) ? "ApiSdk" : namespaceName;
         var finalOptions = additionalOptions ?? string.Empty;
@@ -28,15 +31,52 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, ILogger<OpenApiSer
         {
             if (settings.IsContainer || settings.IsAzure)
             {
+                // 컨테이너/Azure 환경에서는 마운트된 볼륨의 specs 폴더를 확인합니다.
+                // 리눅스 컨테이너에서 윈도우 경로(\)가 들어올 경우를 대비해 파일명만 확실하게 추출합니다.
                 string fileName = Path.GetFileName(specSource);
+                if (fileName.Contains('\\'))
+                {
+                    fileName = fileName.Split('\\').Last();
+                }
+
                 inputPath = Path.Combine(settings.SpecsPath, fileName);
 
+                // 2. 파일이 마운트된 경로에 없으면 에이전트에게 복사를 요청합니다. (에러 처리 X)
                 if (!File.Exists(inputPath))
                 {
-                    var errorMsg = $"[Error] File not found in mounted volume: {inputPath}.\n" +
-                                   $"For Docker/Azure: Please ensure the spec file is uploaded/copied to the mounted 'workspace/specs' folder.";
-                    logger.LogError(errorMsg);
-                    return errorMsg;
+                    // 기본 안내 경로 (환경변수 누락 시 대비)
+                    string targetHostPath = $"workspace/specs/{fileName}";
+
+                    // 도커 실행 시 주입된 HOST_ROOT_PATH 환경 변수 확인
+                    // 옵션: -e HOST_ROOT_PATH=${env:REPOSITORY_ROOT}/openapi-to-sdk
+                    string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
+
+                    if (!string.IsNullOrEmpty(hostRootPath))
+                    {
+                        // 1. 경로 정규화: 윈도우(\)와 리눅스(/) 구분자를 모두 포워드 슬래시('/')로 통일
+                        // 이렇게 하면 어떤 OS의 Agent라도 경로를 오해 없이 인식합니다.
+                        string normalizedHostRoot = hostRootPath.Replace('\\', '/').TrimEnd('/');
+
+                        // 2. 최종 호스트 타겟 경로 조립
+                        // 예: D:/Projects/openapi-to-sdk/workspace/specs/petstore.json
+                        targetHostPath = $"{normalizedHostRoot}/workspace/specs/{fileName}";
+                    }
+
+                    // [핵심] 에러가 아닌 '조치 요청' 메시지 반환
+                    // 문구가 [Error]로 시작하지 않으므로 Agent는 이를 '성공적인 응답'으로 인식하고,
+                    // 내용에 포함된 지시사항(파일 복사)을 수행하려고 시도합니다.
+                    return $"""
+                    ⚠️ Action Required: File Synchronization Needed
+
+                    The file '{fileName}' is not currently in the shared volume visible to the container.
+                    To proceed with SDK generation, I need access to this file.
+
+                    Please perform the following steps using your filesystem tools:
+                    1. COPY the file from: `{specSource}`
+                    2. PASTE it to: `{targetHostPath}`
+
+                    After copying the file, please call this 'generate_sdk' tool again with the same arguments.
+                    """;
                 }
             }
             else
@@ -119,13 +159,54 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, ILogger<OpenApiSer
     {
         if (settings.IsHttpMode)
         {
-            string downloadUrl = $"/download/{zipFileName}";
+            string relativePath = $"/download/{zipFileName}";
+            string downloadUrl;
+
+            // 현재 요청(Request) 정보 가져오기
+            var request = httpContextAccessor.HttpContext?.Request;
+
+            if (request != null)
+            {
+                // Local, Docker, Azure 모두 현재 접속된 Host(도메인+포트)를 기준으로 URL 생성
+                // 예: http://localhost:5222, https://myapp.azurecontainerapps.io 등
+                string baseUrl = $"{request.Scheme}://{request.Host}";
+                downloadUrl = $"{baseUrl}{relativePath}";
+            }
+            else
+            {
+                // HttpContext가 없는 예외적인 경우 (Fallback)
+                // Azure나 Docker는 보통 포트 8080, 로컬은 5222 등 다양하므로 상대 경로만 제공
+                downloadUrl = relativePath;
+            }
+
             return $"✅ SDK Generation Successful!\n\n" +
-                   $"Download Link: {downloadUrl}\n" +
-                   $"(Note: If accessing locally via browser, prepend your host address, e.g., http://localhost:8080{downloadUrl})";
+                   $"Download Link: {downloadUrl}";
         }
         else
         {
+            string finalPath = localZipPath;
+
+            if (settings.IsContainer) // Docker Stdio 모드
+            {
+                // 호스트 경로 환경 변수 읽기
+                // 예: "D:/KNU/3-2/CDP1/openapi-to-sdk"
+                string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
+
+                if (!string.IsNullOrEmpty(hostRootPath))
+                {
+                    // 1. 컨테이너 경로의 시작인 /app을 제외합니다.
+                    // finalPath = /app/workspace/...
+                    string relativePathFromApp = finalPath.Substring("/app".Length).TrimStart('/');
+
+                    // 2. 호스트 경로의 끝에 있는 슬래시(/)나 역슬래시(\)를 정리합니다.
+                    string hostPathNormalized = hostRootPath.TrimEnd('/', '\\');
+
+                    // 3. 크로스 플랫폼 호환성을 위해 최종 경로를 포워드 슬래시(/)로 연결합니다.
+                    // Path.Combine 대신 string concatenation을 사용하여 OS 종속성을 제거합니다.
+                    finalPath = $"{hostPathNormalized}/{relativePathFromApp}";
+                }
+            }
+            // Stdio 모드 (기존 동일)
             return $"✅ SDK Generation Successful!\n\n" +
                    $"File Saved At: {localZipPath}\n\n" +
                    $"The file is currently in the workspace. Please check if this location is correct.\n" +

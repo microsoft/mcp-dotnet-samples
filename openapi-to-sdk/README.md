@@ -82,13 +82,13 @@ OpenAPI to SDK MCP server includes:
 1. Run the MCP server app in a container.
 
     ```bash
-    docker run -i --rm -p 8080:8080 openapi-to-sdk:latest
+    docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace" -e HOST_ROOT_PATH="$REPOSITORY_ROOT" openapi-to-sdk:latest
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest
+    docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace" -e HOST_ROOT_PATH="$REPOSITORY_ROOT" ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest
     ```
 
    **Parameters**:
@@ -99,12 +99,12 @@ OpenAPI to SDK MCP server includes:
 
    ```bash
    # use local container image
-   docker run -i --rm -p 8080:8080 openapi-to-sdk:latest --http
+   docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace"  -e HOST_ROOT_PATH="$REPOSITORY_ROOT" openapi-to-sdk:latest --http
    ```
 
    ```bash
    # use container image from the container registry
-   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest --http
+   docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace"  -e HOST_ROOT_PATH="$REPOSITORY_ROOT" ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest --http
    ```
 
 #### On Azure

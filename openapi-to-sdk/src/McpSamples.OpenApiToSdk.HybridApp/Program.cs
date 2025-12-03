@@ -18,6 +18,9 @@ IHostApplicationBuilder builder = useStreamableHttp
 // appsettings.json 로드 및 객체 바인딩 처리
 builder.Services.AddAppSettings<OpenApiToSdkAppSettings>(builder.Configuration, args);
 
+// [추가] HttpContext에 접근하기 위해 등록 (HTTP 모드일 때만 필수지만, 안전하게 항상 등록해도 무방함)
+builder.Services.AddHttpContextAccessor();
+
 // 4. 서비스 등록
 var options = new JsonSerializerOptions
 {
@@ -62,6 +65,7 @@ if (useStreamableHttp)
         RequestPath = "/download",
         ServeUnknownFileTypes = true
     });
+
 }
 
 // 6. 앱 실행
