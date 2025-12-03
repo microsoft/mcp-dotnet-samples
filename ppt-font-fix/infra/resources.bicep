@@ -194,6 +194,10 @@ module mcpPptFontFix 'br/public:avm/res/app/container-app:0.8.0' = {
             name: 'AzureBlobConnectionString' 
             value: storageConnectionString
           }
+          {
+            name: 'AZURE_FILE_SHARE_MOUNT_PATH'
+            value: '/app/mounts'
+          }
         ]
         args: [ '--http' ]
         volumeMounts: [

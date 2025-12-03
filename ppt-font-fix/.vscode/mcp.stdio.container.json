@@ -7,7 +7,7 @@
         "run",
         "-i",
         "--rm",
-        "--name", "ppt-font-fix",
+        "-v", ".\\ppt-font-fix\\input:/files",
         "ppt-font-fix:latest"
       ]
     }
