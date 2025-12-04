@@ -15,7 +15,7 @@ WORKDIR /app
 
 COPY --from=build /app .
 
-COPY ./ppt-font-fix/src/McpSamples.PptFontFix.HybridApp/test.pptx /app/test.pptx
+RUN mkdir -p /app/wwwroot/generated
 
 USER $APP_UID
 
