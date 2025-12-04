@@ -221,7 +221,7 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                 downloadUrl = relativePath;
             }
 
-            return $"✅ SDK Generation Successful!\n\n" +
+            return $"SDK Generation Successful!\n\n" +
                    $"Download Link: {downloadUrl}";
         }
         else
