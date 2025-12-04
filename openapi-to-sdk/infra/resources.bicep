@@ -12,7 +12,7 @@ param principalId string
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
 
-// [추가] 1. 스토리지 계정 및 파일 공유 생성
+// Storage account and file share for the workspace
 resource storage 'Microsoft.Storage/storageAccounts@2025-01-01' = {
   name: '${abbrs.storageStorageAccounts}${resourceToken}'
   location: location
@@ -85,7 +85,7 @@ module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.4.5
   }
 }
 
-// [추가] 2. 환경과 스토리지 연결
+// Link storage to the container apps environment
 resource env 'Microsoft.App/managedEnvironments@2025-01-01' existing = {
   name: '${abbrs.appManagedEnvironments}${resourceToken}'
 }
@@ -137,12 +137,12 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
       ]
     }
     
-    // [추가] 3. 볼륨 정의 (위에서 만든 envStorage의 이름을 참조)
+    // Define the volume using the envStorage created above
     volumes: [
       {
-        name: 'workspace-vol' // 앱 내부에서 쓸 볼륨 식별자
+        name: 'workspace-vol'
         storageType: 'AzureFile'
-        storageName: 'workspace' // envStorage 리소스의 name과 일치해야 함
+        storageName: 'workspace'
       }
     ]
 
@@ -172,7 +172,7 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
           '--http'
         ]
         
-        // [추가] 4. 컨테이너 내부 경로에 마운트
+        // Mount the volume to a path inside the container
         volumeMounts: [
           {
             volumeName: 'workspace-vol'

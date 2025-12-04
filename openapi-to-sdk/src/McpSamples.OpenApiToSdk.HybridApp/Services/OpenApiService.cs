@@ -6,11 +6,35 @@ using Microsoft.Extensions.Logging;
 
 namespace McpSamples.OpenApiToSdk.HybridApp.Services;
 
+/// <summary>
+/// This provides interfaces for the OpenAPI service.
+/// </summary>
+public interface IOpenApiService
+{
+    /// <summary>
+    /// Generates a client SDK from an OpenAPI specification.
+    /// </summary>
+    /// <param name="specSource">The URL or local file path of the OpenAPI specification.</param>
+    /// <param name="language">The target programming language (e.g., CSharp, Python, Java, TypeScript).</param>
+    /// <param name="clientClassName">The name of the generated client class.</param>
+    /// <param name="namespaceName">The namespace for the generated code.</param>
+    /// <param name="additionalOptions">Additional Kiota command line options (e.g., --version).</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A message indicating the result of the SDK generation.</returns>
+    Task<string> GenerateSdkAsync(string specSource, string language, string? clientClassName, string? namespaceName, string? additionalOptions, CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// This represents the service for generating client SDKs from OpenAPI specifications.
+/// </summary>
+/// <param name="settings"><see cref="OpenApiToSdkAppSettings"/> instance.</param>
+/// <param name="httpContextAccessor"><see cref="IHttpContextAccessor"/> instance.</param>
+/// <param name="logger"><see cref="ILogger{TCategoryName}"/> instance.</param>
 public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccessor httpContextAccessor, ILogger<OpenApiService> logger) : IOpenApiService
 {
+    /// <inheritdoc />
     public async Task<string> GenerateSdkAsync(string specSource, string language, string? clientClassName, string? namespaceName, string? additionalOptions, CancellationToken cancellationToken = default)
     {
-        // 0. 기본값 설정 및 옵션 처리
         if (string.IsNullOrWhiteSpace(specSource))
             throw new ArgumentException("Spec source cannot be empty.", nameof(specSource));
         var finalClassName = string.IsNullOrWhiteSpace(clientClassName) ? "ApiClient" : clientClassName;
@@ -19,7 +43,6 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
 
         if (finalOptions.Contains("-o ") || finalOptions.Contains("--output "))
         {
-            // -o 옵션 또는 --output 옵션이 포함된 경우 에러로 반환하여 에이전트에게 "옵션 빼고 다시 요청해"라고 가르침 (방어 코드)
             return """
             Input Error: Invalid Option Detected
             
@@ -30,7 +53,6 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
             """;
         }
 
-        // 1. 입력 소스 판별 (URL vs 파일 경로)
         string inputPath;
         bool isUrl = Uri.TryCreate(specSource, UriKind.Absolute, out var uriResult)
                      && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
@@ -44,8 +66,6 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
         {
             if (settings.IsContainer || settings.IsAzure)
             {
-                // 컨테이너/Azure 환경에서는 마운트된 볼륨의 specs 폴더를 확인합니다.
-                // 리눅스 컨테이너에서 윈도우 경로(\)가 들어올 경우를 대비해 파일명만 확실하게 추출합니다.
                 string fileName = Path.GetFileName(specSource);
                 if (fileName.Contains('\\'))
                 {
@@ -54,21 +74,17 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
 
                 inputPath = Path.Combine(settings.SpecsPath, fileName);
 
-                // 2. 파일이 마운트된 경로에 없으면 에이전트에게 복사를 요청합니다. (에러 처리 X)
                 if (!File.Exists(inputPath))
                 {
-                    if (settings.IsAzure) // [수정] Azure 환경 처리: HTTP 업로드 안내
+                    if (settings.IsAzure)
                     {
-                        // 현재 서버의 업로드 URL 계산
-                        string uploadUrl = "/upload"; // Fallback
+                        string uploadUrl = "/upload";
                         var request = httpContextAccessor.HttpContext?.Request;
                         if (request != null)
                         {
-                            // 예: https://myapp.azurecontainerapps.io/upload
                             uploadUrl = $"{request.Scheme}://{request.Host}/upload";
                         }
 
-                        // Agent에게 'curl' 명령어를 실행하라고 지시
                         return $"""
                         Action Required: File Upload Needed (Azure)
 
@@ -90,24 +106,17 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                     }
                     if (settings.IsContainer)
                     {
-                        // 기본 안내 경로 (환경변수 누락 시 대비)
                         string targetHostPath = $"workspace/specs/{fileName}";
 
-                        // 도커 실행 시 주입된 HOST_ROOT_PATH 환경 변수 확인
-                        // 옵션: -e HOST_ROOT_PATH=${workspaceFolder}/openapi-to-sdk
                         string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
 
                         if (!string.IsNullOrEmpty(hostRootPath))
                         {
-                            // 1. 경로 정규화: 윈도우(\)와 리눅스(/) 구분자를 모두 포워드 슬래시('/')로 통일
                             string normalizedHostRoot = hostRootPath.Replace('\\', '/').TrimEnd('/');
 
-                            // 2. 최종 호스트 타겟 경로 조립
-                            // 예: D:/Projects/openapi-to-sdk/workspace/specs/petstore.json
                             targetHostPath = $"{normalizedHostRoot}/workspace/specs/{fileName}";
                         }
 
-                        // 에러가 아닌 '조치 요청' 메시지 반환
                         return $"""
                         Action Required: File Synchronization Needed
 
@@ -134,15 +143,12 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
             logger.LogInformation("Input is a File: {InputPath}", inputPath);
         }
 
-        // 2. 임시 출력 폴더 생성
         string outputId = Guid.NewGuid().ToString();
         string tempOutputPath = Path.Combine(settings.GeneratedPath, outputId);
         Directory.CreateDirectory(tempOutputPath);
 
         try
         {
-            // 3. Kiota 실행
-            // additionalOptions가 포함된 Arguments 구성
             logger.LogInformation("Starting Kiota generation...");
 
             var startInfo = new ProcessStartInfo
@@ -166,14 +172,12 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                 return $"[Error] Kiota generation failed:\n{error}";
             }
 
-            // 4. Zip 압축
             string zipFileName = $"sdk-{language}-{outputId.Substring(0, 4)}.zip";
             string zipFilePath = Path.Combine(settings.GeneratedPath, zipFileName);
 
             ZipFile.CreateFromDirectory(tempOutputPath, zipFilePath);
             logger.LogInformation("SDK generated and zipped at: {ZipFilePath}", zipFilePath);
 
-            // 5. 결과 반환 메시지 생성
             return CreateResultMessage(zipFileName, zipFilePath);
         }
         catch (Exception ex)
@@ -197,6 +201,12 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
         }
     }
 
+    /// <summary>
+    /// Creates a result message for the SDK generation, including download links for HTTP mode.
+    /// </summary>
+    /// <param name="zipFileName">The name of the generated ZIP file.</param>
+    /// <param name="localZipPath">The local path to the generated ZIP file.</param>
+    /// <returns>A formatted string message with download information.</returns>
     private string CreateResultMessage(string zipFileName, string localZipPath)
     {
         if (settings.IsHttpMode)
@@ -204,20 +214,15 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
             string relativePath = $"/download/{zipFileName}";
             string downloadUrl;
 
-            // 현재 요청(Request) 정보 가져오기
             var request = httpContextAccessor.HttpContext?.Request;
 
             if (request != null)
             {
-                // Local, Docker, Azure 모두 현재 접속된 Host(도메인+포트)를 기준으로 URL 생성
-                // 예: http://localhost:5222, https://myapp.azurecontainerapps.io 등
                 string baseUrl = $"{request.Scheme}://{request.Host}";
                 downloadUrl = $"{baseUrl}{relativePath}";
             }
             else
             {
-                // HttpContext가 없는 예외적인 경우 (Fallback)
-                // Azure나 Docker는 보통 포트 8080, 로컬은 5222 등 다양하므로 상대 경로만 제공
                 downloadUrl = relativePath;
             }
 
@@ -228,27 +233,19 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
         {
             string finalPath = localZipPath;
 
-            if (settings.IsContainer) // Docker Stdio 모드
+            if (settings.IsContainer)
             {
-                // 호스트 경로 환경 변수 읽기
-                // 예: "D:/KNU/3-2/CDP1/openapi-to-sdk"
                 string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
 
                 if (!string.IsNullOrEmpty(hostRootPath))
                 {
-                    // 1. 컨테이너 경로의 시작인 /app을 제외합니다.
-                    // finalPath = /app/workspace/...
                     string relativePathFromApp = finalPath.Substring("/app".Length).TrimStart('/');
 
-                    // 2. 호스트 경로의 끝에 있는 슬래시(/)나 역슬래시(\)를 정리합니다.
                     string hostPathNormalized = hostRootPath.TrimEnd('/', '\\');
 
-                    // 3. 크로스 플랫폼 호환성을 위해 최종 경로를 포워드 슬래시(/)로 연결합니다.
-                    // Path.Combine 대신 string concatenation을 사용하여 OS 종속성을 제거합니다.
                     finalPath = $"{hostPathNormalized}/{relativePathFromApp}";
                 }
             }
-            // Stdio 모드
             return $"SDK Generation Successful!\n\n" +
                    $"File Saved At: {localZipPath}\n\n" +
                    $"The file is currently in the workspace. Please check if this location is correct.\n" +
