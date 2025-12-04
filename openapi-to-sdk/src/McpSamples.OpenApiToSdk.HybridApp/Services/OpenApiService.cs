@@ -7,24 +7,6 @@ using Microsoft.Extensions.Logging;
 namespace McpSamples.OpenApiToSdk.HybridApp.Services;
 
 /// <summary>
-/// This provides interfaces for the OpenAPI service.
-/// </summary>
-public interface IOpenApiService
-{
-    /// <summary>
-    /// Generates a client SDK from an OpenAPI specification.
-    /// </summary>
-    /// <param name="specSource">The URL or local file path of the OpenAPI specification.</param>
-    /// <param name="language">The target programming language (e.g., CSharp, Python, Java, TypeScript).</param>
-    /// <param name="clientClassName">The name of the generated client class.</param>
-    /// <param name="namespaceName">The namespace for the generated code.</param>
-    /// <param name="additionalOptions">Additional Kiota command line options (e.g., --version).</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A message indicating the result of the SDK generation.</returns>
-    Task<string> GenerateSdkAsync(string specSource, string language, string? clientClassName, string? namespaceName, string? additionalOptions, CancellationToken cancellationToken = default);
-}
-
-/// <summary>
 /// This represents the service for generating client SDKs from OpenAPI specifications.
 /// </summary>
 /// <param name="settings"><see cref="OpenApiToSdkAppSettings"/> instance.</param>
