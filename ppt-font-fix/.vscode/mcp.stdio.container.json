@@ -1,4 +1,4 @@
-{
+{ 
   "servers": {
     "ppt-font-fix": {
       "type": "stdio",
@@ -7,7 +7,8 @@
         "run",
         "-i",
         "--rm",
-        "--name", "ppt-font-fix",
+        "-v", "${workspaceFolder}\\ppt-font-fix\\workspace:/files",
+        "-e", "HOST_ROOT_PATH=${workspaceFolder}\\ppt-font-fix",
         "ppt-font-fix:latest"
       ]
     }

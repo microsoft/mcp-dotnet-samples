@@ -16,4 +16,32 @@ public class PptFontFixAppSettings : AppSettings
         Version = "1.0.0",
         Description = "A simple MCP server for managing PPT font fixing."
     };
+
+    /// <summary>
+    /// The root path for the workspace.
+    /// </summary>
+    public string WorkspacePath { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The path for generated files.
+    /// </summary>
+    public string GeneratedPath { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// The path for specs files.
+    /// </summary>
+    public string SpecsPath { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Indicates whether the application is running in HTTP mode.
+    /// </summary>
+    public bool IsHttpMode { get; set; }
+    /// <summary>
+    /// Indicates whether the application is running in a containerized environment.
+    /// </summary>
+    public bool IsContainer { get; set; }
+    /// <summary>
+    /// Indicates whether the application is running in an Azure environment.
+    /// </summary>
+    public bool IsAzure { get; set; }
 }

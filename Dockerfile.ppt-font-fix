@@ -21,8 +21,8 @@ WORKDIR /app
 
 COPY --from=build /app .
 
-RUN mkdir -p /app/wwwroot/generated /files \
-    && chown -R $APP_UID:$APP_UID /app/wwwroot/generated /files \
+RUN mkdir -p /app/wwwroot/generated /app/workspace\
+    && chown -R $APP_UID:$APP_UID /app/wwwroot/generated /app/workspace \
     && chmod 755 /app/wwwroot/generated
 
 USER $APP_UID

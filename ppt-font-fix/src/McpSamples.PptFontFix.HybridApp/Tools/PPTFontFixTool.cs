@@ -15,12 +15,18 @@ namespace McpSamples.PptFontFix.HybridApp.Tools;
 
 public interface IPptFontFixTool
 {
-    /// <summary>
-    /// Opens and analyzes fonts in a specified PPT file.
+    ////// <summary>
+    /// Opens the specified PPT file and loads it into memory for subsequent analysis.
     /// </summary>
-    /// <param name="filePath">The path to be analyzed.</param>
+    /// <param name="filePath">The path to the PPT file.</param>
+    /// <returns>A string message indicating success or an action required instruction for the LLM.</returns>
+    Task<string> OpenPptFileAsync(string filePath); // 🚨 신규 Tool 추가
+
+    /// <summary>
+    /// Analyzes fonts in the file currently loaded in memory.
+    /// </summary>
     /// <returns>Returns <see cref="PptFontAnalyzeResult"/> instance.</returns>
-    Task<PptFontAnalyzeResult> AnalyzePptFileAsync(string filePath);
+    Task<PptFontAnalyzeResult> AnalyzeFontsAsync(); // 🚨 기존 AnalyzePptFileAsync를 AnalyzeFontsAsync로 변경
 
     /// <summary>
     /// Updates the PPT file by removing unused fonts, replacing inconsistent fonts, and saving to a new path.
@@ -42,17 +48,34 @@ public interface IPptFontFixTool
 [McpServerToolType]
 public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> logger) : IPptFontFixTool
 {
-    /// <inheritdoc />
-    [McpServerTool(Name = "analyze_ppt_file", Title = "Analyze PPT File Fonts")]
-    [Description("Opens a Ppt file AND analyzes fonts used, identifies inconsistencies.")]
-    public async Task<PptFontAnalyzeResult> AnalyzePptFileAsync(
+    // 🚨 신규 Tool: open_ppt_file 구현
+    [McpServerTool(Name = "open_ppt_file", Title = "Open PPT File")]
+    [Description("Opens a Ppt file and loads it into memory. Returns action instructions if the file cannot be accessed.")]
+    public async Task<string> OpenPptFileAsync(
         [Description("The path of the Ppt file to open and analyze")] string filePath)
+    {
+        // Service의 OpenPptFileAsync를 호출합니다. (이 메서드는 string?을 반환하도록 수정되었음)
+        string? actionRequiredMessage = await service.OpenPptFileAsync(filePath).ConfigureAwait(false);
+
+        if (!string.IsNullOrEmpty(actionRequiredMessage))
+        {
+            // Service가 string 메시지를 반환했으므로, 예외 없이 바로 반환합니다.
+            return actionRequiredMessage; 
+        }
+
+        // 성공 시:
+        logger.LogInformation("Ppt file opened successfully: {FilePath}", filePath);
+        return $"PPT file '{filePath}' successfully loaded into memory. You can now call the analyze_fonts tool.";
+    }
+
+
+    /// <inheritdoc />
+    [McpServerTool(Name = "analyze_fonts", Title = "Analyze Fonts")]
+    [Description("Analyzes fonts used in the PPT file currently loaded in memory, identifying inconsistencies.")]
+    public async Task<PptFontAnalyzeResult> AnalyzeFontsAsync() // 🚨 Tool 이름 변경
     {
         try
         {
-            await service.OpenPptFileAsync(filePath).ConfigureAwait(false);
-            logger.LogInformation("Ppt file opened successfully: {FilePath}", filePath);
-
             PptFontAnalyzeResult result = await service.AnalyzeFontsAsync().ConfigureAwait(false);
             if (result != null)
             {
@@ -66,9 +89,15 @@ public class PptFontFixTool(IPptFontFixService service, ILogger<PptFontFixTool> 
                 return new PptFontAnalyzeResult();
             }
         }
+        catch (InvalidOperationException ex)
+        {
+            // PPT 파일이 로드되지 않았을 때 (AnalyzeFontsAsync 내부에서 InvalidOperationException을 던질 경우)
+            logger.LogError(ex, "Analysis failed because the PPT file was not loaded.");
+            throw; 
+        }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed during Ppt file analysis process for: {FilePath}", filePath);
+            logger.LogError(ex, "Failed during font analysis process.");
             throw;
         }
     }

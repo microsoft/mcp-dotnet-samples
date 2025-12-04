@@ -1,8 +1,15 @@
 {
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "acaapp-server-fqdn",
+      "description": "Azure Container Apps FQDN"
+    }
+  ],
   "servers": {
     "ppt-font-fix": {
       "type": "http",
-      "url": "http://localhost:5166/mcp"
+      "url": "https://${input:acaapp-server-fqdn}/mcp"
     }
   }
 }
