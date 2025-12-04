@@ -94,7 +94,7 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                         string targetHostPath = $"workspace/specs/{fileName}";
 
                         // 도커 실행 시 주입된 HOST_ROOT_PATH 환경 변수 확인
-                        // 옵션: -e HOST_ROOT_PATH=${env:REPOSITORY_ROOT}/openapi-to-sdk
+                        // 옵션: -e HOST_ROOT_PATH=${workspaceFolder}/openapi-to-sdk
                         string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
 
                         if (!string.IsNullOrEmpty(hostRootPath))
