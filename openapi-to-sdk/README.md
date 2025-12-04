@@ -23,7 +23,7 @@ OpenAPI to SDK MCP server includes:
 | Building Block | Name           | Description                                                                                             | Usage                 |
 |----------------|----------------|---------------------------------------------------------------------------------------------------------|-----------------------|
 | Tools          | `generate_sdk` | Generates a client SDK from an OpenAPI specification (URL or raw content) and returns a download link.  | `#generate_sdk`       |
-| Prompts        | `generate_sdk` | A structured prompt that guides the LLM to generate an SDK, handling language normalization and inputs. | `/mcp.openapi-to-sdk.generate_sdk` |
+| Prompts        | `generate_sdk_prompt` | A structured prompt that guides the LLM to generate an SDK, handling language normalization and inputs. | `/mcp.openapi-to-sdk.generate_sdk_prompt` |
 
 ## Getting Started
 
@@ -222,50 +222,51 @@ OpenAPI to SDK MCP server includes:
 1. Use a prompt by typing `/mcp.openapi-to-sdk.generate_sdk` and enter keywords to search. You'll get a prompt like:
 
     ```text
-    You are an expert SDK generator using Microsoft Kiota.
+     You are an expert SDK generator using Microsoft Kiota.
 
-    1. User Input Analysis
-    - OpenAPI Source: "{openApiSource}"
-    - Target Language: "{language}"
-    - Configuration:
-        - Class Name: {className ?? "Default (ApiClient)"}
-        - Namespace: {namespaceName ?? "Default (ApiSdk)"}
-        - Options: {additionalOptions ?? "None"}
+        Your task is to generate a client SDK based on the following inputs:
+        - OpenAPI Source: `{specSource}`
+        - Target Language: `{language}`
+        - Configuration:
+            - Class Name: {clientClassName}
+            - Namespace: {namespaceName}
+            - Additional Options: {additionalOptions}
 
-    ---
-    2. Execution Strategy (Follow Strictly)
+        ---
+        ### Execution Rules (Follow Strictly)
 
-    Step 1: Validate & Normalize Language
-    Match the input to a valid Kiota identifier: [ CSharp, Go, Java, PHP, Python, Ruby, Shell, Swift, TypeScript ].
-    - If a match or alias is found (e.g., "ts" -> "TypeScript", "golang" -> "Go"), use the valid identifier.
-    - If NO match is found (e.g., "Rust", "C++", "asdf"), STOP immediately and ask the user to provide a supported language.
+        1. **Smart Language Normalization**:
+           The `generate_sdk` tool ONLY accepts the following language identifiers:
+           [ CSharp, Java, TypeScript, PHP, Python, Go, Ruby, Dart, HTTP ]
 
-    Step 2: Resolve OpenAPI Source (CRITICAL)
-    The 'generate_sdk' tool accepts either a URL or Raw Content, but NOT a file path.
-    Analyze the [OpenAPI Source] provided above:
-    
-    - CASE A: It is a URL (starts with http/https)
-        - Action: Pass the URL string directly to the `specSource` argument.
-    
-    - CASE B: It looks like a File Path (e.g., "C:\specs\api.json", "./swagger.yaml")
-        - Action: You MUST first read the content of this file using your available tools (e.g., `filesystem` tool).
-        - Then, pass the file content (JSON/YAML text) to the `specSource` argument.
-        - If you cannot read the file, ask the user to paste the content directly.
+           You MUST intelligently map the user's input to one of these valid identifiers.
+           
+           - **Handle Aliases & Variations**:
+             - "C#", "c#", ".NET", "dotnet", "chsarp" (typo) -> Use CSharp
+             - "TS", "Ts", "ts", "node", "typoscript" (typo) -> Use TypeScript
+             - "Golang", "Goo" (typo) -> Use Go
+             - "py", "pyton" (typo), "python3" -> Use Python
+             - "jav", "Jave" (typo) -> Use Java
+           
+           - **Auto-Correction**:
+             - If the user makes a minor typo or uses a common abbreviation, automatically correct it to the nearest valid identifier from the list above.
 
-    - CASE C: It is Raw JSON/YAML Content
-        - Action: Pass the content string directly to the `specSource` argument.
+           - **Validation**:
+             - If the input refers to a completely unsupported language (e.g., "Rust", "C++", "Assembly"), STOP and politely inform the user that it is not currently supported by Kiota.
 
-    Step 3: Call Tool
-    Call the `generate_sdk` tool with the prepared arguments:
-    - `language`: (The normalized identifier from Step 1)
-    - `specSource`: (The resolved URL or Content from Step 2)
-    - `className`: (As provided)
-    - `namespaceName`: (As provided)
-    - `additionalOptions`: (As provided)
+        2. **Handle Output Path**:
+           - The `generate_sdk` tool manages the output path internally to create a ZIP file.
+           - NEVER pass `-o` or `--output` in the `additionalOptions` argument, even if the user asks to save it to a specific location (e.g., "Generate to D:/Work").
+           - Instead, follow this workflow:
+             1. Call `generate_sdk` WITHOUT the output path option.
+             2. Once the tool returns the ZIP file path (or download link), tell the user: "I have generated the SDK. Would you like me to move/extract it to [User's Requested Path]?"
+             3. If the user agrees, use your filesystem tools to move the file.
 
-    Step 4: Report Results
-    - If a download link is returned, display it clearly.
-    - If a local path is returned, provide the path.
+        3. **Call the Tool**:
+           Use the `generate_sdk` tool with the normalized language and filtered options (excluding -o).
+           
+        4. **Report**:
+           Provide the download link or file path returned by the tool.
     ```
 
 1. Confirm the result.
