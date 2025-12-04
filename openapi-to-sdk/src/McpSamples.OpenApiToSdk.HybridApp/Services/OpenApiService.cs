@@ -94,11 +94,9 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                         Please execute the appropriate command for your operating system (OS) using your terminal or shell tool:
 
                         ### macOS & Linux
-
                         curl -F "file=@{specSource}" {uploadUrl}
 
                         ### Windows (PowerShell/CMD)
-
                         curl.exe -F "file=@{specSource}" {uploadUrl}
 
                         After the command completes successfully, please call this `generate_sdk` tool again.
@@ -246,8 +244,8 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                     finalPath = $"{hostPathNormalized}/{relativePathFromApp}";
                 }
             }
-            return $"SDK Generation Successful!\n\n" +
-                   $"File Saved At: {localZipPath}\n\n" +
+            return $"SDK Generation Successful!\n" +
+                   $"File Saved At: {localZipPath}\n" +
                    $"The file is currently in the workspace. Please check if this location is correct.\n" +
                    $"If the user wants the file elsewhere, please move it to the desired destination.";
         }
