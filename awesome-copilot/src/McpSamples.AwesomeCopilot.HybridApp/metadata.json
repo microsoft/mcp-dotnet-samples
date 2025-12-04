@@ -1304,6 +1304,20 @@
       ]
     },
     {
+      "filename": "convert-plaintext-to-md.prompt.md",
+      "agent": "agent",
+      "description": "Convert a text-based document to markdown following instructions from prompt, or if a documented option is passed, follow the instructions for that option.",
+      "tools": [
+        "edit",
+        "edit/editFiles",
+        "fetch",
+        "runCommands",
+        "search",
+        "search/readFile",
+        "search/textSearch"
+      ]
+    },
+    {
       "filename": "copilot-instructions-blueprint-generator.prompt.md",
       "description": "Technology-agnostic blueprint generator for creating comprehensive copilot-instructions.md files that guide GitHub Copilot to produce code consistent with project standards, architecture patterns, and exact technology versions by analyzing existing codebase patterns and avoiding assumptions.",
       "agent": "agent"
@@ -3043,6 +3057,10 @@
         },
         {
           "path": "agents/pagerduty-incident-responder.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/comet-opik.agent.md",
           "kind": "agent"
         }
       ],
