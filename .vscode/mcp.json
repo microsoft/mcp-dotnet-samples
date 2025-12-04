@@ -1,19 +1,17 @@
 {
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "consoleapp-project-path",
-      "description": "The absolute path to the console app project Directory"
-    }
-  ],
   "servers": {
     "openapi-to-sdk": {
       "type": "stdio",
-      "command": "dotnet",
+      "command": "docker",
       "args": [
         "run",
-        "--project",
-        "${input:consoleapp-project-path}"
+        "-i",
+        "--rm",
+        "-v",
+        "${workspaceFolder}/openapi-to-sdk/workspace:/app/workspace",
+        "-e",
+        "HOST_ROOT_PATH=${workspaceFolder}/openapi-to-sdk",
+        "openapi-to-sdk:latest"
       ]
     }
   }

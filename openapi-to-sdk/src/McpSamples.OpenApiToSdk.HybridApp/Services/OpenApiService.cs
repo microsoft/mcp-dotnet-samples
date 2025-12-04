@@ -1,257 +1,258 @@
 using System.Diagnostics;
 using System.IO.Compression;
-using McpSamples.OpenApiToSdk.HybridApp.Models;
+using McpSamples.OpenApiToSdk.HybridApp.Configurations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace McpSamples.OpenApiToSdk.HybridApp.Services;
 
-/// <summary>
-/// This represents the service entity for OpenAPI operations. It handles downloading OpenAPI specifications,
-/// generating SDKs using Kiota, and managing temporary files.
-/// </summary>
-/// <param name="httpClient">An <see cref="HttpClient"/> instance for making HTTP requests.</param>
-/// <param name="logger">An <see cref="ILogger{TCategoryName}"/> instance for logging.</param>
-/// <param name="httpContextAccessor">An <see cref="IHttpContextAccessor"/> to access the current HTTP context (optional).</param>
-public class OpenApiService(
-    HttpClient httpClient,
-    ILogger<OpenApiService> logger,
-    IHttpContextAccessor? httpContextAccessor = null) : IOpenApiService
+public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccessor httpContextAccessor, ILogger<OpenApiService> logger) : IOpenApiService
 {
-    /// <inheritdoc />
-    public async Task<OpenApiToSdkResult> GenerateSdkAsync(
-            string specSource,
-            string language,
-            string? className = null,
-            string? namespaceName = null,
-            string? additionalOptions = null)
+    public async Task<string> GenerateSdkAsync(string specSource, string language, string? clientClassName, string? namespaceName, string? additionalOptions, CancellationToken cancellationToken = default)
     {
-        CleanupOldFiles();
+        // 0. 기본값 설정 및 옵션 처리
+        if (string.IsNullOrWhiteSpace(specSource))
+            throw new ArgumentException("Spec source cannot be empty.", nameof(specSource));
+        var finalClassName = string.IsNullOrWhiteSpace(clientClassName) ? "ApiClient" : clientClassName;
+        var finalNamespace = string.IsNullOrWhiteSpace(namespaceName) ? "ApiSdk" : namespaceName;
+        var finalOptions = additionalOptions ?? string.Empty;
 
-        var result = new OpenApiToSdkResult();
-        string kiotaInputPath;
-        string? tempInputFile = null;
-        var tempGenDir = Path.Combine(Path.GetTempPath(), "kiota_gen_" + Guid.NewGuid());
-
-        try
+        if (finalOptions.Contains("-o ") || finalOptions.Contains("--output "))
         {
-            // Auto-detects if the source is a URL or raw content.
-            if (IsUrl(specSource))
-            {
-                // If it's a URL, pass it directly to Kiota.
-                kiotaInputPath = specSource;
-                logger.LogInformation("Detected URL input: {Url}", specSource);
-            }
-            else
-            {
-                // If it's raw content, save it to a temporary file and pass the path.
-                tempInputFile = await CreateTempFileFromContentAsync(specSource);
-                kiotaInputPath = tempInputFile;
-                logger.LogInformation("Detected raw content input. Created temp file: {Path}", tempInputFile);
-            }
-
-            var optionsList = new List<string>();
-            if (!string.IsNullOrWhiteSpace(className))
-            {
-                optionsList.Add($"--class-name \"{className}\"");
-            }
-            if (!string.IsNullOrWhiteSpace(namespaceName))
-            {
-                optionsList.Add($"--namespace-name \"{namespaceName}\"");
-            }
-            if (!string.IsNullOrWhiteSpace(additionalOptions))
-            {
-                optionsList.Add(additionalOptions);
-            }
-
-            var combinedOptions = string.Join(" ", optionsList);
-
-            Directory.CreateDirectory(tempGenDir);
-            var kiotaError = await RunKiotaAsync(kiotaInputPath, language, tempGenDir, combinedOptions);
-
-            if (!string.IsNullOrEmpty(kiotaError))
-            {
-                result.ErrorMessage = kiotaError;
-                return result;
-            }
-
-            var webRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            var outputDir = Path.Combine(webRootPath, "generated");
-            Directory.CreateDirectory(outputDir);
-
-            var fileName = $"{language}-{DateTime.Now:yyyyMMddHHmmss}-{Guid.NewGuid().ToString()[..6]}.zip";
-            var finalZipPath = Path.Combine(outputDir, fileName);
-
-            ZipFile.CreateFromDirectory(tempGenDir, finalZipPath);
-
-            result.ServerFilePath = finalZipPath;
-            var request = httpContextAccessor?.HttpContext?.Request;
-
-            if (request != null)
-            {
-                var baseUrl = $"{request.Scheme}://{request.Host}";
-                result.ZipPath = $"{baseUrl}/generated/{fileName}";
-                result.Message = $"SDK generation successful. Download link: {result.ZipPath}";
-            }
-            else
-            {
-                var fileUri = "file:///" + finalZipPath.Replace("\\", "/").TrimStart('/');
-                result.ZipPath = fileUri;
-                result.Message = $"SDK generation successful! File Location: {fileUri}";
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error during SDK generation workflow.");
-            result.ErrorMessage = ex.Message;
-        }
-        finally
-        {
-            CleanupTempResources(tempInputFile, tempGenDir);
+            // -o 옵션 또는 --output 옵션이 포함된 경우 에러로 반환하여 에이전트에게 "옵션 빼고 다시 요청해"라고 가르침 (방어 코드)
+            return """
+            Input Error: Invalid Option Detected
+            
+            Please DO NOT include the `-o` or `--output` option in 'additionalOptions'.
+            The output path is managed automatically by the server.
+            
+            If you want to save the file to a specific location, please generate it first, and then move the resulting ZIP file to your desired destination.
+            """;
         }
 
-        return result;
-    }
+        // 1. 입력 소스 판별 (URL vs 파일 경로)
+        string inputPath;
+        bool isUrl = Uri.TryCreate(specSource, UriKind.Absolute, out var uriResult)
+                     && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
-    /// <summary>
-    /// Determines if the given string is an absolute URL.
-    /// </summary>
-    /// <param name="input">The string to check.</param>
-    /// <returns><c>true</c> if the input is a valid HTTP or HTTPS URL; otherwise, <c>false</c>.</returns>
-    private bool IsUrl(string input)
-    {
-        return Uri.TryCreate(input, UriKind.Absolute, out var uriResult)
-            && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-    }
-
-    /// <summary>
-    /// Deletes old generated SDK files from the output directory to save space.
-    /// </summary>
-    private void CleanupOldFiles()
-    {
-        try
+        if (isUrl)
         {
-            var webRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            var outputDir = Path.Combine(webRootPath, "generated");
-
-            if (Directory.Exists(outputDir))
+            inputPath = specSource;
+            logger.LogInformation("Input is a URL: {InputPath}", inputPath);
+        }
+        else
+        {
+            if (settings.IsContainer || settings.IsAzure)
             {
-                var files = Directory.GetFiles(outputDir);
-                foreach (var file in files)
+                // 컨테이너/Azure 환경에서는 마운트된 볼륨의 specs 폴더를 확인합니다.
+                // 리눅스 컨테이너에서 윈도우 경로(\)가 들어올 경우를 대비해 파일명만 확실하게 추출합니다.
+                string fileName = Path.GetFileName(specSource);
+                if (fileName.Contains('\\'))
                 {
-                    if (DateTime.Now - File.GetCreationTime(file) > TimeSpan.FromHours(1))
+                    fileName = fileName.Split('\\').Last();
+                }
+
+                inputPath = Path.Combine(settings.SpecsPath, fileName);
+
+                // 2. 파일이 마운트된 경로에 없으면 에이전트에게 복사를 요청합니다. (에러 처리 X)
+                if (!File.Exists(inputPath))
+                {
+                    if (settings.IsAzure) // [수정] Azure 환경 처리: HTTP 업로드 안내
                     {
-                        try { File.Delete(file); }
-                        catch
+                        // 현재 서버의 업로드 URL 계산
+                        string uploadUrl = "/upload"; // Fallback
+                        var request = httpContextAccessor.HttpContext?.Request;
+                        if (request != null)
                         {
-                            // Ignored
+                            // 예: https://myapp.azurecontainerapps.io/upload
+                            uploadUrl = $"{request.Scheme}://{request.Host}/upload";
                         }
+
+                        // Agent에게 'curl' 명령어를 실행하라고 지시
+                        return $"""
+                        Action Required: File Upload Needed (Azure)
+
+                        I am running in an Azure environment and cannot access your local file `{specSource}` directly.
+                        To proceed, you need to upload the file to the server.
+
+                        Please execute the appropriate command for your operating system (OS) using your terminal or shell tool:
+
+                        ### macOS & Linux
+
+                        curl -F "file=@{specSource}" {uploadUrl}
+
+                        ### Windows (PowerShell/CMD)
+
+                        curl.exe -F "file=@{specSource}" {uploadUrl}
+
+                        After the command completes successfully, please call this `generate_sdk` tool again.
+                        """;
+                    }
+                    if (settings.IsContainer)
+                    {
+                        // 기본 안내 경로 (환경변수 누락 시 대비)
+                        string targetHostPath = $"workspace/specs/{fileName}";
+
+                        // 도커 실행 시 주입된 HOST_ROOT_PATH 환경 변수 확인
+                        // 옵션: -e HOST_ROOT_PATH=${env:REPOSITORY_ROOT}/openapi-to-sdk
+                        string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
+
+                        if (!string.IsNullOrEmpty(hostRootPath))
+                        {
+                            // 1. 경로 정규화: 윈도우(\)와 리눅스(/) 구분자를 모두 포워드 슬래시('/')로 통일
+                            string normalizedHostRoot = hostRootPath.Replace('\\', '/').TrimEnd('/');
+
+                            // 2. 최종 호스트 타겟 경로 조립
+                            // 예: D:/Projects/openapi-to-sdk/workspace/specs/petstore.json
+                            targetHostPath = $"{normalizedHostRoot}/workspace/specs/{fileName}";
+                        }
+
+                        // 에러가 아닌 '조치 요청' 메시지 반환
+                        return $"""
+                        Action Required: File Synchronization Needed
+
+                        The file '{fileName}' is not currently in the shared volume visible to the container.
+                        To proceed with SDK generation, I need access to this file.
+
+                        EXECUTION PLAN (Follow Strictly):
+                        1. COPY the file from `{specSource}` to `{targetHostPath}`.
+                        2. RETRY the `generate_sdk` tool immediately with the same arguments.
+                        """;
                     }
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning("Failed to clean up old generated files: {Message}", ex.Message);
-        }
-    }
-
-    /// <summary>
-    /// Cleans up temporary files and directories created during SDK generation.
-    /// </summary>
-    /// <param name="tempFile">The path to the temporary input file to delete.</param>
-    /// <param name="tempDir">The path to the temporary generation directory to delete.</param>
-    private void CleanupTempResources(string? tempFile, string tempDir)
-    {
-        if (tempFile != null && File.Exists(tempFile))
-        {
-            try { File.Delete(tempFile); }
-            catch (Exception ex) { logger.LogWarning("Failed to delete temp file: {Message}", ex.Message); }
+            else
+            {
+                inputPath = specSource;
+                if (!File.Exists(inputPath))
+                {
+                    var errorMsg = $"[Error] Local file not found: {inputPath}";
+                    logger.LogError(errorMsg);
+                    return errorMsg;
+                }
+            }
+            logger.LogInformation("Input is a File: {InputPath}", inputPath);
         }
 
-        if (Directory.Exists(tempDir))
-        {
-            try { Directory.Delete(tempDir, true); }
-            catch (Exception ex) { logger.LogWarning("Failed to delete temp dir: {Message}", ex.Message); }
-        }
-    }
+        // 2. 임시 출력 폴더 생성
+        string outputId = Guid.NewGuid().ToString();
+        string tempOutputPath = Path.Combine(settings.GeneratedPath, outputId);
+        Directory.CreateDirectory(tempOutputPath);
 
-    /// <summary>
-    /// Creates a temporary JSON file from a string content.
-    /// </summary>
-    /// <param name="content">The string content to write to the file.</param>
-    /// <returns>The path to the newly created temporary file.</returns>
-    private async Task<string> CreateTempFileFromContentAsync(string content)
-    {
-        var tempPath = Path.GetTempFileName();
-        var jsonPath = Path.ChangeExtension(tempPath, ".json");
-        if (File.Exists(tempPath))
-        {
-            File.Move(tempPath, jsonPath, true);
-        }
-        await File.WriteAllTextAsync(jsonPath, content);
-        return jsonPath;
-    }
-
-    /// <inheritdoc />
-    public async Task<string> DownloadOpenApiSpecAsync(string openApiUrl, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(openApiUrl))
-        {
-            throw new ArgumentException("URL is required.", nameof(openApiUrl));
-        }
-        var response = await httpClient.GetAsync(openApiUrl, cancellationToken).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public async Task<string?> RunKiotaAsync(string openApiSpecPath, string language, string outputDir, string? additionalOptions = null)
-    {
         try
         {
-            var arguments = $"generate -l {language} -d \"{openApiSpecPath}\" -o \"{outputDir}\" {additionalOptions}";
+            // 3. Kiota 실행
+            // additionalOptions가 포함된 Arguments 구성
+            logger.LogInformation("Starting Kiota generation...");
 
             var startInfo = new ProcessStartInfo
             {
                 FileName = "kiota",
-                Arguments = arguments,
+                Arguments = $"generate -l {language} -c {finalClassName} -n {finalNamespace} -d \"{inputPath}\" -o \"{tempOutputPath}\" {finalOptions}",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
 
-            logger.LogInformation("Running Kiota: kiota {Arguments}", arguments);
-
             using var process = new Process { StartInfo = startInfo };
             process.Start();
+            await process.WaitForExitAsync(cancellationToken);
 
-            var timeout = TimeSpan.FromMinutes(5);
-            var exitTask = process.WaitForExitAsync();
+            if (process.ExitCode != 0)
+            {
+                string error = await process.StandardError.ReadToEndAsync(cancellationToken);
+                logger.LogError("Kiota generation failed: {Error}", error);
+                return $"[Error] Kiota generation failed:\n{error}";
+            }
 
-            if (await Task.WhenAny(exitTask, Task.Delay(timeout)).ConfigureAwait(false) == exitTask)
-            {
-                if (process.ExitCode != 0)
-                {
-                    var error = await process.StandardError.ReadToEndAsync();
-                    return $"Kiota error: {error}";
-                }
-                return null;
-            }
-            else
-            {
-                try { process.Kill(entireProcessTree: true); }
-                catch
-                {
-                    // Ignored
-                }
-                return "Kiota execution timed out.";
-            }
+            // 4. Zip 압축
+            string zipFileName = $"sdk-{language}-{outputId.Substring(0, 4)}.zip";
+            string zipFilePath = Path.Combine(settings.GeneratedPath, zipFileName);
+
+            ZipFile.CreateFromDirectory(tempOutputPath, zipFilePath);
+            logger.LogInformation("SDK generated and zipped at: {ZipFilePath}", zipFilePath);
+
+            // 5. 결과 반환 메시지 생성
+            return CreateResultMessage(zipFileName, zipFilePath);
         }
         catch (Exception ex)
         {
-            return $"Kiota exception: {ex.Message}";
+            logger.LogError(ex, "An unexpected error occurred during SDK generation.");
+            return $"[Error] An unexpected error occurred: {ex.Message}";
+        }
+        finally
+        {
+            if (Directory.Exists(tempOutputPath))
+            {
+                try
+                {
+                    Directory.Delete(tempOutputPath, true);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed to clean up temp directory: {TempPath}", tempOutputPath);
+                }
+            }
+        }
+    }
+
+    private string CreateResultMessage(string zipFileName, string localZipPath)
+    {
+        if (settings.IsHttpMode)
+        {
+            string relativePath = $"/download/{zipFileName}";
+            string downloadUrl;
+
+            // 현재 요청(Request) 정보 가져오기
+            var request = httpContextAccessor.HttpContext?.Request;
+
+            if (request != null)
+            {
+                // Local, Docker, Azure 모두 현재 접속된 Host(도메인+포트)를 기준으로 URL 생성
+                // 예: http://localhost:5222, https://myapp.azurecontainerapps.io 등
+                string baseUrl = $"{request.Scheme}://{request.Host}";
+                downloadUrl = $"{baseUrl}{relativePath}";
+            }
+            else
+            {
+                // HttpContext가 없는 예외적인 경우 (Fallback)
+                // Azure나 Docker는 보통 포트 8080, 로컬은 5222 등 다양하므로 상대 경로만 제공
+                downloadUrl = relativePath;
+            }
+
+            return $"✅ SDK Generation Successful!\n\n" +
+                   $"Download Link: {downloadUrl}";
+        }
+        else
+        {
+            string finalPath = localZipPath;
+
+            if (settings.IsContainer) // Docker Stdio 모드
+            {
+                // 호스트 경로 환경 변수 읽기
+                // 예: "D:/KNU/3-2/CDP1/openapi-to-sdk"
+                string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
+
+                if (!string.IsNullOrEmpty(hostRootPath))
+                {
+                    // 1. 컨테이너 경로의 시작인 /app을 제외합니다.
+                    // finalPath = /app/workspace/...
+                    string relativePathFromApp = finalPath.Substring("/app".Length).TrimStart('/');
+
+                    // 2. 호스트 경로의 끝에 있는 슬래시(/)나 역슬래시(\)를 정리합니다.
+                    string hostPathNormalized = hostRootPath.TrimEnd('/', '\\');
+
+                    // 3. 크로스 플랫폼 호환성을 위해 최종 경로를 포워드 슬래시(/)로 연결합니다.
+                    // Path.Combine 대신 string concatenation을 사용하여 OS 종속성을 제거합니다.
+                    finalPath = $"{hostPathNormalized}/{relativePathFromApp}";
+                }
+            }
+            // Stdio 모드
+            return $"SDK Generation Successful!\n\n" +
+                   $"File Saved At: {localZipPath}\n\n" +
+                   $"The file is currently in the workspace. Please check if this location is correct.\n" +
+                   $"If the user wants the file elsewhere, please move it to the desired destination.";
         }
     }
 }
