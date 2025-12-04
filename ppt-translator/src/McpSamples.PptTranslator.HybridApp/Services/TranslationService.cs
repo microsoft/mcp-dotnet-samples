@@ -5,25 +5,43 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Azure.Storage.Blobs;
-using Azure.Storage.Sas;
-using Azure.Storage.Blobs.Specialized;
 using Microsoft.Extensions.Configuration;
-using Azure.Storage.Sas;
 
 namespace McpSamples.PptTranslator.HybridApp.Services
 {
+    /// <summary>
+    /// Service for translating extracted text using OpenAI API.
+    /// </summary>
     public interface ITranslationService
     {
+        /// <summary>
+        /// Translates text content from JSON format using OpenAI's language model.
+        /// </summary>
+        /// <param name="extractedJsonPath">Path to JSON file containing extracted text</param>
+        /// <param name="targetLang">Target language code (e.g., 'ko', 'en', 'ja')</param>
+        /// <returns>Path to translated JSON file</returns>
         Task<string> TranslateJsonFileAsync(string extractedJsonPath, string targetLang);
     }
 
+    /// <summary>
+    /// Default implementation using OpenAI Chat Completions API for translation.
+    /// Supports both local and Azure environments with configurable endpoints.
+    /// </summary>
+    /// <remarks>
+    /// OpenAI Chat Completions API를 사용한 번역 서비스 기본 구현.
+    /// 로컬 및 Azure 환경에서 설정 가능한 엔드포인트를 지원합니다.
+    /// </remarks>
     public class TranslationService : ITranslationService
     {
         private readonly ILogger<TranslationService> _logger;
         private readonly IConfiguration _config;
         private readonly HttpClient _http = new();
-        private readonly BlobServiceClient? _blobServiceClient;
+
+        private readonly bool _isAzure =
+            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME"));
+
+        private const string AzureInputMount = "/mnt/storage/input";
+        private const string AzureOutputMount = "/mnt/storage/output";
 
         public TranslationService(
             ILogger<TranslationService> logger,
@@ -32,177 +50,176 @@ namespace McpSamples.PptTranslator.HybridApp.Services
             _logger = logger;
             _config = config;
             _http.Timeout = TimeSpan.FromSeconds(300);
-
-            string? conn = config["AzureBlobConnectionString"];
-            if (!string.IsNullOrWhiteSpace(conn))
-                _blobServiceClient = new BlobServiceClient(conn);
         }
 
         public async Task<string> TranslateJsonFileAsync(string extractedJsonPath, string targetLang)
         {
             _logger.LogInformation("[STEP 2] Sending translation request.");
 
-            // ============================================================
-            // ① Blob URL or local JSON 파일 읽기
-            // ============================================================
-            string extractedJson;
-
-            if (IsBlobUrl(extractedJsonPath))
+            // =======================================================
+            // Azure 모드 → temp 사용 금지 / mount에서 바로 읽기
+            // =======================================================
+            if (_isAzure)
             {
-                if (_blobServiceClient == null)
-                    throw new InvalidOperationException("Blob URL을 처리할 수 없습니다. AzureBlobConnectionString 없음.");
+                string jsonFileName = Path.GetFileName(extractedJsonPath);
+                string fullPath = Path.Combine(AzureInputMount, jsonFileName);
 
-                _logger.LogInformation("[Blob] Extracted JSON 다운로드: {Url}", extractedJsonPath);
-                extractedJson = await DownloadBlobAsString(extractedJsonPath);
+                if (!File.Exists(fullPath))
+                    throw new FileNotFoundException("Azure JSON not found in input mount.", fullPath);
+
+                string extractedJson = await File.ReadAllTextAsync(fullPath);
+
+                // Prompt 불러오기
+                string promptPath = Path.Combine(AppContext.BaseDirectory, "Prompts", "translation_prompt.txt");
+                string promptText = await File.ReadAllTextAsync(promptPath);
+
+                string prompt =
+                    promptText +
+                    $"\n\nTARGET_LANG={targetLang}\n\n" +
+                    extractedJson;
+
+                string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
+                    ?? throw new Exception("OPENAI_API_KEY not set.");
+
+                string model = Environment.GetEnvironmentVariable("OPENAI_MODEL") ?? "gpt-5-nano";
+                string endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT")
+                    ?? "https://api.openai.com/v1/chat/completions";
+
+                var body = new
+                {
+                    model,
+                    messages = new[] { new { role = "user", content = prompt } }
+                };
+
+                var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+                _http.DefaultRequestHeaders.Clear();
+                _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+
+                HttpResponseMessage res = await _http.PostAsync(endpoint, content);
+                string raw = await res.Content.ReadAsStringAsync();
+
+                if (!res.IsSuccessStatusCode)
+                    throw new Exception($"Translation failed: {res.StatusCode}");
+
+                string translated =
+                    JsonDocument.Parse(raw)
+                        .RootElement.GetProperty("choices")[0]
+                        .GetProperty("message")
+                        .GetProperty("content")
+                        .GetString()
+                    ?? throw new Exception("LLM returned empty content.");
+
+                // 저장 경로: mount output
+                Directory.CreateDirectory(AzureOutputMount);
+                string outputFile = $"{Guid.NewGuid():N}_translated_{targetLang}.json";
+                string outputPath = Path.Combine(AzureOutputMount, outputFile);
+
+                await File.WriteAllTextAsync(outputPath, translated);
+
+                _logger.LogInformation("[Azure] 번역 JSON 저장: {Path}", outputPath);
+
+                // 반환: 파일 이름만 넘김 (다음 단계에서 ID로 사용됨)
+                return outputFile;
             }
-            else
-            {
-                if (!File.Exists(extractedJsonPath))
-                    throw new FileNotFoundException("Extracted JSON not found.", extractedJsonPath);
 
-                extractedJson = await File.ReadAllTextAsync(extractedJsonPath);
-            }
 
-            // ============================================================
-            // ② Prompt 로드
-            // ============================================================
-            string promptPath = Path.Combine(AppContext.BaseDirectory, "Prompts", "translation_prompt.txt");
+            // =======================================================
+            // Local 모드 (STDIO / HTTP / DOCKER LOCAL) → 기존 로직 유지
+            // =======================================================
+            extractedJsonPath = ResolveToTemp(extractedJsonPath);
 
-            if (!File.Exists(promptPath))
-                throw new FileNotFoundException($"Prompt file not found: {promptPath}");
+            if (!File.Exists(extractedJsonPath))
+                throw new FileNotFoundException("Extracted JSON not found.", extractedJsonPath);
 
-            string promptText = await File.ReadAllTextAsync(promptPath);
+            string localJson = await File.ReadAllTextAsync(extractedJsonPath);
 
-            string prompt =
-                promptText +
+            string localPromptPath = Path.Combine(AppContext.BaseDirectory, "Prompts", "translation_prompt.txt");
+            string localPromptText = await File.ReadAllTextAsync(localPromptPath);
+
+            string merged =
+                localPromptText +
                 $"\n\nTARGET_LANG={targetLang}\n\n" +
-                extractedJson;
+                localJson;
 
-            // ============================================================
-            // ③ LLM 요청 준비
-            // ============================================================
-            string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
+            string localApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
                 ?? throw new Exception("OPENAI_API_KEY not set.");
 
-            string model = Environment.GetEnvironmentVariable("OPENAI_MODEL") ?? "gpt-5-nano";
-            string endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT")
+            string localModel = Environment.GetEnvironmentVariable("OPENAI_MODEL") ?? "gpt-5-nano";
+            string localEndpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT")
                 ?? "https://api.openai.com/v1/chat/completions";
 
-            var body = new
+            var localBody = new
             {
-                model,
-                messages = new[] { new { role = "user", content = prompt } }
+                model = localModel,
+                messages = new[] { new { role = "user", content = merged } }
             };
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var localContent = new StringContent(JsonSerializer.Serialize(localBody), Encoding.UTF8, "application/json");
 
             _http.DefaultRequestHeaders.Clear();
-            _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {localApiKey}");
 
-            HttpResponseMessage res = await _http.PostAsync(endpoint, content);
-            string raw = await res.Content.ReadAsStringAsync();
+            HttpResponseMessage localRes = await _http.PostAsync(localEndpoint, localContent);
+            string localRaw = await localRes.Content.ReadAsStringAsync();
 
-            if (!res.IsSuccessStatusCode)
+            _logger.LogInformation("[OpenAI Response] Status: {Status}, Body: {Body}", 
+                localRes.StatusCode, localRaw);
+
+            if (!localRes.IsSuccessStatusCode)
             {
-                _logger.LogError("[ERROR] LLM response failed: {Status} / {Body}", res.StatusCode, raw);
-                throw new Exception($"Translation failed: {res.StatusCode}");
+                throw new Exception($"OpenAI API failed: {localRes.StatusCode}, Body: {localRaw}");
             }
 
-            using var doc = JsonDocument.Parse(raw);
-
-            string translated = 
-                doc.RootElement.GetProperty("choices")[0]
+            string localTranslated =
+                JsonDocument.Parse(localRaw)
+                    .RootElement.GetProperty("choices")[0]
                     .GetProperty("message")
                     .GetProperty("content")
                     .GetString()
                 ?? throw new Exception("LLM returned empty content.");
 
-            // ============================================================
-            // ④ 파일 이름 정의
-            // ============================================================
-            string fileName = "translated.json";
+            string localOutput = CreateTempJson(localTranslated);
 
-            // ============================================================
-            // ⑤ Blob 업로드 우선 시도
-            // ============================================================
-            if (_blobServiceClient != null)
-            {
-                try
-                {
-                    _logger.LogInformation("[Azure] 번역 JSON Blob Upload 시작");
-
-                    var container = _blobServiceClient.GetBlobContainerClient("generated-files");
-                    await container.CreateIfNotExistsAsync();
-
-                    var blob = container.GetBlobClient(fileName);
-
-                    using var uploadStream = new MemoryStream(Encoding.UTF8.GetBytes(translated));
-
-                    await blob.UploadAsync(uploadStream, overwrite: true);
-
-                    var sasBuilder = new BlobSasBuilder()
-                    {
-                        BlobContainerName = "generated-files",
-                        BlobName = fileName,
-                        ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
-                    };
-                    sasBuilder.SetPermissions(BlobSasPermissions.Read);
-
-                    Uri sasUrl = blob.GenerateSasUri(sasBuilder);
-
-                    _logger.LogInformation("[Azure] 번역 JSON 업로드 성공: {Url}", sasUrl);
-
-                    return sasUrl.ToString();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "[Azure] 업로드 실패 → 로컬 fallback");
-                }
-            }
-
-            // ============================================================
-            // ⑥ Blob 저장 실패 시 로컬 fallback
-            // ============================================================
-            string localOutput = Path.Combine(
-                Path.GetDirectoryName(extractedJsonPath) ?? ".",
-                fileName
-            );
-
-            await File.WriteAllTextAsync(localOutput, translated, Encoding.UTF8);
-
-            _logger.LogInformation("[Local] 번역 JSON 저장: {Path}", localOutput);
+            _logger.LogInformation("[Local] 번역 JSON 저장(temp): {Path}", localOutput);
 
             return localOutput;
         }
 
-        // ============================================================
-        // Helper: Blob URL 체크
-        // ============================================================
-        private bool IsBlobUrl(string path)
+
+        // =======================================================
+        // Local 전용 temp 로직 (그대로 유지)
+        // =======================================================
+        private static readonly string UploadRoot =
+            Path.Combine(Path.GetTempPath(), "mcp-uploads");
+
+        private string ResolveToTemp(string path)
         {
-            return Uri.TryCreate(path, UriKind.Absolute, out var uri)
-                   && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+            Directory.CreateDirectory(UploadRoot);
+
+            if (path.StartsWith("temp:", StringComparison.OrdinalIgnoreCase))
+            {
+                string id = path.Substring(5);
+                return Path.Combine(UploadRoot, id);
+            }
+
+            if (File.Exists(path))
+            {
+                string id = Guid.NewGuid().ToString("N");
+                string dst = Path.Combine(UploadRoot, id);
+                File.Copy(path, dst, overwrite: true);
+                return dst;
+            }
+
+            throw new InvalidOperationException("Invalid file path. File must exist or start with temp:{id}");
         }
 
-        // ============================================================
-        // Helper: Blob -> JSON string 다운로드
-        // ============================================================
-        private async Task<string> DownloadBlobAsString(string blobUrl)
+        private string CreateTempJson(string json)
         {
-            var uri = new Uri(blobUrl);
-
-            string containerName = uri.Segments[1].Trim('/');
-            string blobName = string.Join("", uri.Segments[2..]);
-
-            var container = _blobServiceClient!.GetBlobContainerClient(containerName);
-            var blob = container.GetBlobClient(blobName);
-
-            if (!await blob.ExistsAsync())
-                throw new FileNotFoundException($"Blob not found: {containerName}/{blobName}");
-
-            using var ms = new MemoryStream();
-            await blob.DownloadToAsync(ms);
-            return Encoding.UTF8.GetString(ms.ToArray());
+            string id = Guid.NewGuid().ToString("N");
+            string dst = Path.Combine(UploadRoot, id);
+            File.WriteAllText(dst, json);
+            return dst;
         }
     }
 }

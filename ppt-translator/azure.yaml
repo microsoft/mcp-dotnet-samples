@@ -2,15 +2,19 @@
 
 name: ppt-translator
 
-metadata:
-  template: azd-init@1.14.0
-
 services:
   ppt-translator:
     project: src/McpSamples.PptTranslator.HybridApp
-    host: containerapp
     language: dotnet
+    host: containerapp
     docker:
       path: ../../../Dockerfile.ppt-translator-azure
       context: ../../../
       remoteBuild: true
+
+infra:
+  path: infra
+  parameters:
+    openAiApiKey:
+      type: secret
+      value: ${OPENAI_API_KEY}

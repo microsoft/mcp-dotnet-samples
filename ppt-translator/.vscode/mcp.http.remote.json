@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "ppt-translator-azure-fqdn",
+      "description": "Azure Container App FQDN (from azd output: AZURE_RESOURCE_PPT_TRANSLATOR_FQDN)"
+    }
+  ],
+  "servers": {
+    "ppt-translator-azure": {
+      "type": "http",
+      "url": "https://${input:ppt-translator-azure-fqdn}/mcp"
+    }
+  }
+}

@@ -33,6 +33,11 @@ RUN apt-get update && apt-get install -y \
     libx11-6 \
     libxext6 \
     libxrender1 \
+    uuid-dev \
+    libuuid1 \
+    libgdiplus \
+    libharfbuzz0b \
+    libicu72 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy published app

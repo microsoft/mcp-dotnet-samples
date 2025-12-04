@@ -5,7 +5,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>McpSamples.PptTranslator.HybridApp</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>    
+    <Nullable>enable</Nullable>
     <UserSecretsId>5e4ba7bc-008d-4689-8311-3be925ba73a8</UserSecretsId>
   </PropertyGroup>
 
@@ -17,11 +17,12 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
 
+    <!-- Azure Storage Files -->
+    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.19.1" />
+
     <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
+
     <None Include="Prompts/translation_prompt.txt" CopyToOutputDirectory="Always" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.20.0" />
   </ItemGroup>
 
 </Project>
-
-

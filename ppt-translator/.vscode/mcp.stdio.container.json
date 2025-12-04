@@ -15,6 +15,7 @@
         "-i",
         "--rm",
         "-e", "OPENAI_API_KEY=${env:OPENAI_API_KEY}",
+        "-e", "HOST_MOUNT_PATH=${input:ppt-folder-path}",
         "-v", "${input:ppt-folder-path}:/files",
         "ppt-translator:latest"
       ]
