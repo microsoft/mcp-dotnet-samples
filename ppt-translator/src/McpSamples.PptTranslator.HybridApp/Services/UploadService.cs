@@ -3,17 +3,34 @@ using McpSamples.PptTranslator.HybridApp.Models;
 
 namespace McpSamples.PptTranslator.HybridApp.Services
 {
+    /// <summary>
+    /// Service for handling file uploads in different execution modes.
+    /// </summary>
     public interface IUploadService
     {
+        /// <summary>
+        /// Saves an uploaded file stream to the appropriate storage location.
+        /// </summary>
+        /// <param name="stream">File content stream</param>
+        /// <param name="fileName">Original filename</param>
+        /// <returns>Path where the file was saved</returns>
         Task<string> SaveUploadedFileAsync(Stream stream, string fileName);
     }
 
+    /// <summary>
+    /// Default implementation supporting local, container, and Azure storage modes.
+    /// Automatically detects execution mode and saves files to appropriate locations.
+    /// </summary>
+    /// <remarks>
+    /// 로컬, 컨테이너, Azure 스토리지 모드를 지원하는 기본 구현.
+    /// 실행 모드를 자동으로 감지하고 적절한 위치에 파일을 저장합니다.
+    /// </remarks>
     public class UploadService : IUploadService
     {
         private readonly ILogger<UploadService> _logger;
         private readonly ExecutionMode _executionMode;
 
-        // Azure 감지 (legacy, 호환성용)
+        // Legacy: Azure 감지 (호환성용)
         private readonly bool _isAzure =
             !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME"));
 

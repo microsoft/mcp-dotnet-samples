@@ -123,8 +123,17 @@ namespace McpSamples.PptTranslator.HybridApp.Tools
         }
 
         /// <summary>
-        /// Resolves the input file path based on execution mode.
+        /// Resolves the input file path based on current execution mode.
+        /// Handles path translation between local, container, and Azure environments.
         /// </summary>
+        /// <param name="filePath">User-provided file path</param>
+        /// <returns>Resolved absolute path accessible in current environment</returns>
+        /// <exception cref="FileNotFoundException">When file cannot be found in expected location</exception>
+        /// <exception cref="InvalidOperationException">When file requires upload or copy action</exception>
+        /// <remarks>
+        /// 현재 실행 모드에 따라 입력 파일 경로를 해석합니다.
+        /// 로컬, 컨테이너, Azure 환경 간 경로 변환을 처리합니다.
+        /// </remarks>
         private string ResolveInputPath(string filePath)
         {
             switch (_executionMode)
@@ -206,6 +215,18 @@ namespace McpSamples.PptTranslator.HybridApp.Tools
             }
         }
 
+        /// <summary>
+        /// Determines the output path for translated file based on execution mode.
+        /// Respects user-provided output path when applicable.
+        /// </summary>
+        /// <param name="originalFileName">Original input filename</param>
+        /// <param name="targetLang">Target language code for filename suffix</param>
+        /// <param name="userOutputPath">Optional user-specified output directory</param>
+        /// <returns>Full path where translated file should be saved</returns>
+        /// <remarks>
+        /// 실행 모드에 따라 번역된 파일의 출력 경로를 결정합니다.
+        /// 사용자가 제공한 출력 경로가 있는 경우 이를 우선합니다.
+        /// </remarks>
         private string DetermineOutputPath(string originalFileName, string targetLang, string? userOutputPath)
         {
             string outputFileName = $"{Path.GetFileNameWithoutExtension(originalFileName)}_{targetLang}.pptx";
@@ -247,8 +268,18 @@ namespace McpSamples.PptTranslator.HybridApp.Tools
         }
 
         /// <summary>
-        /// Builds the success message based on execution mode.
+        /// Builds a user-friendly success message with file access instructions.
+        /// Message format varies by execution mode to provide appropriate file retrieval steps.
         /// </summary>
+        /// <param name="outputPath">Path where translated file was saved</param>
+        /// <param name="originalFileName">Original input filename</param>
+        /// <param name="targetLang">Target language code</param>
+        /// <param name="userOutputPath">User-provided output path if any</param>
+        /// <returns>Formatted success message with file location and access instructions</returns>
+        /// <remarks>
+        /// 파일 접근 방법을 포함한 사용자 친화적인 성공 메시지를 생성합니다.
+        /// 메시지 형식은 실행 모드에 따라 달라지며 적절한 파일 다운로드 방법을 제공합니다.
+        /// </remarks>
         private string BuildSuccessMessage(string outputPath, string originalFileName, string targetLang, string? userOutputPath)
         {
             string outputFileName = $"{Path.GetFileNameWithoutExtension(originalFileName)}_{targetLang}.pptx";

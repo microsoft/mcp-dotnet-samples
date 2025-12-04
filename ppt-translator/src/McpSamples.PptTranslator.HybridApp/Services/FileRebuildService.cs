@@ -10,11 +10,30 @@ using Microsoft.Extensions.Configuration;
 
 namespace McpSamples.PptTranslator.HybridApp.Services
 {
+    /// <summary>
+    /// Service for rebuilding PowerPoint files with translated text.
+    /// </summary>
     public interface IFileRebuildService
     {
+        /// <summary>
+        /// Creates a new PPT file by applying translated text to the original presentation.
+        /// </summary>
+        /// <param name="pptFilePath">Path to the original PowerPoint file</param>
+        /// <param name="translatedJsonPath">Path to JSON file with translated text</param>
+        /// <param name="targetLang">Target language code for output filename</param>
+        /// <param name="outputPath">Output directory for translated PPT file</param>
+        /// <returns>Path to the newly created translated PPT file</returns>
         Task<string> RebuildPptFromJsonAsync(string pptFilePath, string translatedJsonPath, string targetLang, string outputPath);
     }
 
+    /// <summary>
+    /// Default implementation that preserves slide structure while replacing text content.
+    /// Uses ShapeCrawler to manipulate PowerPoint files programmatically.
+    /// </summary>
+    /// <remarks>
+    /// 슬라이드 구조를 유지하면서 텍스트 내용만 교체하는 기본 구현.
+    /// ShapeCrawler를 사용하여 PowerPoint 파일을 프로그래밍 방식으로 조작합니다.
+    /// </remarks>
     public class FileRebuildService : IFileRebuildService
     {
         private readonly ILogger<FileRebuildService> _logger;

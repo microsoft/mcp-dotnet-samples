@@ -12,13 +12,40 @@ using McpSamples.PptTranslator.HybridApp.Models;
 
 namespace McpSamples.PptTranslator.HybridApp.Services;
 
+/// <summary>
+/// Service for extracting text content from PowerPoint files.
+/// </summary>
 public interface ITextExtractService
 {
+    /// <summary>
+    /// Opens a PowerPoint file for text extraction.
+    /// </summary>
+    /// <param name="filePath">Path to the PPT file</param>
     Task OpenPptFileAsync(string filePath);
+    
+    /// <summary>
+    /// Extracts all text content from the opened presentation.
+    /// </summary>
+    /// <returns>Structured extraction result containing slide and shape text</returns>
     Task<PptTextExtractResult> TextExtractAsync();
+    
+    /// <summary>
+    /// Serializes extracted text to JSON format.
+    /// </summary>
+    /// <param name="extracted">Extracted text data</param>
+    /// <param name="outputPath">Output directory for JSON file</param>
+    /// <returns>Path to the generated JSON file</returns>
     Task<string> ExtractToJsonAsync(PptTextExtractResult extracted, string outputPath);
 }
 
+/// <summary>
+/// Default implementation of text extraction service using ShapeCrawler library.
+/// Handles both local and Azure environments with appropriate path resolution.
+/// </summary>
+/// <remarks>
+/// ShapeCrawler 라이브러리를 사용한 텍스트 추출 서비스 기본 구현.
+/// 로컬 및 Azure 환경에서 적절한 경로 해석을 처리합니다.
+/// </remarks>
 public class TextExtractService : ITextExtractService
 {
     private readonly ILogger<TextExtractService> _logger;
@@ -41,9 +68,7 @@ public class TextExtractService : ITextExtractService
     {
         string resolved = filePath;
 
-        // ==================================================
-        // Azure 환경 → temp 사용 금지 / mount 경로 직접 사용
-        // ==================================================
+        // Azure 환경: temp 디렉토리 사용 금지, mount 경로 직접 사용
         if (_isAzure)
         {
             string fileName = Path.GetFileName(filePath);
@@ -57,9 +82,7 @@ public class TextExtractService : ITextExtractService
             return;
         }
 
-        // ==================================================
-        // Local 환경 (STDIO/HTTP/DOCKER) → 기존 로직 유지
-        // ==================================================
+        // 로컬 환경 (STDIO/HTTP/Container): 기존 로직 유지
         resolved = TempFileResolver.ResolveToTemp(filePath);
 
         if (!File.Exists(resolved))

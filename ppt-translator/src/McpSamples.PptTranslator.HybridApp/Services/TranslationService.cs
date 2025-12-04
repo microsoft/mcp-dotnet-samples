@@ -9,11 +9,28 @@ using Microsoft.Extensions.Configuration;
 
 namespace McpSamples.PptTranslator.HybridApp.Services
 {
+    /// <summary>
+    /// Service for translating extracted text using OpenAI API.
+    /// </summary>
     public interface ITranslationService
     {
+        /// <summary>
+        /// Translates text content from JSON format using OpenAI's language model.
+        /// </summary>
+        /// <param name="extractedJsonPath">Path to JSON file containing extracted text</param>
+        /// <param name="targetLang">Target language code (e.g., 'ko', 'en', 'ja')</param>
+        /// <returns>Path to translated JSON file</returns>
         Task<string> TranslateJsonFileAsync(string extractedJsonPath, string targetLang);
     }
 
+    /// <summary>
+    /// Default implementation using OpenAI Chat Completions API for translation.
+    /// Supports both local and Azure environments with configurable endpoints.
+    /// </summary>
+    /// <remarks>
+    /// OpenAI Chat Completions API를 사용한 번역 서비스 기본 구현.
+    /// 로컬 및 Azure 환경에서 설정 가능한 엔드포인트를 지원합니다.
+    /// </remarks>
     public class TranslationService : ITranslationService
     {
         private readonly ILogger<TranslationService> _logger;
