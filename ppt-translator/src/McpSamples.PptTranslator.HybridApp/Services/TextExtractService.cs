@@ -7,10 +7,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using ShapeCrawler;
 using ShapeCrawler.Presentations;
+using Microsoft.Extensions.Configuration;
 using McpSamples.PptTranslator.HybridApp.Models;
-using Azure.Storage.Blobs;           // ⭐ Blob 추가
-using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Sas;
 
 namespace McpSamples.PptTranslator.HybridApp.Services;
 
@@ -24,78 +22,57 @@ public interface ITextExtractService
 public class TextExtractService : ITextExtractService
 {
     private readonly ILogger<TextExtractService> _logger;
-    private readonly BlobServiceClient? _blobServiceClient;   // ⭐ Blob Client
+    private readonly bool _isAzure =
+        !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME"));
+
+    private const string AzureInputMount = "/mnt/storage/input";
+    private const string AzureOutputMount = "/mnt/storage/output";
+
     private Presentation? _presentation;
 
     public TextExtractService(
         ILogger<TextExtractService> logger,
-        IConfiguration config)  // ⭐ Blob을 위해 IConfiguration 추가
+        IConfiguration config)
     {
         _logger = logger;
-
-        string? conn = config["AzureBlobConnectionString"];
-        if (!string.IsNullOrWhiteSpace(conn))
-            _blobServiceClient = new BlobServiceClient(conn);
     }
 
     public async Task OpenPptFileAsync(string filePath)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(filePath, nameof(filePath));
+        string resolved = filePath;
 
-        // ================================
-        // 1) Blob URL로 들어온 경우 처리
-        // ================================
-        if (Uri.TryCreate(filePath, UriKind.Absolute, out var uri) &&
-            (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+        // ==================================================
+        // Azure 환경 → temp 사용 금지 / mount 경로 직접 사용
+        // ==================================================
+        if (_isAzure)
         {
-            if (_blobServiceClient == null)
-                throw new InvalidOperationException("Blob URL을 처리할 수 없습니다. AzureBlobConnectionString이 없습니다.");
+            string fileName = Path.GetFileName(filePath);
+            resolved = Path.Combine(AzureInputMount, fileName);
 
-            _logger.LogInformation("Blob URL 감지됨 → 다운로드 시작: {Url}", filePath);
+            if (!File.Exists(resolved))
+                throw new FileNotFoundException("Azure PPT not found in mount folder.", resolved);
 
-            try
-            {
-                // URL에서 container + blobname 추출
-                string container = uri.Segments[1].Trim('/');
-                string blobName = string.Join("", uri.Segments[2..]);
-
-                var containerClient = _blobServiceClient.GetBlobContainerClient(container);
-                var blobClient = containerClient.GetBlobClient(blobName);
-
-                if (!await blobClient.ExistsAsync())
-                    throw new FileNotFoundException($"Blob 파일을 찾을 수 없습니다: {container}/{blobName}");
-
-                // ⭐ Blob에서 다운로드 후 메모리로 Presentation 생성
-                var ms = new MemoryStream();
-                await blobClient.DownloadToAsync(ms);
-                ms.Position = 0;
-
-                _presentation = new Presentation(ms);
-
-                _logger.LogInformation("Blob PPT 로드 완료.");
-                return;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Blob PPT 파일 로드 실패");
-                throw;
-            }
+            _presentation = new Presentation(resolved);
+            _logger.LogInformation("[Azure] PPT opened from mount: {Path}", resolved);
+            return;
         }
 
-        // ================================
-        // 2) 기존 로컬 파일 처리 (변경 없음)
-        // ================================
-        if (!File.Exists(filePath))
-            throw new FileNotFoundException("PPT file not found.", filePath);
+        // ==================================================
+        // Local 환경 (STDIO/HTTP/DOCKER) → 기존 로직 유지
+        // ==================================================
+        resolved = TempFileResolver.ResolveToTemp(filePath);
+
+        if (!File.Exists(resolved))
+            throw new FileNotFoundException("Resolved PPT file not found.", resolved);
 
         try
         {
-            _presentation = new Presentation(filePath);
-            _logger.LogInformation("[INFO] PPT file opened.");
+            _presentation = new Presentation(resolved);
+            _logger.LogInformation("[Local] PPT opened: {Resolved}", resolved);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "[ERROR] Failed to open PPT file.");
+            _logger.LogError(ex, "Failed to open PPT file.");
             throw;
         }
     }
@@ -103,74 +80,76 @@ public class TextExtractService : ITextExtractService
     public Task<PptTextExtractResult> TextExtractAsync()
     {
         if (_presentation == null)
-            throw new InvalidOperationException("PPT file must be opened before extraction.");
+            throw new InvalidOperationException("PPT must be opened before extraction.");
 
         var result = new PptTextExtractResult();
         var items = new List<PptTextExtractItem>();
 
-        try
+        foreach (var slide in _presentation.Slides)
         {
-            foreach (var slide in _presentation.Slides)
+            foreach (var shape in slide.Shapes)
             {
-                foreach (var shape in slide.Shapes)
+                if (shape.TextBox == null)
+                    continue;
+
+                string text = shape.TextBox.Text?.Trim() ?? "";
+                if (string.IsNullOrWhiteSpace(text))
+                    continue;
+
+                items.Add(new PptTextExtractItem
                 {
-                    if (shape.TextBox == null)
-                        continue;
-
-                    string text = shape.TextBox.Text?.Trim() ?? string.Empty;
-                    if (string.IsNullOrWhiteSpace(text))
-                        continue;
-
-                    items.Add(new PptTextExtractItem
-                    {
-                        SlideIndex = slide.Number,
-                        ShapeId = shape.Id.ToString(),
-                        Text = text
-                    });
-                }
+                    SlideIndex = slide.Number,
+                    ShapeId = shape.Id.ToString(),
+                    Text = text
+                });
             }
-
-            result.Items = items;
-            result.TotalCount = items.Count;
-
-            _logger.LogInformation("[INFO] Extracted {Count} items.", result.TotalCount);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "[ERROR] Failed during text extraction.");
-            throw;
         }
 
+        result.Items = items;
+        result.TotalCount = items.Count;
+
+        _logger.LogInformation("Extracted {Count} items", result.TotalCount);
         return Task.FromResult(result);
     }
 
     public async Task<string> ExtractToJsonAsync(PptTextExtractResult extracted, string outputPath)
     {
-        ArgumentNullException.ThrowIfNull(extracted);
+        // ==================================================
+        // Azure 환경 → 무조건 mount output 에 저장
+        // ==================================================
+        if (_isAzure)
+        {
+            Directory.CreateDirectory(AzureOutputMount);
 
-        var directory = Path.GetDirectoryName(outputPath);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
+            string fileName = Path.GetFileName(outputPath);
+            string savePath = Path.Combine(AzureOutputMount, fileName);
 
-        var options = new JsonSerializerOptions
+            var json = JsonSerializer.Serialize(extracted, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            });
+
+            await File.WriteAllTextAsync(savePath, json);
+
+            _logger.LogInformation("[Azure] JSON extracted → {Path}", savePath);
+            return savePath;
+        }
+
+        // ==================================================
+        // Local 환경 → 기존 로직 유지
+        // ==================================================
+        var dir = Path.GetDirectoryName(outputPath);
+        if (!string.IsNullOrEmpty(dir))
+            Directory.CreateDirectory(dir);
+
+        var localJson = JsonSerializer.Serialize(extracted, new JsonSerializerOptions
         {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        };
+        });
 
-        try
-        {
-            var json = JsonSerializer.Serialize(extracted, options);
-            await File.WriteAllTextAsync(outputPath, json);
-
-            _logger.LogInformation("[INFO] Extracted JSON saved.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "[ERROR] Failed to save extracted JSON.");
-            throw;
-        }
-
-        return Path.GetFullPath(outputPath);
+        await File.WriteAllTextAsync(outputPath, localJson);
+        return outputPath;
     }
 }

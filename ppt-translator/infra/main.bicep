@@ -1,47 +1,59 @@
 targetScope = 'subscription'
 
+@description('Environment name used for naming resources')
 @minLength(1)
 @maxLength(64)
-@description('Name of the environment that can be used as part of naming resource convention')
 param environmentName string
 
+@description('Primary deployment region')
 @minLength(1)
-@description('Primary location for all resources')
 param location string
 
-param mcpAwesomeCopilotExists bool
+param pptTranslatorExists bool = false
 
 @description('Id of the user or app to assign application roles')
-param principalId string
+param principalId string = ''
 
-// Tags that should be applied to all resources.
-// 
-// Note that 'azd-service-name' tags should be applied separately to service host resources.
-// Example usage:
-//   tags: union(tags, { 'azd-service-name': <service name in azure.yaml> })
+@secure()
+@description('OpenAI API Key')
+param openAiApiKey string = ''
+
 var tags = {
   'azd-env-name': environmentName
 }
 
-// Organize resources in a resource group
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: 'rg-${environmentName}'
   location: location
   tags: tags
 }
 
-module resources 'resources.bicep' = {
+module resources './resources.bicep' = {
+  name: 'ppt-translator-resources'
   scope: rg
-  name: 'resources'
   params: {
     location: location
     tags: tags
     principalId: principalId
-    mcpAwesomeCopilotExists: mcpAwesomeCopilotExists
+    pptTranslatorExists: pptTranslatorExists
+    openAiApiKey: openAiApiKey
   }
 }
 
+// Note: openAiApiKey and storageConnectionString should be provided via azd env set
+// Example:
+//   azd env set OPENAI_API_KEY "your-key-here"
+//   azd env set STORAGE_CONNECTION_STRING "your-connection-string"
+
+// Outputs following azd naming conventions
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
-output AZURE_RESOURCE_MCP_AWESOME_COPILOT_ID string = resources.outputs.AZURE_RESOURCE_MCP_AWESOME_COPILOT_ID
-output AZURE_RESOURCE_MCP_AWESOME_COPILOT_NAME string = resources.outputs.AZURE_RESOURCE_MCP_AWESOME_COPILOT_NAME
-output AZURE_RESOURCE_MCP_AWESOME_COPILOT_FQDN string = resources.outputs.AZURE_RESOURCE_MCP_AWESOME_COPILOT_FQDN
+output AZURE_CONTAINER_REGISTRY_NAME string = resources.outputs.AZURE_CONTAINER_REGISTRY_NAME
+output AZURE_RESOURCE_PPT_TRANSLATOR_ID string = resources.outputs.AZURE_RESOURCE_PPT_TRANSLATOR_ID
+output AZURE_RESOURCE_PPT_TRANSLATOR_NAME string = resources.outputs.AZURE_RESOURCE_PPT_TRANSLATOR_NAME
+output AZURE_RESOURCE_PPT_TRANSLATOR_FQDN string = resources.outputs.AZURE_RESOURCE_PPT_TRANSLATOR_FQDN
+output AZURE_STORAGE_ACCOUNT_NAME string = resources.outputs.AZURE_STORAGE_ACCOUNT_NAME
+output AZURE_STORAGE_FILE_SHARE_NAME string = resources.outputs.AZURE_STORAGE_FILE_SHARE_NAME
+
+// Service-specific outputs for azd
+output SERVICE_PPT_TRANSLATOR_NAME string = resources.outputs.AZURE_RESOURCE_PPT_TRANSLATOR_NAME
+output SERVICE_PPT_TRANSLATOR_URI string = 'https://${resources.outputs.AZURE_RESOURCE_PPT_TRANSLATOR_FQDN}'

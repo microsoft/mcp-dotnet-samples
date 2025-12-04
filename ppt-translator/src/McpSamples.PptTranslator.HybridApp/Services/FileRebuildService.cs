@@ -6,82 +6,88 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ShapeCrawler;
 using ShapeCrawler.Presentations;
-using Azure.Storage.Blobs;                // ⭐ Blob 추가
-using Azure.Storage.Sas;
-using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Sas;
 using Microsoft.Extensions.Configuration;
 
 namespace McpSamples.PptTranslator.HybridApp.Services
 {
     public interface IFileRebuildService
     {
-        Task<string> RebuildPptFromJsonAsync(string pptFilePath, string translatedJsonPath, string targetLang);
+        Task<string> RebuildPptFromJsonAsync(string pptFilePath, string translatedJsonPath, string targetLang, string outputPath);
     }
 
     public class FileRebuildService : IFileRebuildService
     {
         private readonly ILogger<FileRebuildService> _logger;
-        private readonly BlobServiceClient? _blobServiceClient;   // ⭐ BlobClient 지원
-        private readonly IConfiguration _config;
+        private readonly bool _isAzure;
+
+        private static readonly string UploadRoot =
+            Path.Combine(Path.GetTempPath(), "mcp-uploads");
 
         public FileRebuildService(
             ILogger<FileRebuildService> logger,
             IConfiguration config)
         {
             _logger = logger;
-            _config = config;
+            _isAzure = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME"));
 
-            string? conn = config["AzureBlobConnectionString"];
-            if (!string.IsNullOrWhiteSpace(conn))
-                _blobServiceClient = new BlobServiceClient(conn);
+            if (!_isAzure && !Directory.Exists(UploadRoot))
+                Directory.CreateDirectory(UploadRoot);
         }
 
-        public async Task<string> RebuildPptFromJsonAsync(string pptFilePath, string translatedJsonPath, string targetLang)
+        public async Task<string> RebuildPptFromJsonAsync(string pptFilePath, string translatedJsonPath, string targetLang, string outputPath)
         {
-            // ============================================================================================
-            // ① Blob URL 로딩 지원 (팀원 방식 그대로)
-            // ============================================================================================
-            Stream originalStream;
+            _logger.LogInformation("[Rebuild] START - Original paths: PPT={0}, JSON={1}", pptFilePath, translatedJsonPath);
+            
+            string resolvedPptPath = ResolvePath(pptFilePath);
+            _logger.LogInformation("[Rebuild] Resolved PPT path: {0}", resolvedPptPath);
+            
+            string resolvedJsonPath = ResolvePath(translatedJsonPath);
+            _logger.LogInformation("[Rebuild] Resolved JSON path: {0}", resolvedJsonPath);
 
-            if (IsBlobUrl(pptFilePath))
+            if (!File.Exists(resolvedPptPath))
             {
-                _logger.LogInformation("[Blob] PPT 다운로드 시작: {Url}", pptFilePath);
-
-                if (_blobServiceClient == null)
-                    throw new InvalidOperationException("Blob URL을 사용할 수 없습니다. AzureBlobConnectionString이 없습니다.");
-
-                originalStream = await DownloadBlobIntoStream(pptFilePath);
+                _logger.LogError("[Rebuild] PPT file NOT FOUND: {0}", resolvedPptPath);
+                throw new FileNotFoundException("PPT file not found.", resolvedPptPath);
             }
-            else
+            _logger.LogInformation("[Rebuild] PPT file EXISTS, size: {0} bytes", new FileInfo(resolvedPptPath).Length);
+
+            if (!File.Exists(resolvedJsonPath))
             {
-                if (!File.Exists(pptFilePath))
-                    throw new FileNotFoundException("Original PPT file not found.", pptFilePath);
-
-                originalStream = File.OpenRead(pptFilePath);
+                _logger.LogError("[Rebuild] JSON file NOT FOUND: {0}", resolvedJsonPath);
+                throw new FileNotFoundException("Translated JSON file not found.", resolvedJsonPath);
             }
+            _logger.LogInformation("[Rebuild] JSON file EXISTS, size: {0} bytes", new FileInfo(resolvedJsonPath).Length);
 
-            // translated JSON 확인
-            if (!File.Exists(translatedJsonPath))
-                throw new FileNotFoundException("Translated JSON file not found.", translatedJsonPath);
+            _logger.LogInformation("[Rebuild] Input PPT: {0}", resolvedPptPath);
+            _logger.LogInformation("[Rebuild] Translated JSON: {0}", resolvedJsonPath);
 
-            // JSON 읽기
-            string jsonContent = await File.ReadAllTextAsync(translatedJsonPath);
+            var originalStream = File.OpenRead(resolvedPptPath);
+            string jsonContent = await File.ReadAllTextAsync(resolvedJsonPath);
+
             var translated = JsonSerializer.Deserialize<TranslatedResult>(jsonContent)
                 ?? throw new Exception("Failed to parse translated JSON.");
 
             ValidateTranslatedJson(translated);
 
-            // ============================================================================================
-            // ② 메모리 스트림에 복사하여 프레젠테이션 객체 생성
-            // ============================================================================================
+            _logger.LogInformation("[Rebuild] Creating working stream copy...");
             var workingStream = new MemoryStream();
             await originalStream.CopyToAsync(workingStream);
             workingStream.Position = 0;
+            _logger.LogInformation("[Rebuild] Working stream size: {0} bytes", workingStream.Length);
 
-            var pres = new Presentation(workingStream);
+            _logger.LogInformation("[Rebuild] Loading PPT with ShapeCrawler.Presentation...");
+            Presentation pres;
+            try
+            {
+                pres = new Presentation(workingStream);
+                _logger.LogInformation("[Rebuild] ShapeCrawler Presentation loaded successfully! Slide count: {0}", pres.Slides.Count);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[Rebuild] FAILED to load Presentation with ShapeCrawler!");
+                throw;
+            }
 
-            // 적용
             foreach (var item in translated.Items)
             {
                 try
@@ -95,128 +101,100 @@ namespace McpSamples.PptTranslator.HybridApp.Services
                 catch (Exception ex)
                 {
                     _logger.LogError(ex,
-                        "Failed to apply translated text. Slide={Slide}, ShapeId={ShapeId}",
+                        "[Rebuild] Failed apply text: Slide={Slide}, ShapeId={ShapeId}",
                         item.SlideIndex, item.ShapeId);
                 }
             }
 
-            // ============================================================================================
-            // ③ 저장 파일 이름 설정
-            // ============================================================================================
-            string finalFileName = $"{Path.GetFileNameWithoutExtension(pptFilePath)}_translated_{targetLang}.pptx";
-
-            // Azure 사용 여부
-            string? connStr = _config["AzureBlobConnectionString"];
-
-            // ============================================================================================
-            // ④ Azure Blob Storage로 저장
-            // ============================================================================================
-            if (!string.IsNullOrWhiteSpace(connStr) && _blobServiceClient != null)
+            // 전달받은 outputPath 사용 (이미 디렉터리가 생성되어 있어야 함)
+            _logger.LogInformation("[Rebuild] Saving to output path: {0}", outputPath);
+            
+            string outputDir = Path.GetDirectoryName(outputPath) ?? "";
+            if (!string.IsNullOrEmpty(outputDir) && !Directory.Exists(outputDir))
             {
-                try
-                {
-                    _logger.LogInformation("[Azure] 번역 PPT Blob 저장 시작...");
-
-                    var container = _blobServiceClient.GetBlobContainerClient("generated-files");
-                    await container.CreateIfNotExistsAsync();
-
-                    var blob = container.GetBlobClient(finalFileName);
-
-                    var uploadStream = new MemoryStream();
-                    pres.Save(uploadStream);
-                    uploadStream.Position = 0;
-
-                    await blob.UploadAsync(uploadStream, overwrite: true);
-
-                    var sasBuilder = new BlobSasBuilder()
-                    {
-                        BlobContainerName = "generated-files",
-                        BlobName = finalFileName,
-                        ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
-                    };
-                    sasBuilder.SetPermissions(BlobSasPermissions.Read);
-
-                    Uri sasUri = blob.GenerateSasUri(sasBuilder);
-
-                    _logger.LogInformation("[Azure] 업로드 완료 → {Url}", sasUri);
-
-                    return sasUri.ToString();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "[Azure] 업로드 실패 → 로컬 저장으로 fallback");
-                }
+                _logger.LogInformation("[Rebuild] Creating output directory: {0}", outputDir);
+                Directory.CreateDirectory(outputDir);
+            }
+            
+            using (var fs = new FileStream(outputPath, FileMode.Create))
+            {
+                _logger.LogInformation("[Rebuild] Calling pres.Save()...");
+                var ms = new MemoryStream();
+                pres.Save(ms);
+                _logger.LogInformation("[Rebuild] pres.Save() completed, stream size: {0} bytes", ms.Length);
+                ms.Position = 0;
+                await ms.CopyToAsync(fs);
+                _logger.LogInformation("[Rebuild] File written to disk: {0} bytes", fs.Length);
             }
 
-            // ============================================================================================
-            // ⑤ 로컬 저장 fallback
-            // ============================================================================================
-            string localPath = Path.Combine(Path.GetTempPath(), finalFileName);
+            _logger.LogInformation("[Rebuild] Output saved successfully: {0}", outputPath);
+            return outputPath;
+        }
 
-            using (var fs = new FileStream(localPath, FileMode.Create))
+
+        // ==========================================================
+        // 경로 해석: Azure와 로컬 temp 방식을 분리
+        // ==========================================================
+        private string ResolvePath(string path)
+        {
+            if (_isAzure)
             {
-                var saveStream = new MemoryStream();
-                pres.Save(saveStream);
-                saveStream.Position = 0;
-                await saveStream.CopyToAsync(fs);
+                // Azure에서는 마운트된 경로 그대로 사용해야 한다.
+                return path;
             }
 
-            _logger.LogInformation("로컬 저장 완료: {Path}", localPath);
+            // 로컬에서는 기존 temp 시스템 유지
+            Directory.CreateDirectory(UploadRoot);
 
-            return localPath;
+            if (path.StartsWith("temp:", StringComparison.OrdinalIgnoreCase))
+                return Path.Combine(UploadRoot, path.Substring(5));
+
+            if (File.Exists(path))
+            {
+                string id = Guid.NewGuid().ToString("N");
+                string dest = Path.Combine(UploadRoot, id);
+                File.Copy(path, dest, overwrite: true);
+                return dest;
+            }
+
+            throw new InvalidOperationException($"Invalid path '{path}'.");
         }
 
         // ==========================================================
-        // Blob 도우미 함수들 (팀원 코드 구조 그대로)
+        // Azure → /output/{GUID}_translated_lang.pptx
+        // Local → 기존 temp 폴더
         // ==========================================================
-        private bool IsBlobUrl(string path)
+        private string GetOutputPath(string lang)
         {
-            return Uri.TryCreate(path, UriKind.Absolute, out var uri) &&
-                   (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+            string fileName = $"{Guid.NewGuid()}_translated_{lang}.pptx";
+
+            if (_isAzure)
+            {
+                // Azure File Share 마운트 경로
+                return Path.Combine("/output", fileName);
+            }
+
+            return Path.Combine(Path.GetTempPath(), fileName);
         }
 
-        private async Task<Stream> DownloadBlobIntoStream(string blobUrl)
-        {
-            var uri = new Uri(blobUrl);
 
-            string containerName = uri.Segments[1].Trim('/');
-            string blobName = string.Join("", uri.Segments[2..]);
-
-            var container = _blobServiceClient!.GetBlobContainerClient(containerName);
-            var blob = container.GetBlobClient(blobName);
-
-            if (!await blob.ExistsAsync())
-                throw new FileNotFoundException($"Blob not found: {containerName}/{blobName}");
-
-            var ms = new MemoryStream();
-            await blob.DownloadToAsync(ms);
-            ms.Position = 0;
-
-            return ms;
-        }
-
-        // ============================================================================
-        // 기존 코드 (구조 그대로 유지)
-        // ============================================================================
         private void ApplyTranslatedText(ITextBox textBox, string translatedText)
         {
             var paragraphs = textBox.Paragraphs;
             if (paragraphs.Count == 0)
                 paragraphs.Add();
 
-            var firstParagraph = paragraphs[0];
-            ITextPortionFont? baseFont =
-                firstParagraph.Portions.Count > 0 ? firstParagraph.Portions[0].Font : null;
+            var first = paragraphs[0];
+            var baseFont = first.Portions.Count > 0 ? first.Portions[0].Font : null;
 
-            firstParagraph.Text = string.Empty;
+            first.Text = "";
+            var lines = translatedText.Split('\n');
 
-            var lines = translatedText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
-
-            firstParagraph.Portions.AddText(lines[0]);
-            ApplyStyleIfAvailable(firstParagraph, baseFont);
+            first.Portions.AddText(lines[0]);
+            ApplyStyle(first, baseFont);
 
             for (int i = 1; i < paragraphs.Count; i++)
-                paragraphs[i].Text = string.Empty;
+                paragraphs[i].Text = "";
 
             for (int i = 1; i < lines.Length; i++)
             {
@@ -230,17 +208,15 @@ namespace McpSamples.PptTranslator.HybridApp.Services
                 }
 
                 p.Text = lines[i];
-                ApplyStyleIfAvailable(p, baseFont);
+                ApplyStyle(p, baseFont);
             }
         }
 
-        private void ApplyStyleIfAvailable(IParagraph p, ITextPortionFont? baseFont)
+        private void ApplyStyle(IParagraph p, ITextPortionFont? baseFont)
         {
             if (baseFont == null || p.Portions.Count == 0) return;
 
-            var f = p.Portions.Last().Font;
-            if (f == null) return;
-
+            var f = p.Portions[0].Font;
             f.Size = baseFont.Size;
             f.IsBold = baseFont.IsBold;
             f.IsItalic = baseFont.IsItalic;
@@ -257,16 +233,6 @@ namespace McpSamples.PptTranslator.HybridApp.Services
 
             if (json.TotalCount != json.Items.Count)
                 throw new Exception("JSON TotalCount does not match Items count.");
-
-            foreach (var i in json.Items)
-            {
-                if (i.SlideIndex <= 0)
-                    throw new Exception($"Invalid SlideIndex: {i.SlideIndex}");
-                if (string.IsNullOrWhiteSpace(i.ShapeId))
-                    throw new Exception("ShapeId cannot be empty.");
-                if (!int.TryParse(i.ShapeId, out _))
-                    throw new Exception($"ShapeId must be numeric: {i.ShapeId}");
-            }
         }
 
         private IShape? FindShapeById(ISlide slide, string id)
@@ -274,7 +240,6 @@ namespace McpSamples.PptTranslator.HybridApp.Services
             foreach (var s in slide.Shapes)
                 if (s.Id.ToString() == id)
                     return s;
-
             return null;
         }
 
