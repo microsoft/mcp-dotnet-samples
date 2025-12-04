@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading;
 using Azure.Storage.Sas;
+using McpSamples.PptFontFix.HybridApp.Configurations;
 
 namespace McpSamples.PptFontFix.HybridApp.Services;
 
@@ -19,21 +20,12 @@ namespace McpSamples.PptFontFix.HybridApp.Services;
 /// </summary>
 public interface IPptFontFixService
 {
-    /// <summary>
-    /// Uploads a PPT file stream to a temporary location on the server and returns a temp ID.
-    /// The returned temp ID can be used later with the "temp:{id}" pattern in tools.
-    /// </summary>
-    /// <param name="fileStream">The PPTX file stream.</param>
-    /// <param name="fileName">Original file name (for logging only).</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Temporary identifier for the uploaded file.</returns>
-    Task<string> UploadPptFileAsync(Stream fileStream, string fileName, CancellationToken cancellationToken = default);
-
+    
     /// <summary>
     /// open a Ppt file.
     /// </summary>
     /// <param name="filePath"></param>
-    Task OpenPptFileAsync(string filePath);
+    Task<string?> OpenPptFileAsync(string filePath);
 
     /// <summary>
     /// Analyze fonts in a Ppt file.
@@ -74,6 +66,7 @@ public class PptFontFixService : IPptFontFixService
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IWebHostEnvironment? _webHostEnvironment;
     private readonly IHttpContextAccessor? _httpContextAccessor;
+    private readonly PptFontFixAppSettings _settings;
     private Presentation? _presentation;
     private readonly string? _fileShareMountPath;
 
@@ -83,6 +76,7 @@ public class PptFontFixService : IPptFontFixService
         ILogger<PptFontFixService> logger,
         IConfiguration configuration,
         IHostEnvironment hostEnvironment,
+        PptFontFixAppSettings settings,
         IServiceProvider serviceProvider)
     {
         _logger = logger;
@@ -91,62 +85,27 @@ public class PptFontFixService : IPptFontFixService
         _webHostEnvironment = serviceProvider.GetService<IWebHostEnvironment>();
         _httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
         _fileShareMountPath = configuration["AZURE_FILE_SHARE_MOUNT_PATH"];
-
+        _settings = settings;
+        
     }
+    private readonly string? _hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
 
-    private static string GetTempFilePath(string tempId)
-    {
-        // 업로드된 PPT 파일을 저장하는 서버 임시 경로 규칙
-        return Path.Combine(Path.GetTempPath(), $"ppt_upload_{tempId}.tmp");
-    }
 
+    
     /// <inheritdoc />
-    public async Task<string> UploadPptFileAsync(Stream fileStream, string fileName, CancellationToken cancellationToken = default)
-    {
-        var tempId = Guid.NewGuid().ToString("N");
-        var tempPath = GetTempFilePath(tempId);
-
-        _logger.LogInformation("Uploading PPT file: {FileName} -> {TempPath}", fileName, tempPath);
-
-        using (var outputStream = File.Create(tempPath))
-        {
-            await fileStream.CopyToAsync(outputStream, cancellationToken);
-        }
-
-        return tempId;
-    }
-
-    /// <inheritdoc />
-    public async Task OpenPptFileAsync(string filePath)
+    public async Task<string?> OpenPptFileAsync(string filePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath, nameof(filePath));
 
-        // 0. temp:ID 패턴 처리 (업로드된 PPT 파일)
-        if (filePath.StartsWith("temp:", StringComparison.OrdinalIgnoreCase))
+        _presentation?.Dispose();
+        _presentation = null;
+        _analyzedVisibleFonts = null; 
+
+        if (Uri.TryCreate(filePath, UriKind.Absolute, out var uriResult)
+            && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
         {
-            var tempId = filePath.Substring(5);
-            var tempFilePath = GetTempFilePath(tempId);
-
-            if (!File.Exists(tempFilePath))
-            {
-                _logger.LogError("❌ Temp PPT file for ID '{TempId}' not found at {Path}", tempId, tempFilePath);
-                throw new FileNotFoundException($"The uploaded temporary PPT file for ID '{tempId}' was not found or has expired.", tempFilePath);
-            }
-
-            try
-            {
-                _presentation?.Dispose();
-                _presentation = new ShapeCrawler.Presentation(tempFilePath);
-                _analyzedVisibleFonts = null;
-                _logger.LogInformation("Ppt file opened successfully from temp upload: {Path}", tempFilePath);
-                await Task.CompletedTask;
-                return;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to open PPT file from temp path: {Path}", tempFilePath);
-                throw;
-            }
+            _logger.LogError("File path cannot be a URL. Must be a local or mounted path.");
+            return "[Error] File Access: Direct URL access is not supported. Please ensure the file is placed in the shared volume.";
         }
 
         var searchPaths = new List<string> { filePath }; 
@@ -160,7 +119,6 @@ public class PptFontFixService : IPptFontFixService
         // (기존) WebRoot 및 Temp 경로 탐색
         string baseDir = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
         searchPaths.Add(Path.Combine(baseDir, "generated", safeFileName));
-        searchPaths.Add(Path.Combine(Path.GetTempPath(), safeFileName));
 
         // (신규) File Share Mount Path를 기반으로 파일명으로 직접 접근 시도
         if (!string.IsNullOrEmpty(_fileShareMountPath))
@@ -179,83 +137,88 @@ public class PptFontFixService : IPptFontFixService
             }
         }
         
-        // 2. 외부 파일 처리 및 마운트 경로로 복사 (가장 중요한 신규 로직)
-        if (foundPath == null && !Uri.TryCreate(filePath, UriKind.Absolute, out _) && !filePath.StartsWith("temp:", StringComparison.OrdinalIgnoreCase))
+        if (foundPath == null)
         {
-            // 1) 찾지 못했고, URL이나 Temp ID도 아닐 경우, filePath 자체가 로컬 호스트 경로라고 가정하고 복사를 시도합니다.
-            
-            string targetBaseDir;
-            if (!string.IsNullOrEmpty(_fileShareMountPath))
+            // 2-1. Azure Container Apps (Remote HTTP) 환경 (IsAzure 플래그 사용)
+            if (_settings.IsAzure && _settings.IsHttpMode)
             {
-                // File Share 마운트 경로를 사용합니다.
-                targetBaseDir = Path.Combine(_fileShareMountPath, "uploaded");
-            }
-            else if (File.Exists("/files")) // Docker volume convention check
-            {
-                // Docker 볼륨 마운트 경로를 사용합니다.
-                targetBaseDir = "/files";
-            }
-            else
-            {
-                // 최후의 수단으로 Web Root/generated를 사용하거나 예외를 발생시킵니다.
-                targetBaseDir = Path.Combine(baseDir, "uploaded"); 
-            }
+                // [변경] Azure 환경에서는 curl 업로드 가이드 반환
+                string uploadUrl = "/upload"; 
+                var request = _httpContextAccessor?.HttpContext?.Request;
+                if (request != null)
+                {
+                    uploadUrl = $"{request.Scheme}://{request.Host}/upload";
+                }
+                
+                return $"""
+                    ⚠️ Action Required: File Upload Needed (Azure Remote)
 
-            if (!Directory.Exists(targetBaseDir)) 
-            {
-                Directory.CreateDirectory(targetBaseDir);
-            }
+                    I am running in an Azure environment and cannot access your local file `{filePath}` directly.
+                    To proceed, you need to upload the file to the server.
 
-            string tempCopyPath = Path.Combine(targetBaseDir, safeFileName);
+                    Please execute the appropriate command for your operating system (OS) using your terminal or shell tool:
+
+                    ### 🍎/🐧 macOS & Linux (Example)
+
+                    curl -F "file=@{filePath}" {uploadUrl}
+
+                    ### 💻 Windows (PowerShell/CMD Example)
+
+                    curl.exe -F "file=@{filePath}" {uploadUrl}
+
+                    After the command completes successfully, please call the `open_ppt_file` tool again with the path returned by the upload.
+                    """;
+            }
+            // 2-2. Docker Container (Stdio/HTTP Local) 환경 (IsContainer 플래그 사용)
+            else if (_settings.IsContainer)
+            {
+                // [변경] Docker 환경에서는 볼륨 복사(cp) 가이드 반환
+                string targetContainerPath = Path.Combine(_settings.SpecsPath, safeFileName);
+                string targetHostPath = targetContainerPath;
+                string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
+
+
+                if (!string.IsNullOrEmpty(_hostRootPath))
+                {
+
+                    string normalizedHostRoot = _hostRootPath.Replace('\\', '/').TrimEnd('/');
+                    
+                    targetHostPath = $"{normalizedHostRoot}/ppt-font-fix/workspace/{safeFileName}";
+                }
+                
+                return $"""
+                    ⚠️ Action Required: File Synchronization Needed (Docker Container)
+
+                    The file '{safeFileName}' (Original path: `{filePath}`) is not currently in the shared volume visible to the container.
+                    To proceed, I need access to this file.
+
+                    EXECUTION PLAN (Follow Strictly):
+                    1. COPY the file from your local machine path (`{filePath}`) 
+                       to the host directory mapped to the container volume. 
+                       The recommended target path is: `{targetHostPath}`
+                    2. RETRY the `open_ppt_file` tool immediately with the original file path (`{filePath}`).
+                    """;
+            }
+            // 2-3. 로컬 환경 또는 기타 오류
             
-            try
-            {
-                _logger.LogInformation("Attempting to copy file from outside mount ({Source}) to inside mount ({Target})", filePath, tempCopyPath);
-                // 호스트 경로에 있는 파일을 컨테이너 내부의 마운트 경로로 복사 시도
-                // 이는 호스트가 컨테이너의 마운트 디렉토리를 공유하고 있어야 성공합니다.
-                File.Copy(filePath, tempCopyPath, overwrite: true);
-                foundPath = tempCopyPath;
-                _logger.LogInformation("✅ File successfully copied to mount path: {Path}", foundPath);
-            }
-            catch (FileNotFoundException)
-            {
-                _logger.LogError("❌ File not found at the original path: {Path}. Searched in: {Paths}", filePath, string.Join(", ", searchPaths));
-                throw new FileNotFoundException($"Ppt file not found at the original path and could not be copied into the container.", filePath);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "❌ Failed to copy file from outside mount to inside mount.");
-                throw new IOException($"Failed to access or copy file from host path '{filePath}' into the container volume.", ex);
-            }
-        }
-        else if (foundPath == null)
-        {
             _logger.LogError("❌ File not found. Searched in: {Paths}", string.Join(", ", searchPaths));
-            throw new FileNotFoundException($"Ppt file not found. File must be accessible at the host path OR successfully copied to the container volume.", filePath);
+            // [변경] 원본 코드의 복사 시도/throw 대신 에러 메시지 반환
+            return $"[Error] File Not Found: The file '{filePath}' was not found. Please ensure the path is correct and accessible.";
         }
         
         // 3. 파일 열기 (foundPath 사용)
         try
         {
             _presentation?.Dispose();
-            // 파일을 메모리 스트림으로 읽어와서 ShapeCrawler에 전달하는 방식이
-            // 파일 잠금 문제를 피하고 컨테이너 환경에서 안정적입니다.
-            using (var fs = new FileStream(foundPath, FileMode.Open, FileAccess.Read))
-            {
-                var memoryStream = new MemoryStream();
-                await fs.CopyToAsync(memoryStream);
-                memoryStream.Position = 0;
-                _presentation = new ShapeCrawler.Presentation(memoryStream); // ShapeCrawler 생성자에 Stream 전달
-            }
-
-            _analyzedVisibleFonts = null;
+            _presentation = new ShapeCrawler.Presentation(foundPath);
+            _analyzedVisibleFonts = null; 
             _logger.LogInformation("Ppt file opened successfully: {FilePath}", foundPath);
-            await Task.CompletedTask;
+            return "✅ Ppt file opened successfully and ready for analysis.";
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to open Ppt file.");
-            throw;
+            _logger.LogError(ex, "Failed to open Ppt file from path: {Path}", foundPath);
+            return $"[Error] Failed to open Ppt file: {ex.Message}";
         }
     }
 
@@ -417,13 +380,6 @@ public class PptFontFixService : IPptFontFixService
                     baseDirectory = Path.Combine(_fileShareMountPath, "generated");
                     _logger.LogInformation("Base Path: Azure File Share Mount -> {Path}", baseDirectory);
                 }
-                // else if (isHttpMode)
-                // {
-                //     // [HTTP Service Mode]: /files 마운트가 없거나 HTTP 서비스로 실행 중일 때 Web Root 사용
-                //     string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
-                //     baseDirectory = Path.Combine(webRoot, "generated");
-                //     _logger.LogInformation("Base Path: HTTP Web Root -> {Path}", baseDirectory);
-                // }
                 else if (Directory.Exists("/files"))
                 {
                     // [Stdio Container Mode]: HTTP 요청이 없고, /files 볼륨이 마운트되어 있을 때 사용
@@ -482,10 +438,10 @@ public class PptFontFixService : IPptFontFixService
                 }
 
                 // Docker/Linux 환경에서 권한 설정
-                if (string.IsNullOrEmpty(this._fileShareMountPath))
-                    {
-                        File.SetUnixFileMode(finalPhysicalPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
-                    }
+                if (!OperatingSystem.IsWindows() && string.IsNullOrEmpty(this._fileShareMountPath))
+                {
+                    File.SetUnixFileMode(finalPhysicalPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
+                }
                 
                 _logger.LogInformation("✅ File successfully saved to mount/web path: {Path}", finalPhysicalPath);
             }

@@ -15,8 +15,20 @@ WORKDIR /app
 
 COPY --from=build /app .
 
-RUN mkdir -p /app/wwwroot/generated
+RUN mkdir -p /app/wwwroot/generated \
+    && mkdir -p /app/workspace \
+    && mkdir -p /files
 
-USER $APP_UID
+ARG UID=$APP_UID
+
+# 3. 중요: 생성된 디렉토리의 소유권을 $APP_UID에게 변경합니다.
+# 이렇게 해야 $APP_UID 사용자가 이 디렉토리에 파일을 쓸 수 있습니다.
+# chown -R [사용자 ID]:[그룹 ID] [경로]
+RUN chown -R $UID:$UID /app/wwwroot/generated \
+    && chown -R $UID:$UID /app/workspace \
+    && chown -R $UID:$UID /files
+
+# 4. 비-루트 사용자로 전환 (기존 코드와 동일)
+USER $UID
 
 ENTRYPOINT ["dotnet", "McpSamples.PptFontFix.HybridApp.dll"]
