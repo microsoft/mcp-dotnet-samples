@@ -1558,6 +1558,15 @@
       ]
     },
     {
+      "filename": "create-tldr-page.prompt.md",
+      "agent": "agent",
+      "description": "Create a tldr page from documentation URLs and command examples, requiring both URL and command name.",
+      "tools": [
+        "edit/createFile",
+        "fetch"
+      ]
+    },
+    {
       "filename": "csharp-async.prompt.md",
       "agent": "agent",
       "tools": [
@@ -2247,6 +2256,18 @@
       "filename": "technology-stack-blueprint-generator.prompt.md",
       "description": "Comprehensive technology stack blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks, programming languages, and implementation patterns across multiple platforms (.NET, Java, JavaScript, React, Python). Generates configurable blueprints with version information, licensing details, usage patterns, coding conventions, and visual diagrams. Provides implementation-ready templates and maintains architectural consistency for guided development.",
       "agent": "agent"
+    },
+    {
+      "filename": "tldr-prompt.prompt.md",
+      "agent": "agent",
+      "description": "Create tldr summaries for GitHub Copilot files (prompts, agents, instructions, collections), MCP servers, or documentation from URLs and queries.",
+      "tools": [
+        "fetch",
+        "search/readFile",
+        "search",
+        "search/textSearch"
+      ],
+      "model": "claude-sonnet-4"
     },
     {
       "filename": "typescript-mcp-server-generator.prompt.md",
@@ -2961,6 +2982,10 @@
           "kind": "agent"
         },
         {
+          "path": "agents/diffblue-cover.agent.md",
+          "kind": "agent"
+        },
+        {
           "path": "agents/droid.agent.md",
           "kind": "agent"
         },
@@ -2978,6 +3003,10 @@
         },
         {
           "path": "agents/launchdarkly-flag-cleanup.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/lingodotdev-i18n.agent.md",
           "kind": "agent"
         },
         {
@@ -3592,7 +3621,7 @@
       "filename": "4.1-Beast.agent.md",
       "description": "GPT 4.1 as a top-notch coding agent.",
       "model": "GPT-4.1",
-      "title": "4.1 Beast Mode v3.1"
+      "name": "4.1 Beast Mode v3.1"
     },
     {
       "filename": "CSharpExpert.agent.md",
@@ -3602,11 +3631,11 @@
     {
       "filename": "Thinking-Beast-Mode.agent.md",
       "description": "A transcendent coding agent with quantum cognitive architecture, adversarial intelligence, and unrestricted creative freedom.",
-      "title": "Thinking Beast Mode"
+      "name": "Thinking Beast Mode"
     },
     {
       "filename": "Ultimate-Transparent-Thinking-Beast-Mode.agent.md",
-      "title": "Ultimate Transparent Thinking Beast Mode",
+      "name": "Ultimate Transparent Thinking Beast Mode",
       "description": "Ultimate Transparent Thinking Beast Mode"
     },
     {
@@ -3942,7 +3971,7 @@
     {
       "filename": "code-tour.agent.md",
       "description": "Expert agent for creating and maintaining VSCode CodeTour files with comprehensive schema support and best practices",
-      "title": "VSCode Tour Expert"
+      "name": "VSCode Tour Expert"
     },
     {
       "filename": "comet-opik.agent.md",
@@ -4036,6 +4065,24 @@
       "description": "Expert assistant for developing Model Context Protocol (MCP) servers in C#",
       "name": "C# MCP Server Expert",
       "model": "GPT-4.1"
+    },
+    {
+      "filename": "custom-agent-foundry.agent.md",
+      "description": "Expert at designing and creating VS Code custom agents with optimal configurations",
+      "name": "Custom Agent Foundry",
+      "argument-hint": "Describe the agent role, purpose, and required capabilities",
+      "model": "Claude Sonnet 4.5",
+      "tools": [
+        "vscode",
+        "execute",
+        "read",
+        "edit",
+        "search",
+        "web",
+        "agent",
+        "github/*",
+        "todo"
+      ]
     },
     {
       "filename": "debug.agent.md",
@@ -4351,7 +4398,7 @@
         "githubRepo",
         "todos"
       ],
-      "title": "GPT 5 Beast Mode"
+      "name": "GPT 5 Beast Mode"
     },
     {
       "filename": "hlbpa.agent.md",
@@ -5127,7 +5174,7 @@
       "filename": "rust-gpt-4.1-beast-mode.agent.md",
       "description": "Rust GPT-4.1 Coding Beast Mode for VS Code",
       "model": "GPT-4.1",
-      "title": "Rust Beast Mode"
+      "name": "Rust Beast Mode"
     },
     {
       "filename": "rust-mcp-expert.agent.md",
