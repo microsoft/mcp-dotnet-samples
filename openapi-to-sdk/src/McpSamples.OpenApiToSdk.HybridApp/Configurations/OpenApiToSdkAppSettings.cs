@@ -18,7 +18,7 @@ public class OpenApiToSdkAppSettings : AppSettings
     };
 
     // --------------------------------------------------------
-    // Runtime Configurations (Program.cs에서 계산 후 할당될 값들)
+    // Runtime Configurations (Values assigned after calculation in Program.cs)
     // --------------------------------------------------------
 
     /// <summary>

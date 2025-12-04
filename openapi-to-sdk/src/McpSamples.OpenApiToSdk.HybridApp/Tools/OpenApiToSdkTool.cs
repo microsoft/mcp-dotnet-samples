@@ -46,7 +46,7 @@ public class OpenApiToSdkTool(IOpenApiService service) : IOpenApiToSdkTool
       [Description("Additional Kiota command line options (e.g., --version).")]
         string? additionalOptions = null)
   {
-    // Service 호출 (복잡한 파라미터 파싱 로직이 사라지고 바로 호출 가능)
+    // Service 호출
     var resultMessage = await service.GenerateSdkAsync(
         specSource,
         language,

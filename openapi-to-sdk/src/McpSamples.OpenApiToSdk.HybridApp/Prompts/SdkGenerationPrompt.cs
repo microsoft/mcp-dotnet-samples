@@ -65,11 +65,11 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
            You MUST intelligently map the user's input to one of these valid identifiers.
            
            - **Handle Aliases & Variations**:
-             - "C#", "c#", ".NET", "dotnet", "chsarp" (typo) -> Use **CSharp**
-             - "TS", "Ts", "ts", "node", "typoscript" (typo) -> Use **TypeScript**
-             - "Golang", "Goo" (typo) -> Use **Go**
-             - "py", "pyton" (typo), "python3" -> Use **Python**
-             - "jav", "Jave" (typo) -> Use **Java**
+             - "C#", "c#", ".NET", "dotnet", "chsarp" (typo) -> Use CSharp
+             - "TS", "Ts", "ts", "node", "typoscript" (typo) -> Use TypeScript
+             - "Golang", "Goo" (typo) -> Use Go
+             - "py", "pyton" (typo), "python3" -> Use Python
+             - "jav", "Jave" (typo) -> Use Java
            
            - **Auto-Correction**:
              - If the user makes a minor typo or uses a common abbreviation, automatically correct it to the nearest valid identifier from the list above.

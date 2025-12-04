@@ -21,7 +21,7 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
         {
             // -o 옵션 또는 --output 옵션이 포함된 경우 에러로 반환하여 에이전트에게 "옵션 빼고 다시 요청해"라고 가르침 (방어 코드)
             return """
-            ⚠️ Input Error: Invalid Option Detected
+            Input Error: Invalid Option Detected
             
             Please DO NOT include the `-o` or `--output` option in 'additionalOptions'.
             The output path is managed automatically by the server.
@@ -70,18 +70,18 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
 
                         // Agent에게 'curl' 명령어를 실행하라고 지시
                         return $"""
-                        ⚠️ Action Required: File Upload Needed (Azure)
+                        Action Required: File Upload Needed (Azure)
 
                         I am running in an Azure environment and cannot access your local file `{specSource}` directly.
                         To proceed, you need to upload the file to the server.
 
                         Please execute the appropriate command for your operating system (OS) using your terminal or shell tool:
 
-                        ### 🍎/🐧 macOS & Linux
+                        ### macOS & Linux
 
                         curl -F "file=@{specSource}" {uploadUrl}
 
-                        ### 💻 Windows (PowerShell/CMD)
+                        ### Windows (PowerShell/CMD)
 
                         curl.exe -F "file=@{specSource}" {uploadUrl}
 
@@ -109,7 +109,7 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
 
                         // 에러가 아닌 '조치 요청' 메시지 반환
                         return $"""
-                        ⚠️ Action Required: File Synchronization Needed
+                        Action Required: File Synchronization Needed
 
                         The file '{fileName}' is not currently in the shared volume visible to the container.
                         To proceed with SDK generation, I need access to this file.
@@ -249,7 +249,7 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                 }
             }
             // Stdio 모드
-            return $"✅ SDK Generation Successful!\n\n" +
+            return $"SDK Generation Successful!\n\n" +
                    $"File Saved At: {localZipPath}\n\n" +
                    $"The file is currently in the workspace. Please check if this location is correct.\n" +
                    $"If the user wants the file elsewhere, please move it to the desired destination.";
