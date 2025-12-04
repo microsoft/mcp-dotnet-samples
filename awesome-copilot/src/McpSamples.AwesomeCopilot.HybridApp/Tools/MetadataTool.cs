@@ -26,6 +26,19 @@ public interface IMetadataTool
     /// <param name="filename">The filename of the instruction</param>
     /// <returns>The file contents as a string</returns>
     Task<string> LoadAsync(InstructionMode mode, string filename);
+
+    /// <summary>
+    /// Lists all collections available in the metadata.
+    /// </summary>
+    /// <returns>Returns a <see cref="MetadataResult"/> containing collections</returns>
+    Task<MetadataResult> ListCollectionsAsync();
+
+    /// <summary>
+    /// Loads a collection by id
+    /// </summary>
+    /// <param name="id">Collection id</param>
+    /// <returns>Returns the collection as an object or error message as string</returns>
+    Task<object> LoadCollectionAsync(string id);
 }
 
 /// <summary>
@@ -35,8 +48,8 @@ public interface IMetadataTool
 public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger) : IMetadataTool
 {
     /// <inheritdoc />
-    [McpServerTool(Name = "search_instructions", Title = "Searches custom instructions")]
-    [Description("Searches custom instructions based on keywords in their titles and descriptions.")]
+    [McpServerTool(Name = "search_instructions", Title = "Searches custom instructions and agents")]
+    [Description("Searches custom instructions and agents based on keywords in their titles and descriptions.")]
     public async Task<MetadataResult> SearchAsync(
         [Description("The keyword to search for")] string keywords)
     {
@@ -60,11 +73,11 @@ public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger
     }
 
     /// <inheritdoc />
-    [McpServerTool(Name = "load_instruction", Title = "Loads a custom instruction")]
-    [Description("Loads a custom instruction from the repository.")]
+    [McpServerTool(Name = "load_instruction", Title = "Loads a custom instruction or agent")]
+    [Description("Loads a custom instruction or agent from the repository.")]
     public async Task<string> LoadAsync(
         [Description("The instruction mode")] InstructionMode mode,
-        [Description("The filename of the instruction")] string filename)
+        [Description("The filename of the instruction or agent")] string filename)
     {
         try
         {
@@ -84,6 +97,52 @@ public class MetadataTool(IMetadataService service, ILogger<MetadataTool> logger
             logger.LogError(ex, "Error occurred while loading instruction with mode {Mode} and filename {Filename}.", mode, filename);
 
             return ex.Message;
+        }
+    }
+
+    /// <summary>
+    /// Lists all collections available in the metadata.
+    /// </summary>
+    [McpServerTool(Name = "list_collections", Title = "Lists available collections")]
+    [Description("Lists all collections available in the repository metadata.")]
+    public async Task<MetadataResult> ListCollectionsAsync()
+    {
+        var result = new MetadataResult();
+        try
+        {
+            var metadata = await service.SearchAsync(string.Empty).ConfigureAwait(false);
+            result.Metadata = new Metadata { Collections = metadata.Collections };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error occurred while listing collections.");
+            result.ErrorMessage = ex.Message;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Loads a collection by id
+    /// </summary>
+    [McpServerTool(Name = "load_collection", Title = "Loads a collection by id")]
+    [Description("Loads a collection by id from the metadata and returns its object representation.")]
+    public async Task<object> LoadCollectionAsync([Description("The collection id")] string id)
+    {
+        try
+        {
+            var collection = await service.GetCollectionAsync(id).ConfigureAwait(false);
+            if (collection == null)
+            {
+                return new { Error = $"Collection '{id}' not found" };
+            }
+
+            return collection;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error occurred while loading collection {Id}.", id);
+            return new { Error = ex.Message };
         }
     }
 }

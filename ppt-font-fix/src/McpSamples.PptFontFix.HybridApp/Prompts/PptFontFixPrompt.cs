@@ -3,7 +3,7 @@ using ModelContextProtocol.Server;
 using System.IO; 
 using System;
 using System.Collections.Generic;
-using System.Linq; // Path.GetFileName을 위한 Last() 메서드 사용을 위해 필요
+using System.Linq;
 
 namespace McpSamples.PptFontFix.HybridApp.Prompts;
 
