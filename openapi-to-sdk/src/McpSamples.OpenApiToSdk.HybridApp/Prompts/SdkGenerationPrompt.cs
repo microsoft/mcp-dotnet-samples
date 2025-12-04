@@ -31,16 +31,12 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
   public string GetSdkGenerationPrompt(
       [Description("The URL or local file path of the OpenAPI specification.")]
         string specSource,
-
       [Description("The target programming language. Supported values: CSharp, Java, TypeScript, PHP, Python, Go, Ruby, Dart, HTTP.")]
         string language,
-
       [Description("The name of the generated client class. Default: 'ApiClient'.")]
         string? clientClassName = "ApiClient",
-
       [Description("The namespace for the generated code. Default: 'ApiSdk'.")]
         string? namespaceName = "ApiSdk",
-
       [Description("Any additional options for Kiota generation (e.g., --version).")]
         string? additionalOptions = "None")
   {
@@ -79,7 +75,7 @@ public class SdkGenerationPrompt : ISdkGenerationPrompt
 
         2. **Handle Output Path**:
            - The `generate_sdk` tool manages the output path internally to create a ZIP file.
-           - **NEVER** pass `-o` or `--output` in the `additionalOptions` argument, even if the user asks to save it to a specific location (e.g., "Generate to D:/Work").
+           - NEVER pass `-o` or `--output` in the `additionalOptions` argument, even if the user asks to save it to a specific location (e.g., "Generate to D:/Work").
            - Instead, follow this workflow:
              1. Call `generate_sdk` WITHOUT the output path option.
              2. Once the tool returns the ZIP file path (or download link), tell the user: "I have generated the SDK. Would you like me to move/extract it to [User's Requested Path]?"
