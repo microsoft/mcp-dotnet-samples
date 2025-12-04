@@ -367,49 +367,41 @@ public class PptFontFixService : IPptFontFixService
 
             string finalPhysicalPath = "";
             string baseDirectory;
+            string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
+            string webGeneratedDir = Path.Combine(webRoot, "generated"); // 웹 서비스 경로
 
             bool isContainerEnv = !OperatingSystem.IsWindows() || !string.IsNullOrEmpty(_fileShareMountPath);
             bool isHttpMode = _httpContextAccessor?.HttpContext?.Request != null;
 
-            if (isContainerEnv)
-            {
-                // 1. 저장 기본 경로 결정 (마운트 볼륨 또는 웹 루트)
-                if (!string.IsNullOrEmpty(_fileShareMountPath))
-                {
-                    // Azure File Share Mount Path를 사용합니다. (예: /app/mounts/generated)
-                    baseDirectory = Path.Combine(_fileShareMountPath, "generated");
-                    _logger.LogInformation("Base Path: Azure File Share Mount -> {Path}", baseDirectory);
-                }
-                else if (Directory.Exists("/files"))
-                {
-                    // [Stdio Container Mode]: HTTP 요청이 없고, /files 볼륨이 마운트되어 있을 때 사용
-                    baseDirectory = "/files"; // 👈 Stdio 출력 경로
-                    _logger.LogInformation("Base Path: Stdio Container Volume Mount (/files) -> {Path}", baseDirectory);
-                }
-                else
-                {
-                    // File Share가 없거나 마운트 실패 시, 로컬 웹 루트를 사용합니다.
-                    string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
-                    baseDirectory = Path.Combine(webRoot, "generated");
-                    _logger.LogInformation("Base Path: Local/Docker Web Root -> {Path}", baseDirectory);
-                }
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(outputDirectory) && Directory.Exists(outputDirectory))
-                {
-                    // 2-1. Stdio/로컬 환경: 사용자가 지정한 outputDirectory 사용 (요청 반영)
-                    baseDirectory = outputDirectory;
-                    _logger.LogInformation("Base Path: Local User Specified -> {Path}", baseDirectory);
-                }
-                else
-                {
-                    // 2-2. Fallback: 로컬 환경이지만 outputDirectory가 없으면 Web Root 사용
-                    string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
-                    baseDirectory = Path.Combine(webRoot, "generated");
-                    _logger.LogInformation("Base Path: Local Web Root Fallback -> {Path}", baseDirectory);
-                }
-            }
+
+            if (isHttpMode)
+{
+    // 💡 HTTP 환경에서는 마운트 경로를 무시하고 웹 서비스 경로만 사용합니다.
+    baseDirectory = webGeneratedDir;
+    _logger.LogInformation("Base Path: HTTP Mode detected. Using Web Root -> {Path}", baseDirectory);
+}
+// 2. HTTP 모드가 아닐 때 (Stdio/Local/마운트 볼륨 모드)
+else
+{
+    if (!string.IsNullOrEmpty(_fileShareMountPath))
+    {
+        // Azure File Share Mount Path를 사용합니다.
+        baseDirectory = Path.Combine(_fileShareMountPath, "generated");
+        _logger.LogInformation("Base Path: File Share Mount (Non-HTTP) -> {Path}", baseDirectory);
+    }
+    else if (Directory.Exists("/files"))
+    {
+        // Stdio Container Volume Mount (/files)를 사용합니다.
+        baseDirectory = "/files";
+        _logger.LogInformation("Base Path: Stdio Volume Mount (/files) -> {Path}", baseDirectory);
+    }
+    else
+    {
+        // Fallback으로 웹 루트 경로를 사용합니다.
+        baseDirectory = webGeneratedDir;
+        _logger.LogInformation("Base Path: Local/Fallback Web Root -> {Path}", baseDirectory);
+    }
+}
 
             // 2. 디렉토리 확인 및 생성
             if (!Directory.Exists(baseDirectory))
