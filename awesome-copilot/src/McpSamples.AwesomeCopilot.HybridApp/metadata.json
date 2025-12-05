@@ -231,6 +231,69 @@
       ]
     },
     {
+      "filename": "dataverse-python-api-reference.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
+      "filename": "dataverse-python-authentication-security.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
+      "filename": "dataverse-python-error-handling.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
+      "filename": "dataverse-python-modules.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
+      "filename": "dataverse-python-performance-optimization.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
+      "filename": "dataverse-python-real-world-usecases.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
+      "filename": "dataverse-python-sdk.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
+      "filename": "dataverse-python-testing-debugging.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
+      "filename": "dataverse-python.instructions.md",
+      "applyTo": [
+        "**"
+      ],
+      "description": "No description provided"
+    },
+    {
       "filename": "declarative-agents-microsoft365.instructions.md",
       "description": "Comprehensive development guidelines for Microsoft 365 Copilot declarative agents with schema v1.5, TypeSpec integration, and Microsoft 365 Agents Toolkit workflows",
       "applyTo": [
@@ -1656,6 +1719,26 @@
       "description": "Get best practices for XUnit unit testing, including data-driven tests"
     },
     {
+      "filename": "dataverse-python-advanced-patterns.prompt.md",
+      "name": "Dataverse Python Advanced Patterns",
+      "description": "Generate production code for Dataverse SDK using advanced patterns, error handling, and optimization techniques."
+    },
+    {
+      "filename": "dataverse-python-production-code.prompt.md",
+      "name": "Dataverse Python - Production Code Generator",
+      "description": "Generate production-ready Python code using Dataverse SDK with error handling, optimization, and best practices"
+    },
+    {
+      "filename": "dataverse-python-quickstart.prompt.md",
+      "name": "Dataverse Python Quickstart Generator",
+      "description": "Generate Python SDK setup + CRUD + bulk + paging snippets using official patterns."
+    },
+    {
+      "filename": "dataverse-python-usecase-builder.prompt.md",
+      "name": "Dataverse Python - Use Case Solution Builder",
+      "description": "Generate complete solutions for specific Dataverse SDK use cases with architecture recommendations"
+    },
+    {
       "filename": "declarative-agents.prompt.md",
       "description": "Complete development kit for Microsoft 365 Copilot declarative agents with three comprehensive workflows (basic, advanced, validation), TypeSpec support, and Microsoft 365 Agents Toolkit integration"
     },
@@ -2700,6 +2783,89 @@
         },
         {
           "path": "prompts/postgresql-code-review.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "dataverse-sdk-for-python.collection.yml",
+      "id": "dataverse-sdk-for-python",
+      "name": "Dataverse SDK for Python",
+      "description": "Comprehensive collection for building production-ready Python integrations with Microsoft Dataverse. Includes official documentation, best practices, advanced features, file operations, and code generation prompts.",
+      "tags": [
+        "dataverse",
+        "python",
+        "integration",
+        "sdk"
+      ],
+      "items": [
+        {
+          "path": "instructions/dataverse-python-sdk.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-api-reference.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-modules.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-best-practices.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-advanced-features.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-agentic-workflows.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-authentication-security.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-error-handling.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-file-operations.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-pandas-integration.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-performance-optimization.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-real-world-usecases.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/dataverse-python-testing-debugging.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/dataverse-python-quickstart.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/dataverse-python-advanced-patterns.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/dataverse-python-production-code.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/dataverse-python-usecase-builder.prompt.md",
           "kind": "prompt"
         }
       ],
