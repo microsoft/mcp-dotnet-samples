@@ -183,7 +183,7 @@ public class PptFontFixService : IPptFontFixService
 
                     string normalizedHostRoot = _hostRootPath.Replace('\\', '/').TrimEnd('/');
                     
-                    targetHostPath = $"{normalizedHostRoot}/ppt-font-fix/workspace/{safeFileName}";
+                    targetHostPath = $"{normalizedHostRoot}/workspace/{safeFileName}";
                 }
                 
                 return $"""
@@ -373,35 +373,41 @@ public class PptFontFixService : IPptFontFixService
             bool isContainerEnv = !OperatingSystem.IsWindows() || !string.IsNullOrEmpty(_fileShareMountPath);
             bool isHttpMode = _httpContextAccessor?.HttpContext?.Request != null;
 
-
-            if (isHttpMode)
-{
-    // 💡 HTTP 환경에서는 마운트 경로를 무시하고 웹 서비스 경로만 사용합니다.
-    baseDirectory = webGeneratedDir;
-    _logger.LogInformation("Base Path: HTTP Mode detected. Using Web Root -> {Path}", baseDirectory);
-}
-// 2. HTTP 모드가 아닐 때 (Stdio/Local/마운트 볼륨 모드)
-else
-{
-    if (!string.IsNullOrEmpty(_fileShareMountPath))
-    {
-        // Azure File Share Mount Path를 사용합니다.
-        baseDirectory = Path.Combine(_fileShareMountPath, "generated");
-        _logger.LogInformation("Base Path: File Share Mount (Non-HTTP) -> {Path}", baseDirectory);
-    }
-    else if (Directory.Exists("/files"))
-    {
-        // Stdio Container Volume Mount (/files)를 사용합니다.
-        baseDirectory = "/files";
-        _logger.LogInformation("Base Path: Stdio Volume Mount (/files) -> {Path}", baseDirectory);
-    }
-    else
-    {
-        // Fallback으로 웹 루트 경로를 사용합니다.
-        baseDirectory = webGeneratedDir;
-        _logger.LogInformation("Base Path: Local/Fallback Web Root -> {Path}", baseDirectory);
-    }
-}
+            if (!string.IsNullOrEmpty(outputDirectory) && !isContainerEnv)
+            {
+                baseDirectory = outputDirectory;
+                _logger.LogInformation("Base Path: User Provided Output Directory -> {Path}", baseDirectory);
+            }
+            else
+            {
+                if (isHttpMode)
+                {
+                    // 💡 HTTP 환경에서는 마운트 경로를 무시하고 웹 서비스 경로만 사용합니다.
+                    baseDirectory = webGeneratedDir;
+                    _logger.LogInformation("Base Path: HTTP Mode detected. Using Web Root -> {Path}", baseDirectory);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(_fileShareMountPath))
+                    {
+                        // Azure File Share Mount Path를 사용합니다.
+                        baseDirectory = Path.Combine(_fileShareMountPath, "generated");
+                        _logger.LogInformation("Base Path: File Share Mount (Non-HTTP) -> {Path}", baseDirectory);
+                    }
+                    else if (Directory.Exists("/files"))
+                    {
+                        // Stdio Container Volume Mount (/files)를 사용합니다.
+                        baseDirectory = "/files";
+                        _logger.LogInformation("Base Path: Stdio Volume Mount (/files) -> {Path}", baseDirectory);
+                    }
+                    else
+                    {
+                        // 로컬 환경에서는 웹 루트의 generated 폴더를 사용합니다.
+                        baseDirectory = webGeneratedDir;
+                        _logger.LogInformation("Base Path: Local Environment Web Root -> {Path}", baseDirectory);
+                    }
+                }
+            }
 
             // 2. 디렉토리 확인 및 생성
             if (!Directory.Exists(baseDirectory))
@@ -446,7 +452,14 @@ else
             // 4. 최종 반환: HTTP Context가 있다면 웹 URL을, 없다면 물리적 경로를 반환
             if (_httpContextAccessor?.HttpContext?.Request != null)
             {
+                if (!string.IsNullOrEmpty(outputDirectory) && !finalPhysicalPath.StartsWith(webRoot, StringComparison.OrdinalIgnoreCase))
+                {
+                    // 사용자 지정 경로가 웹으로 접근 불가능할 경우 물리적 경로 반환
+                    _logger.LogWarning("User-specified path is outside of WebRoot. Returning Physical Path: {Path}", finalPhysicalPath);
+                    return finalPhysicalPath;
+                }
                 // 모든 파일이 'generated' 폴더 아래에 저장되었으므로, 웹 URL 경로는 /generated/{filename}으로 통일
+                string relativePath = Path.GetRelativePath(webRoot, finalPhysicalPath).Replace('\\', '/');
                 var request = _httpContextAccessor.HttpContext.Request;
                 string url = $"{request.Scheme}://{request.Host}/generated/{safeFileName}";
                 _logger.LogInformation("✅ Returning Web URL: {Url}", url);
