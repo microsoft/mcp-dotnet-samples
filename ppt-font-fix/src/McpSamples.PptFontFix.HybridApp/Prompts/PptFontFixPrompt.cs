@@ -39,6 +39,7 @@ public class PptFontFixPrompt : IPptFontFixPrompt
         ### Order of execution
         1. Use the 'open_ppt_file' tool to verify that the file exists in FilePath. If the file opens without any problems, proceed to the next step.
         - If not, use the file system tool to move the file in the File Path that you suggested to a specific path based on the result value returned by the tool.
+        - If Tool returns 'curl' command, use the file system tool to download the file from the public URL to the specific path.
         2. If the file is opened normally, please analyze the usage status of the font in the PPT file through 'analyze_font' and show the following results.
         - List of used fonts
         - List of inconsistent used fons
@@ -46,8 +47,8 @@ public class PptFontFixPrompt : IPptFontFixPrompt
         - Ask the user for two answers.
         A. **Choose a Standard Font** (from UsedFonts)  
         B. **Choose an Action Mode:**:
-                    3-1. Fix & Clean — Replace fonts and remove unused text boxes  
-                    3-2. Fix Only — Replace fonts only
+                    1. Fix & Clean — Replace fonts and remove unused text boxes  
+                    2. Fix Only — Replace fonts only
         4. Ask the user if there is a path they want to save.
         - If the user did not answer the desired path: Save it as the default path if the file was opened immediately without any problems in No. 1, and specify the outputDirectory as null if you moved the file in the path you suggested.
         ** If the returned path starts with '/files/', the file is stored within the mounted path. If the user has responded to the desired path, this requires a file system tool to copy it from the mounted folder to the file path between the local and the container. If not, it should be notified that it is stored in the mounted folder. (Exists inside workspace)
