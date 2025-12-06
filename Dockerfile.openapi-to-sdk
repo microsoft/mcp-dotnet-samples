@@ -1,17 +1,12 @@
 # syntax=docker/dockerfile:1
 
-# -----------------------------------------------------------------------------
-# Build Stage
-# -----------------------------------------------------------------------------
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 
-# 소스 코드 복사 (Shared 프로젝트 포함)
 COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
 COPY ./openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp /source/openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp
 
 WORKDIR /source/openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp
 
-# Kiota 도구 설치 (빌드 스테이지에서 설치 후 복사)
 RUN dotnet tool install --global Microsoft.OpenApi.Kiota
 
 # 아키텍처에 맞게 게시 (Publish)
@@ -23,37 +18,23 @@ RUN case "$TARGETARCH" in \
     esac && \
     dotnet publish -c Release -o /app -r $RID --self-contained false
 
-# -----------------------------------------------------------------------------
-# Runtime Stage
-# -----------------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
 
 WORKDIR /app
 
-# 1. 빌드 결과물 복사
 COPY --from=build /app .
 
-# 2. Kiota 도구 복사 및 설정
 COPY --from=build /root/.dotnet/tools /opt/kiota-tools
 
-# [중요] 권한 설정 및 심볼릭 링크
-# - /opt/kiota-tools: 실행 가능하도록 설정
-# - kiota: 전역 경로에 심볼릭 링크 연결
 RUN chmod -R 755 /opt/kiota-tools && \
     ln -s /opt/kiota-tools/kiota /usr/local/bin/kiota
 
-# 3. [개선] Workspace 디렉터리 생성 및 권한 부여
-# - 미리 폴더를 만들어두지 않으면, 앱 실행 시 권한 오류가 날 수 있습니다.
-# - $APP_UID는 .NET 이미지에 내장된 변수입니다.
 RUN mkdir -p /app/workspace/generated && \
     mkdir -p /app/workspace/specs && \
     chown -R $APP_UID:$APP_UID /app/workspace
 
-# PATH 환경 변수 설정
 ENV PATH="/opt/kiota-tools:${PATH}"
 
-# 4. 보안을 위해 비-루트 사용자 전환
 USER $APP_UID
 
-# 실행
 ENTRYPOINT ["dotnet", "McpSamples.OpenApiToSdk.HybridApp.dll"]

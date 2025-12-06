@@ -2,7 +2,6 @@
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 
-# Install Kiota CLI
 RUN dotnet tool install --global Microsoft.OpenApi.Kiota
 
 COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
@@ -19,10 +18,13 @@ WORKDIR /app
 COPY --from=build /app .
 COPY --from=build /root/.dotnet/tools /opt/kiota-tools
 
-RUN mkdir -p /app/wwwroot/generated && \
-    chown -R $APP_UID:$APP_UID /app/wwwroot
+RUN mkdir -p /app/workspace/generated && \
+    mkdir -p /app/workspace/specs && \
+    chown -R $APP_UID:$APP_UID /app/workspace && \
+    chmod -R 755 /opt/kiota-tools && \
+    ln -s /opt/kiota-tools/kiota /usr/local/bin/kiota
 
-RUN ln -s /opt/kiota-tools/kiota /usr/local/bin/kiota
+ENV PATH="/opt/kiota-tools:${PATH}"
 
 USER $APP_UID
 

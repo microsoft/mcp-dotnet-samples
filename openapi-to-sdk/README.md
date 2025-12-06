@@ -82,13 +82,13 @@ OpenAPI to SDK MCP server includes:
 1. Run the MCP server app in a container.
 
     ```bash
-    docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace" -e HOST_ROOT_PATH="$REPOSITORY_ROOT" openapi-to-sdk:latest
+    docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/openapi-to-sdk" openapi-to-sdk:latest
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace" -e HOST_ROOT_PATH="$REPOSITORY_ROOT" ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest
+    docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/openapi-to-sdk" ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest
     ```
 
    **Parameters**:
@@ -99,12 +99,12 @@ OpenAPI to SDK MCP server includes:
 
    ```bash
    # use local container image
-   docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace"  -e HOST_ROOT_PATH="$REPOSITORY_ROOT" openapi-to-sdk:latest --http
+   docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace"  -e HOST_ROOT_PATH="$REPOSITORY_ROOT/openapi-to-sdk" openapi-to-sdk:latest --http
    ```
 
    ```bash
    # use container image from the container registry
-   docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace"  -e HOST_ROOT_PATH="$REPOSITORY_ROOT" ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest --http
+   docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/openapi-to-sdk/workspace:/app/workspace"  -e HOST_ROOT_PATH="$REPOSITORY_ROOT/openapi-to-sdk" ghcr.io/microsoft/mcp-dotnet-samples/openapi-to-sdk:latest --http
    ```
 
 #### On Azure
@@ -217,7 +217,8 @@ OpenAPI to SDK MCP server includes:
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
 1. Choose `openapi-to-sdk` then click `Start Server`.
 1. When prompted, enter one of the following values:
-   - The absolute directory path of the `McpSamples.OpenApiToSdk.HybridApp` project
+   - The absolute directory path of the `McpSamples.OpenApiToSdk.HybridApp` project (On a local machine)
+   - The absolute directory path of the `openapi-to-sdk` project (In a container)
    - The FQDN of Azure Container Apps.
 1. Use a prompt by typing `/mcp.openapi-to-sdk.generate_sdk` and enter keywords to search. You'll get a prompt like:
 
