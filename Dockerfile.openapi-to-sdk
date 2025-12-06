@@ -9,7 +9,6 @@ WORKDIR /source/openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp
 
 RUN dotnet tool install --global Microsoft.OpenApi.Kiota
 
-# 아키텍처에 맞게 게시 (Publish)
 ARG TARGETARCH
 RUN case "$TARGETARCH" in \
     "amd64") RID="linux-musl-x64" ;; \
