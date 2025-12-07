@@ -67,19 +67,19 @@ public class OpenApiService(OpenApiToSdkAppSettings settings, IHttpContextAccess
                             uploadUrl = $"{request.Scheme}://{request.Host}/upload";
                         }
 
-                        return $"""
+                        return $$"""
                         Action Required: File Upload Needed (Azure)
 
-                        I am running in an Azure environment and cannot access your local file `{specSource}` directly.
+                        I am running in an Azure environment and cannot access your local file `{{specSource}}` directly.
                         To proceed, you need to upload the file to the server.
 
                         Please execute the appropriate command for your operating system (OS) using your terminal or shell tool:
 
                         ### macOS & Linux
-                        curl -F "file=@{specSource}" {uploadUrl}
+                        curl -F "file=@{{specSource}}" {{uploadUrl}}
 
-                        ### Windows (PowerShell/CMD)
-                        curl.exe -F "file=@{specSource}" {uploadUrl}
+                        ### Windows (PowerShell)
+                        Invoke-RestMethod -Uri "{{uploadUrl}}" -Method Post -Form @{file = Get-Item -Path "{{specSource}}"}
 
                         After the command completes successfully, please call this `generate_sdk` tool again.
                         """;
