@@ -23,4 +23,12 @@ public interface IMetadataService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Returns the file contents as a string</returns>
     Task<string> LoadAsync(string directory, string filename, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a collection by its id (from the metadata collections array)
+    /// </summary>
+    /// <param name="id">Collection id</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Returns the <see cref="Models.Collection"/> or null if not found</returns>
+    Task<Collection?> GetCollectionAsync(string id, CancellationToken cancellationToken = default);
 }
