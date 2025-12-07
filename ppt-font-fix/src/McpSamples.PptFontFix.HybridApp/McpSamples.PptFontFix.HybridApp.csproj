@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
-    <PackageReference Include="ModelContextProtocol" Version="0.4.1-preview.1" />
+    <PackageReference Include="ModelContextProtocol" Version="0.*-*" />
     <PackageReference Include="ShapeCrawler" Version="0.75.1" />
   </ItemGroup>
 

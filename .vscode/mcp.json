@@ -2,14 +2,22 @@
   "inputs": [
     {
       "type": "promptString",
-      "id": "acaapp-server-fqdn",
-      "description": "Azure Container Apps FQDN"
+      "id": "repository-root",
+      "description": "The absolute path where the your repository is cloned"
     }
   ],
   "servers": {
     "ppt-font-fix": {
-      "type": "http",
-      "url": "https://${input:acaapp-server-fqdn}/mcp"
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-v", "${input:repository-root}\\workspace:/files",
+        "-e", "HOST_ROOT_PATH=${input:repository-root}",
+        "ppt-font-fix:latest"
+      ]
     }
   }
 }

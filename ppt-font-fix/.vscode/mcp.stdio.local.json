@@ -13,10 +13,7 @@
       "args": [
         "run",
         "--project",
-        "${input:consoleapp-project-path}",
-        "--",
-        "-tc",
-        "-p"
+        "${input:consoleapp-project-path}"
       ]
     }
   }

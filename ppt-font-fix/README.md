@@ -21,7 +21,8 @@ PPT Font Fix MCP server includes:
 
 | Building Block | Name                       | Description                         | Usage                       |
 |----------------|----------------------------|-------------------------------------|-----------------------------|
-| Tools          | `analyze_ppt_file`         | Opens and analyzes fonts used in a PPTX file.       | `#analyze_ppt_file` |
+| Tools          | `open_ppt_file`         | Opens a PPTX file.       | `#open_ppt_file` |
+| Tools          | `analyze_ppt_file`         | Analyzes fonts used in a PPTX file.       | `#analyze_ppt_file` |
 | Tools          | `update_ppt_file`          | Replaces inconsistent fonts and saves the modified file.     | `#update_ppt_file` |
 | Prompts        | `fix_ppt_fonts`            | Structured workflow to guide file upload and repair process. | `/mcp.ppt-font-fix.fix_ppt_fonts ` |
 
@@ -80,17 +81,18 @@ PPT Font Fix MCP server includes:
     cd $REPOSITORY_ROOT
     docker build -f Dockerfile.ppt-font-fix -t ppt-font-fix:latest .
     ```
+    > Make sure take note the absolute directory path of the `ppt-font-fix` project.
 
 1. Run the MCP server app in a container.
 
     ```bash
-    docker run -i --rm -p 8080:8080 ppt-font-fix:latest
+    docker run -i --rm -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/ppt-font-fix" ppt-font-fix:latest
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest
+    docker run -i --rm -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/ppt-font-fix" ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest
     ```
 
    **Parameters**:
@@ -101,12 +103,12 @@ PPT Font Fix MCP server includes:
 
    ```bash
    # use local container image
-   docker run -it --rm -p 8080:8080 -u 0 --name ppt-font-fix ppt-font-fix:latest --http
+   docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/ppt-font-fix" ppt-font-fix:latest --http
    ```
 
    ```bash
    # use container image from the container registry
-   docker run -it --rm -p 8080:8080 -u 0 --name ppt-font-fix ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest --http
+   docker run -it --rm -p 8080:8080 -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/ppt-font-fix" ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest --http
    ```
 
 #### On Azure
