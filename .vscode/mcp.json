@@ -1,16 +1,8 @@
 { 
   "servers": {
     "ppt-font-fix": {
-      "type": "stdio",
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-v", "${workspaceFolder}\\ppt-font-fix\\workspace:/files",
-        "-e", "HOST_ROOT_PATH=${workspaceFolder}\\ppt-font-fix",
-        "ppt-font-fix:latest"
-      ]
+      "type": "http",
+      "url": "http://localhost:8080/mcp"
     }
   }
 }

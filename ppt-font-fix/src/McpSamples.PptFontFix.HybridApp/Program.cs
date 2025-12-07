@@ -57,14 +57,14 @@ if (useStreamableHttp && app is WebApplication webApp)
             return Results.BadRequest(new { error = "No file uploaded." });
         }
 
-        // 2. 입력 파일 저장소 (SpecsPath) 확인 및 생성
+        // 2. 입력 파일 저장소 (InputPath) 확인 및 생성
         var appSettings = webApp.Services.GetRequiredService<PptFontFixAppSettings>(); // AppSettings 주입
-        if (!Directory.Exists(appSettings.SpecsPath))
-            Directory.CreateDirectory(appSettings.SpecsPath);
+        if (!Directory.Exists(appSettings.InputPath))
+            Directory.CreateDirectory(appSettings.InputPath);
 
         // 3. 파일명 추출 및 최종 경로 설정
         var fileName = Path.GetFileName(file.FileName);
-        var filePath = Path.Combine(appSettings.SpecsPath, fileName);
+        var filePath = Path.Combine(appSettings.InputPath, fileName);
 
         try
         {
@@ -99,36 +99,40 @@ void InitializeRuntimeSettings(PptFontFixAppSettings settings, bool isHttp)
 
     string baseDirectory;
 
-    if (isContainer)
+    if (isAzure)
     {
-        baseDirectory = "/app"; 
-        settings.SpecsPath = Path.Combine(baseDirectory, "files");
-        settings.GeneratedPath = Path.Combine(baseDirectory, "workspace", "generated");
-        
-        // WorkspacePath는 SpecsPath의 상위 개념으로 설정
-        settings.WorkspacePath = Path.GetDirectoryName(settings.SpecsPath) ?? baseDirectory;
+        //baseDirectory = "/app";
+        baseDirectory = "/workspace";
+        settings.InputPath = Path.Combine(baseDirectory);
+        settings.GeneratedPath = Path.Combine(baseDirectory,"generated");
+        settings.WorkspacePath = Path.GetDirectoryName(settings.InputPath) ?? baseDirectory;
     }
-    
+    else if (isContainer)
+    {
+        baseDirectory = "/files"; 
+        settings.InputPath = Path.Combine(baseDirectory, "input");
+        settings.GeneratedPath = Path.Combine(baseDirectory, "generated");
+        
+        // WorkspacePath는 InputPath의 상위 개념으로 설정
+        settings.WorkspacePath = Path.GetDirectoryName(settings.InputPath) ?? baseDirectory;
+    }
     else
     {
         // [로컬 환경]: 프로젝트 루트 폴더 찾기
         baseDirectory = TryFindProjectRoot(Directory.GetCurrentDirectory()) ?? Directory.GetCurrentDirectory();
+        string workspacePath = Path.Combine(baseDirectory, "workspace");
+        settings.WorkspacePath = workspacePath;
+        settings.InputPath = Path.Combine(workspacePath, "input"); // 입력 파일 저장소
+        settings.GeneratedPath = Path.Combine(workspacePath, "generated"); // 출력 파일 저장소
     }
-
-    // 작업 공간 경로 설정
-    string workspacePath = Path.Combine(baseDirectory, "workspace");
     
-    // 설정 객체에 값 주입
-    settings.WorkspacePath = workspacePath;
-    settings.SpecsPath = Path.Combine(workspacePath, "inputs"); // 입력 파일 저장소
-    settings.GeneratedPath = Path.Combine(workspacePath, "generated"); // 출력 파일 저장소
     settings.IsHttpMode = isHttp;
     settings.IsContainer = isContainer;
     settings.IsAzure = isAzure;
 
     // 디렉토리 생성 보장
     if (!Directory.Exists(settings.WorkspacePath)) Directory.CreateDirectory(settings.WorkspacePath);
-    if (!Directory.Exists(settings.SpecsPath)) Directory.CreateDirectory(settings.SpecsPath);
+    if (!Directory.Exists(settings.InputPath)) Directory.CreateDirectory(settings.InputPath);
     if (!Directory.Exists(settings.GeneratedPath)) Directory.CreateDirectory(settings.GeneratedPath);
 }
 
@@ -141,7 +145,7 @@ string? TryFindProjectRoot(string startPath)
         // Dockerfile.ppt-font-fix 파일이 있는 곳을 루트로 간주
         if (dir.GetFiles("Dockerfile.ppt-font-fix").Length > 0)
         {
-            return dir.FullName;
+            return Path.Combine(dir.FullName, "ppt-font-fix");
         }
         dir = dir.Parent;
     }

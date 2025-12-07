@@ -28,9 +28,9 @@ public class PptFontFixAppSettings : AppSettings
     public string GeneratedPath { get; set; } = string.Empty;
     
     /// <summary>
-    /// The path for specs files.
+    /// The path for input files.
     /// </summary>
-    public string SpecsPath { get; set; } = string.Empty;
+    public string InputPath { get; set; } = string.Empty;
     
     /// <summary>
     /// Indicates whether the application is running in HTTP mode.

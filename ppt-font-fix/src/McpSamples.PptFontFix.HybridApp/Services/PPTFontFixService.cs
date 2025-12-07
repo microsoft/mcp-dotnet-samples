@@ -112,9 +112,9 @@ public class PptFontFixService : IPptFontFixService
         string safeFileName = Path.GetFileName(filePath.Replace('\\', '/'));
 
         // (기존) 컨테이너 내부의 미리 약속된 경로를 탐색
+        searchPaths.Add(Path.Combine(_settings.InputPath, safeFileName));
         searchPaths.Add(Path.Combine("/app", safeFileName));
         searchPaths.Add(Path.Combine("/files", safeFileName));
-        searchPaths.Add(Path.Combine("/app/mounts", safeFileName));
 
         // (기존) WebRoot 및 Temp 경로 탐색
         string baseDir = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
@@ -173,7 +173,7 @@ public class PptFontFixService : IPptFontFixService
             else if (_settings.IsContainer)
             {
                 // [변경] Docker 환경에서는 볼륨 복사(cp) 가이드 반환
-                string targetContainerPath = Path.Combine(_settings.SpecsPath, safeFileName);
+                string targetContainerPath = Path.Combine(_settings.InputPath, safeFileName);
                 string targetHostPath = targetContainerPath;
                 string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
 
@@ -183,7 +183,7 @@ public class PptFontFixService : IPptFontFixService
 
                     string normalizedHostRoot = _hostRootPath.Replace('\\', '/').TrimEnd('/');
                     
-                    targetHostPath = $"{normalizedHostRoot}/workspace/{safeFileName}";
+                    targetHostPath = $"{normalizedHostRoot}/{safeFileName}";
                 }
                 
                 return $"""
@@ -366,7 +366,7 @@ public class PptFontFixService : IPptFontFixService
             memoryStream.Position = 0;
 
             string finalPhysicalPath = "";
-            string baseDirectory;
+            string baseDirectory = _settings.GeneratedPath;
             string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
             string webGeneratedDir = Path.Combine(webRoot, "generated"); // 웹 서비스 경로
 
@@ -396,8 +396,7 @@ public class PptFontFixService : IPptFontFixService
                     }
                     else if (Directory.Exists("/files"))
                     {
-                        // Stdio Container Volume Mount (/files)를 사용합니다.
-                        baseDirectory = "/files";
+                        baseDirectory = _settings.GeneratedPath;
                         _logger.LogInformation("Base Path: Stdio Volume Mount (/files) -> {Path}", baseDirectory);
                     }
                     else
