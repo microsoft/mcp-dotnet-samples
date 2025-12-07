@@ -173,7 +173,9 @@
         "**/Dockerfile.*",
         "**/*.dockerfile",
         "**/docker-compose*.yml",
-        "**/docker-compose*.yaml"
+        "**/docker-compose*.yaml",
+        "**/compose*.yml",
+        "**/compose*.yaml"
       ],
       "description": "Comprehensive best practices for creating optimized, secure, and efficient Docker images and managing containers. Covers multi-stage builds, image layer optimization, security scanning, and runtime best practices."
     },
@@ -391,7 +393,8 @@
     {
       "filename": "github-actions-ci-cd-best-practices.instructions.md",
       "applyTo": [
-        ".github/workflows/*.yml"
+        ".github/workflows/*.yml",
+        ".github/workflows/*.yaml"
       ],
       "description": "Comprehensive guide for building robust, secure, and efficient CI/CD pipelines using GitHub Actions. Covers workflow structure, jobs, steps, environment variables, secret management, caching, matrix strategies, testing, and deployment strategies."
     },
