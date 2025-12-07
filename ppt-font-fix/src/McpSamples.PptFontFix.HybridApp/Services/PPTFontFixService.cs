@@ -37,7 +37,7 @@ public interface IPptFontFixService
     /// Save the modified Ppt file.
     /// </summary>
     /// <param name="desiredFileName">The desired file name to save as.</param>
-    /// <param name="outputDirectory">The directory path on the host machine to save the modified file.</param> // ✅ 신규 추가
+    /// <param name="outputDirectory">The directory path on the host machine to save the modified file.</param>
     Task<string> SavePptFileAsync(string desiredFileName, string? outputDirectory = null);
 
     /// <summary>
@@ -111,16 +111,13 @@ public class PptFontFixService : IPptFontFixService
         var searchPaths = new List<string> { filePath }; 
         string safeFileName = Path.GetFileName(filePath.Replace('\\', '/'));
 
-        // (기존) 컨테이너 내부의 미리 약속된 경로를 탐색
         searchPaths.Add(Path.Combine(_settings.InputPath, safeFileName));
         searchPaths.Add(Path.Combine("/app", safeFileName));
         searchPaths.Add(Path.Combine("/files", safeFileName));
 
-        // (기존) WebRoot 및 Temp 경로 탐색
         string baseDir = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
         searchPaths.Add(Path.Combine(baseDir, "generated", safeFileName));
 
-        // (신규) File Share Mount Path를 기반으로 파일명으로 직접 접근 시도
         if (!string.IsNullOrEmpty(_fileShareMountPath))
         {
             searchPaths.Add(Path.Combine(_fileShareMountPath, "generated", safeFileName));
@@ -139,10 +136,8 @@ public class PptFontFixService : IPptFontFixService
         
         if (foundPath == null)
         {
-            // 2-1. Azure Container Apps (Remote HTTP) 환경 (IsAzure 플래그 사용)
             if (_settings.IsAzure && _settings.IsHttpMode)
             {
-                // [변경] Azure 환경에서는 curl 업로드 가이드 반환
                 string uploadUrl = "/upload"; 
                 var request = _httpContextAccessor?.HttpContext?.Request;
                 if (request != null)
@@ -169,10 +164,8 @@ public class PptFontFixService : IPptFontFixService
                     After the command completes successfully, please call the `open_ppt_file` tool again with the path returned by the upload.
                     """;
             }
-            // 2-2. Docker Container (Stdio/HTTP Local) 환경 (IsContainer 플래그 사용)
             else if (_settings.IsContainer)
             {
-                // [변경] Docker 환경에서는 볼륨 복사(cp) 가이드 반환
                 string targetContainerPath = Path.Combine(_settings.InputPath, safeFileName);
                 string targetHostPath = targetContainerPath;
                 string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
@@ -199,14 +192,11 @@ public class PptFontFixService : IPptFontFixService
                     2. RETRY the `open_ppt_file` tool immediately with the original file path (`{filePath}`).
                     """;
             }
-            // 2-3. 로컬 환경 또는 기타 오류
             
             _logger.LogError("❌ File not found. Searched in: {Paths}", string.Join(", ", searchPaths));
-            // [변경] 원본 코드의 복사 시도/throw 대신 에러 메시지 반환
             return $"[Error] File Not Found: The file '{filePath}' was not found. Please ensure the path is correct and accessible.";
         }
         
-        // 3. 파일 열기 (foundPath 사용)
         try
         {
             _presentation?.Dispose();
@@ -355,7 +345,6 @@ public class PptFontFixService : IPptFontFixService
         if (this._presentation == null) throw new InvalidOperationException("Ppt file is not opened. Please open a Ppt file before saving.");
         ArgumentException.ThrowIfNullOrWhiteSpace(desiredFileName, nameof(desiredFileName));
 
-        // 파일 이름 정리 (안전한 파일 이름 추출)
         string safeFileName = Path.GetFileName(desiredFileName).Replace(":", "").Trim();
 
         _logger.LogInformation("Save process started. Target: {SafeName}", safeFileName);
@@ -368,7 +357,7 @@ public class PptFontFixService : IPptFontFixService
             string finalPhysicalPath = "";
             string baseDirectory = _settings.GeneratedPath;
             string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
-            string webGeneratedDir = Path.Combine(webRoot, "generated"); // 웹 서비스 경로
+            string webGeneratedDir = Path.Combine(webRoot, "generated");
 
             bool isContainerEnv = !OperatingSystem.IsWindows() || !string.IsNullOrEmpty(_fileShareMountPath);
             bool isHttpMode = _httpContextAccessor?.HttpContext?.Request != null;
@@ -382,7 +371,6 @@ public class PptFontFixService : IPptFontFixService
             {
                 if (isHttpMode)
                 {
-                    // 💡 HTTP 환경에서는 마운트 경로를 무시하고 웹 서비스 경로만 사용합니다.
                     baseDirectory = webGeneratedDir;
                     _logger.LogInformation("Base Path: HTTP Mode detected. Using Web Root -> {Path}", baseDirectory);
                 }
@@ -390,7 +378,6 @@ public class PptFontFixService : IPptFontFixService
                 {
                     if (!string.IsNullOrEmpty(_fileShareMountPath))
                     {
-                        // Azure File Share Mount Path를 사용합니다.
                         baseDirectory = Path.Combine(_fileShareMountPath, "generated");
                         _logger.LogInformation("Base Path: File Share Mount (Non-HTTP) -> {Path}", baseDirectory);
                     }
@@ -401,14 +388,12 @@ public class PptFontFixService : IPptFontFixService
                     }
                     else
                     {
-                        // 로컬 환경에서는 웹 루트의 generated 폴더를 사용합니다.
                         baseDirectory = webGeneratedDir;
                         _logger.LogInformation("Base Path: Local Environment Web Root -> {Path}", baseDirectory);
                     }
                 }
             }
 
-            // 2. 디렉토리 확인 및 생성
             if (!Directory.Exists(baseDirectory))
             {
                 try
@@ -424,7 +409,6 @@ public class PptFontFixService : IPptFontFixService
             
             finalPhysicalPath = Path.Combine(baseDirectory, safeFileName);
             
-            // 3. 파일 저장 (마운트 볼륨/웹 루트에 단일 저장)
             try 
             {
                 memoryStream.Position = 0;
@@ -434,7 +418,6 @@ public class PptFontFixService : IPptFontFixService
                     await fs.FlushAsync();
                 }
 
-                // Docker/Linux 환경에서 권한 설정
                 if (!OperatingSystem.IsWindows() && string.IsNullOrEmpty(this._fileShareMountPath))
                 {
                     File.SetUnixFileMode(finalPhysicalPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
@@ -448,16 +431,13 @@ public class PptFontFixService : IPptFontFixService
                 throw;
             }
 
-            // 4. 최종 반환: HTTP Context가 있다면 웹 URL을, 없다면 물리적 경로를 반환
             if (_httpContextAccessor?.HttpContext?.Request != null)
             {
                 if (!string.IsNullOrEmpty(outputDirectory) && !finalPhysicalPath.StartsWith(webRoot, StringComparison.OrdinalIgnoreCase))
                 {
-                    // 사용자 지정 경로가 웹으로 접근 불가능할 경우 물리적 경로 반환
                     _logger.LogWarning("User-specified path is outside of WebRoot. Returning Physical Path: {Path}", finalPhysicalPath);
                     return finalPhysicalPath;
                 }
-                // 모든 파일이 'generated' 폴더 아래에 저장되었으므로, 웹 URL 경로는 /generated/{filename}으로 통일
                 string relativePath = Path.GetRelativePath(webRoot, finalPhysicalPath).Replace('\\', '/');
                 var request = _httpContextAccessor.HttpContext.Request;
                 string url = $"{request.Scheme}://{request.Host}/generated/{safeFileName}";
@@ -466,7 +446,6 @@ public class PptFontFixService : IPptFontFixService
             }
             else
             {
-                // STDIN/STDOUT (stdio) 또는 로컬 실행 환경에서 HTTP Context가 없을 경우
                 _logger.LogInformation("✅ Returning Physical Path (No HTTP Context): {Path}", finalPhysicalPath);
                 return finalPhysicalPath;
             }
