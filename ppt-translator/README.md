@@ -383,7 +383,3 @@ docker buildx build --platform linux/amd64 -t ppt-translator:latest -f Dockerfil
 ```bash
 azd up
 ```
-
-## License
-
-MIT
