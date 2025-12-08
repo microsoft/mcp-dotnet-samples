@@ -236,13 +236,16 @@ namespace McpSamples.PptTranslator.HybridApp.Services
             if (baseFont == null || p.Portions.Count == 0) return;
 
             var f = p.Portions[0].Font;
-            f.Size = baseFont.Size;
-            f.IsBold = baseFont.IsBold;
-            f.IsItalic = baseFont.IsItalic;
-            f.Underline = baseFont.Underline;
-            f.Color.Set(baseFont.Color.Hex);
-            f.LatinName = baseFont.LatinName;
-            f.EastAsianName = baseFont.EastAsianName;
+            if (f != null)
+            {
+                f.Size = baseFont.Size;
+                f.IsBold = baseFont.IsBold;
+                f.IsItalic = baseFont.IsItalic;
+                f.Underline = baseFont.Underline;
+                f.Color.Set(baseFont.Color.Hex);
+                f.LatinName = baseFont.LatinName;
+                f.EastAsianName = baseFont.EastAsianName;
+            }
         }
 
         private void ValidateTranslatedJson(TranslatedResult json)

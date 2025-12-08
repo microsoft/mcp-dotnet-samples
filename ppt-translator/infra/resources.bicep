@@ -4,17 +4,17 @@ param location string = resourceGroup().location
 @description('Tags applied to all resources')
 param tags object = {}
 
+param pptTranslatorExists bool
+
 @description('Id of the user or app to assign application roles')
 param principalId string
-
-param pptTranslatorExists bool
 
 @secure()
 param openAiApiKey string
 
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = uniqueString(subscription().id, resourceGroup().id, location)
-var containerAppName = 'ppt-translator'
+var pptTranslatorAppName = 'ppt-translator'
 
 // Monitor application with Azure Monitor
 module monitoring 'br/public:avm/ptn/azd/monitoring:0.1.0' = {
@@ -79,7 +79,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
     resource filesShare 'shares' = {
       name: 'ppt-files'
       properties: {
-        shareQuota: 5120  // 5TB
+        shareQuota: 100  // 100GB
         enabledProtocols: 'SMB'
       }
     }
@@ -102,9 +102,6 @@ module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.4.5
 // Register Azure Files storage with Container App Environment
 resource managedEnv 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
   name: '${abbrs.appManagedEnvironments}${resourceToken}'
-  dependsOn: [
-    containerAppsEnvironment
-  ]
 }
 
 resource filesStorage 'Microsoft.App/managedEnvironments/storages@2023-05-01' = {
@@ -123,43 +120,32 @@ resource filesStorage 'Microsoft.App/managedEnvironments/storages@2023-05-01' = 
 //
 // 3. Container App with Volume Mount
 //
+//
+// 3. Container App with Volume Mount (using AVM module)
+//
 module pptTranslatorFetchLatestImage './modules/fetch-container-image.bicep' = {
   name: 'pptTranslator-fetch-image'
   params: {
     exists: pptTranslatorExists
-    name: containerAppName
+    name: 'ppt-translator'
   }
 }
 
-resource pptTranslator 'Microsoft.App/containerApps@2023-05-01' = {
-  name: containerAppName
-  location: location
-  tags: union(tags, { 'azd-service-name': 'ppt-translator' })
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${resourceGroup().id}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${abbrs.managedIdentityUserAssignedIdentities}ppttrans-${resourceToken}': {}
-    }
-  }
-  properties: {
-    managedEnvironmentId: containerAppsEnvironment.outputs.resourceId
-    configuration: {
-      activeRevisionsMode: 'Single'
-      ingress: {
-        external: true
-        targetPort: 8080
-        transport: 'auto'
-      }
-      registries: [
-        {
-          server: containerRegistry.outputs.loginServer
-          identity: pptTranslatorIdentity.outputs.resourceId
-        }
-      ]
-      secrets: [
+module pptTranslator 'br/public:avm/res/app/container-app:0.8.0' = {
+  name: 'pptTranslator'
+  params: {
+    name: pptTranslatorAppName
+    location: location
+    tags: union(tags, { 'azd-service-name': 'ppt-translator' })
+    environmentResourceId: containerAppsEnvironment.outputs.resourceId
+    ingressTargetPort: 8080
+    scaleMinReplicas: 1
+    scaleMaxReplicas: 10
+    secrets: {
+      secureList: [
         {
           name: 'openai-api-key'
-          value: !empty(openAiApiKey) ? openAiApiKey : 'placeholder'
+          value: openAiApiKey
         }
         {
           name: 'storage-connection'
@@ -167,56 +153,66 @@ resource pptTranslator 'Microsoft.App/containerApps@2023-05-01' = {
         }
       ]
     }
-    template: {
-      scale: {
-        minReplicas: 1
-        maxReplicas: 10
-      }
-      volumes: [
-        {
-          name: 'files-volume'
-          storageType: 'AzureFile'
-          storageName: filesStorage.name
+    containers: [
+      {
+        image: pptTranslatorFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+        name: 'main'
+        resources: {
+          cpu: json('0.5')
+          memory: '1.0Gi'
         }
-      ]
-      containers: [
-        {
-          name: 'main'
-          image: pptTranslatorFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
-          resources: {
-            cpu: json('0.5')
-            memory: '1.0Gi'
+        args: [
+          '--http'
+        ]
+        env: [
+          {
+            name: 'OPENAI_API_KEY'
+            secretRef: 'openai-api-key'
           }
-          args: [
-            '--http'
-          ]
-          env: [
-            {
-              name: 'OPENAI_API_KEY'
-              secretRef: 'openai-api-key'
-            }
-            {
-              name: 'AZURE_STORAGE_CONNECTION_STRING'
-              secretRef: 'storage-connection'
-            }
-          ]
-          volumeMounts: [
-            {
-              volumeName: 'files-volume'
-              mountPath: '/files'
-            }
-          ]
-        }
+          {
+            name: 'AZURE_STORAGE_CONNECTION_STRING'
+            secretRef: 'storage-connection'
+          }
+        ]
+        volumeMounts: [
+          {
+            volumeName: 'files-volume'
+            mountPath: '/files'
+          }
+        ]
+      }
+    ]
+    volumes: [
+      {
+        name: 'files-volume'
+        storageType: 'AzureFile'
+        storageName: filesStorage.name
+      }
+    ]
+    managedIdentities: {
+      userAssignedResourceIds: [
+        pptTranslatorIdentity.outputs.resourceId
       ]
     }
+    registries: [
+      {
+        server: containerRegistry.outputs.loginServer
+        identity: pptTranslatorIdentity.outputs.resourceId
+      }
+    ]
   }
 }
 
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.outputs.loginServer
 output AZURE_CONTAINER_REGISTRY_NAME string = containerRegistry.outputs.name
-output AZURE_RESOURCE_PPT_TRANSLATOR_ID string = pptTranslator.id
-output AZURE_RESOURCE_PPT_TRANSLATOR_NAME string = pptTranslator.name
-output AZURE_RESOURCE_PPT_TRANSLATOR_FQDN string = pptTranslator.properties.configuration.ingress.fqdn
+output AZURE_RESOURCE_PPT_TRANSLATOR_ID string = pptTranslator.outputs.resourceId
+output AZURE_RESOURCE_PPT_TRANSLATOR_NAME string = pptTranslator.outputs.name
+output AZURE_RESOURCE_PPT_TRANSLATOR_FQDN string = pptTranslator.outputs.fqdn
 output AZURE_STORAGE_ACCOUNT_NAME string = storageAccount.name
 output AZURE_STORAGE_FILE_SHARE_NAME string = storageAccount::fileServices::filesShare.name
+
+// azd expects these specific output names for container apps
+output SERVICE_PPT_TRANSLATOR_NAME string = pptTranslator.outputs.name
+output SERVICE_PPT_TRANSLATOR_IDENTITY_PRINCIPAL_ID string = pptTranslatorIdentity.outputs.principalId
+output SERVICE_PPT_TRANSLATOR_IMAGE_NAME string = pptTranslatorFetchLatestImage.outputs.?containers[?0].?image ?? 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 

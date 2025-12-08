@@ -2,6 +2,9 @@
 
 name: ppt-translator
 
+metadata:
+  template: azd-init@1.14.0
+
 services:
   ppt-translator:
     project: src/McpSamples.PptTranslator.HybridApp

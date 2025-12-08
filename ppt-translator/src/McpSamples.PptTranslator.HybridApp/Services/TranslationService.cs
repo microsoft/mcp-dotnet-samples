@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using McpSamples.PptTranslator.HybridApp.Models;
 
 namespace McpSamples.PptTranslator.HybridApp.Services
 {
@@ -36,12 +37,7 @@ namespace McpSamples.PptTranslator.HybridApp.Services
         private readonly ILogger<TranslationService> _logger;
         private readonly IConfiguration _config;
         private readonly HttpClient _http = new();
-
-        private readonly bool _isAzure =
-            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME"));
-
-        private const string AzureInputMount = "/mnt/storage/input";
-        private const string AzureOutputMount = "/mnt/storage/output";
+        private readonly ExecutionMode _executionMode;
 
         public TranslationService(
             ILogger<TranslationService> logger,
@@ -49,6 +45,7 @@ namespace McpSamples.PptTranslator.HybridApp.Services
         {
             _logger = logger;
             _config = config;
+            _executionMode = ExecutionModeDetector.DetectExecutionMode();
             _http.Timeout = TimeSpan.FromSeconds(300);
         }
 
@@ -57,15 +54,15 @@ namespace McpSamples.PptTranslator.HybridApp.Services
             _logger.LogInformation("[STEP 2] Sending translation request.");
 
             // =======================================================
-            // Azure 모드 → temp 사용 금지 / mount에서 바로 읽기
+            // Container/Azure 모드 → /files 구조 사용
             // =======================================================
-            if (_isAzure)
+            if (_executionMode.IsContainerMode())
             {
                 string jsonFileName = Path.GetFileName(extractedJsonPath);
-                string fullPath = Path.Combine(AzureInputMount, jsonFileName);
+                string fullPath = Path.Combine("/files/tmp", jsonFileName);
 
                 if (!File.Exists(fullPath))
-                    throw new FileNotFoundException("Azure JSON not found in input mount.", fullPath);
+                    throw new FileNotFoundException("JSON not found in /files/tmp.", fullPath);
 
                 string extractedJson = await File.ReadAllTextAsync(fullPath);
 
@@ -110,24 +107,22 @@ namespace McpSamples.PptTranslator.HybridApp.Services
                         .GetString()
                     ?? throw new Exception("LLM returned empty content.");
 
-                // 저장 경로: mount output
-                Directory.CreateDirectory(AzureOutputMount);
+                // 저장 경로: /files/tmp
                 string outputFile = $"{Guid.NewGuid():N}_translated_{targetLang}.json";
-                string outputPath = Path.Combine(AzureOutputMount, outputFile);
+                string outputPath = Path.Combine("/files/tmp", outputFile);
 
                 await File.WriteAllTextAsync(outputPath, translated);
 
-                _logger.LogInformation("[Azure] 번역 JSON 저장: {Path}", outputPath);
+                _logger.LogInformation("[Container] 번역 JSON 저장: {Path}", outputPath);
 
-                // 반환: 파일 이름만 넘김 (다음 단계에서 ID로 사용됨)
-                return outputFile;
+                // 반환: 전체 경로 (다음 단계에서 사용)
+                return outputPath;
             }
 
 
             // =======================================================
-            // Local 모드 (STDIO / HTTP / DOCKER LOCAL) → 기존 로직 유지
+            // Local 모드 (STDIO / HTTP / DOCKER LOCAL) → 파일 처리
             // =======================================================
-            extractedJsonPath = ResolveToTemp(extractedJsonPath);
 
             if (!File.Exists(extractedJsonPath))
                 throw new FileNotFoundException("Extracted JSON not found.", extractedJsonPath);
@@ -179,47 +174,15 @@ namespace McpSamples.PptTranslator.HybridApp.Services
                     .GetString()
                 ?? throw new Exception("LLM returned empty content.");
 
-            string localOutput = CreateTempJson(localTranslated);
+            string tempDir = Path.Combine(Path.GetTempPath(), "mcp-uploads");
+            Directory.CreateDirectory(tempDir);
+            string id = Guid.NewGuid().ToString("N");
+            string localOutput = Path.Combine(tempDir, id);
+            await File.WriteAllTextAsync(localOutput, localTranslated);
 
             _logger.LogInformation("[Local] 번역 JSON 저장(temp): {Path}", localOutput);
 
             return localOutput;
-        }
-
-
-        // =======================================================
-        // Local 전용 temp 로직 (그대로 유지)
-        // =======================================================
-        private static readonly string UploadRoot =
-            Path.Combine(Path.GetTempPath(), "mcp-uploads");
-
-        private string ResolveToTemp(string path)
-        {
-            Directory.CreateDirectory(UploadRoot);
-
-            if (path.StartsWith("temp:", StringComparison.OrdinalIgnoreCase))
-            {
-                string id = path.Substring(5);
-                return Path.Combine(UploadRoot, id);
-            }
-
-            if (File.Exists(path))
-            {
-                string id = Guid.NewGuid().ToString("N");
-                string dst = Path.Combine(UploadRoot, id);
-                File.Copy(path, dst, overwrite: true);
-                return dst;
-            }
-
-            throw new InvalidOperationException("Invalid file path. File must exist or start with temp:{id}");
-        }
-
-        private string CreateTempJson(string json)
-        {
-            string id = Guid.NewGuid().ToString("N");
-            string dst = Path.Combine(UploadRoot, id);
-            File.WriteAllText(dst, json);
-            return dst;
         }
     }
 }
