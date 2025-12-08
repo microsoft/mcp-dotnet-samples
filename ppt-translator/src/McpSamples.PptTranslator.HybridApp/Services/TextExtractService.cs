@@ -49,12 +49,7 @@ public interface ITextExtractService
 public class TextExtractService : ITextExtractService
 {
     private readonly ILogger<TextExtractService> _logger;
-    private readonly bool _isAzure =
-        !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME"));
-
-    private const string AzureInputMount = "/mnt/storage/input";
-    private const string AzureOutputMount = "/mnt/storage/output";
-
+    private readonly ExecutionMode _executionMode;
     private Presentation? _presentation;
 
     public TextExtractService(
@@ -62,41 +57,57 @@ public class TextExtractService : ITextExtractService
         IConfiguration config)
     {
         _logger = logger;
+        _executionMode = ExecutionModeDetector.DetectExecutionMode();
     }
 
-    public async Task OpenPptFileAsync(string filePath)
+    public Task OpenPptFileAsync(string filePath)
     {
         string resolved = filePath;
 
-        // Azure 환경: temp 디렉토리 사용 금지, mount 경로 직접 사용
-        if (_isAzure)
+        if (_executionMode.IsContainerMode())
         {
+            // Container/Azure 모드: 통합된 /files/input 사용
             string fileName = Path.GetFileName(filePath);
-            resolved = Path.Combine(AzureInputMount, fileName);
+            resolved = Path.Combine("/files/input", fileName);
 
             if (!File.Exists(resolved))
-                throw new FileNotFoundException("Azure PPT not found in mount folder.", resolved);
+                throw new FileNotFoundException("PPT file not found in /files/input folder.", resolved);
 
             _presentation = new Presentation(resolved);
-            _logger.LogInformation("[Azure] PPT opened from mount: {Path}", resolved);
-            return;
+            _logger.LogInformation("[Container] PPT opened from /files/input: {Path}", resolved);
+            return Task.CompletedTask;
         }
-
-        // 로컬 환경 (STDIO/HTTP/Container): 기존 로직 유지
-        resolved = TempFileResolver.ResolveToTemp(filePath);
-
-        if (!File.Exists(resolved))
-            throw new FileNotFoundException("Resolved PPT file not found.", resolved);
-
-        try
+        else
         {
-            _presentation = new Presentation(resolved);
-            _logger.LogInformation("[Local] PPT opened: {Resolved}", resolved);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to open PPT file.");
-            throw;
+            // 로컬 모드: 파일 복사
+            if (File.Exists(filePath))
+            {
+                string tempDir = Path.Combine(Path.GetTempPath(), "mcp-uploads");
+                Directory.CreateDirectory(tempDir);
+                string id = Guid.NewGuid().ToString("N");
+                resolved = Path.Combine(tempDir, id);
+                File.Copy(filePath, resolved, overwrite: true);
+            }
+            else
+            {
+                throw new FileNotFoundException("PPT file not found.", filePath);
+            }
+
+            if (!File.Exists(resolved))
+                throw new FileNotFoundException("Resolved PPT file not found.", resolved);
+
+            try
+            {
+                _presentation = new Presentation(resolved);
+                _logger.LogInformation("[Local] PPT opened: {Resolved}", resolved);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to open PPT file.");
+                throw;
+            }
+            
+            return Task.CompletedTask;
         }
     }
 
@@ -137,42 +148,36 @@ public class TextExtractService : ITextExtractService
 
     public async Task<string> ExtractToJsonAsync(PptTextExtractResult extracted, string outputPath)
     {
-        // ==================================================
-        // Azure 환경 → 무조건 mount output 에 저장
-        // ==================================================
-        if (_isAzure)
-        {
-            Directory.CreateDirectory(AzureOutputMount);
-
-            string fileName = Path.GetFileName(outputPath);
-            string savePath = Path.Combine(AzureOutputMount, fileName);
-
-            var json = JsonSerializer.Serialize(extracted, new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            });
-
-            await File.WriteAllTextAsync(savePath, json);
-
-            _logger.LogInformation("[Azure] JSON extracted → {Path}", savePath);
-            return savePath;
-        }
-
-        // ==================================================
-        // Local 환경 → 기존 로직 유지
-        // ==================================================
-        var dir = Path.GetDirectoryName(outputPath);
-        if (!string.IsNullOrEmpty(dir))
-            Directory.CreateDirectory(dir);
-
-        var localJson = JsonSerializer.Serialize(extracted, new JsonSerializerOptions
+        var jsonOptions = new JsonSerializerOptions
         {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        });
+        };
+        
+        var json = JsonSerializer.Serialize(extracted, jsonOptions);
+        
+        if (_executionMode.IsContainerMode())
+        {
+            // Container/Azure 모드: 통합된 /files/tmp 사용
+            string fileName = Path.GetFileName(outputPath);
+            string savePath = Path.Combine("/files/tmp", fileName);
+            
+            Directory.CreateDirectory("/files/tmp");
+            await File.WriteAllTextAsync(savePath, json);
+            
+            _logger.LogInformation("[Container] JSON extracted → {Path}", savePath);
+            return savePath;
+        }
+        else
+        {
+            // 로컬 모드: 기존 로직 유지
+            var dir = Path.GetDirectoryName(outputPath);
+            if (!string.IsNullOrEmpty(dir))
+                Directory.CreateDirectory(dir);
 
-        await File.WriteAllTextAsync(outputPath, localJson);
-        return outputPath;
+            await File.WriteAllTextAsync(outputPath, json);
+            _logger.LogInformation("[Local] JSON extracted → {Path}", outputPath);
+            return outputPath;
+        }
     }
 }
