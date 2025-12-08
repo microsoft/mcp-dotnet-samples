@@ -2,6 +2,7 @@
 using McpSamples.PptTranslator.HybridApp.Services;
 using McpSamples.PptTranslator.HybridApp.Tools;
 using McpSamples.PptTranslator.HybridApp.Models;
+using McpSamples.PptTranslator.HybridApp.Prompts;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 using ModelContextProtocol.Server;
@@ -39,6 +40,7 @@ builder.Services.AddScoped<ITextExtractService, TextExtractService>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
 builder.Services.AddScoped<IFileRebuildService, FileRebuildService>();
 builder.Services.AddScoped<IPptTranslateTool, PptTranslateTool>();
+builder.Services.AddSingleton<IPptTranslatorPrompt, PptTranslatorPrompt>();
 
 IHost appHost = builder.BuildApp(useStreamableHttp);
 
@@ -48,7 +50,7 @@ if (useStreamableHttp)
     var app = (WebApplication)appHost;
 
     // ---------------------------
-    // 1) Upload (Azure only - uploads to /files)
+    // 1) Upload (Azure only - uploads to /files/input)
     // ---------------------------
     app.MapPost("/upload", async (HttpRequest req) =>
     {
@@ -61,10 +63,12 @@ if (useStreamableHttp)
 
         if (isAzure)
         {
-            Directory.CreateDirectory(FilesDir);
+            // input 폴더에 저장하여 일관성 보장
+            string inputDir = Path.Combine(FilesDir, "input");
+            Directory.CreateDirectory(inputDir);
 
             string fileName = file.FileName; // 원본 파일명 사용
-            string savePath = Path.Combine(FilesDir, fileName);
+            string savePath = Path.Combine(inputDir, fileName);
 
             using var fs = File.Create(savePath);
             await file.CopyToAsync(fs);
@@ -77,75 +81,18 @@ if (useStreamableHttp)
         }
     });
 
-    // ---------------------------
-    // 2) Input File Access (deprecated - kept for backward compatibility)
-    // ---------------------------
-    app.MapGet("/input/{id}", (string id) =>
-    {
-        if (isAzure)
-        {
-            string path = Path.Combine(FilesDir, id);
-            return File.Exists(path)
-                ? Results.File(path)
-                : Results.NotFound();
-        }
-        else
-        {
-            return Results.BadRequest("Input endpoint is only available in Azure mode.");
-        }
-    });
 
-    // ---------------------------
-    // 3) Output File Download (deprecated - use /download/{filename} instead)
-    // ---------------------------
-    app.MapGet("/output/{id}/{lang}", (string id, string lang) =>
-    {
-        string fileName = $"{id}_translated_{lang}.pptx";
 
-        if (isAzure)
-        {
-            string path = Path.Combine(FilesDir, fileName);
-            return File.Exists(path)
-                ? Results.File(path,
-                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                    fileName)
-                : Results.NotFound();
-        }
-        else
-        {
-            string? path = Directory
-                .GetFiles(Path.GetTempPath())
-                .FirstOrDefault(f => Path.GetFileName(f).Contains(fileName));
 
-            return path != null
-                ? Results.File(path,
-                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                    fileName)
-                : Results.NotFound();
-        }
-    });
 
     // ---------------------------
     // 4) Download by filename (Primary endpoint for all modes)
     // ---------------------------
     app.MapGet("/download/{filename}", (string filename) =>
     {
-        string filePath;
-        
-        switch (executionMode)
-        {
-            case ExecutionMode.HttpContainer:
-            case ExecutionMode.HttpRemote:
-                // Container/Azure 모드: /files에서 찾기
-                filePath = Path.Combine(FilesDir, filename);
-                break;
-                
-            case ExecutionMode.HttpLocal:
-            default:
-                // 로컬 모드: wwwroot/generated에서 찾기
-                filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "generated", filename);
-                break;
-        }
+        string filePath = executionMode.IsContainerMode()
+            ? Path.Combine(FilesDir, "output", filename)  // Container/Azure 모드: /files/output 폴더 사용
+            : Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "generated", filename);  // 로컬 모드
         
         return File.Exists(filePath)
             ? Results.File(filePath,
@@ -154,32 +101,7 @@ if (useStreamableHttp)
             : Results.NotFound();
     });
 
-    // ---------------------------
-    // 5) Direct download endpoint (legacy - deprecated)
-    // ---------------------------
-    app.MapGet("/download", (HttpRequest req) =>
-    {
-        string? id = req.Query["id"];
-        if (string.IsNullOrEmpty(id))
-            return Results.BadRequest("Missing id");
 
-        if (isAzure)
-        {
-            string path = Path.Combine(FilesDir, id);
-            return File.Exists(path)
-                ? Results.File(path,
-                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                    id)
-                : Results.NotFound();
-        }
-        else
-        {
-            string filePath = Path.Combine(Path.GetTempPath(), id);
-            return File.Exists(filePath)
-                ? Results.File(filePath)
-                : Results.NotFound();
-        }
-    });
 
     await app.RunAsync();
 }
