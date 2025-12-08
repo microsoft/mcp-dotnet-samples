@@ -9,14 +9,14 @@ param environmentName string
 @minLength(1)
 param location string
 
-param pptTranslatorExists bool = false
+param pptTranslatorExists bool
 
 @description('Id of the user or app to assign application roles')
-param principalId string = ''
+param principalId string
 
 @secure()
 @description('OpenAI API Key')
-param openAiApiKey string = ''
+param openAiApiKey string
 
 var tags = {
   'azd-env-name': environmentName
@@ -34,16 +34,11 @@ module resources './resources.bicep' = {
   params: {
     location: location
     tags: tags
+    openAiApiKey: openAiApiKey
     principalId: principalId
     pptTranslatorExists: pptTranslatorExists
-    openAiApiKey: openAiApiKey
   }
 }
-
-// Note: openAiApiKey and storageConnectionString should be provided via azd env set
-// Example:
-//   azd env set OPENAI_API_KEY "your-key-here"
-//   azd env set STORAGE_CONNECTION_STRING "your-connection-string"
 
 // Outputs following azd naming conventions
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
@@ -55,5 +50,6 @@ output AZURE_STORAGE_ACCOUNT_NAME string = resources.outputs.AZURE_STORAGE_ACCOU
 output AZURE_STORAGE_FILE_SHARE_NAME string = resources.outputs.AZURE_STORAGE_FILE_SHARE_NAME
 
 // Service-specific outputs for azd
-output SERVICE_PPT_TRANSLATOR_NAME string = resources.outputs.AZURE_RESOURCE_PPT_TRANSLATOR_NAME
-output SERVICE_PPT_TRANSLATOR_URI string = 'https://${resources.outputs.AZURE_RESOURCE_PPT_TRANSLATOR_FQDN}'
+output SERVICE_PPT_TRANSLATOR_NAME string = resources.outputs.SERVICE_PPT_TRANSLATOR_NAME
+output SERVICE_PPT_TRANSLATOR_IDENTITY_PRINCIPAL_ID string = resources.outputs.SERVICE_PPT_TRANSLATOR_IDENTITY_PRINCIPAL_ID
+output SERVICE_PPT_TRANSLATOR_IMAGE_NAME string = resources.outputs.SERVICE_PPT_TRANSLATOR_IMAGE_NAME
