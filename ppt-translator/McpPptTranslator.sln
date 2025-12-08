@@ -4,7 +4,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSamples.PptFontFix.HybridApp", "src\McpSamples.PptFontFix.HybridApp\McpSamples.PptFontFix.HybridApp.csproj", "{4E3C401C-B16C-459D-8AFC-896CCF5DBACF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSamples.PptTranslator.HybridApp", "src\McpSamples.PptTranslator.HybridApp\McpSamples.PptTranslator.HybridApp.csproj", "{4E3C401C-B16C-459D-8AFC-896CCF5DBACF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSamples.Shared", "..\shared\McpSamples.Shared\McpSamples.Shared.csproj", "{1F4DA2CA-2377-4800-A275-02F65E68CC2D}"
 EndProject
