@@ -1,194 +1,284 @@
-# PPT Translator MCP Server
+# MCP Server: PPT Translator
 
-Translates PowerPoint presentations to different languages using OpenAI API and ShapeCrawler. This MCP server has been redesigned with a modernized architecture for improved performance and maintainability.
+This is an MCP server that translates PowerPoint presentations to different languages using OpenAI API and ShapeCrawler. This MCP server has been redesigned with a modernized architecture for improved performance and maintainability.
+
+## Install
+
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)]() [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)]()
+
+## Prerequisites
+
+- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [Visual Studio Code](https://code.visualstudio.com/) with
+  - [C# Dev Kit](https://marketplace.visualstudio.com/items/?itemName=ms-dotnettools.csdevkit) extension
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
+- [Docker Desktop](https://docs.docker.com/get-started/get-docker/)
+- [OpenAI API Key](https://platform.openai.com/api-keys)
+
+## What's Included
+
+PPT Translator MCP server includes:
+
+| Building Block | Name                       | Description                         | Usage                       |
+|----------------|----------------------------|-------------------------------------|-----------------------------|
+| Tools          | `translate_ppt_file`       | Translates a PowerPoint file to target language | `#translate_ppt_file` |
+| Prompts        | `ppt_translator`           | Structured workflow to guide translation process | `/mcp.ppt-translator.ppt_translator` |
+
+## Getting Started
+
+- [Getting repository root](#getting-repository-root)
+- [Running MCP server](#running-mcp-server)
+  - [On a local machine](#on-a-local-machine)
+  - [In a container](#in-a-container)
+  - [On Azure](#on-azure)
+- [Connect MCP server to an MCP host/client](#connect-mcp-server-to-an-mcp-hostclient)
+  - [VS Code + Agent Mode + Local MCP server](#vs-code--agent-mode--local-mcp-server)
+
+### Getting repository root
+
+1. Get the repository root.
+
+    ```bash
+    # bash/zsh
+    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
+    ```
+
+    ```powershell
+    # PowerShell
+    $REPOSITORY_ROOT = git rev-parse --show-toplevel
+    ```
+
+### Running MCP server
+
+#### On a local machine
+
+1. Set your OpenAI API key.
+
+    ```bash
+    export OPENAI_API_KEY="your-openai-api-key"
+    ```
+
+    ```powershell
+    $env:OPENAI_API_KEY="your-openai-api-key"
+    ```
+
+1. Run the MCP server app.
+
+    ```bash
+    cd $REPOSITORY_ROOT/ppt-translator
+    dotnet run --project ./src/McpSamples.PptTranslator.HybridApp
+    ```
+
+   > Make sure take note the absolute directory path of the `McpSamples.PptTranslator.HybridApp` project.
+
+   **Parameters**:
+
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5280`.
+
+   With these parameters, you can run the MCP server like:
+
+   ```bash
+   dotnet run --project ./src/McpSamples.PptTranslator.HybridApp -- --http
+   ```
+
+#### In a container
+
+1. Build the MCP server app as a container image.
+
+    ```bash
+    cd $REPOSITORY_ROOT
+    docker build -f Dockerfile.ppt-translator -t ppt-translator:latest .
+    ```
+    > Make sure take note the absolute directory path of the `ppt-translator` project.
+
+1. Run the MCP server app in a container.
+
+    ```bash
+    docker run -i --rm \
+      -e OPENAI_API_KEY=$OPENAI_API_KEY \
+      -e HOST_MOUNT_PATH=/Users/yourname/ppt-files \
+      -v /Users/yourname/ppt-files:/files \
+      ppt-translator:latest
+    ```
+
+   Alternatively, use the container image from the container registry.
+
+    ```bash
+    docker run -i --rm \
+      -e OPENAI_API_KEY=$OPENAI_API_KEY \
+      -e HOST_MOUNT_PATH=/Users/yourname/ppt-files \
+      -v /Users/yourname/ppt-files:/files \
+      ghcr.io/microsoft/mcp-dotnet-samples/ppt-translator:latest
+    ```
+
+   **Parameters**:
+
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:8080`.
+
+   With these parameters, you can run the MCP server like:
+
+   ```bash
+   # use local container image
+   docker run -i --rm -p 8080:8080 \
+     -e OPENAI_API_KEY=$OPENAI_API_KEY \
+     -e HOST_MOUNT_PATH=/Users/yourname/ppt-files \
+     -v /Users/yourname/ppt-files:/files \
+     ppt-translator:latest -- --http
+   ```
+
+   ```bash
+   # use container image from the container registry
+   docker run -it --rm -p 8080:8080 \
+     -e OPENAI_API_KEY=$OPENAI_API_KEY \
+     -e HOST_MOUNT_PATH=/Users/yourname/ppt-files \
+     -v /Users/yourname/ppt-files:/files \
+     ghcr.io/microsoft/mcp-dotnet-samples/ppt-translator:latest -- --http
+   ```
+
+#### On Azure
+
+1. Navigate to the directory.
+
+    ```bash
+    cd $REPOSITORY_ROOT/ppt-translator
+    ```
+
+1. Login to Azure.
+
+    ```bash
+    # Login with Azure Developer CLI
+    azd auth login
+    ```
+
+1. Set OpenAI API Key.
+
+    ```bash
+    azd env set OPENAI_API_KEY "your-openai-api-key"
+    # 확인
+    azd env get-values
+    ```
+
+1. Deploy the MCP server app to Azure.
+
+    ```bash
+    azd up
+    ```
+
+   While provisioning and deploying, you'll be asked to provide subscription ID, location, environment name.
+
+1. After the deployment is complete, get the information by running the following commands:
+
+   - Azure Container Apps FQDN:
+
+     ```bash
+     azd env get-value AZURE_RESOURCE_PPT_TRANSLATOR_FQDN
+     ```
+
+     If you want to use Azure, you must upload the file to the running server first:
+
+     ```bash
+     curl -F "file=@sample.pptx" https://{YOUR_FQDN}/upload
+     ```
+
+### Connect MCP server to an MCP host/client
+
+#### VS Code + Agent Mode + Local MCP server
+
+1. Copy `mcp.json` to the repository root.
+
+   **For locally running MCP server (STDIO):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.stdio.local.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.stdio.local.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For locally running MCP server (HTTP):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.http.local.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.http.local.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For locally running MCP server in a container (STDIO):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.stdio.container.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.stdio.container.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For locally running MCP server in a container (HTTP):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.http.container.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.http.container.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+   **For remotely running MCP server in a container (HTTP):**
+
+    ```bash
+    mkdir -p $REPOSITORY_ROOT/.vscode
+    cp $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.http.remote.json \
+       $REPOSITORY_ROOT/.vscode/mcp.json
+    ```
+
+    ```powershell
+    New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
+    Copy-Item -Path $REPOSITORY_ROOT/ppt-translator/.vscode/mcp.http.remote.json `
+              -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
+    ```
+
+1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
+1. Choose `ppt-translator` then click `Start Server`.
+1. When prompted, enter one of the following values:
+   - The absolute directory path of the `McpSamples.PptTranslator.HybridApp` project
+   - The FQDN of Azure Container Apps.
+1. Enter prompt like:
+
+    ```text
+    Translate /path/to/presentation.pptx to Korean
+    ```
+
+1. Confirm the result.
 
 ## Features
 
-- **5 Execution Modes**: stdio.local, http.local, stdio.container, http.container, http.remote
 - **Multi-language Support**: Translate to any language (ko, en, ja, etc.)
 - **Multiple File Format Support**: Enhanced to support various document formats
 - **Preserves Formatting**: Maintains original PPT structure and styling
 - **OpenAI Integration**: Uses GPT models for high-quality translation
 - **Integrated Prompt System**: Built-in MCP prompts for enhanced user guidance
 - **Streamlined Architecture**: Refactored services for better performance
-
-## Prerequisites
-
-- .NET 9.0 SDK
-- OpenAI API Key
-- Docker (for container modes)
-- Azure subscription (for http.remote mode)
-
-## File Structure (Container/Azure modes)
-
-When running in container or Azure modes, files are organized in subfolders:
-
-```
-HOST_MOUNT_PATH/
-├── input/     # Input PPT files (.pptx)
-├── output/    # Translated PPT files (.pptx)
-└── tmp/       # Temporary processing files (.json)
-```
-
-This structure keeps files organized and separates input, output, and temporary files.
-
-## Installation
-
-### 1. stdio.local (Local STDIO)
-
-```bash
-cd ppt-translator/src/McpSamples.PptTranslator.HybridApp
-dotnet run
-```
-
-**MCP Config**: `.vscode/mcp.stdio.local.json`
-
-### 2. http.local (Local HTTP)
-
-```bash
-cd ppt-translator/src/McpSamples.PptTranslator.HybridApp
-dotnet run -- --http
-```
-
-Access at: `http://localhost:5280`
-
-**MCP Config**: `.vscode/mcp.http.local.json`
-
-### 3. stdio.container (Docker STDIO)
-
-```bash
-# Build image
-docker buildx build --platform linux/amd64 -t ppt-translator:latest -f Dockerfile.ppt-translator .
-
-# Run container
-docker run -i --rm \
-  -e OPENAI_API_KEY=$OPENAI_API_KEY \
-  -e HOST_MOUNT_PATH=/Users/yourname/ppt-files \
-  -v /Users/yourname/ppt-files:/files \
-  ppt-translator:latest
-```
-
-**MCP Config**: `.vscode/mcp.stdio.container.json`
-
-### 4. http.container (Docker HTTP)
-
-```bash
-# Build image (same as above)
-docker buildx build --platform linux/amd64 -t ppt-translator:latest -f Dockerfile.ppt-translator .
-
-# Run container
-docker run -i --rm \
-  -p 8080:8080 \
-  -e OPENAI_API_KEY=$OPENAI_API_KEY \
-  -e HOST_MOUNT_PATH=/Users/yourname/ppt-files \
-  -v /Users/yourname/ppt-files:/files \
-  ppt-translator:latest \
-  -- --http
-```
-
-Access at: `http://localhost:8080`
-
-**MCP Config**: `.vscode/mcp.http.container.json`
-
-### 5. http.remote (Azure Container Apps)
-
-#### Deploy to Azure
-
-```bash
-cd ppt-translator
-
-# Login to Azure
-azd auth login
-
-# Set OpenAI API Key
-azd env set OPENAI_API_KEY "your-openai-api-key"
-# 확인
-azd env get-values
-
-# Deploy
-azd up
-```
-
-#### Get FQDN
-
-```bash
-azd env get-value AZURE_RESOURCE_PPT_TRANSLATOR_FQDN
-```
-
-Example output: `ppt-translator.victoriousocean-12345678.koreacentral.azurecontainerapps.io`
-
-#### Configure MCP
-
-Update `.vscode/mcp.http.remote.json` with your FQDN when prompted.
-
-**MCP Config**: `.vscode/mcp.http.remote.json`
-
-## Usage
-
-### File Upload (http.remote only)
-
-Upload PPT file to Azure File Share:
-
-```bash
-curl -F "file=@sample.pptx" https://{YOUR_FQDN}/upload
-```
-
-Response:
-```json
-{
-  "id": "abc123_sample.pptx",
-  "path": "abc123_sample.pptx"
-}
-```
-
-### Usage via MCP Prompts
-
-The server now includes built-in MCP prompts for enhanced user experience:
-
-1. **Translation Guidance**: Structured prompts help users understand translation workflow
-2. **Error Handling**: Automated error handling with detailed instructions
-3. **Multi-format Support**: Enhanced prompts for various file types
-
-Use GitHub Copilot with MCP:
-
-```
-Translate sample.pptx to Japanese
-```
-
-The modernized tool will:
-1. Automatically detect file format and execution mode
-2. Extract text from PPT using optimized processing
-3. Translate using OpenAI with enhanced prompt system
-4. Rebuild PPT with translated text
-5. Provide download link with improved error handling
-
-### Download Translated File
-
-#### Local modes:
-```bash
-# File path returned in success message
-
-# 🍎/🐧 macOS & Linux
-cp "/path/to/output/sample_ja.pptx" "/destination/"
-
-# 💻 Windows Command Prompt
-copy "\path\to\output\sample_ja.pptx" "\destination\\"
-
-# 💻 Windows PowerShell
-Copy-Item "/path/to/output/sample_ja.pptx" -Destination "/destination/"
-```
-
-#### Container modes:
-```bash
-# HTTP download
-curl -o "sample_ja.pptx" http://localhost:8080/download/sample_ja.pptx
-```
-
-#### Azure mode:
-```bash
-# HTTP download (example FQDN)
-curl -o "sample_ja.pptx" https://ppt-translator.nicepebble-4f85ae45.southeastasia.azurecontainerapps.io/download/sample_ja.pptx
-```
+- **5 Execution Modes**: stdio.local, http.local, stdio.container, http.container, http.remote
 
 ## Tool Reference
 
@@ -200,36 +290,19 @@ Translates a PowerPoint file to target language.
 - `filePath` (required): Path to PPT file
   - Local: absolute path (e.g., `/Users/name/file.pptx`)
   - Container: filename only (e.g., `sample.pptx`)
-  - Azure: filename only (e.g., `abc123_sample.pptx`)
+  - Azure: filename only (e.g., `sample.pptx`)
 - `targetLang` (required): Target language code (e.g., `ko`, `en`, `ja`)
 - `outputPath` (optional): Custom output directory (local modes only)
 
-**Example:**
-```json
-{
-  "filePath": "sample.pptx",
-  "targetLang": "ko"
-}
-```
-
 ## Architecture
-
-### Execution Mode Detection
-
-The server automatically detects execution mode based on environment variables:
-
-- `DOTNET_RUNNING_IN_CONTAINER`: Container vs Local
-- `CONTAINER_APP_NAME`: Azure Container Apps
-- `MCP_HTTP_MODE`: HTTP vs STDIO
-- `HOST_MOUNT_PATH`: Host mount path for containers
 
 ### Modernized Service Architecture
 
 This version features a completely refactored service architecture:
 
-- **Streamlined Services**: Removed legacy `TempFileResolver` and consolidated file processing
+- **Streamlined Services**: Removed legacy components and consolidated file processing
 - **Enhanced Tool System**: Improved translation tools with better error handling
-- **Integrated Prompt System**: Added `PptTranslatorPrompt` for better MCP integration
+- **Integrated Prompt System**: Added structured prompts for better MCP integration
 - **Optimized File Processing**: Direct file handling for improved performance
 
 ### File Storage
@@ -262,33 +335,17 @@ docker buildx build --platform linux/amd64 -t ppt-translator:latest -f Dockerfil
 
 ### Container File Not Found
 
-Ensure file is in mounted input directory:
+Ensure file is in mounted directory:
 
 ```bash
-# For container modes
-
 # 🍎/🐧 macOS & Linux
-cp "/path/to/file.pptx" "/path/to/mount/folder/input/file.pptx"
+cp "/path/to/file.pptx" "/path/to/mount/folder/file.pptx"
 
 # 💻 Windows Command Prompt
-copy "\path\to\file.pptx" "\path\to\mount\folder\input\file.pptx"
+copy "\path\to\file.pptx" "\path\to\mount\folder\file.pptx"
 
 # 💻 Windows PowerShell
-Copy-Item "/path/to/file.pptx" -Destination "/path/to/mount/folder/input/file.pptx"
-```
-
-### Azure Upload Fails
-
-Check FQDN and File Share permissions:
-
-```bash
-# Get Storage Account name
-azd env get-value AZURE_STORAGE_ACCOUNT_NAME
-
-# Verify File Share exists
-az storage share show \
-  --account-name <storage-account-name> \
-  --name ppt-files
+Copy-Item "/path/to/file.pptx" -Destination "/path/to/mount/folder/file.pptx"
 ```
 
 ## Development
@@ -326,3 +383,7 @@ docker buildx build --platform linux/amd64 -t ppt-translator:latest -f Dockerfil
 ```bash
 azd up
 ```
+
+## License
+
+MIT
