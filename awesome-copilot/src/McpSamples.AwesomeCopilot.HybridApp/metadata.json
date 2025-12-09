@@ -2255,6 +2255,27 @@
       "tested_with": "GitHub Copilot Chat (GPT-4o) - Validated July 20, 2025"
     },
     {
+      "filename": "structured-autonomy-generate.prompt.md",
+      "name": "sa-generate",
+      "description": "Structured Autonomy Implementation Generator Prompt",
+      "model": "GPT-5.1-Codex (Preview) (copilot)",
+      "agent": "agent"
+    },
+    {
+      "filename": "structured-autonomy-implement.prompt.md",
+      "name": "sa-implement",
+      "description": "Structured Autonomy Implementation Prompt",
+      "model": "GPT-5 mini (copilot)",
+      "agent": "agent"
+    },
+    {
+      "filename": "structured-autonomy-plan.prompt.md",
+      "name": "sa-plan",
+      "description": "Structured Autonomy Planning Prompt",
+      "model": "Claude Sonnet 4.5 (copilot)]",
+      "agent": "agent"
+    },
+    {
       "filename": "suggest-awesome-github-copilot-agents.prompt.md",
       "agent": "agent",
       "description": "Suggest relevant GitHub Copilot Custom Agents files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing custom agents in this repository.",
