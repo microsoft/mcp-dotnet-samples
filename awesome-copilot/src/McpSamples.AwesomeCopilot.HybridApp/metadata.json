@@ -1846,6 +1846,19 @@
       "description": "Generate a complete Go MCP server project with proper structure, dependencies, and implementation using the official github.com/modelcontextprotocol/go-sdk."
     },
     {
+      "filename": "java-add-graalvm-native-image-support.prompt.md",
+      "agent": "agent",
+      "description": "GraalVM Native Image expert that adds native image support to Java applications, builds the project, analyzes build errors, applies fixes, and iterates until successful compilation using Oracle best practices.",
+      "model": "Claude Sonnet 4.5",
+      "tools": [
+        "read_file",
+        "replace_string_in_file",
+        "run_in_terminal",
+        "list_dir",
+        "grep_search"
+      ]
+    },
+    {
       "filename": "java-docs.prompt.md",
       "agent": "agent",
       "tools": [
