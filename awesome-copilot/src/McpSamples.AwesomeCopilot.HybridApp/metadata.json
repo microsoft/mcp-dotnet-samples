@@ -188,6 +188,18 @@
       "description": "Comprehensive best practices for creating optimized, secure, and efficient Docker images and managing containers. Covers multi-stage builds, image layer optimization, security scanning, and runtime best practices."
     },
     {
+      "filename": "convert-cassandra-to-spring-data-cosmos.instructions.md",
+      "description": "Step-by-step guide for converting Spring Boot Cassandra applications to use Azure Cosmos DB with Spring Data Cosmos",
+      "applyTo": [
+        "**/*.java",
+        "**/pom.xml",
+        "**/build.gradle",
+        "**/application*.properties",
+        "**/application*.yml",
+        "**/application*.conf"
+      ]
+    },
+    {
       "filename": "convert-jpa-to-spring-data-cosmos.instructions.md",
       "description": "Step-by-step guide for converting Spring Boot JPA applications to use Azure Cosmos DB with Spring Data Cosmos",
       "applyTo": [
@@ -3716,6 +3728,54 @@
       "display": {}
     },
     {
+      "filename": "software-engineering-team.collection.yml",
+      "id": "software-engineering-team",
+      "name": "Software Engineering Team",
+      "description": "7 specialized agents covering the full software development lifecycle from UX design and architecture to security and DevOps.",
+      "tags": [
+        "team",
+        "enterprise",
+        "security",
+        "devops",
+        "ux",
+        "architecture",
+        "product",
+        "ai-ethics"
+      ],
+      "items": [
+        {
+          "path": "agents/se-ux-ui-designer.agent.md",
+          "kind": "agent",
+          "usage": "\nThis collection of 7 agents is based on learnings from [The AI-Native Engineering Flow](https://medium.com/data-science-at-microsoft/the-ai-native-engineering-flow-5de5ffd7d877) experiments at Microsoft, designed to augment software engineering teams across the entire development lifecycle.\n\n**Key Design Principles:**\n- **Standalone**: Each agent works independently without cross-dependencies\n- **Enterprise-ready**: Incorporates OWASP, Zero Trust, WCAG, and Well-Architected frameworks\n- **Lifecycle coverage**: From UX research → Architecture → Development → Security → DevOps\n\n**Agents in this collection:**\n- **SE: UX Designer** - Jobs-to-be-Done analysis and user journey mapping\n- **SE: Tech Writer** - Technical documentation, blogs, ADRs, and user guides\n- **SE: DevOps/CI** - CI/CD debugging and deployment troubleshooting\n- **SE: Product Manager** - GitHub issues with business context and acceptance criteria\n- **SE: Responsible AI** - Bias testing, accessibility (WCAG), and ethical development\n- **SE: Architect** - Architecture reviews with Well-Architected frameworks\n- **SE: Security** - OWASP Top 10, LLM/ML security, and Zero Trust\n\nYou can use individual agents as needed or adopt the full collection for comprehensive team augmentation."
+        },
+        {
+          "path": "agents/se-technical-writer.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/se-gitops-ci-specialist.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/se-product-manager-advisor.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/se-responsible-ai-code.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/se-system-architecture-reviewer.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/se-security-reviewer.agent.md",
+          "kind": "agent"
+        }
+      ],
+      "display": {}
+    },
+    {
       "filename": "swift-mcp-development.collection.yml",
       "id": "swift-mcp-development",
       "name": "Swift MCP Server Development",
@@ -5410,6 +5470,92 @@
       "description": "Expert assistant for Rust MCP server development using the rmcp SDK with tokio async runtime",
       "name": "Rust MCP Expert",
       "model": "GPT-4.1"
+    },
+    {
+      "filename": "se-gitops-ci-specialist.agent.md",
+      "name": "SE: DevOps/CI",
+      "description": "DevOps specialist for CI/CD pipelines, deployment debugging, and GitOps workflows focused on making deployments boring and reliable",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "terminalCommand",
+        "search",
+        "githubRepo"
+      ]
+    },
+    {
+      "filename": "se-product-manager-advisor.agent.md",
+      "name": "SE: Product Manager",
+      "description": "Product management guidance for creating GitHub issues, aligning business value with user needs, and making data-driven product decisions",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "githubRepo",
+        "create_issue",
+        "update_issue",
+        "list_issues",
+        "search_issues"
+      ]
+    },
+    {
+      "filename": "se-responsible-ai-code.agent.md",
+      "name": "SE: Responsible AI",
+      "description": "Responsible AI specialist ensuring AI works for everyone through bias prevention, accessibility compliance, ethical development, and inclusive design",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "search"
+      ]
+    },
+    {
+      "filename": "se-security-reviewer.agent.md",
+      "name": "SE: Security",
+      "description": "Security-focused code review specialist with OWASP Top 10, Zero Trust, LLM security, and enterprise security standards",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "search",
+        "problems"
+      ]
+    },
+    {
+      "filename": "se-system-architecture-reviewer.agent.md",
+      "name": "SE: Architect",
+      "description": "System architecture review specialist with Well-Architected frameworks, design validation, and scalability analysis for AI and distributed systems",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "search",
+        "fetch"
+      ]
+    },
+    {
+      "filename": "se-technical-writer.agent.md",
+      "name": "SE: Tech Writer",
+      "description": "Technical writing specialist for creating developer documentation, technical blogs, tutorials, and educational content",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "search",
+        "fetch"
+      ]
+    },
+    {
+      "filename": "se-ux-ui-designer.agent.md",
+      "name": "SE: UX Designer",
+      "description": "Jobs-to-be-Done analysis, user journey mapping, and UX research artifacts for Figma and design workflows",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "search",
+        "fetch"
+      ]
     },
     {
       "filename": "search-ai-optimization-expert.agent.md",
