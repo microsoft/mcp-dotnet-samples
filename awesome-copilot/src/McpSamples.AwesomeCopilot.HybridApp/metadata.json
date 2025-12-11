@@ -81,6 +81,14 @@
       ]
     },
     {
+      "filename": "azure-verified-modules-bicep.instructions.md",
+      "description": "Azure Verified Modules (AVM) and Bicep",
+      "applyTo": [
+        "**/*.bicep",
+        "**/*.bicepparam"
+      ]
+    },
+    {
       "filename": "azure-verified-modules-terraform.instructions.md",
       "description": "Azure Verified Modules (AVM) and Terraform",
       "applyTo": [
