@@ -6,10 +6,6 @@ using McpSamples.OpenApiToSdk.HybridApp.Services;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
 
-/// <summary>
-/// This is the entry point for the OpenAPI to SDK Hybrid App.
-/// It configures the application host, registers services, and sets up runtime settings.
-/// </summary>
 var useStreamableHttp = AppSettings.UseStreamableHttp(Environment.GetEnvironmentVariables(), args);
 
 IHostApplicationBuilder builder = useStreamableHttp
@@ -17,7 +13,6 @@ IHostApplicationBuilder builder = useStreamableHttp
                                 : Host.CreateApplicationBuilder(args);
 
 builder.Services.AddAppSettings<OpenApiToSdkAppSettings>(builder.Configuration, args);
-
 builder.Services.AddHttpContextAccessor();
 
 var options = new JsonSerializerOptions
@@ -72,34 +67,23 @@ if (useStreamableHttp)
         return Results.Ok(new { Message = "File uploaded successfully.", SavedPath = filePath });
     })
     .DisableAntiforgery();
-
 }
 
 await app.RunAsync();
 
-/// <summary>
-/// Initializes runtime settings based on the execution environment (Local/Docker/Azure).
-/// </summary>
-/// <param name="settings">The <see cref="OpenApiToSdkAppSettings"/> instance.</param>
-/// <param name="isHttp">A boolean indicating if the application is running in HTTP mode.</param>
 void InitializeRuntimeSettings(OpenApiToSdkAppSettings settings, bool isHttp)
 {
-    bool isContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
-    string? azureAppName = Environment.GetEnvironmentVariable("CONTAINER_APP_NAME");
-    bool isAzure = !string.IsNullOrEmpty(azureAppName);
-
     string baseDirectory;
 
-    if (isContainer)
+    if (settings.Runtime.Mode.Equals("Local", StringComparison.OrdinalIgnoreCase))
     {
-        baseDirectory = "/app";
+        baseDirectory = TryFindProjectRoot(Directory.GetCurrentDirectory()) ?? Directory.GetCurrentDirectory();
+
+        Console.WriteLine($"[Init] Local Base Directory resolved to: {baseDirectory}");
     }
     else
     {
-        baseDirectory = TryFindProjectRoot(Directory.GetCurrentDirectory()) ?? Directory.GetCurrentDirectory();
-        baseDirectory = Path.Combine(baseDirectory, "openapi-to-sdk");
-
-        Console.WriteLine($"[Init] Local Base Directory resolved to: {baseDirectory}");
+        baseDirectory = Directory.GetCurrentDirectory();
     }
 
     string workspacePath = Path.Combine(baseDirectory, "workspace");
@@ -108,25 +92,18 @@ void InitializeRuntimeSettings(OpenApiToSdkAppSettings settings, bool isHttp)
     settings.GeneratedPath = Path.Combine(workspacePath, "generated");
     settings.SpecsPath = Path.Combine(workspacePath, "specs");
     settings.IsHttpMode = isHttp;
-    settings.IsContainer = isContainer;
-    settings.IsAzure = isAzure;
 
     if (!Directory.Exists(settings.WorkspacePath)) Directory.CreateDirectory(settings.WorkspacePath);
     if (!Directory.Exists(settings.SpecsPath)) Directory.CreateDirectory(settings.SpecsPath);
     if (!Directory.Exists(settings.GeneratedPath)) Directory.CreateDirectory(settings.GeneratedPath);
 }
 
-/// <summary>
-/// Helper method to find the project root directory by searching for 'Dockerfile.openapi-to-sdk'.
-/// </summary>
-/// <param name="startPath">The path to start searching from.</param>
-/// <returns>The full path of the project root if found, otherwise null.</returns>
 string? TryFindProjectRoot(string startPath)
 {
     var dir = new DirectoryInfo(startPath);
     while (dir != null)
     {
-        if (dir.GetFiles("Dockerfile.openapi-to-sdk").Length > 0)
+        if (dir.Name.Equals("openapi-to-sdk", StringComparison.OrdinalIgnoreCase))
         {
             return dir.FullName;
         }

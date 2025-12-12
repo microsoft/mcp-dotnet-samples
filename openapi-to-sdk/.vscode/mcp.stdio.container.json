@@ -2,8 +2,8 @@
   "inputs": [
     {
       "type": "promptString",
-      "id": "repository-root",
-      "description": "Enter the absolute path to the repository root directory (where 'openapi-to-sdk' folder is located)."
+      "id": "consoleapp-project-path",
+      "description": "The absolute path to the console app project Directory"
     }
   ],
   "servers": {
@@ -15,10 +15,11 @@
         "-i",
         "--rm",
         "-v",
-        "${input:repository-root}/workspace:/app/workspace",
+        "${input:consoleapp-project-path}/../../workspace:/app/workspace",
         "-e",
-        "HOST_ROOT_PATH=${input:repository-root}",
-        "openapi-to-sdk:latest"
+        "HOST_ROOT_PATH=${input:consoleapp-project-path}/../../",
+        "openapi-to-sdk:latest",
+        "-c"
       ]
     }
   }
