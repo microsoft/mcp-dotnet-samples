@@ -2,8 +2,8 @@
   "inputs": [
     {
       "type": "promptString",
-      "id": "repository-root",
-      "description": "The absolute path where the your repository is cloned"
+      "id": "your-ppt-file-path",
+      "description": "The absolute path where the PPT file you want to modify is located"
     }
   ],
   "servers": {
@@ -14,7 +14,7 @@
         "run",
         "-i",
         "--rm",
-        "-v", "${input:repository-root}\\workspace:/files",
+        "-v", "${input:your-ppt-file-path}:/files",
         "ppt-font-fix:latest"
       ]
     }

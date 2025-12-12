@@ -44,4 +44,21 @@ public class PptFontFixAppSettings : AppSettings
     /// Indicates whether the application is running in an Azure environment.
     /// </summary>
     public bool IsAzure { get; set; }
+
+    /// <inheritdoc />
+    protected override T ParseMore<T>(IConfiguration config, string[] args)
+    {
+        var settings = base.ParseMore<T>(config, args);
+
+        for (var i = 0; i < args.Length; i++)
+        {
+            var arg = args[i];
+            if (args.Contains("-c") || args.Contains("--container"))
+            {
+                (settings as PptFontFixAppSettings)!.IsContainer = true;
+            }
+        }
+
+        return (settings as T)!;
+    }
 }

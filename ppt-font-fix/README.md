@@ -86,13 +86,13 @@ PPT Font Fix MCP server includes:
 1. Run the MCP server app in a container.
 
     ```bash
-    docker run -i --rm -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/ppt-font-fix" ppt-font-fix:latest
+    docker run -i --rm -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" ppt-font-fix:latest -c
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -i --rm -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/ppt-font-fix" ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest
+    docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest -c
     ```
 
    **Parameters**:
@@ -103,12 +103,12 @@ PPT Font Fix MCP server includes:
 
    ```bash
    # use local container image
-   docker run -i --rm -p 8080:8080 -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/ppt-font-fix" ppt-font-fix:latest --http
+   docker run -it --rm -p 8080:8080 -u 0 -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" ppt-font-fix:latest --http -c
    ```
 
    ```bash
    # use container image from the container registry
-   docker run -it --rm -p 8080:8080 -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" -e HOST_ROOT_PATH="$REPOSITORY_ROOT/ppt-font-fix" ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest --http
+   docker run -it --rm -p 8080:8080 -u 0 -v "$REPOSITORY_ROOT/ppt-font-fix/workspace:/files" ghcr.io/microsoft/mcp-dotnet-samples/ppt-font-fix:latest --http -c
    ```
 
 #### On Azure

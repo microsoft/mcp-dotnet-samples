@@ -1,23 +1,8 @@
 {
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "repository-root",
-      "description": "The absolute path where the your repository is cloned"
-    }
-  ],
   "servers": {
     "ppt-font-fix": {
-      "type": "stdio",
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-v", "${input:repository-root}\\workspace:/files",
-        "-e", "HOST_ROOT_PATH=${input:repository-root}",
-        "ppt-font-fix:latest"
-      ]
+      "type": "http",
+      "url": "http://localhost:8080/mcp"
     }
   }
 }

@@ -62,13 +62,9 @@ public interface IPptFontFixService
 public class PptFontFixService : IPptFontFixService
 {
     private readonly ILogger<PptFontFixService> _logger;
-    private readonly IConfiguration _configuration;
-    private readonly IHostEnvironment _hostEnvironment;
-    private readonly IWebHostEnvironment? _webHostEnvironment;
     private readonly IHttpContextAccessor? _httpContextAccessor;
     private readonly PptFontFixAppSettings _settings;
     private Presentation? _presentation;
-    private readonly string? _fileShareMountPath;
 
     private HashSet<string>? _analyzedVisibleFonts;
 
@@ -80,16 +76,10 @@ public class PptFontFixService : IPptFontFixService
         IServiceProvider serviceProvider)
     {
         _logger = logger;
-        _configuration = configuration;
-        _hostEnvironment = hostEnvironment;
-        _webHostEnvironment = serviceProvider.GetService<IWebHostEnvironment>();
         _httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
-        _fileShareMountPath = configuration["AZURE_FILE_SHARE_MOUNT_PATH"];
         _settings = settings;
         
     }
-    private readonly string? _hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
-
 
     
     /// <inheritdoc />
@@ -108,20 +98,9 @@ public class PptFontFixService : IPptFontFixService
             return "[Error] File Access: Direct URL access is not supported. Please ensure the file is placed in the shared volume.";
         }
 
-        var searchPaths = new List<string> { filePath }; 
         string safeFileName = Path.GetFileName(filePath.Replace('\\', '/'));
 
-        searchPaths.Add(Path.Combine(_settings.InputPath, safeFileName));
-        searchPaths.Add(Path.Combine("/app", safeFileName));
-        searchPaths.Add(Path.Combine("/files", safeFileName));
-
-        string baseDir = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
-        searchPaths.Add(Path.Combine(baseDir, "generated", safeFileName));
-
-        if (!string.IsNullOrEmpty(_fileShareMountPath))
-        {
-            searchPaths.Add(Path.Combine(_fileShareMountPath, "generated", safeFileName));
-        }
+        var searchPaths = new List<string> { filePath, Path.Combine(_settings.InputPath, safeFileName) }; 
 
         string? foundPath = null;
         foreach (var path in searchPaths)
@@ -165,20 +144,7 @@ public class PptFontFixService : IPptFontFixService
                     """;
             }
             else if (_settings.IsContainer)
-            {
-                string targetContainerPath = Path.Combine(_settings.InputPath, safeFileName);
-                string targetHostPath = targetContainerPath;
-                string? hostRootPath = Environment.GetEnvironmentVariable("HOST_ROOT_PATH");
-
-
-                if (!string.IsNullOrEmpty(_hostRootPath))
-                {
-
-                    string normalizedHostRoot = _hostRootPath.Replace('\\', '/').TrimEnd('/');
-                    
-                    targetHostPath = $"{normalizedHostRoot}/{safeFileName}";
-                }
-                
+            {   
                 return $"""
                     ⚠️ Action Required: File Synchronization Needed (Docker Container)
 
@@ -188,7 +154,7 @@ public class PptFontFixService : IPptFontFixService
                     EXECUTION PLAN (Follow Strictly):
                     1. COPY the file from your local machine path (`{filePath}`) 
                        to the host directory mapped to the container volume. 
-                       The recommended target path is: `{targetHostPath}`
+                       The recommended target path is: `{_settings.InputPath}/{safeFileName}`
                     2. RETRY the `open_ppt_file` tool immediately with the original file path (`{filePath}`).
                     """;
             }
@@ -354,101 +320,46 @@ public class PptFontFixService : IPptFontFixService
             await Task.Run(() => _presentation.Save(memoryStream));
             memoryStream.Position = 0;
 
-            string finalPhysicalPath = "";
             string baseDirectory = _settings.GeneratedPath;
-            string webRoot = _webHostEnvironment?.WebRootPath ?? Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
-            string webGeneratedDir = Path.Combine(webRoot, "generated");
 
-            bool isContainerEnv = !OperatingSystem.IsWindows() || !string.IsNullOrEmpty(_fileShareMountPath);
-            bool isHttpMode = _httpContextAccessor?.HttpContext?.Request != null;
-
-            if (!string.IsNullOrEmpty(outputDirectory) && !isContainerEnv)
+            if (!string.IsNullOrEmpty(outputDirectory) && !_settings.IsContainer && !_settings.IsAzure)
             {
                 baseDirectory = outputDirectory;
-                _logger.LogInformation("Base Path: User Provided Output Directory -> {Path}", baseDirectory);
-            }
-            else
-            {
-                if (isHttpMode)
-                {
-                    baseDirectory = webGeneratedDir;
-                    _logger.LogInformation("Base Path: HTTP Mode detected. Using Web Root -> {Path}", baseDirectory);
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(_fileShareMountPath))
-                    {
-                        baseDirectory = Path.Combine(_fileShareMountPath, "generated");
-                        _logger.LogInformation("Base Path: File Share Mount (Non-HTTP) -> {Path}", baseDirectory);
-                    }
-                    else if (Directory.Exists("/files"))
-                    {
-                        baseDirectory = _settings.GeneratedPath;
-                        _logger.LogInformation("Base Path: Stdio Volume Mount (/files) -> {Path}", baseDirectory);
-                    }
-                    else
-                    {
-                        baseDirectory = webGeneratedDir;
-                        _logger.LogInformation("Base Path: Local Environment Web Root -> {Path}", baseDirectory);
-                    }
-                }
+                _logger.LogInformation("Using User Provided Directory: {Path}", baseDirectory);
             }
 
-            if (!Directory.Exists(baseDirectory))
-            {
-                try
-                {
-                    Directory.CreateDirectory(baseDirectory);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "FATAL: Could not create base directory {Path}.", baseDirectory);
-                    throw;
-                }
-            }
+            if (!Directory.Exists(baseDirectory)) Directory.CreateDirectory(baseDirectory);
             
-            finalPhysicalPath = Path.Combine(baseDirectory, safeFileName);
+            string finalPhysicalPath = Path.Combine(baseDirectory, safeFileName);
             
             try 
             {
-                memoryStream.Position = 0;
                 using (var fs = new FileStream(finalPhysicalPath, FileMode.Create, FileAccess.Write))
                 {
                     await memoryStream.CopyToAsync(fs);
                     await fs.FlushAsync();
                 }
-
-                if (!OperatingSystem.IsWindows() && string.IsNullOrEmpty(this._fileShareMountPath))
-                {
-                    File.SetUnixFileMode(finalPhysicalPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
-                }
-                
-                _logger.LogInformation("✅ File successfully saved to mount/web path: {Path}", finalPhysicalPath);
+   
+                _logger.LogInformation("File saved to: {Path}", finalPhysicalPath);
             }
             catch (Exception ex) 
             { 
-                _logger.LogError(ex, "FATAL: Could not save file to the final physical path: {Path}", finalPhysicalPath);
+                _logger.LogError(ex, "FATAL: Could not save file.");
                 throw;
             }
 
-            if (_httpContextAccessor?.HttpContext?.Request != null)
+            if (_settings.IsHttpMode)
             {
-                if (!string.IsNullOrEmpty(outputDirectory) && !finalPhysicalPath.StartsWith(webRoot, StringComparison.OrdinalIgnoreCase))
+                var request = _httpContextAccessor?.HttpContext?.Request;
+                if (request != null)
                 {
-                    _logger.LogWarning("User-specified path is outside of WebRoot. Returning Physical Path: {Path}", finalPhysicalPath);
-                    return finalPhysicalPath;
+                    string url = $"{request.Scheme}://{request.Host}/generated/{safeFileName}";
+                    _logger.LogInformation("Returning Web URL: {Url}", url);
+                    return url;
                 }
-                string relativePath = Path.GetRelativePath(webRoot, finalPhysicalPath).Replace('\\', '/');
-                var request = _httpContextAccessor.HttpContext.Request;
-                string url = $"{request.Scheme}://{request.Host}/generated/{safeFileName}";
-                _logger.LogInformation("✅ Returning Web URL: {Url}", url);
-                return url;
             }
-            else
-            {
-                _logger.LogInformation("✅ Returning Physical Path (No HTTP Context): {Path}", finalPhysicalPath);
-                return finalPhysicalPath;
-            }
+            
+            return finalPhysicalPath;
         }
     }
 

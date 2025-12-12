@@ -31,7 +31,7 @@ InitializeRuntimeSettings(appSettings, useStreamableHttp);
 
 if (useStreamableHttp && app is WebApplication webApp)
 {
-    string actualGeneratedPath = Path.Combine(webApp.Environment.WebRootPath, "generated");
+    string actualGeneratedPath = appSettings.GeneratedPath;
     if (!Directory.Exists(actualGeneratedPath))
     {
         Directory.CreateDirectory(actualGeneratedPath);
@@ -50,7 +50,7 @@ if (useStreamableHttp && app is WebApplication webApp)
             return Results.BadRequest(new { error = "No file uploaded." });
         }
 
-        var appSettings = webApp.Services.GetRequiredService<PptFontFixAppSettings>(); // AppSettings 주입
+        var appSettings = webApp.Services.GetRequiredService<PptFontFixAppSettings>();
         if (!Directory.Exists(appSettings.InputPath))
             Directory.CreateDirectory(appSettings.InputPath);
 
@@ -79,7 +79,7 @@ await app.RunAsync();
 
 void InitializeRuntimeSettings(PptFontFixAppSettings settings, bool isHttp)
 {
-    bool isContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+    bool isContainer = settings.IsContainer || Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
     string? azureAppName = Environment.GetEnvironmentVariable("CONTAINER_APP_NAME");
     bool isAzure = !string.IsNullOrEmpty(azureAppName);
 
@@ -87,9 +87,9 @@ void InitializeRuntimeSettings(PptFontFixAppSettings settings, bool isHttp)
 
     if (isAzure)
     {
-        baseDirectory = "/workspace";
-        settings.InputPath = Path.Combine(baseDirectory);
-        settings.GeneratedPath = Path.Combine(baseDirectory,"generated");
+        baseDirectory = "/app";
+        settings.InputPath = Path.Combine(baseDirectory, "workspace/input");
+        settings.GeneratedPath = Path.Combine(baseDirectory,"workspace/generated");
         settings.WorkspacePath = Path.GetDirectoryName(settings.InputPath) ?? baseDirectory;
     }
     else if (isContainer)
