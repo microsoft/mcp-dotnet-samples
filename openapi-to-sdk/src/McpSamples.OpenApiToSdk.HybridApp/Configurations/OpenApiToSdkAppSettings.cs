@@ -4,8 +4,7 @@ using Microsoft.OpenApi.Models;
 namespace McpSamples.OpenApiToSdk.HybridApp.Configurations;
 
 /// <summary>
-/// Represents the application settings for the OpenApiToSdk app.
-/// Inherits from Shared AppSettings to maintain consistency.
+/// This represents the application settings for the OpenApiToSdk app.
 /// </summary>
 public class OpenApiToSdkAppSettings : AppSettings
 {
@@ -17,9 +16,10 @@ public class OpenApiToSdkAppSettings : AppSettings
         Description = "An MCP server that generates client SDKs from OpenAPI specifications using Kiota."
     };
 
-    // --------------------------------------------------------
-    // Runtime Configurations (Values assigned after calculation in Program.cs)
-    // --------------------------------------------------------
+    /// <summary>
+    /// Gets or sets the <see cref="RuntimeSettings"/> instance.
+    /// </summary>
+    public RuntimeSettings Runtime { get; set; } = new RuntimeSettings();
 
     /// <summary>
     /// The root path for the workspace (shared volume or local folder).
@@ -41,13 +41,42 @@ public class OpenApiToSdkAppSettings : AppSettings
     /// </summary>
     public bool IsHttpMode { get; set; }
 
-    /// <summary>
-    /// Indicates if the app is running inside a Docker container.
-    /// </summary>
-    public bool IsContainer { get; set; }
+    /// <inheritdoc />
+    protected override T ParseMore<T>(IConfiguration config, string[] args)
+    {
+        var settings = base.ParseMore<T>(config, args);
 
+        for (var i = 0; i < args.Length; i++)
+        {
+            var arg = args[i];
+            switch (arg)
+            {
+                case "--azure":
+                case "-a":
+                    (settings as OpenApiToSdkAppSettings)!.Runtime.Mode = "Azure";
+                    break;
+
+                case "--container":
+                case "-c":
+                    (settings as OpenApiToSdkAppSettings)!.Runtime.Mode = "Container";
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        return settings;
+    }
+}
+
+/// <summary>
+/// This represents the runtime settings for the OpenApiToSdk app.
+/// </summary>
+public class RuntimeSettings
+{
     /// <summary>
-    /// Indicates if the app is running in Azure Container Apps.
+    /// Gets or sets the runtime mode (Local, Container, Azure).
     /// </summary>
-    public bool IsAzure { get; set; }
+    public string Mode { get; set; } = "Local";
 }

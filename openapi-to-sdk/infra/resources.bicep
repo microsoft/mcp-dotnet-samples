@@ -169,7 +169,8 @@ module mcpOpenApiToSdk 'br/public:avm/res/app/container-app:0.8.0' = {
           }
         ]
         args: [
-          '--http'
+          '--http',
+          '--azure'
         ]
         
         // Mount the volume to a path inside the container
