@@ -33,6 +33,14 @@
       ]
     },
     {
+      "filename": "apex.instructions.md",
+      "description": "Guidelines and best practices for Apex development on the Salesforce Platform",
+      "applyTo": [
+        "**/*.cls",
+        "**/*.trigger"
+      ]
+    },
+    {
       "filename": "aspnet-rest-apis.instructions.md",
       "description": "Guidelines for building REST APIs with ASP.NET",
       "applyTo": [
@@ -1244,6 +1252,30 @@
       "description": "Shorthand code will be in the file provided from the prompt or raw data in the prompt, and will be used to update the code file when the prompt has the text `UPDATE CODE FROM SHORTHAND`.",
       "applyTo": [
         "**/${input:file}"
+      ]
+    },
+    {
+      "filename": "update-docs-on-code-change.instructions.md",
+      "description": "Automatically update README.md and documentation files when application code changes require documentation updates",
+      "applyTo": [
+        "**/*.{md",
+        "js",
+        "mjs",
+        "cjs",
+        "ts",
+        "tsx",
+        "jsx",
+        "py",
+        "java",
+        "cs",
+        "go",
+        "rb",
+        "php",
+        "rs",
+        "cpp",
+        "c",
+        "h",
+        "hpp}"
       ]
     },
     {
@@ -4054,7 +4086,7 @@
         "${{ github.workspace }}:/workspace",
         "--name",
         "arm-mcp",
-        "armswdev/arm-mcp:latest"
+        "armlimited/arm-mcp:latest"
       ],
       "tools": [
         "skopeo",
@@ -4429,6 +4461,11 @@
       ],
       "env": "",
       "DIFFBLUE_COVER_CLI": "/placeholder/path/to/dcover"
+    },
+    {
+      "filename": "dotnet-maui.agent.md",
+      "name": "MAUI Expert",
+      "description": "Support development of .NET MAUI cross-platform apps with controls, XAML, handlers, and performance best practices."
     },
     {
       "filename": "dotnet-upgrade.agent.md",
@@ -5137,16 +5174,15 @@
       "description": "Strategic planning and architecture assistant focused on thoughtful analysis before implementation. Helps developers understand codebases, clarify requirements, and develop comprehensive implementation strategies.",
       "name": "Plan Mode - Strategic Planning & Architecture",
       "tools": [
-        "codebase",
-        "extensions",
-        "fetch",
-        "findTestFiles",
-        "githubRepo",
-        "problems",
-        "search",
-        "searchResults",
-        "usages",
-        "vscodeAPI"
+        "search/codebase",
+        "vscode/extensions",
+        "web/fetch",
+        "web/githubRepo",
+        "read/problems",
+        "azure-mcp/search",
+        "search/searchResults",
+        "search/usages",
+        "vscode/vscodeAPI"
       ]
     },
     {
