@@ -5028,6 +5028,25 @@
       ]
     },
     {
+      "filename": "modernization.agent.md",
+      "description": "Human-in-the-loop modernization assistant for analyzing, documenting, and planning complete project modernization with architectural recommendations.",
+      "model": "GPT-5",
+      "tools": [
+        "search",
+        "read",
+        "edit",
+        "execute",
+        "agent",
+        "todo",
+        "read/problems",
+        "execute/runTask",
+        "execute/runInTerminal",
+        "execute/createAndRunTask",
+        "execute/getTaskOutput",
+        "web/fetch"
+      ]
+    },
+    {
       "filename": "monday-bug-fixer.agent.md",
       "name": "Monday Bug Context Fixer",
       "description": "Elite bug-fixing agent that enriches task context from Monday.com platform data. Gathers related items, docs, comments, epics, and requirements to deliver production-quality fixes with comprehensive PRs.",
