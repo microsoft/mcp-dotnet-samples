@@ -8,6 +8,13 @@
       ]
     },
     {
+      "filename": "agents.instructions.md",
+      "description": "Guidelines for creating custom agent files for GitHub Copilot",
+      "applyTo": [
+        "**/*.agent.md"
+      ]
+    },
+    {
       "filename": "ai-prompt-engineering-safety-best-practices.instructions.md",
       "applyTo": [
         "*"
@@ -1820,8 +1827,7 @@
     {
       "filename": "dotnet-upgrade.prompt.md",
       "name": ".NET Upgrade Analysis Prompts",
-      "description": "Ready-to-use prompts for comprehensive .NET framework upgrade analysis and execution",
-      "prompts": ""
+      "description": "Ready-to-use prompts for comprehensive .NET framework upgrade analysis and execution"
     },
     {
       "filename": "editorconfig.prompt.md",
