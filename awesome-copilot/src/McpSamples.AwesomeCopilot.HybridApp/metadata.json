@@ -573,6 +573,19 @@
       ]
     },
     {
+      "filename": "mcp-m365-copilot.instructions.md",
+      "description": "Best practices for building MCP-based declarative agents and API plugins for Microsoft 365 Copilot with Model Context Protocol integration",
+      "applyTo": [
+        "**/{*mcp*",
+        "*agent*",
+        "*plugin*",
+        "declarativeAgent.json",
+        "ai-plugin.json",
+        "mcp.json",
+        "manifest.json}"
+      ]
+    },
+    {
       "filename": "memory-bank.instructions.md",
       "applyTo": [
         "**"
@@ -3325,6 +3338,44 @@
       "display": {}
     },
     {
+      "filename": "mcp-m365-copilot.collection.yml",
+      "id": "mcp-m365-copilot",
+      "name": "MCP-based M365 Agents",
+      "description": "Comprehensive collection for building declarative agents with Model Context Protocol integration for Microsoft 365 Copilot",
+      "tags": [
+        "mcp",
+        "m365-copilot",
+        "declarative-agents",
+        "api-plugins",
+        "model-context-protocol",
+        "adaptive-cards"
+      ],
+      "items": [
+        {
+          "kind": "prompt",
+          "path": "prompts/mcp-create-declarative-agent.prompt.md"
+        },
+        {
+          "kind": "prompt",
+          "path": "prompts/mcp-create-adaptive-cards.prompt.md"
+        },
+        {
+          "kind": "prompt",
+          "path": "prompts/mcp-deploy-manage-agents.prompt.md"
+        },
+        {
+          "kind": "instruction",
+          "path": "instructions/mcp-m365-copilot.instructions.md"
+        },
+        {
+          "kind": "agent",
+          "path": "agents/mcp-m365-agent-expert.agent.md",
+          "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP-based declarative agents for Microsoft 365 Copilot.\n\nThis chat mode is ideal for:\n- Creating new declarative agents with MCP integration\n- Designing Adaptive Cards for visual responses\n- Configuring OAuth 2.0 or SSO authentication\n- Setting up response semantics and data extraction\n- Troubleshooting deployment and governance issues\n- Learning MCP best practices for M365 Copilot\n\nTo get the best results, consider:\n- Using the instruction file to set context for all Copilot interactions\n- Using prompts to generate initial agent structure and configurations\n- Switching to the expert chat mode for detailed implementation help\n- Providing specific details about your MCP server, tools, and business scenario"
+        }
+      ],
+      "display": {}
+    },
+    {
       "filename": "partners.collection.yml",
       "id": "partners",
       "name": "Partners",
@@ -5073,6 +5124,12 @@
       "lingo": "",
       "type": "sse",
       "url": "https://mcp.lingo.dev/main"
+    },
+    {
+      "filename": "mcp-m365-agent-expert.agent.md",
+      "description": "Expert assistant for building MCP-based declarative agents for Microsoft 365 Copilot with Model Context Protocol integration",
+      "name": "MCP M365 Agent Expert",
+      "model": "GPT-4.1"
     },
     {
       "filename": "mentor.agent.md",
