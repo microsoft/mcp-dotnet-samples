@@ -556,6 +556,13 @@
       ]
     },
     {
+      "filename": "lwc.instructions.md",
+      "description": "Guidelines and best practices for developing Lightning Web Components (LWC) on Salesforce Platform.",
+      "applyTo": [
+        "force-app/main/default/lwc/**"
+      ]
+    },
+    {
       "filename": "makefile.instructions.md",
       "description": "Best practices for authoring GNU Make Makefiles",
       "applyTo": [
@@ -1119,6 +1126,15 @@
       "description": "Rust programming language coding conventions and best practices",
       "applyTo": [
         "**/*.rs"
+      ]
+    },
+    {
+      "filename": "scala2.instructions.md",
+      "description": "Scala 2.12/2.13 programming language coding conventions and best practices following Databricks style guide for functional programming, type safety, and production code quality.",
+      "applyTo": [
+        "**.scala",
+        "**/build.sbt",
+        "**/build.sc"
       ]
     },
     {
@@ -5772,6 +5788,23 @@
       "filename": "rust-mcp-expert.agent.md",
       "description": "Expert assistant for Rust MCP server development using the rmcp SDK with tokio async runtime",
       "name": "Rust MCP Expert",
+      "model": "GPT-4.1"
+    },
+    {
+      "filename": "salesforce-expert.agent.md",
+      "description": "Provide expert Salesforce Platform guidance, including Apex Enterprise Patterns, LWC, integration, and Aura-to-LWC migration.",
+      "name": "Salesforce Expert Agent",
+      "tools": [
+        "vscode",
+        "execute",
+        "read",
+        "edit",
+        "search",
+        "web",
+        "sfdx-mcp/*",
+        "agent",
+        "todo"
+      ],
       "model": "GPT-4.1"
     },
     {
