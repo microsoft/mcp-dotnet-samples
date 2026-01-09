@@ -892,6 +892,17 @@
       ]
     },
     {
+      "filename": "php-symfony.instructions.md",
+      "description": "Symfony development standards aligned with official Symfony Best Practices",
+      "applyTo": [
+        "**/*.php",
+        "**/*.yaml",
+        "**/*.yml",
+        "**/*.xml",
+        "**/*.twig"
+      ]
+    },
+    {
       "filename": "playwright-dotnet.instructions.md",
       "description": "Playwright .NET test generation instructions",
       "applyTo": [
@@ -1333,6 +1344,16 @@
         "c",
         "h",
         "hpp}"
+      ]
+    },
+    {
+      "filename": "vsixtoolkit.instructions.md",
+      "description": "Guidelines for Visual Studio extension (VSIX) development using Community.VisualStudio.Toolkit",
+      "applyTo": [
+        "**/*.cs",
+        "**/*.vsct",
+        "**/*.xaml",
+        "**/source.extension.vsixmanifest"
       ]
     },
     {
@@ -4296,6 +4317,45 @@
       "tools": [
         "atlassian"
       ]
+    },
+    {
+      "filename": "azure-iac-exporter.agent.md",
+      "name": "azure-iac-exporter",
+      "description": "Export existing Azure resources to Infrastructure as Code templates via Azure Resource Graph analysis, Azure Resource Manager API calls, and azure-iac-generator integration. Use this skill when the user asks to export, convert, migrate, or extract existing Azure resources to IaC templates (Bicep, ARM Templates, Terraform, Pulumi).",
+      "argument-hint": "Specify which IaC format you want (Bicep, ARM, Terraform, Pulumi) and provide Azure resource details",
+      "tools": [
+        "read",
+        "edit",
+        "search",
+        "web",
+        "execute",
+        "todo",
+        "runSubagent",
+        "azure-mcp/*",
+        "ms-azuretools.vscode-azure-github-copilot/azure_query_azure_resource_graph"
+      ],
+      "model": "Claude Sonnet 4.5"
+    },
+    {
+      "filename": "azure-iac-generator.agent.md",
+      "name": "azure-iac-generator",
+      "description": "Central hub for generating Infrastructure as Code (Bicep, ARM, Terraform, Pulumi) with format-specific validation and best practices. Use this skill when the user asks to generate, create, write, or build infrastructure code, deployment code, or IaC templates in any format (Bicep, ARM Templates, Terraform, Pulumi).",
+      "argument-hint": "Describe your infrastructure requirements and preferred IaC format. Can receive handoffs from export/migration agents.",
+      "tools": [
+        "vscode",
+        "execute",
+        "read",
+        "edit",
+        "search",
+        "web",
+        "agent",
+        "azure-mcp/azureterraformbestpractices",
+        "azure-mcp/bicepschema",
+        "azure-mcp/search",
+        "pulumi-mcp/get-type",
+        "runSubagent"
+      ],
+      "model": "Claude Sonnet 4.5"
     },
     {
       "filename": "azure-logic-apps-expert.agent.md",
