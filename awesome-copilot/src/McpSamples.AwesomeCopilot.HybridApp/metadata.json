@@ -528,6 +528,20 @@
       "description": "Comprehensive best practices for deploying and managing applications on Kubernetes. Covers Pods, Deployments, Services, Ingress, ConfigMaps, Secrets, health checks, resource limits, scaling, and security contexts."
     },
     {
+      "filename": "kubernetes-manifests.instructions.md",
+      "applyTo": [
+        "k8s/**/*.yaml",
+        "k8s/**/*.yml",
+        "manifests/**/*.yaml",
+        "manifests/**/*.yml",
+        "deploy/**/*.yaml",
+        "deploy/**/*.yml",
+        "charts/**/templates/**/*.yaml",
+        "charts/**/templates/**/*.yml"
+      ],
+      "description": "Best practices for Kubernetes YAML manifests including labeling conventions, security contexts, pod security, resource management, probes, and validation commands"
+    },
+    {
       "filename": "langchain-python.instructions.md",
       "description": "Instructions for using LangChain with Python",
       "applyTo": [
@@ -1255,6 +1269,13 @@
       ]
     },
     {
+      "filename": "typespec-m365-copilot.instructions.md",
+      "description": "Guidelines and best practices for building TypeSpec-based declarative agents and API plugins for Microsoft 365 Copilot",
+      "applyTo": [
+        "**/*.tsp"
+      ]
+    },
+    {
       "filename": "update-code-from-shorthand.instructions.md",
       "description": "Shorthand code will be in the file provided from the prompt or raw data in the prompt, and will be used to update the code file when the prompt has the text `UPDATE CODE FROM SHORTHAND`.",
       "applyTo": [
@@ -1803,6 +1824,17 @@
     {
       "filename": "declarative-agents.prompt.md",
       "description": "Complete development kit for Microsoft 365 Copilot declarative agents with three comprehensive workflows (basic, advanced, validation), TypeSpec support, and Microsoft 365 Agents Toolkit integration"
+    },
+    {
+      "filename": "devops-rollout-plan.prompt.md",
+      "agent": "agent",
+      "description": "Generate comprehensive rollout plans with preflight checks, step-by-step deployment, verification signals, rollback procedures, and communication plans for infrastructure and application changes",
+      "tools": [
+        "codebase",
+        "terminalCommand",
+        "search",
+        "githubRepo"
+      ]
     },
     {
       "filename": "documentation-writer.prompt.md",
@@ -2465,6 +2497,61 @@
       "filename": "typescript-mcp-server-generator.prompt.md",
       "agent": "agent",
       "description": "Generate a complete MCP server project in TypeScript with tools, resources, and proper configuration"
+    },
+    {
+      "filename": "typespec-api-operations.prompt.md",
+      "mode": "agent",
+      "tools": [
+        "changes",
+        "search/codebase",
+        "edit/editFiles",
+        "problems"
+      ],
+      "description": "Add GET, POST, PATCH, and DELETE operations to a TypeSpec API plugin with proper routing, parameters, and adaptive cards",
+      "model": "gpt-4.1",
+      "tags": [
+        "typespec",
+        "m365-copilot",
+        "api-plugin",
+        "rest-operations",
+        "crud"
+      ]
+    },
+    {
+      "filename": "typespec-create-agent.prompt.md",
+      "mode": "agent",
+      "tools": [
+        "changes",
+        "search/codebase",
+        "edit/editFiles",
+        "problems"
+      ],
+      "description": "Generate a complete TypeSpec declarative agent with instructions, capabilities, and conversation starters for Microsoft 365 Copilot",
+      "model": "gpt-4.1",
+      "tags": [
+        "typespec",
+        "m365-copilot",
+        "declarative-agent",
+        "agent-development"
+      ]
+    },
+    {
+      "filename": "typespec-create-api-plugin.prompt.md",
+      "mode": "agent",
+      "tools": [
+        "changes",
+        "search/codebase",
+        "edit/editFiles",
+        "problems"
+      ],
+      "description": "Generate a TypeSpec API plugin with REST operations, authentication, and Adaptive Cards for Microsoft 365 Copilot",
+      "model": "gpt-4.1",
+      "tags": [
+        "typespec",
+        "m365-copilot",
+        "api-plugin",
+        "rest-api"
+      ]
     },
     {
       "filename": "update-avm-modules-in-bicep.prompt.md",
@@ -3941,6 +4028,39 @@
         }
       ],
       "display": {}
+    },
+    {
+      "filename": "typespec-m365-copilot.collection.yml",
+      "id": "typespec-m365-copilot",
+      "name": "TypeSpec for Microsoft 365 Copilot",
+      "description": "Comprehensive collection of prompts, instructions, and resources for building declarative agents and API plugins using TypeSpec for Microsoft 365 Copilot extensibility.",
+      "tags": [
+        "typespec",
+        "m365-copilot",
+        "declarative-agents",
+        "api-plugins",
+        "agent-development",
+        "microsoft-365"
+      ],
+      "items": [
+        {
+          "path": "prompts/typespec-create-agent.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/typespec-create-api-plugin.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/typespec-api-operations.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "instructions/typespec-m365-copilot.instructions.md",
+          "kind": "instruction"
+        }
+      ],
+      "display": {}
     }
   ],
   "agents": [
@@ -4450,6 +4570,20 @@
       ]
     },
     {
+      "filename": "devops-expert.agent.md",
+      "name": "DevOps Expert",
+      "description": "DevOps specialist following the infinity loop principle (Plan → Code → Build → Test → Release → Deploy → Operate → Monitor) with focus on automation, collaboration, and continuous improvement",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "terminalCommand",
+        "search",
+        "githubRepo",
+        "runCommands",
+        "runTasks"
+      ]
+    },
+    {
       "filename": "diffblue-cover.agent.md",
       "name": "DiffblueCover",
       "description": "Expert agent for creating unit tests for java applications using Diffblue Cover.",
@@ -4702,6 +4836,18 @@
         "terminalSelection",
         "usages",
         "vscodeAPI"
+      ]
+    },
+    {
+      "filename": "github-actions-expert.agent.md",
+      "name": "GitHub Actions Expert",
+      "description": "GitHub Actions specialist focused on secure CI/CD workflows, action pinning, OIDC authentication, permissions least privilege, and supply-chain security",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "terminalCommand",
+        "search",
+        "githubRepo"
       ]
     },
     {
@@ -5248,6 +5394,18 @@
         "githubRepo",
         "search",
         "usages"
+      ]
+    },
+    {
+      "filename": "platform-sre-kubernetes.agent.md",
+      "name": "Platform SRE for Kubernetes",
+      "description": "SRE-focused Kubernetes specialist prioritizing reliability, safe rollouts/rollbacks, security defaults, and operational verification for production-grade deployments",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "terminalCommand",
+        "search",
+        "githubRepo"
       ]
     },
     {
@@ -6016,6 +6174,18 @@
         "documentation",
         "get_bestpractices",
         "microsoft-docs"
+      ]
+    },
+    {
+      "filename": "terraform-iac-reviewer.agent.md",
+      "name": "Terraform IaC Reviewer",
+      "description": "Terraform-focused agent that reviews and creates safer IaC changes with emphasis on state safety, least privilege, module patterns, drift detection, and plan/apply discipline",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "terminalCommand",
+        "search",
+        "githubRepo"
       ]
     },
     {
