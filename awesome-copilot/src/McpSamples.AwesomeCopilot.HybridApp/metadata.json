@@ -8,6 +8,14 @@
       ]
     },
     {
+      "filename": "agent-skills.instructions.md",
+      "description": "Guidelines for creating high-quality Agent Skills for GitHub Copilot",
+      "applyTo": [
+        "**/.github/skills/**/SKILL.md",
+        "**/.claude/skills/**/SKILL.md"
+      ]
+    },
+    {
       "filename": "agents.instructions.md",
       "description": "Guidelines for creating custom agent files for GitHub Copilot",
       "applyTo": [
@@ -2425,7 +2433,7 @@
       "filename": "structured-autonomy-plan.prompt.md",
       "name": "sa-plan",
       "description": "Structured Autonomy Planning Prompt",
-      "model": "Claude Sonnet 4.5 (copilot)]",
+      "model": "Claude Sonnet 4.5 (copilot)",
       "agent": "agent"
     },
     {
