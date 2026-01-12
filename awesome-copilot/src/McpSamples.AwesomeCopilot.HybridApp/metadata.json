@@ -645,10 +645,14 @@
     },
     {
       "filename": "nextjs.instructions.md",
+      "description": "Best practices for building Next.js (App Router) apps with modern caching, tooling, and server/client boundaries (aligned with Next.js 16.1.1).",
       "applyTo": [
-        "**"
-      ],
-      "description": "No description provided"
+        "**/*.tsx",
+        "**/*.ts",
+        "**/*.jsx",
+        "**/*.js",
+        "**/*.css"
+      ]
     },
     {
       "filename": "nodejs-javascript-vitest.instructions.md",
@@ -1399,7 +1403,7 @@
       "description": "Add educational comments to the file specified, or prompt asking for file to comment if one is not provided.",
       "tools": [
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "todos"
       ]
     },
@@ -1514,7 +1518,7 @@
       "tools": [
         "edit",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "runCommands",
         "search",
         "search/readFile",
@@ -1546,7 +1550,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -1569,7 +1573,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -1653,7 +1657,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -1676,7 +1680,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -1699,7 +1703,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -1727,7 +1731,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -1768,7 +1772,7 @@
         "changes",
         "testFailure",
         "openSimpleBrowser",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "todos",
         "Microsoft Docs",
@@ -1781,7 +1785,7 @@
       "description": "Create a tldr page from documentation URLs and command examples, requiring both URL and command name.",
       "tools": [
         "edit/createFile",
-        "fetch"
+        "web/fetch"
       ]
     },
     {
@@ -1900,7 +1904,7 @@
       "tools": [
         "edit/editFiles",
         "search",
-        "fetch"
+        "web/fetch"
       ],
       "description": "Diátaxis Documentation Expert. An expert technical writer specializing in creating high-quality software documentation, guided by the principles and structure of the Diátaxis technical documentation authoring framework."
     },
@@ -1984,7 +1988,7 @@
         "problems",
         "search",
         "runCommands",
-        "fetch"
+        "web/fetch"
       ],
       "description": "Set up complete GitHub Copilot configuration for a new project based on technology stack"
     },
@@ -2194,7 +2198,7 @@
         "changes",
         "search/codebase",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "problems",
         "runCommands",
@@ -2217,7 +2221,7 @@
         "changes",
         "search/codebase",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "problems",
         "runCommands",
         "runTasks",
@@ -2466,7 +2470,7 @@
         "changes",
         "testFailure",
         "openSimpleBrowser",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "todos",
         "search"
@@ -2485,7 +2489,7 @@
         "changes",
         "testFailure",
         "openSimpleBrowser",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "todos",
         "search"
@@ -2504,7 +2508,7 @@
         "changes",
         "testFailure",
         "openSimpleBrowser",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "todos",
         "search"
@@ -2523,7 +2527,7 @@
         "changes",
         "testFailure",
         "openSimpleBrowser",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "todos",
         "search"
@@ -2544,7 +2548,7 @@
       "agent": "agent",
       "description": "Create tldr summaries for GitHub Copilot files (prompts, agents, instructions, collections), MCP servers, or documentation from URLs and queries.",
       "tools": [
-        "fetch",
+        "web/fetch",
         "search/readFile",
         "search",
         "search/textSearch"
@@ -2619,7 +2623,7 @@
         "search/codebase",
         "think",
         "changes",
-        "fetch",
+        "web/fetch",
         "search/searchResults",
         "todos",
         "edit/editFiles",
@@ -2638,7 +2642,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -2661,7 +2665,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -2684,7 +2688,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "openSimpleBrowser",
@@ -2710,7 +2714,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -2733,7 +2737,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -2754,7 +2758,7 @@
       "tools": [
         "createFile",
         "editFiles",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "search",
         "testFailure"
@@ -4195,7 +4199,7 @@
         "codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -4253,7 +4257,7 @@
       "tools": [
         "codebase",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "figma-dev-mode-mcp-server"
       ]
@@ -4512,7 +4516,7 @@
       "description": "Act as an Azure Bicep Infrastructure as Code coding specialist that creates Bicep templates.",
       "tools": [
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "runCommands",
         "terminalLastCommand",
         "get_bicep_best_practices",
@@ -4525,7 +4529,7 @@
       "description": "Act as implementation planner for your Azure Bicep Infrastructure as Code task.",
       "tools": [
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "microsoft-docs",
         "azure_design_architecture",
         "get_bicep_best_practices",
@@ -4605,7 +4609,7 @@
       "tools": [
         "codebase",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "problems",
@@ -4622,7 +4626,7 @@
         "codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -4697,7 +4701,7 @@
       "description": "Validate user understanding of code, design patterns, and implementation details through guided questioning.",
       "tools": [
         "codebase",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "search",
@@ -4762,7 +4766,7 @@
         "testFailure",
         "terminalLastCommand",
         "terminalSelection",
-        "fetch",
+        "web/fetch",
         "microsoft.docs.mcp"
       ]
     },
@@ -4786,7 +4790,7 @@
         "codebase",
         "terminalCommand",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "runTests",
         "problems"
@@ -4848,7 +4852,7 @@
         "codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -4960,7 +4964,7 @@
       "tools": [
         "changes",
         "codebase",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "openSimpleBrowser",
@@ -5034,7 +5038,7 @@
         "search/codebase",
         "changes",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "runCommands",
@@ -5168,7 +5172,7 @@
         "codebase",
         "terminalCommand",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "runTests",
         "problems",
@@ -5220,7 +5224,7 @@
       "description": "Help mentor the engineer by providing guidance and support.",
       "tools": [
         "codebase",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "search",
@@ -5502,7 +5506,7 @@
         "codebase",
         "terminalCommand",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "runTests",
         "problems"
@@ -5750,7 +5754,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -5775,7 +5779,7 @@
       "tools": [
         "codebase",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "problems",
         "runCommands",
@@ -5924,7 +5928,7 @@
         "codebase",
         "edit/editFiles",
         "search",
-        "fetch"
+        "web/fetch"
       ]
     },
     {
@@ -5936,7 +5940,7 @@
         "codebase",
         "edit/editFiles",
         "search",
-        "fetch"
+        "web/fetch"
       ]
     },
     {
@@ -5948,7 +5952,7 @@
         "codebase",
         "edit/editFiles",
         "search",
-        "fetch"
+        "web/fetch"
       ]
     },
     {
@@ -5956,7 +5960,7 @@
       "description": "Expert guidance for modern search optimization: SEO, Answer Engine Optimization (AEO), and Generative Engine Optimization (GEO) with AI-ready content strategies",
       "tools": [
         "codebase",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "terminalCommand",
         "edit/editFiles",
@@ -5971,7 +5975,7 @@
         "codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -6000,7 +6004,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -6033,7 +6037,7 @@
         "codebase",
         "terminalCommand",
         "edit/editFiles",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "runTests",
         "problems"
@@ -6045,7 +6049,7 @@
       "tools": [
         "changes",
         "codebase",
-        "fetch",
+        "web/fetch",
         "githubRepo",
         "openSimpleBrowser",
         "problems",
@@ -6064,7 +6068,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -6091,7 +6095,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -6258,7 +6262,7 @@
         "codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -6285,7 +6289,7 @@
         "edit",
         "search",
         "shell",
-        "fetch",
+        "web/fetch",
         "runTasks",
         "githubRepo",
         "todos",
@@ -6364,7 +6368,7 @@
         "codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -6393,7 +6397,7 @@
         "search/codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
@@ -6419,7 +6423,7 @@
         "codebase",
         "edit/editFiles",
         "extensions",
-        "fetch",
+        "web/fetch",
         "findTestFiles",
         "githubRepo",
         "new",
