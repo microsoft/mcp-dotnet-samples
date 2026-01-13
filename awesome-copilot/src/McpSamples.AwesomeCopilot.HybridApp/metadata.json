@@ -4709,6 +4709,15 @@
       ]
     },
     {
+      "filename": "devils-advocate.agent.md",
+      "description": "I play the devil's advocate to challenge and stress-test your ideas by finding flaws, risks, and edge cases",
+      "tools": [
+        "read",
+        "search",
+        "web"
+      ]
+    },
+    {
       "filename": "devops-expert.agent.md",
       "name": "DevOps Expert",
       "description": "DevOps specialist following the infinity loop principle (Plan → Code → Build → Test → Release → Deploy → Operate → Monitor) with focus on automation, collaboration, and continuous improvement",
