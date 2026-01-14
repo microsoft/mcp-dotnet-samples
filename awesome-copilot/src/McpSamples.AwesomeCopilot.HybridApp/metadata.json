@@ -460,6 +460,15 @@
       ]
     },
     {
+      "filename": "html-css-style-color-guide.instructions.md",
+      "description": "Color usage guidelines and styling rules for HTML elements to ensure accessible, professional designs.",
+      "applyTo": [
+        "**/*.html",
+        "**/*.css",
+        "**/*.js"
+      ]
+    },
+    {
       "filename": "instructions.instructions.md",
       "description": "Guidelines for creating high-quality custom instruction files for GitHub Copilot",
       "applyTo": [
@@ -2443,7 +2452,7 @@
     {
       "filename": "suggest-awesome-github-copilot-agents.prompt.md",
       "agent": "agent",
-      "description": "Suggest relevant GitHub Copilot Custom Agents files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing custom agents in this repository.",
+      "description": "Suggest relevant GitHub Copilot Custom Agents files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing custom agents in this repository, and identifying outdated agents that need updates.",
       "tools": [
         "edit",
         "search",
