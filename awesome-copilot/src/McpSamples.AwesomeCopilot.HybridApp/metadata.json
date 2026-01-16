@@ -2488,7 +2488,7 @@
     {
       "filename": "suggest-awesome-github-copilot-collections.prompt.md",
       "agent": "agent",
-      "description": "Suggest relevant GitHub Copilot collections from the awesome-copilot repository based on current repository context and chat history, providing automatic download and installation of collection assets.",
+      "description": "Suggest relevant GitHub Copilot collections from the awesome-copilot repository based on current repository context and chat history, providing automatic download and installation of collection assets, and identifying outdated collection assets that need updates.",
       "tools": [
         "edit",
         "search",
@@ -2507,7 +2507,7 @@
     {
       "filename": "suggest-awesome-github-copilot-instructions.prompt.md",
       "agent": "agent",
-      "description": "Suggest relevant GitHub Copilot instruction files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing instructions in this repository.",
+      "description": "Suggest relevant GitHub Copilot instruction files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing instructions in this repository, and identifying outdated instructions that need updates.",
       "tools": [
         "edit",
         "search",
@@ -2526,7 +2526,7 @@
     {
       "filename": "suggest-awesome-github-copilot-prompts.prompt.md",
       "agent": "agent",
-      "description": "Suggest relevant GitHub Copilot prompt files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing prompts in this repository.",
+      "description": "Suggest relevant GitHub Copilot prompt files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing prompts in this repository, and identifying outdated prompts that need updates.",
       "tools": [
         "edit",
         "search",
