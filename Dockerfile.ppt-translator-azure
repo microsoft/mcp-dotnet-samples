@@ -1,0 +1,44 @@
+# Azure Container Registry compatible Dockerfile
+
+###############################################
+# 1) BUILD STAGE
+###############################################
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+
+COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
+COPY ./ppt-translator/src/McpSamples.PptTranslator.HybridApp \
+     /source/ppt-translator/src/McpSamples.PptTranslator.HybridApp
+
+WORKDIR /source/ppt-translator/src/McpSamples.PptTranslator.HybridApp
+
+RUN dotnet publish -c Release -o /app --self-contained false
+
+
+###############################################
+# 2) FINAL STAGE (DEBIAN, not Alpine)
+###############################################
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+WORKDIR /app
+
+# ShapeCrawler + SkiaSharp deps (Debian)
+RUN apt-get update && apt-get install -y \
+    libfontconfig1 \
+    libfreetype6 \
+    libpng16-16 \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create mount folder (Azure File Share - single /files mount)
+RUN mkdir -p /files && chmod -R 777 /files
+
+COPY --from=build /app .
+
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
+ENV MCP_HTTP_PATH=/mcp
+
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "McpSamples.PptTranslator.HybridApp.dll"]

@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "ppt-translator-http-container": {
+      "type": "http",
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}

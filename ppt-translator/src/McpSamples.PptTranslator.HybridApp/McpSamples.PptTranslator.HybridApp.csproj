@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>McpSamples.PptTranslator.HybridApp</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>5e4ba7bc-008d-4689-8311-3be925ba73a8</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenAI" Version="2.7.0" />
+    <PackageReference Include="ShapeCrawler" Version="0.75.1" />
+
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
+
+    <!-- Azure Storage Files -->
+    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.19.1" />
+
+    <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
+
+    <None Include="Prompts/translation_prompt.txt" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>

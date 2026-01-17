@@ -400,3 +400,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 .DS_Store
+.azure
