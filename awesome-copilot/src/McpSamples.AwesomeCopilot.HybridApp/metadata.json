@@ -1422,6 +1422,22 @@
       "agent": "agent"
     },
     {
+      "filename": "apple-appstore-reviewer.prompt.md",
+      "agent": "agent",
+      "name": "Apple App Store Reviewer",
+      "tools": [
+        "vscode",
+        "execute",
+        "read",
+        "search",
+        "web",
+        "upstash/context7/*",
+        "agent",
+        "todo"
+      ],
+      "description": "Serves as a reviewer of the codebase with instructions on looking for Apple App Store optimizations or rejection reasons."
+    },
+    {
       "filename": "architecture-blueprint-generator.prompt.md",
       "description": "Comprehensive project architecture blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks and architectural patterns, generates visual diagrams, documents implementation patterns, and provides extensible blueprints for maintaining architectural consistency and guiding new development.",
       "agent": "agent"
@@ -2184,6 +2200,17 @@
         "writeTest"
       ],
       "description": "Add new language to a Next.js + next-intl application"
+    },
+    {
+      "filename": "openapi-to-application-code.prompt.md",
+      "agent": "agent",
+      "description": "Generate a complete, production-ready application from an OpenAPI specification",
+      "model": "GPT-4.1",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "search/codebase"
+      ]
     },
     {
       "filename": "php-mcp-server-generator.prompt.md",
@@ -3429,6 +3456,148 @@
           "kind": "agent",
           "path": "agents/mcp-m365-agent-expert.agent.md",
           "usage": "recommended\n\nThis chat mode provides expert guidance for building MCP-based declarative agents for Microsoft 365 Copilot.\n\nThis chat mode is ideal for:\n- Creating new declarative agents with MCP integration\n- Designing Adaptive Cards for visual responses\n- Configuring OAuth 2.0 or SSO authentication\n- Setting up response semantics and data extraction\n- Troubleshooting deployment and governance issues\n- Learning MCP best practices for M365 Copilot\n\nTo get the best results, consider:\n- Using the instruction file to set context for all Copilot interactions\n- Using prompts to generate initial agent structure and configurations\n- Switching to the expert chat mode for detailed implementation help\n- Providing specific details about your MCP server, tools, and business scenario"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "openapi-to-application-csharp-dotnet.collection.yml",
+      "id": "openapi-to-application-csharp-dotnet",
+      "name": "OpenAPI to Application - C# .NET",
+      "description": "Generate production-ready .NET applications from OpenAPI specifications. Includes ASP.NET Core project scaffolding, controller generation, entity framework integration, and C# best practices.",
+      "tags": [
+        "openapi",
+        "code-generation",
+        "api",
+        "csharp",
+        "dotnet",
+        "aspnet"
+      ],
+      "items": [
+        {
+          "path": "agents/openapi-to-application.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "instructions/csharp.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/openapi-to-application-code.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "openapi-to-application-go.collection.yml",
+      "id": "openapi-to-application-go",
+      "name": "OpenAPI to Application - Go",
+      "description": "Generate production-ready Go applications from OpenAPI specifications. Includes project scaffolding, handler generation, middleware setup, and Go best practices for REST APIs.",
+      "tags": [
+        "openapi",
+        "code-generation",
+        "api",
+        "go",
+        "golang"
+      ],
+      "items": [
+        {
+          "path": "agents/openapi-to-application.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "instructions/go.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/openapi-to-application-code.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "openapi-to-application-java-spring-boot.collection.yml",
+      "id": "openapi-to-application-java-spring-boot",
+      "name": "OpenAPI to Application - Java Spring Boot",
+      "description": "Generate production-ready Spring Boot applications from OpenAPI specifications. Includes project scaffolding, REST controller generation, service layer organization, and Spring Boot best practices.",
+      "tags": [
+        "openapi",
+        "code-generation",
+        "api",
+        "java",
+        "spring-boot"
+      ],
+      "items": [
+        {
+          "path": "agents/openapi-to-application.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "instructions/springboot.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/openapi-to-application-code.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "openapi-to-application-nodejs-nestjs.collection.yml",
+      "id": "openapi-to-application-nodejs-nestjs",
+      "name": "OpenAPI to Application - Node.js NestJS",
+      "description": "Generate production-ready NestJS applications from OpenAPI specifications. Includes project scaffolding, controller and service generation, TypeScript best practices, and enterprise patterns.",
+      "tags": [
+        "openapi",
+        "code-generation",
+        "api",
+        "nodejs",
+        "typescript",
+        "nestjs"
+      ],
+      "items": [
+        {
+          "path": "agents/openapi-to-application.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "instructions/nestjs.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/openapi-to-application-code.prompt.md",
+          "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "openapi-to-application-python-fastapi.collection.yml",
+      "id": "openapi-to-application-python-fastapi",
+      "name": "OpenAPI to Application - Python FastAPI",
+      "description": "Generate production-ready FastAPI applications from OpenAPI specifications. Includes project scaffolding, route generation, dependency injection, and Python best practices for async APIs.",
+      "tags": [
+        "openapi",
+        "code-generation",
+        "api",
+        "python",
+        "fastapi"
+      ],
+      "items": [
+        {
+          "path": "agents/openapi-to-application.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "instructions/python.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "prompts/openapi-to-application-code.prompt.md",
+          "kind": "prompt"
         }
       ],
       "display": {}
@@ -5495,6 +5664,17 @@
         "list_releases_for_project",
         "list_spaces",
         "list_tenants"
+      ]
+    },
+    {
+      "filename": "openapi-to-application.agent.md",
+      "description": "Expert assistant for generating working applications from OpenAPI specifications",
+      "name": "OpenAPI to Application Generator",
+      "model": "GPT-4.1",
+      "tools": [
+        "codebase",
+        "edit/editFiles",
+        "search/codebase"
       ]
     },
     {
