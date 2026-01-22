@@ -233,6 +233,44 @@
       ]
     },
     {
+      "filename": "copilot-sdk-csharp.instructions.md",
+      "applyTo": [
+        "**.cs",
+        "**.csproj"
+      ],
+      "description": "This file provides guidance on building C# applications using GitHub Copilot SDK.",
+      "name": "GitHub Copilot SDK C# Instructions"
+    },
+    {
+      "filename": "copilot-sdk-go.instructions.md",
+      "applyTo": [
+        "**.go",
+        "go.mod"
+      ],
+      "description": "This file provides guidance on building Go applications using GitHub Copilot SDK.",
+      "name": "GitHub Copilot SDK Go Instructions"
+    },
+    {
+      "filename": "copilot-sdk-nodejs.instructions.md",
+      "applyTo": [
+        "**.ts",
+        "**.js",
+        "package.json"
+      ],
+      "description": "This file provides guidance on building Node.js/TypeScript applications using GitHub Copilot SDK.",
+      "name": "GitHub Copilot SDK Node.js Instructions"
+    },
+    {
+      "filename": "copilot-sdk-python.instructions.md",
+      "applyTo": [
+        "**.py",
+        "pyproject.toml",
+        "setup.py"
+      ],
+      "description": "This file provides guidance on building Python applications using GitHub Copilot SDK.",
+      "name": "GitHub Copilot SDK Python Instructions"
+    },
+    {
       "filename": "copilot-thought-logging.instructions.md",
       "applyTo": [
         "**"
@@ -2978,6 +3016,42 @@
         {
           "path": "prompts/remember-interactive-programming.prompt.md",
           "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "copilot-sdk.collection.yml",
+      "id": "copilot-sdk",
+      "name": "Copilot SDK",
+      "description": "Build applications with the GitHub Copilot SDK across multiple programming languages. Includes comprehensive instructions for C#, Go, Node.js/TypeScript, and Python to help you create AI-powered applications.",
+      "tags": [
+        "copilot-sdk",
+        "sdk",
+        "csharp",
+        "go",
+        "nodejs",
+        "typescript",
+        "python",
+        "ai",
+        "github-copilot"
+      ],
+      "items": [
+        {
+          "path": "instructions/copilot-sdk-csharp.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/copilot-sdk-go.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/copilot-sdk-nodejs.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "instructions/copilot-sdk-python.instructions.md",
+          "kind": "instruction"
         }
       ],
       "display": {}
