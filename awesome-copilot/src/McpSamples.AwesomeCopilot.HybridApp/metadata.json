@@ -2925,6 +2925,38 @@
       "display": {}
     },
     {
+      "filename": "cast-imaging.collection.yml",
+      "id": "cast-imaging",
+      "name": "CAST Imaging Agents",
+      "description": "A comprehensive collection of specialized agents for software analysis, impact assessment, structural quality advisories, and architectural review using CAST Imaging.",
+      "tags": [
+        "cast-imaging",
+        "software-analysis",
+        "architecture",
+        "quality",
+        "impact-analysis",
+        "devops"
+      ],
+      "items": [
+        {
+          "path": "agents/cast-imaging-software-discovery.agent.md",
+          "kind": "agent",
+          "usage": "This agent is designed for comprehensive software application discovery and architectural mapping. It helps users understand code structure, dependencies, and architectural patterns, including database schemas and physical source file locations.\n\nIdeal for:\n- Exploring available applications and getting overviews.\n- Understanding system architecture and component structure.\n- Analyzing dependencies and database schemas (tables/columns).\n- Locating and analyzing physical source files."
+        },
+        {
+          "path": "agents/cast-imaging-impact-analysis.agent.md",
+          "kind": "agent",
+          "usage": "This agent specializes in comprehensive change impact assessment and risk analysis. It assists users in understanding ripple effects of code changes, identifying architectural coupling (shared resources), and developing testing strategies.\n\nIdeal for:\n- Assessing potential impacts of code modifications.\n- Identifying architectural coupling and shared code risks.\n- Analyzing impacts spanning multiple applications.\n- Developing targeted testing approaches based on change scope."
+        },
+        {
+          "path": "agents/cast-imaging-structural-quality-advisor.agent.md",
+          "kind": "agent",
+          "usage": "This agent focuses on identifying, analyzing, and providing remediation guidance for structural quality issues. It supports specialized standards including Security (CVE), Green IT deficiencies, and ISO-5055 compliance.\n\nIdeal for:\n- Identifying and understanding code quality issues and structural flaws.\n- Checking compliance with Security (CVE), Green IT, and ISO-5055 standards.\n- Prioritizing quality issues based on business impact and risk.\n- Analyzing quality trends and providing remediation guidance."
+        }
+      ],
+      "display": {}
+    },
+    {
       "filename": "clojure-interactive-programming.collection.yml",
       "id": "clojure-interactive-programming",
       "name": "Clojure Interactive Programming",
@@ -4726,6 +4758,42 @@
       "filename": "blueprint-mode.agent.md",
       "model": "GPT-5 (copilot)",
       "description": "Executes structured workflows (Debug, Express, Main, Loop) with strict correctness and maintainability. Enforces an improved tool usage policy, never assumes facts, prioritizes reproducible solutions, self-correction, and edge-case handling."
+    },
+    {
+      "filename": "cast-imaging-impact-analysis.agent.md",
+      "name": "CAST Imaging Impact Analysis Agent",
+      "description": "Specialized agent for comprehensive change impact assessment and risk analysis in software systems using CAST Imaging",
+      "mcp-servers": "",
+      "imaging-impact-analysis": "",
+      "type": "http",
+      "url": "https://castimaging.io/imaging/mcp/",
+      "headers": "",
+      "'x-api-key'": "${input:imaging-key}",
+      "args": []
+    },
+    {
+      "filename": "cast-imaging-software-discovery.agent.md",
+      "name": "CAST Imaging Software Discovery Agent",
+      "description": "Specialized agent for comprehensive software application discovery and architectural mapping through static code analysis using CAST Imaging",
+      "mcp-servers": "",
+      "imaging-structural-search": "",
+      "type": "http",
+      "url": "https://castimaging.io/imaging/mcp/",
+      "headers": "",
+      "'x-api-key'": "${input:imaging-key}",
+      "args": []
+    },
+    {
+      "filename": "cast-imaging-structural-quality-advisor.agent.md",
+      "name": "CAST Imaging Structural Quality Advisor Agent",
+      "description": "Specialized agent for identifying, analyzing, and providing remediation guidance for code quality issues using CAST Imaging",
+      "mcp-servers": "",
+      "imaging-structural-quality": "",
+      "type": "http",
+      "url": "https://castimaging.io/imaging/mcp/",
+      "headers": "",
+      "'x-api-key'": "${input:imaging-key}",
+      "args": []
     },
     {
       "filename": "clojure-interactive-programming.agent.md",
