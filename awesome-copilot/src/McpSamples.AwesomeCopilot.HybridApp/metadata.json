@@ -2532,25 +2532,6 @@
       ]
     },
     {
-      "filename": "suggest-awesome-github-copilot-chatmodes.prompt.md",
-      "agent": "agent",
-      "description": "Suggest relevant GitHub Copilot Custom Chat Modes files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing custom chat modes in this repository.",
-      "tools": [
-        "edit",
-        "search",
-        "runCommands",
-        "runTasks",
-        "think",
-        "changes",
-        "testFailure",
-        "openSimpleBrowser",
-        "web/fetch",
-        "githubRepo",
-        "todos",
-        "search"
-      ]
-    },
-    {
       "filename": "suggest-awesome-github-copilot-collections.prompt.md",
       "agent": "agent",
       "description": "Suggest relevant GitHub Copilot collections from the awesome-copilot repository based on current repository context and chat history, providing automatic download and installation of collection assets, and identifying outdated collection assets that need updates.",
@@ -2844,7 +2825,7 @@
       "filename": "awesome-copilot.collection.yml",
       "id": "awesome-copilot",
       "name": "Awesome Copilot",
-      "description": "Meta prompts that help you discover and generate curated GitHub Copilot chat modes, collections, instructions, prompts, and agents.",
+      "description": "Meta prompts that help you discover and generate curated GitHub Copilot agents, collections, instructions, prompts, and skills.",
       "tags": [
         "github-copilot",
         "discovery",
@@ -2853,10 +2834,6 @@
         "agents"
       ],
       "items": [
-        {
-          "path": "prompts/suggest-awesome-github-copilot-chatmodes.prompt.md",
-          "kind": "prompt"
-        },
         {
           "path": "prompts/suggest-awesome-github-copilot-collections.prompt.md",
           "kind": "prompt"
