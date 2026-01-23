@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>53a97ea1-8708-44a3-b810-38b77f5d6001</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
+    <PackageReference Include="Azure.Identity" Version="1.17.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.21.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="4.0.1" />
+    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.24.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.77.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- .azurefunctions 디렉토리를 publish 폴더에 포함 -->
+  <ItemGroup>
+    <None Include=".azurefunctions/**" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
