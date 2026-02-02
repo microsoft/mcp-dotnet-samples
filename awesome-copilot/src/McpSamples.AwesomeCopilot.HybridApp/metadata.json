@@ -56,6 +56,13 @@
       ]
     },
     {
+      "filename": "arch-linux.instructions.md",
+      "description": "Guidance for Arch Linux administration, pacman workflows, and rolling-release best practices.",
+      "applyTo": [
+        "**"
+      ]
+    },
+    {
       "filename": "aspnet-rest-apis.instructions.md",
       "description": "Guidelines for building REST APIs with ASP.NET",
       "applyTo": [
@@ -138,6 +145,13 @@
         "**/*.razor",
         "**/*.razor.cs",
         "**/*.razor.css"
+      ]
+    },
+    {
+      "filename": "centos-linux.instructions.md",
+      "description": "Guidance for CentOS administration, RHEL-compatible tooling, and SELinux-aware operations.",
+      "applyTo": [
+        "**"
       ]
     },
     {
@@ -377,6 +391,13 @@
       "description": "No description provided"
     },
     {
+      "filename": "debian-linux.instructions.md",
+      "description": "Guidance for Debian-based Linux administration, apt workflows, and Debian policy conventions.",
+      "applyTo": [
+        "**"
+      ]
+    },
+    {
       "filename": "declarative-agents-microsoft365.instructions.md",
       "description": "Comprehensive development guidelines for Microsoft 365 Copilot declarative agents with schema v1.5, TypeSpec integration, and Microsoft 365 Agents Toolkit workflows",
       "applyTo": [
@@ -448,6 +469,13 @@
       "applyTo": [
         "**/*.xaml",
         "**/*.cs"
+      ]
+    },
+    {
+      "filename": "fedora-linux.instructions.md",
+      "description": "Guidance for Fedora (Red Hat family) systems, dnf workflows, SELinux, and modern systemd practices.",
+      "applyTo": [
+        "**"
       ]
     },
     {
@@ -1476,6 +1504,18 @@
       "description": "Serves as a reviewer of the codebase with instructions on looking for Apple App Store optimizations or rejection reasons."
     },
     {
+      "filename": "arch-linux-triage.prompt.md",
+      "agent": "agent",
+      "description": "Triage and resolve Arch Linux issues with pacman, systemd, and rolling-release best practices.",
+      "model": "gpt-4.1",
+      "tools": [
+        "search",
+        "runCommands",
+        "terminalCommand",
+        "edit/editFiles"
+      ]
+    },
+    {
       "filename": "architecture-blueprint-generator.prompt.md",
       "description": "Comprehensive project architecture blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks and architectural patterns, generates visual diagrams, documents implementation patterns, and provides extensible blueprints for maintaining architectural consistency and guiding new development.",
       "agent": "agent"
@@ -1535,6 +1575,18 @@
       "filename": "breakdown-test.prompt.md",
       "agent": "agent",
       "description": "Test Planning and Quality Assurance prompt that generates comprehensive test strategies, task breakdowns, and quality validation plans for GitHub projects."
+    },
+    {
+      "filename": "centos-linux-triage.prompt.md",
+      "agent": "agent",
+      "description": "Triage and resolve CentOS issues using RHEL-compatible tooling, SELinux-aware practices, and firewalld.",
+      "model": "gpt-4.1",
+      "tools": [
+        "search",
+        "runCommands",
+        "terminalCommand",
+        "edit/editFiles"
+      ]
     },
     {
       "filename": "code-exemplars-blueprint-generator.prompt.md",
@@ -1947,6 +1999,18 @@
       "description": "Generate complete solutions for specific Dataverse SDK use cases with architecture recommendations"
     },
     {
+      "filename": "debian-linux-triage.prompt.md",
+      "agent": "agent",
+      "description": "Triage and resolve Debian Linux issues with apt, systemd, and AppArmor-aware guidance.",
+      "model": "gpt-4.1",
+      "tools": [
+        "search",
+        "runCommands",
+        "terminalCommand",
+        "edit/editFiles"
+      ]
+    },
+    {
       "filename": "declarative-agents.prompt.md",
       "description": "Complete development kit for Microsoft 365 Copilot declarative agents with three comprehensive workflows (basic, advanced, validation), TypeSpec support, and Microsoft 365 Agents Toolkit integration"
     },
@@ -2003,6 +2067,18 @@
         "runCommands"
       ],
       "description": "Get best practices for Entity Framework Core"
+    },
+    {
+      "filename": "fedora-linux-triage.prompt.md",
+      "agent": "agent",
+      "description": "Triage and resolve Fedora issues with dnf, systemd, and SELinux-aware guidance.",
+      "model": "gpt-4.1",
+      "tools": [
+        "search",
+        "runCommands",
+        "terminalCommand",
+        "edit/editFiles"
+      ]
     },
     {
       "filename": "finalize-agent-prompt.prompt.md",
@@ -4557,6 +4633,19 @@
       ]
     },
     {
+      "filename": "arch-linux-expert.agent.md",
+      "name": "Arch Linux Expert",
+      "description": "Arch Linux specialist focused on pacman, rolling-release maintenance, and Arch-centric system administration workflows.",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "search",
+        "terminalCommand",
+        "runCommands",
+        "edit/editFiles"
+      ]
+    },
+    {
       "filename": "arch.agent.md",
       "name": "Senior Cloud Architect",
       "description": "Expert in modern architecture design patterns, NFR requirements, and creating comprehensive architectural diagrams and documentation"
@@ -4851,6 +4940,19 @@
       "args": []
     },
     {
+      "filename": "centos-linux-expert.agent.md",
+      "name": "CentOS Linux Expert",
+      "description": "CentOS (Stream/Legacy) Linux specialist focused on RHEL-compatible administration, yum/dnf workflows, and enterprise hardening.",
+      "model": "GPT-4.1",
+      "tools": [
+        "codebase",
+        "search",
+        "terminalCommand",
+        "runCommands",
+        "edit/editFiles"
+      ]
+    },
+    {
       "filename": "clojure-interactive-programming.agent.md",
       "description": "Expert Clojure pair programmer with REPL-first methodology, architectural oversight, and interactive problem-solving. Enforces quality standards, prevents workarounds, and develops solutions incrementally through live REPL evaluation before file modifications.",
       "name": "Clojure Interactive Programming"
@@ -4969,6 +5071,19 @@
         "agent",
         "github/*",
         "todo"
+      ]
+    },
+    {
+      "filename": "debian-linux-expert.agent.md",
+      "name": "Debian Linux Expert",
+      "description": "Debian Linux specialist focused on stable system administration, apt-based package management, and Debian policy-aligned practices.",
+      "model": "Claude Sonnet 4",
+      "tools": [
+        "codebase",
+        "search",
+        "terminalCommand",
+        "runCommands",
+        "edit/editFiles"
       ]
     },
     {
@@ -5266,6 +5381,19 @@
         "usages",
         "vscodeAPI",
         "microsoft.docs.mcp"
+      ]
+    },
+    {
+      "filename": "fedora-linux-expert.agent.md",
+      "name": "Fedora Linux Expert",
+      "description": "Fedora (Red Hat family) Linux specialist focused on dnf, SELinux, and modern systemd-based workflows.",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "search",
+        "terminalCommand",
+        "runCommands",
+        "edit/editFiles"
       ]
     },
     {
@@ -6138,6 +6266,22 @@
         "delete_issue",
         "get_issue",
         "search_issues"
+      ]
+    },
+    {
+      "filename": "repo-architect.agent.md",
+      "description": "Bootstraps and validates agentic project structures for GitHub Copilot (VS Code) and OpenCode CLI workflows. Run after `opencode /init` or VS Code Copilot initialization to scaffold proper folder hierarchies, instructions, agents, skills, and prompts.",
+      "model": "GPT-4.1",
+      "tools": [
+        "changes",
+        "codebase",
+        "editFiles",
+        "fetch",
+        "new",
+        "problems",
+        "runCommands",
+        "search",
+        "terminalLastCommand"
       ]
     },
     {
