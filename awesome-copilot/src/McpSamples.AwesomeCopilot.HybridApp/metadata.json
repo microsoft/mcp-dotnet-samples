@@ -1635,8 +1635,8 @@
       "filename": "conventional-commit.prompt.md",
       "description": "Prompt and workflow for generating conventional commit messages using a structured XML format. Guides users to create standardized, descriptive commit messages in line with the Conventional Commits specification, including instructions, examples, and validation.",
       "tools": [
-        "runCommands/runInTerminal",
-        "runCommands/getTerminalOutput"
+        "execute/runInTerminal",
+        "execute/getTerminalOutput"
       ]
     },
     {
@@ -1953,7 +1953,7 @@
         "problems",
         "search"
       ],
-      "description": "Get best practices for MSTest unit testing, including data-driven tests"
+      "description": "Get best practices for MSTest 3.x/4.x unit testing, including modern assertion APIs and data-driven tests"
     },
     {
       "filename": "csharp-nunit.prompt.md",
