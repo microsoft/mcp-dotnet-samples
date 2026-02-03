@@ -1315,6 +1315,19 @@
       ]
     },
     {
+      "filename": "tailwind-v4-vite.instructions.md",
+      "description": "Tailwind CSS v4+ installation and configuration for Vite projects using the official @tailwindcss/vite plugin",
+      "applyTo": [
+        "vite.config.ts",
+        "vite.config.js",
+        "**/*.css",
+        "**/*.tsx",
+        "**/*.ts",
+        "**/*.jsx",
+        "**/*.js"
+      ]
+    },
+    {
       "filename": "taming-copilot.instructions.md",
       "applyTo": [
         "**"
