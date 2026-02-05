@@ -730,6 +730,14 @@
       ]
     },
     {
+      "filename": "no-heredoc.instructions.md",
+      "name": "No Heredoc File Operations",
+      "description": "Prevents terminal heredoc file corruption in VS Code Copilot by enforcing use of file editing tools instead of shell redirections",
+      "applyTo": [
+        "**"
+      ]
+    },
+    {
       "filename": "nodejs-javascript-vitest.instructions.md",
       "description": "Guidelines for writing Node.js and JavaScript code with Vitest testing",
       "applyTo": [
