@@ -5568,6 +5568,16 @@
       ]
     },
     {
+      "filename": "insiders-a11y-tracker.agent.md",
+      "name": "VS Code Insiders Accessibility Tracker",
+      "description": "Specialized agent for tracking and analyzing accessibility improvements in VS Code Insiders builds",
+      "model": "Claude Sonnet 4.5",
+      "tools": [
+        "github/search_issues",
+        "github/issue_read"
+      ]
+    },
+    {
       "filename": "janitor.agent.md",
       "description": "Perform janitorial tasks on any codebase including cleanup, simplification, and tech debt remediation.",
       "name": "Universal Janitor",
