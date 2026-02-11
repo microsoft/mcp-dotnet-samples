@@ -6400,6 +6400,11 @@
       "model": "GPT-4.1"
     },
     {
+      "filename": "reepl-linkedin.agent.md",
+      "name": "reepl-linkedin",
+      "description": "AI-powered LinkedIn content creation, scheduling, and analytics agent. Create posts, carousels, and manage your LinkedIn presence with GitHub Copilot."
+    },
+    {
       "filename": "refine-issue.agent.md",
       "description": "Refine the requirement or issue with Acceptance Criteria, Technical Considerations, Edge Cases, and NFRs",
       "name": "Refine Requirement or Issue",
