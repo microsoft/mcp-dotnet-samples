@@ -225,6 +225,13 @@
       "description": "Comprehensive best practices for creating optimized, secure, and efficient Docker images and managing containers. Covers multi-stage builds, image layer optimization, security scanning, and runtime best practices."
     },
     {
+      "filename": "context-engineering.instructions.md",
+      "description": "Guidelines for structuring code and projects to maximize GitHub Copilot effectiveness through better context management",
+      "applyTo": [
+        "**"
+      ]
+    },
+    {
       "filename": "convert-cassandra-to-spring-data-cosmos.instructions.md",
       "description": "Step-by-step guide for converting Spring Boot Cassandra applications to use Azure Cosmos DB with Spring Data Cosmos",
       "applyTo": [
@@ -1640,6 +1647,14 @@
       "description": "Containerize an ASP.NET Core project by creating Dockerfile and .dockerfile files customized for the project."
     },
     {
+      "filename": "context-map.prompt.md",
+      "agent": "agent",
+      "tools": [
+        "codebase"
+      ],
+      "description": "Generate a map of all files relevant to a task before making changes"
+    },
+    {
       "filename": "conventional-commit.prompt.md",
       "description": "Prompt and workflow for generating conventional commit messages using a structured XML format. Guides users to create standardized, descriptive commit messages in line with the Conventional Commits specification, including instructions, examples, and validation.",
       "tools": [
@@ -2515,6 +2530,15 @@
       "agent": "agent"
     },
     {
+      "filename": "refactor-plan.prompt.md",
+      "agent": "agent",
+      "tools": [
+        "codebase",
+        "terminalCommand"
+      ],
+      "description": "Plan a multi-file refactor with proper sequencing and rollback steps"
+    },
+    {
       "filename": "remember-interactive-programming.prompt.md",
       "description": "A micro-prompt that reminds the agent that it is an interactive programmer. Works great in Clojure when Copilot has access to the REPL (probably via Backseat Driver). Will work with any system that has a live REPL that the agent can use. Adapt the prompt with any specific reminders in your workflow and/or workspace.",
       "name": "Interactive Programming Nudge"
@@ -2904,6 +2928,14 @@
       ]
     },
     {
+      "filename": "what-context-needed.prompt.md",
+      "agent": "agent",
+      "tools": [
+        "codebase"
+      ],
+      "description": "Ask Copilot what files it needs to see before answering a question"
+    },
+    {
       "filename": "write-coding-standards-from-file.prompt.md",
       "agent": "agent",
       "description": "Write a coding standards document for a project using the coding styles from the file(s) and/or folder(s) passed as arguments in the prompt.",
@@ -3090,6 +3122,46 @@
         {
           "path": "prompts/remember-interactive-programming.prompt.md",
           "kind": "prompt"
+        }
+      ],
+      "display": {}
+    },
+    {
+      "filename": "context-engineering.collection.yml",
+      "id": "context-engineering",
+      "name": "Context Engineering",
+      "description": "Tools and techniques for maximizing GitHub Copilot effectiveness through better context management. Includes guidelines for structuring code, an agent for planning multi-file changes, and prompts for context-aware development.",
+      "tags": [
+        "context",
+        "productivity",
+        "refactoring",
+        "best-practices",
+        "architecture"
+      ],
+      "items": [
+        {
+          "path": "instructions/context-engineering.instructions.md",
+          "kind": "instruction"
+        },
+        {
+          "path": "agents/context-architect.agent.md",
+          "kind": "agent",
+          "usage": "recommended\n\nThe Context Architect agent helps plan multi-file changes by mapping dependencies\nand identifying all relevant files before making modifications.\n\nUse this agent when:\n- Planning refactors that span multiple files\n- Adding features that touch several modules\n- Investigating unfamiliar parts of the codebase\n\nExample usage:\n```\n@context-architect I need to add rate limiting to all API endpoints.\nWhat files are involved and what's the best approach?\n```\n\nFor best results:\n- Describe the high-level goal, not just the immediate task\n- Let the agent search before you provide files\n- Review the context map before approving changes"
+        },
+        {
+          "path": "prompts/context-map.prompt.md",
+          "kind": "prompt",
+          "usage": "optional\n\nUse before any significant change to understand the blast radius.\nProduces a structured map of files, dependencies, and tests."
+        },
+        {
+          "path": "prompts/what-context-needed.prompt.md",
+          "kind": "prompt",
+          "usage": "optional\n\nUse when Copilot gives a generic or incorrect answer.\nAsks Copilot to explicitly list what files it needs to see."
+        },
+        {
+          "path": "prompts/refactor-plan.prompt.md",
+          "kind": "prompt",
+          "usage": "optional\n\nUse for multi-file refactors. Produces a phased plan with\nverification steps and rollback procedures."
         }
       ],
       "display": {}
@@ -5014,6 +5086,16 @@
       "OPIK_SELF_HOSTED": "COPILOT_MCP_OPIK_SELF_HOSTED",
       "OPIK_TOOLSETS": "COPILOT_MCP_OPIK_TOOLSETS",
       "DEBUG_MODE": "COPILOT_MCP_OPIK_DEBUG"
+    },
+    {
+      "filename": "context-architect.agent.md",
+      "description": "An agent that helps plan and execute multi-file changes by identifying relevant context and dependencies",
+      "model": "GPT-5",
+      "tools": [
+        "codebase",
+        "terminalCommand"
+      ],
+      "name": "Context Architect"
     },
     {
       "filename": "context7.agent.md",
