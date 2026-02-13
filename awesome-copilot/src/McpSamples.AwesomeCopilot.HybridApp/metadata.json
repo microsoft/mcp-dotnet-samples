@@ -3909,6 +3909,27 @@
       "display": {}
     },
     {
+      "filename": "ospo-sponsorship.collection.yml",
+      "id": "ospo-sponsorship",
+      "name": "Open Source Sponsorship",
+      "description": "Tools and resources for Open Source Program Offices (OSPOs) to identify, evaluate, and manage sponsorship of open source dependencies through GitHub Sponsors, Open Collective, and other funding platforms.",
+      "tags": [
+        "ospo",
+        "sponsorship",
+        "open-source",
+        "funding",
+        "github-sponsors"
+      ],
+      "items": [
+        {
+          "path": "skills/sponsor-finder/SKILL.md",
+          "kind": "skill",
+          "usage": "Find which of a GitHub repository's dependencies are sponsorable via GitHub Sponsors.\nInvoke by providing a GitHub owner/repo (e.g., \"find sponsorable dependencies in expressjs/express\")."
+        }
+      ],
+      "display": {}
+    },
+    {
       "filename": "partners.collection.yml",
       "id": "partners",
       "name": "Partners",
