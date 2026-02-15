@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(az webapp log tail:*)",
+      "Bash(az functionapp config appsettings list:*)",
+      "Bash(dotnet build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
