@@ -2530,6 +2530,21 @@
       "agent": "agent"
     },
     {
+      "filename": "refactor-method-complexity-reduce.prompt.md",
+      "name": "refactor-method-complexity-reduce",
+      "description": "Refactor given method `${input:methodName}` to reduce its cognitive complexity to `${input:complexityThreshold}` or below, by extracting helper methods.",
+      "argument-hint": "methodName=..., complexityThreshold=15",
+      "agent": "agent",
+      "model": "Auto (copilot)",
+      "tools": [
+        "search/changes",
+        "search/codebase",
+        "edit/editFiles",
+        "read/problems",
+        "execute/runTests"
+      ]
+    },
+    {
       "filename": "refactor-plan.prompt.md",
       "agent": "agent",
       "tools": [
@@ -2694,6 +2709,25 @@
       "filename": "suggest-awesome-github-copilot-prompts.prompt.md",
       "agent": "agent",
       "description": "Suggest relevant GitHub Copilot prompt files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing prompts in this repository, and identifying outdated prompts that need updates.",
+      "tools": [
+        "edit",
+        "search",
+        "runCommands",
+        "runTasks",
+        "think",
+        "changes",
+        "testFailure",
+        "openSimpleBrowser",
+        "web/fetch",
+        "githubRepo",
+        "todos",
+        "search"
+      ]
+    },
+    {
+      "filename": "suggest-awesome-github-copilot-skills.prompt.md",
+      "agent": "agent",
+      "description": "Suggest relevant GitHub Copilot skills from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing skills in this repository, and identifying outdated skills that need updates.",
       "tools": [
         "edit",
         "search",
@@ -2977,6 +3011,10 @@
         },
         {
           "path": "prompts/suggest-awesome-github-copilot-agents.prompt.md",
+          "kind": "prompt"
+        },
+        {
+          "path": "prompts/suggest-awesome-github-copilot-skills.prompt.md",
           "kind": "prompt"
         },
         {
@@ -4392,6 +4430,35 @@
       "display": {}
     },
     {
+      "filename": "rug-agentic-workflow.collection.yml",
+      "id": "rug-agentic-workflow",
+      "name": "RUG Agentic Workflow",
+      "description": "Three-agent workflow for orchestrated software delivery with an orchestrator plus implementation and QA subagents.",
+      "tags": [
+        "agentic-workflow",
+        "orchestration",
+        "subagents",
+        "software-engineering",
+        "qa"
+      ],
+      "items": [
+        {
+          "path": "agents/rug-orchestrator.agent.md",
+          "kind": "agent",
+          "usage": "recommended\n\nThis workflow is designed as a coordinated trio:\n- `RUG` orchestrates decomposition, delegation, and validation loops.\n- `SWE` executes implementation tasks.\n- `QA` validates requirements, edge cases, and regressions.\n\nTypical usage:\n1. Start with `RUG` for multi-step tasks.\n2. Let `RUG` delegate coding to `SWE`.\n3. Let `RUG` delegate verification to `QA`.\n\nBest results:\n- Keep each delegated task narrowly scoped.\n- Require explicit acceptance criteria per task.\n- Run a final cross-task validation pass before completion."
+        },
+        {
+          "path": "agents/swe-subagent.agent.md",
+          "kind": "agent"
+        },
+        {
+          "path": "agents/qa-subagent.agent.md",
+          "kind": "agent"
+        }
+      ],
+      "display": {}
+    },
+    {
       "filename": "rust-mcp-development.collection.yml",
       "id": "rust-mcp-development",
       "name": "Rust MCP Server Development",
@@ -5594,56 +5661,56 @@
       "description": "Automates browser testing, UI/UX validation via Chrome DevTools",
       "name": "gem-chrome-tester",
       "disable-model-invocation": "false",
-      "user-invokable": "true"
+      "user-invocable": "true"
     },
     {
       "filename": "gem-devops.agent.md",
       "description": "Manages containers, CI/CD pipelines, and infrastructure deployment",
       "name": "gem-devops",
       "disable-model-invocation": "false",
-      "user-invokable": "true"
+      "user-invocable": "true"
     },
     {
       "filename": "gem-documentation-writer.agent.md",
       "description": "Generates technical docs, diagrams, maintains code-documentation parity",
       "name": "gem-documentation-writer",
       "disable-model-invocation": "false",
-      "user-invokable": "true"
+      "user-invocable": "true"
     },
     {
       "filename": "gem-implementer.agent.md",
       "description": "Executes TDD code changes, ensures verification, maintains quality",
       "name": "gem-implementer",
       "disable-model-invocation": "false",
-      "user-invokable": "true"
+      "user-invocable": "true"
     },
     {
       "filename": "gem-orchestrator.agent.md",
       "description": "Coordinates multi-agent workflows, delegates tasks, synthesizes results via runSubagent",
       "name": "gem-orchestrator",
       "disable-model-invocation": "true",
-      "user-invokable": "true"
+      "user-invocable": "true"
     },
     {
       "filename": "gem-planner.agent.md",
       "description": "Creates DAG-based plans with pre-mortem analysis and task decomposition from research findings",
       "name": "gem-planner",
       "disable-model-invocation": "false",
-      "user-invokable": "true"
+      "user-invocable": "true"
     },
     {
       "filename": "gem-researcher.agent.md",
       "description": "Research specialist: gathers codebase context, identifies relevant files/patterns, returns structured findings",
       "name": "gem-researcher",
       "disable-model-invocation": "false",
-      "user-invokable": "true"
+      "user-invocable": "true"
     },
     {
       "filename": "gem-reviewer.agent.md",
       "description": "Security gatekeeper for critical tasks—OWASP, secrets, compliance",
       "name": "gem-reviewer",
       "disable-model-invocation": "false",
-      "user-invokable": "true"
+      "user-invocable": "true"
     },
     {
       "filename": "gilfoyle.agent.md",
@@ -6527,6 +6594,21 @@
       "model": "GPT-4.1"
     },
     {
+      "filename": "qa-subagent.agent.md",
+      "name": "QA",
+      "description": "Meticulous QA subagent for test planning, bug hunting, edge-case analysis, and implementation verification.",
+      "tools": [
+        "vscode",
+        "execute",
+        "read",
+        "agent",
+        "edit",
+        "search",
+        "web",
+        "todo"
+      ]
+    },
+    {
       "filename": "reepl-linkedin.agent.md",
       "name": "reepl-linkedin",
       "description": "AI-powered LinkedIn content creation, scheduling, and analytics agent. Create posts, carousels, and manage your LinkedIn presence with GitHub Copilot."
@@ -6585,6 +6667,25 @@
       "description": "Expert assistance for building Model Context Protocol servers in Ruby using the official MCP Ruby SDK gem with Rails integration.",
       "name": "Ruby MCP Expert",
       "model": "GPT-4.1"
+    },
+    {
+      "filename": "rug-orchestrator.agent.md",
+      "name": "RUG",
+      "description": "Pure orchestration agent that decomposes requests, delegates all work to subagents, validates outcomes, and repeats until complete.",
+      "tools": [
+        "vscode",
+        "execute",
+        "read",
+        "agent",
+        "edit",
+        "search",
+        "web",
+        "todo"
+      ],
+      "agents": [
+        "SWE",
+        "QA"
+      ]
     },
     {
       "filename": "rust-gpt-4.1-beast-mode.agent.md",
@@ -6884,6 +6985,21 @@
       ],
       "env": "",
       "STACKHAWK_API_KEY": "COPILOT_MCP_STACKHAWK_API_KEY"
+    },
+    {
+      "filename": "swe-subagent.agent.md",
+      "name": "SWE",
+      "description": "Senior software engineer subagent for implementation tasks: feature development, debugging, refactoring, and testing.",
+      "tools": [
+        "vscode",
+        "execute",
+        "read",
+        "agent",
+        "edit",
+        "search",
+        "web",
+        "todo"
+      ]
     },
     {
       "filename": "swift-mcp-expert.agent.md",
