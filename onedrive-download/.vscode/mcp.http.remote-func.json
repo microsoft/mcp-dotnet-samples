@@ -1,15 +1,15 @@
-{
+﻿{
   "inputs": [
     {
       "type": "promptString",
-      "id": "apim-fqdn",
-      "description": "Azure API Management FQDN"
+      "id": "functionAppFqdn",
+      "description": "Azure Function App FQDN"
     }
   ],
   "servers": {
     "onedrive-download": {
       "type": "http",
-      "url": "https://${input:apim-fqdn}/mcp"
+      "url": "https://${input:functionAppFqdn}/mcp"
     }
   }
 }

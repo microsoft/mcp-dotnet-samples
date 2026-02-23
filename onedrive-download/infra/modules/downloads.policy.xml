@@ -1,0 +1,41 @@
+<!--
+    Azure API Management Policy for File Downloads
+    This policy forwards requests to Azure File Share without token validation.
+    SAS URLs already contain time-bound access tokens.
+-->
+<policies>
+    <inbound>
+        <base />
+        <!-- CORS support for downloads -->
+        <cors>
+            <allowed-origins>
+                <origin>*</origin>
+            </allowed-origins>
+            <allowed-methods>
+                <method>GET</method>
+                <method>HEAD</method>
+                <method>OPTIONS</method>
+            </allowed-methods>
+            <allowed-headers>
+                <header>*</header>
+            </allowed-headers>
+        </cors>
+        <!-- No token validation for downloads - SAS URL provides access control -->
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <base />
+        <!-- Add CORS headers for successful responses -->
+        <set-header name="Access-Control-Allow-Origin" exists-action="override">
+            <value>*</value>
+        </set-header>
+        <set-header name="Access-Control-Allow-Methods" exists-action="override">
+            <value>GET, HEAD, OPTIONS</value>
+        </set-header>
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
