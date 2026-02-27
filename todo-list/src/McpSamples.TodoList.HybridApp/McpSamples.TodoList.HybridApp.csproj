@@ -11,6 +11,8 @@
     <RootNamespace>McpSamples.TodoList.HybridApp</RootNamespace>
 
     <UserSecretsId>eaa94a42-b4f2-44f1-86b4-a5dddd90a202</UserSecretsId>
+
+    <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated</InterceptorsNamespaces>
   </PropertyGroup>
 
   <ItemGroup>

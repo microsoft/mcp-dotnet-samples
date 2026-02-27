@@ -1,7 +1,7 @@
 using System.Collections;
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace McpSamples.Shared.Configurations;
 

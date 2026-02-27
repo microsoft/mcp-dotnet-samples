@@ -11,6 +11,8 @@
     <RootNamespace>McpSamples.AwesomeCopilot.HybridApp</RootNamespace>
 
     <UserSecretsId>3b9db7fd-b2cb-4b92-81b7-f3865823ef0a</UserSecretsId>
+
+    <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated</InterceptorsNamespaces>
   </PropertyGroup>
 
   <ItemGroup>
