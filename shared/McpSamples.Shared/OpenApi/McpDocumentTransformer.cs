@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using System.Text.Json.Nodes;
 
 using McpSamples.Shared.Configurations;
@@ -5,6 +6,8 @@ using McpSamples.Shared.Configurations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
+
+using ModelContextProtocol.Protocol;
 
 namespace McpSamples.Shared.OpenApi;
 
@@ -16,7 +19,7 @@ namespace McpSamples.Shared.OpenApi;
 public class McpDocumentTransformer<T>(T appsettings, IHttpContextAccessor accessor) : IOpenApiDocumentTransformer where T : AppSettings, new()
 {
     /// <inheritdoc />
-    public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
+    public async Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
         document.Info = new OpenApiInfo
         {
@@ -33,6 +36,15 @@ public class McpDocumentTransformer<T>(T appsettings, IHttpContextAccessor acces
                     : "http://localhost:8080/"
             }
         ];
+
+        var jsonRpcResponse = await context.GetOrCreateSchemaAsync(typeof(JsonRpcResponse), cancellationToken: cancellationToken);
+
+        var jsonRpcRequest = await context.GetOrCreateSchemaAsync(typeof(JsonRpcRequest), cancellationToken: cancellationToken);
+
+        document.AddComponent(nameof(JsonRpcResponse), jsonRpcResponse);
+
+        document.AddComponent(nameof(JsonRpcRequest), jsonRpcRequest);
+
         var pathItem = new OpenApiPathItem();
         pathItem.AddOperation(HttpMethod.Post, new OpenApiOperation
         {
@@ -47,13 +59,29 @@ public class McpDocumentTransformer<T>(T appsettings, IHttpContextAccessor acces
                 ["200"] = new OpenApiResponse
                 {
                     Description = "Success",
+                    Content = new Dictionary<string, OpenApiMediaType>
+                    {
+                        [MediaTypeNames.Application.Json] = new()
+                        {
+                            Schema = new OpenApiSchemaReference(nameof(JsonRpcResponse), document),
+                        },
+                    },
                 }
-            }
+            },
+            RequestBody = new OpenApiRequestBody
+            {
+                Required = true,
+                Content = new Dictionary<string, OpenApiMediaType>
+                {
+                    [MediaTypeNames.Application.Json] = new()
+                    {
+                        Schema = new OpenApiSchemaReference(nameof(JsonRpcRequest), document),
+                    },
+                },
+            },
         });
 
         document.Paths ??= [];
         document.Paths.Add("/mcp", pathItem);
-
-        return Task.CompletedTask;
     }
 }
