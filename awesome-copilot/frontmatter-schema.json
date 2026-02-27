@@ -4,11 +4,18 @@
   "description": "Schema for validating frontmatter data in the awesome-copilot repository",
   "type": "object",
   "properties": {
-    "chatmodes": {
+    "agents": {
       "type": "array",
-      "description": "Array of chat mode configurations",
+      "description": "Array of agent file configurations",
       "items": {
-        "$ref": "#/definitions/chatmode"
+        "$ref": "#/definitions/agent"
+      }
+    },
+    "hooks": {
+      "type": "array",
+      "description": "Array of hook file configurations",
+      "items": {
+        "$ref": "#/definitions/hook"
       }
     },
     "instructions": {
@@ -24,97 +31,130 @@
       "items": {
         "$ref": "#/definitions/prompt"
       }
+    },
+    "skills": {
+      "type": "array",
+      "description": "Array of skill file configurations",
+      "items": {
+        "$ref": "#/definitions/skill"
+      }
+    },
+    "workflows": {
+      "type": "array",
+      "description": "Array of agent workflow file configurations",
+      "items": {
+        "$ref": "#/definitions/workflow"
+      }
     }
   },
   "additionalProperties": false,
   "definitions": {
-    "chatmode": {
+    "agent": {
       "type": "object",
-      "description": "Configuration for a chat mode",
+      "description": "Configuration for an agent file",
       "properties": {
-        "filename": {
+        "name": {
           "type": "string",
-          "description": "Name of the chat mode file",
-          "pattern": "^[a-zA-Z0-9._-]+\\.chatmode\\.md$"
-        },
-        "title": {
-          "type": "string",
-          "description": "Display title for the chat mode",
-          "minLength": 1
+          "description": "The name of the custom agent. If not specified, the file name is used.",
+          "pattern": "^[a-zA-Z0-9._-]+\\.agent\\.md$"
         },
         "description": {
           "type": "string",
-          "description": "Description of the chat mode functionality",
-          "minLength": 1
+          "description": "A brief description of the custom agent, shown as placeholder text in the chat input field."
         },
-        "model": {
+        "argument-hint": {
           "type": "string",
-          "description": "AI model to use for this chat mode"
-        },
-        "tools": {
-          "type": "array",
-          "description": "Array of available tools for this chat mode",
-          "items": {
-            "type": "string"
-          }
+          "description": "Hint text shown in the chat input field to guide users on how to interact with the prompt."
         }
       },
-      "required": ["filename", "description"],
+      "additionalProperties": false
+    },
+    "hook": {
+      "type": "object",
+      "description": "Configuration for a hook file",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A unique identifier for the hook. Must be lowercase, using hyphens for spaces (for example, webapp-testing). Must match the parent directory name. Maximum 64 characters.",
+          "pattern": "^README\\.md$"
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of what the hook does and when to use it. Be specific about both capabilities and use cases to help Copilot decide when to load the hook. Maximum 1024 characters."
+        }
+      },
       "additionalProperties": false
     },
     "instruction": {
       "type": "object",
       "description": "Configuration for an instruction file",
       "properties": {
-        "filename": {
+        "name": {
           "type": "string",
-          "description": "Name of the instruction file",
+          "description": "Display name shown in the UI. Defaults to the file name.",
           "pattern": "^[a-zA-Z0-9._-]+\\.instructions\\.md$"
         },
         "description": {
           "type": "string",
-          "description": "Description of the instruction file purpose",
-          "minLength": 1
-        },
-        "applyTo": {
-          "type": "array",
-          "description": "File patterns that this instruction applies to",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
+          "description": "Short description shown on hover in the Chat view."
         }
       },
-      "required": ["filename", "description"],
       "additionalProperties": false
     },
     "prompt": {
       "type": "object",
       "description": "Configuration for a prompt file",
       "properties": {
-        "filename": {
+        "name": {
           "type": "string",
-          "description": "Name of the prompt file",
+          "description": "The name of the prompt, used after typing / in chat. If not specified, the file name is used.",
           "pattern": "^[a-zA-Z0-9._-]+\\.prompt\\.md$"
         },
         "description": {
           "type": "string",
-          "description": "Description of the prompt functionality",
-          "minLength": 1
+          "description": "A short description of the prompt."
         },
-        "mode": {
+        "argument-hint": {
           "type": "string",
-          "description": "Execution mode for the prompt"
-        },
-        "tools": {
-          "type": "array",
-          "description": "Array of available tools for this prompt",
-          "items": {
-            "type": "string"
-          }
+          "description": "Hint text shown in the chat input field to guide users on how to interact with the prompt."
         }
       },
-      "required": ["filename", "description"],
+      "additionalProperties": false
+    },
+    "skill": {
+      "type": "object",
+      "description": "Configuration for a skill file",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A unique identifier for the skill. Must be lowercase, using hyphens for spaces (for example, webapp-testing). Must match the parent directory name. Maximum 64 characters.",
+          "pattern": "^SKILL\\.md$"
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of what the skill does and when to use it. Be specific about both capabilities and use cases to help Copilot decide when to load the skill. Maximum 1024 characters."
+        },
+        "argument-hint": {
+          "type": "string",
+          "description": "Hint text shown in the chat input field when the skill is invoked as a slash command. Helps users understand what additional information to provide (for example, [test file] [options])."
+        }
+      },
+      "additionalProperties": false
+    },
+    "workflow": {
+      "type": "object",
+      "description": "Configuration for an agent workflow file",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the agent workflow.",
+          "pattern": "^[a-zA-Z0-9._-]+\\.md$"
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the agent workflow, shown as placeholder text in the chat input field."
+        }
+      },
       "additionalProperties": false
     }
   }

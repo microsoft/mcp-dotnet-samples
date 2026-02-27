@@ -8,8 +8,11 @@ public enum InstructionMode
     [JsonStringEnumMemberName("undefined")]
     Undefined,
 
-    [JsonStringEnumMemberName("chatmodes")]
-    ChatModes,
+    [JsonStringEnumMemberName("agents")]
+    Agents,
+
+    [JsonStringEnumMemberName("hooks")]
+    Hooks,
 
     [JsonStringEnumMemberName("instructions")]
     Instructions,
@@ -17,6 +20,9 @@ public enum InstructionMode
     [JsonStringEnumMemberName("prompts")]
     Prompts,
 
-    [JsonStringEnumMemberName("agents")]
-    Agents
+    [JsonStringEnumMemberName("skills")]
+    Skills,
+
+    [JsonStringEnumMemberName("workflows")]
+    Workflows
 }

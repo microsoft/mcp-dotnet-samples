@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace McpSamples.AwesomeCopilot.HybridApp.Models;
 
 /// <summary>
@@ -8,10 +6,14 @@ namespace McpSamples.AwesomeCopilot.HybridApp.Models;
 public class Metadata
 {
     /// <summary>
-    /// Gets or sets the list of <see cref="ChatMode"/> objects.
+    /// Gets or sets the list of <see cref="Agent"/> objects.
     /// </summary>
-    [JsonPropertyName("chatmodes")]
-    public List<ChatMode> ChatModes { get; set; } = [];
+    public List<Agent> Agents { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets the list of <see cref="Hook"/> objects.
+    /// </summary>
+    public List<Hook> Hooks { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the list of <see cref="Instruction"/> objects.
@@ -24,13 +26,12 @@ public class Metadata
     public List<Prompt> Prompts { get; set; } = [];
 
     /// <summary>
-    /// Gets or sets the list of <see cref="Collection"/> objects.
+    /// Gets or sets the list of <see cref="Skill"/> objects.
     /// </summary>
-    [JsonPropertyName("collections")]
-    public List<Collection> Collections { get; set; } = [];
+    public List<Skill> Skills { get; set; } = [];
 
     /// <summary>
-    /// Gets or sets the list of <see cref="Agent"/> objects.
+    /// Gets or sets the list of <see cref="Workflow"/> objects.
     /// </summary>
-    public List<Agent> Agents { get; set; } = [];
+    public List<Workflow> Workflows { get; set; } = [];
 }

@@ -3,17 +3,17 @@ using System.Text.Json.Serialization;
 namespace McpSamples.AwesomeCopilot.HybridApp.Models;
 
 /// <summary>
-/// This represents the data entity for an agent.
+/// This represents the data entity for a skill.
 /// </summary>
-public class Agent
+public class Skill
 {
     /// <summary>
-    /// Gets or sets the name of the agent file.
+    /// Gets or sets the name of the skill file.
     /// </summary>
     public required string Filename { get; set; }
 
     /// <summary>
-    /// Gets or sets the name of the agent.
+    /// Gets or sets the name of the skill.
     /// </summary>
     public string? Name { get; set; }
 

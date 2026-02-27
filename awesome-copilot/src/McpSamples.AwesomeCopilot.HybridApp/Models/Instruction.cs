@@ -11,17 +11,12 @@ public class Instruction
     public required string Filename { get; set; }
 
     /// <summary>
-    /// Gets or sets the title.
+    /// Gets or sets the display name.
     /// </summary>
-    public string? Title { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// Gets or sets the description.
     /// </summary>
     public required string Description { get; set; }
-
-    /// <summary>
-    /// Gets or sets the file patterns that this instruction applies to.
-    /// </summary>
-    public List<string> ApplyTo { get; set; } = [];
 }

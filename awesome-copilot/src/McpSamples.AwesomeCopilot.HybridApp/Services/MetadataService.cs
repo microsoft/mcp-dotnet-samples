@@ -34,27 +34,29 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
 
         var result = new Metadata
         {
-            // Search in ChatModes
-            ChatModes = [.. metadata.ChatModes.Where(cm => ContainsAnyKeyword(cm.Title, searchTerms) == true ||
-                                                           ContainsAnyKeyword(cm.Description, searchTerms) == true)],
+            // Search in Agents
+            Agents = [.. metadata.Agents.Where(agent => ContainsAnyKeyword(agent.Name, searchTerms) == true ||
+                                                         ContainsAnyKeyword(agent.Description, searchTerms) == true)],
+
+            // Search in Hooks
+            Hooks = [.. metadata.Hooks.Where(hook => ContainsAnyKeyword(hook.Name, searchTerms) == true ||
+                                                      ContainsAnyKeyword(hook.Description, searchTerms) == true)],
 
             // Search in Instructions
-            Instructions = [.. metadata.Instructions.Where(inst => ContainsAnyKeyword(inst.Title, searchTerms) == true ||
+            Instructions = [.. metadata.Instructions.Where(inst => ContainsAnyKeyword(inst.Name, searchTerms) == true ||
                                                                    ContainsAnyKeyword(inst.Description, searchTerms) == true)],
 
             // Search in Prompts
-            Prompts = [.. metadata.Prompts.Where(prompt => ContainsAnyKeyword(prompt.Description, searchTerms) == true)],
+            Prompts = [.. metadata.Prompts.Where(prompt => ContainsAnyKeyword(prompt.Name, searchTerms) == true ||
+                                                           ContainsAnyKeyword(prompt.Description, searchTerms) == true)],
 
-            // Search in Collections
-            Collections = [.. metadata.Collections.Where(c =>
-                ContainsAnyKeyword(c.Name, searchTerms) == true ||
-                ContainsAnyKeyword(c.Description, searchTerms) == true ||
-                ContainsAnyKeyword(c.Usage, searchTerms) == true ||
-                (c.Tags is not null && c.Tags.Any(tag => searchTerms.Any(term => tag.Contains(term, StringComparison.InvariantCultureIgnoreCase)))))],
+            // Search in Skills
+            Skills = [.. metadata.Skills.Where(skill => ContainsAnyKeyword(skill.Name, searchTerms) == true ||
+                                                        ContainsAnyKeyword(skill.Description, searchTerms) == true)],
 
-            // Search in Agents
-            Agents = [.. metadata.Agents.Where(agent => ContainsAnyKeyword(agent.Title, searchTerms) == true ||
-                                                         ContainsAnyKeyword(agent.Description, searchTerms) == true)]
+            // Search in Workflows
+            Workflows = [.. metadata.Workflows.Where(wf => ContainsAnyKeyword(wf.Name, searchTerms) == true ||
+                                                            ContainsAnyKeyword(wf.Description, searchTerms) == true)],
         };
 
         return result;
@@ -89,21 +91,6 @@ public class MetadataService(HttpClient http, JsonSerializerOptions options, ILo
         {
             throw new InvalidOperationException($"Failed to load file '{filename}' from directory '{directory}': {ex.Message}", ex);
         }
-    }
-
-    /// <inheritdoc />
-    public async Task<Collection?> GetCollectionAsync(string id, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            throw new ArgumentException("Collection id cannot be null or empty", nameof(id));
-        }
-
-        var metadata = await GetMetadataAsync(cancellationToken).ConfigureAwait(false);
-
-        var collection = metadata.Collections.FirstOrDefault(c => string.Equals(c.Id, id, StringComparison.InvariantCultureIgnoreCase));
-
-        return collection;
     }
 
     private async Task<Metadata> GetMetadataAsync(CancellationToken cancellationToken)

@@ -1,5 +1,5 @@
 {
-  "azureFunctions.deploySubpath": "${workspaceFolder}/src/McpSamples.OutlookEmail.HybridApp/bin/Release/net9.0/publish",
+  "azureFunctions.deploySubpath": "${workspaceFolder}/src/McpSamples.OutlookEmail.HybridApp/bin/Release/net10.0/publish",
   "azureFunctions.projectLanguage": "C#",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "neverOpen",
