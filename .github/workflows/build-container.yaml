@@ -35,7 +35,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.x'
+          dotnet-version: '10.x'
 
       - name: Pull the latest metadata.json
         if: inputs.image_name == 'awesome-copilot'
@@ -51,19 +51,13 @@ jobs:
           path: awesome-copilot/src/awesome-copilot
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Node.js
-        if: inputs.image_name == 'awesome-copilot'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.x'
-
       - name: Update metadata.json
         if: inputs.image_name == 'awesome-copilot'
         shell: bash
         run: |
           pushd awesome-copilot
 
-          node update-metadata.js
+          dotnet run ./update-metadata.cs
 
           popd
 

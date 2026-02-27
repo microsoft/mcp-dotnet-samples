@@ -8,7 +8,7 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
 
 ## Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [Visual Studio Code](https://code.visualstudio.com/) with
   - [C# Dev Kit](https://marketplace.visualstudio.com/items/?itemName=ms-dotnettools.csdevkit) extension
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
@@ -19,11 +19,11 @@ This is an MCP server that retrieves GitHub Copilot customizations from the [awe
 
 Awesome Copilot MCP server includes:
 
-| Building Block | Name                  | Description                                                                      | Usage                                    |
-|----------------|-----------------------|----------------------------------------------------------------------------------|------------------------------------------|
-| Tools          | `search_instructions` | Searches custom instructions and agents based on keywords in their descriptions. | `#search_instructions`                   |
-| Tools          | `load_instruction`    | Loads a custom instruction or agent from the repository.                         | `#load_instruction`                      |
-| Prompts        | `get_search_prompt`   | Get a prompt for searching copilot instructions.                                 | `/mcp.awesome-copilot.get_search_prompt` |
+| Building Block | Name                  | Description                                                                                               | Usage                                    |
+|----------------|-----------------------|-----------------------------------------------------------------------------------------------------------|------------------------------------------|
+| Tools          | `search_instructions` | Searches agents, hooks, instructions, prompts, skills, and workflows based on keywords in their names and descriptions. | `#search_instructions`                   |
+| Tools          | `load_instruction`    | Loads a custom instruction, agent, hook, prompt, skill, or workflow from the repository.                  | `#load_instruction`                      |
+| Prompts        | `get_search_prompt`   | Get a prompt for searching copilot instructions.                                                          | `/mcp.awesome-copilot.get_search_prompt` |
 
 ## Getting Started
 
@@ -224,28 +224,28 @@ Awesome Copilot MCP server includes:
 1. Use a prompt by typing `/mcp.awesome-copilot.get_search_prompt` and enter keywords to search. You'll get a prompt like:
 
     ```text
-    Please search all the chatmodes, instructions, prompts, and agents that are related to the search keyword, `{keyword}`.
+    Please search all the agents, hooks, instructions, prompts, skills, and workflows that are related to the search keyword, `{keyword}`.
 
     Here's the process to follow:
 
     1. Use the `awesome-copilot` MCP server.
-    1. Search all chatmodes, instructions, prompts, and agents for the keyword provided.
-    1. DO NOT load any chatmodes, instructions, prompts, or agents from the MCP server until the user asks to do so.
-    1. Scan local chatmodes, instructions, prompts, and agents markdown files in `.github/chatmodes`, `.github/instructions`, `.github/prompts`, and `.github/agents` directories respectively.
-    1. Compare existing chatmodes, instructions, prompts, and agents with the search results.
-    1. Provide a structured response in a table format that includes the already exists, mode (chatmodes, instructions, prompts or agents), filename, title and description of each item found. Here's an example of the table format:
+    1. Search all agents, hooks, instructions, prompts, skills, and workflows for the keyword provided.
+    1. DO NOT load any items from the MCP server until the user asks to do so.
+    1. Scan local instructions, prompts, and agents markdown files in `.github/instructions`, `.github/prompts`, and `.github/agents` directories respectively.
+    1. Compare existing items with the search results.
+    1. Provide a structured response in a table format that includes the already exists, mode (agents, hooks, instructions, prompts, skills, or workflows), filename, name and description of each item found. Here's an example of the table format:
 
-        | Exists | Mode         | Filename                      | Title         | Description   |
+        | Exists | Mode         | Filename                      | Name          | Description   |
         |--------|--------------|-------------------------------|---------------|---------------|
-        | ✅    | chatmodes    | chatmode1.chatmode.md         | ChatMode 1    | Description 1 |
+        | ✅    | agents       | agent1.agent.md               | Agent 1       | Description 1 |
         | ❌    | instructions | instruction1.instructions.md  | Instruction 1 | Description 1 |
         | ✅    | prompts      | prompt1.prompt.md             | Prompt 1      | Description 1 |
-        | ❌    | agents       | agent1.agent.md               | Agent 1       | Description 1 |
+        | ❌    | skills       | skill1/SKILL.md               | Skill 1       | Description 1 |
 
         ✅ indicates that the item already exists in this repository, while ❌ indicates that it does not.
 
     1. If any item doesn't exist in the repository, ask which item the user wants to save.
-    1. If the user wants to save it, save the item in the appropriate directory (`.github/chatmodes`, `.github/instructions`, `.github/prompts`, or `.github/agents`) using the mode and filename, with NO modification.
+    1. If the user wants to save it, save the item in the appropriate directory (`.github/instructions`, `.github/prompts`, or `.github/agents`) using the mode and filename, with NO modification.
     ```
 
 1. Confirm the result.
