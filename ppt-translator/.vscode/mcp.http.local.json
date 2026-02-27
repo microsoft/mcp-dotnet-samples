@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "ppt-translator": {
+      "type": "http",
+      "url": "http://localhost:5166/mcp"
+    }
+  }
+}

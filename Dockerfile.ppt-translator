@@ -1,0 +1,54 @@
+# syntax=docker/dockerfile:1
+
+# ================================
+# 1) BUILD STAGE
+# ================================
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+
+# Copy shared library
+COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
+
+# Copy PPT Translator HybridApp
+COPY ./ppt-translator/src/McpSamples.PptTranslator.HybridApp \
+     /source/ppt-translator/src/McpSamples.PptTranslator.HybridApp
+
+WORKDIR /source/ppt-translator/src/McpSamples.PptTranslator.HybridApp
+
+# Publish
+RUN dotnet publish -c Release -o /app --self-contained false
+
+
+# ================================
+# 2) FINAL RUNTIME IMAGE (DEBIAN)
+# ================================
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+WORKDIR /app
+
+# ShapeCrawler + SkiaSharp dependencies
+RUN apt-get update && apt-get install -y \
+    libfontconfig1 \
+    libfreetype6 \
+    libpng16-16 \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    uuid-dev \
+    libuuid1 \
+    libgdiplus \
+    libharfbuzz0b \
+    libicu72 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy published app
+COPY --from=build /app .
+
+# Folder for file mounting
+RUN mkdir -p /files && chmod -R 755 /files
+
+# HTTP MCP endpoint
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
+ENV MCP_HTTP_PATH=/mcp
+
+# STDI/O MCP + HTTP MCP 지원
+ENTRYPOINT ["dotnet", "McpSamples.PptTranslator.HybridApp.dll"]
