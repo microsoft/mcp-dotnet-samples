@@ -1,0 +1,39 @@
+# syntax=docker/dockerfile:1
+
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
+
+COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
+COPY ./openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp /source/openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp
+
+WORKDIR /source/openapi-to-sdk/src/McpSamples.OpenApiToSdk.HybridApp
+
+RUN dotnet tool install --global Microsoft.OpenApi.Kiota
+
+ARG TARGETARCH
+RUN case "$TARGETARCH" in \
+    "amd64") RID="linux-musl-x64" ;; \
+    "arm64") RID="linux-musl-arm64" ;; \
+    *) RID="linux-musl-x64" ;; \
+    esac && \
+    dotnet publish -c Release -o /app -r $RID --self-contained false
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
+
+WORKDIR /app
+
+COPY --from=build /app .
+
+COPY --from=build /root/.dotnet/tools /opt/kiota-tools
+
+RUN chmod -R 755 /opt/kiota-tools && \
+    ln -s /opt/kiota-tools/kiota /usr/local/bin/kiota
+
+RUN mkdir -p /app/workspace/generated && \
+    mkdir -p /app/workspace/specs && \
+    chown -R $APP_UID:$APP_UID /app/workspace
+
+ENV PATH="/opt/kiota-tools:${PATH}"
+
+USER $APP_UID
+
+ENTRYPOINT ["dotnet", "McpSamples.OpenApiToSdk.HybridApp.dll"]

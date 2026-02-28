@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: openapi-to-sdk
+
+metadata:
+  template: azd-init@1.14.0
+
+services:
+  openapi-to-sdk:
+    project: src/McpSamples.OpenApiToSdk.HybridApp
+    host: containerapp
+    language: dotnet
+    docker:
+      path: ../../../Dockerfile.openapi-to-sdk-azure
+      context: ../../../
+      remoteBuild: true
