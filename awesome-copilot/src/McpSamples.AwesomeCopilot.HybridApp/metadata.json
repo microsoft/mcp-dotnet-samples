@@ -435,6 +435,11 @@
       "name": "Mentor mode"
     },
     {
+      "filename": "mentoring-juniors.agent.md",
+      "description": "Socratic mentor for junior developers. Guides through questions, never gives direct answers. Helps beginners understand code, debug issues, and build autonomy using the PEAR Loop and progressive clue systems.",
+      "name": "Sensei - Junior Mentor"
+    },
+    {
       "filename": "meta-agentic-project-scaffold.agent.md",
       "description": "Meta agentic project creation assistant to help users create and manage project workflows effectively.",
       "name": "Meta Agentic Project Scaffold"
@@ -2166,6 +2171,11 @@
       "filename": "memory-merger/SKILL.md",
       "name": "memory-merger",
       "description": "Merges mature lessons from a domain memory file into its instruction file. Syntax: \u0060/memory-merger \u003Edomain [scope]\u0060 where scope is \u0060global\u0060 (default), \u0060user\u0060, \u0060workspace\u0060, or \u0060ws\u0060."
+    },
+    {
+      "filename": "mentoring-juniors/SKILL.md",
+      "name": "mentoring-juniors",
+      "description": "Socratic mentoring for junior developers and AI newcomers. Guides through questions, never answers. Triggers: \u0022help me understand\u0022, \u0022explain this code\u0022, \u0022I\u0027m stuck\u0022, \u0022Im stuck\u0022, \u0022I\u0027m confused\u0022, \u0022Im confused\u0022, \u0022I don\u0027t understand\u0022, \u0022I dont understand\u0022, \u0022can you teach me\u0022, \u0022teach me\u0022, \u0022mentor me\u0022, \u0022guide me\u0022, \u0022what does this error mean\u0022, \u0022why doesn\u0027t this work\u0022, \u0022why does not this work\u0022, \u0022I\u0027m a beginner\u0022, \u0022Im a beginner\u0022, \u0022I\u0027m learning\u0022, \u0022Im learning\u0022, \u0022I\u0027m new to this\u0022, \u0022Im new to this\u0022, \u0022walk me through\u0022, \u0022how does this work\u0022, \u0022what\u0027s wrong with my code\u0022, \u0022what\u0027s wrong\u0022, \u0022can you break this down\u0022, \u0022ELI5\u0022, \u0022step by step\u0022, \u0022where do I start\u0022, \u0022what am I missing\u0022, \u0022newbie here\u0022, \u0022junior dev\u0022, \u0022first time using\u0022, \u0022how do I\u0022, \u0022what is\u0022, \u0022is this right\u0022, \u0022not sure\u0022, \u0022need help\u0022, \u0022struggling\u0022, \u0022show me\u0022, \u0022help me debug\u0022, \u0022best practice\u0022, \u0022too complex\u0022, \u0022overwhelmed\u0022, \u0022lost\u0022, \u0022debug this\u0022, \u0022/socratic\u0022, \u0022/hint\u0022, \u0022/concept\u0022, \u0022/pseudocode\u0022. Progressive clue systems, teaching techniques, and success metrics."
     },
     {
       "filename": "microsoft-code-reference/SKILL.md",
