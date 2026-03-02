@@ -835,6 +835,11 @@
       "description": "Terraform infrastructure specialist with automated HCP Terraform workflows. Leverages Terraform MCP server for registry integration, workspace management, and run orchestration. Generates compliant code using latest provider/module versions, manages private registries, automates variable sets, and orchestrates infrastructure deployments with proper validation and security practices."
     },
     {
+      "filename": "terratest-module-testing.agent.md",
+      "description": "Generate and refactor Go Terratest suites for Terraform modules, including CI-safe patterns, staged tests, and negative-path validation.",
+      "name": "Terratest Module Testing"
+    },
+    {
       "filename": "typescript-mcp-expert.agent.md",
       "description": "Expert assistant for developing Model Context Protocol (MCP) servers in TypeScript",
       "name": "TypeScript MCP Server Expert"
@@ -2176,6 +2181,11 @@
       "filename": "model-recommendation/SKILL.md",
       "name": "model-recommendation",
       "description": "Analyze chatmode or prompt files and recommend optimal AI models based on task complexity, required capabilities, and cost-efficiency"
+    },
+    {
+      "filename": "msstore-cli/SKILL.md",
+      "name": "msstore-cli",
+      "description": "Microsoft Store Developer CLI (msstore) for publishing Windows applications to the Microsoft Store. Use when asked to configure Store credentials, list Store apps, check submission status, publish submissions, manage package flights, set up CI/CD for Store publishing, or integrate with Partner Center. Supports Windows App SDK/WinUI, UWP, .NET MAUI, Flutter, Electron, React Native, and PWA applications."
     },
     {
       "filename": "multi-stage-dockerfile/SKILL.md",
