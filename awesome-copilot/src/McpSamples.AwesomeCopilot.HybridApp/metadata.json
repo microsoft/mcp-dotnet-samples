@@ -700,6 +700,11 @@
       "name": "Salesforce Expert Agent"
     },
     {
+      "filename": "scientific-paper-research.agent.md",
+      "name": "Scientific Paper Research",
+      "description": "Research agent that searches scientific papers and retrieves structured experimental data from full-text studies using the BGPT MCP server."
+    },
+    {
       "filename": "se-gitops-ci-specialist.agent.md",
       "name": "SE: DevOps/CI",
       "description": "DevOps specialist for CI/CD pipelines, deployment debugging, and GitOps workflows focused on making deployments boring and reliable"
