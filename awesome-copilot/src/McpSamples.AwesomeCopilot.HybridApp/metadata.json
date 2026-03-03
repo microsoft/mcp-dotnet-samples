@@ -873,6 +873,11 @@
       "filename": "wg-code-sentinel.agent.md",
       "description": "Ask WG Code Sentinel to review your code for security issues.",
       "name": "WG Code Sentinel"
+    },
+    {
+      "filename": "winui3-expert.agent.md",
+      "name": "WinUI 3 Expert",
+      "description": "Expert agent for WinUI 3 and Windows App SDK development. Prevents common UWP-to-WinUI 3 API mistakes, guides XAML controls, MVVM patterns, windowing, threading, app lifecycle, dialogs, and deployment for desktop Windows apps."
     }
   ],
   "hooks": [
@@ -1574,6 +1579,10 @@
     {
       "filename": "vuejs3.instructions.md",
       "description": "VueJS 3 development standards and best practices with Composition API and TypeScript"
+    },
+    {
+      "filename": "winui3.instructions.md",
+      "description": "WinUI 3 and Windows App SDK coding guidelines. Prevents common UWP API misuse, enforces correct XAML namespaces, threading, windowing, and MVVM patterns for desktop Windows apps."
     },
     {
       "filename": "wordpress.instructions.md",
@@ -2586,6 +2595,16 @@
       "filename": "winapp-cli/SKILL.md",
       "name": "winapp-cli",
       "description": "Windows App Development CLI (winapp) for building, packaging, and deploying Windows applications. Use when asked to initialize Windows app projects, create MSIX packages, generate AppxManifest.xml, manage development certificates, add package identity for debugging, sign packages, publish to the Microsoft Store, create external catalogs, or access Windows SDK build tools. Supports .NET (csproj), C\u002B\u002B, Electron, Rust, Tauri, and cross-platform frameworks targeting Windows."
+    },
+    {
+      "filename": "winmd-api-search/SKILL.md",
+      "name": "winmd-api-search",
+      "description": "Find and explore Windows desktop APIs. Use when building features that need platform capabilities \u2014 camera, file access, notifications, UI controls, AI/ML, sensors, networking, etc. Discovers the right API for a task and retrieves full type details (methods, properties, events, enumeration values)."
+    },
+    {
+      "filename": "winui3-migration-guide/SKILL.md",
+      "name": "winui3-migration-guide",
+      "description": "UWP-to-WinUI 3 migration reference. Maps legacy UWP APIs to correct Windows App SDK equivalents with before/after code snippets. Covers namespace changes, threading (CoreDispatcher to DispatcherQueue), windowing (CoreWindow to AppWindow), dialogs, pickers, sharing, printing, background tasks, and the most common Copilot code generation mistakes."
     },
     {
       "filename": "workiq-copilot/SKILL.md",
