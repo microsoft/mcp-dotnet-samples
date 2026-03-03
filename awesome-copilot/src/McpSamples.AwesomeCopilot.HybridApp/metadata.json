@@ -2233,6 +2233,11 @@
       "description": "Add new language to a Next.js \u002B next-intl application"
     },
     {
+      "filename": "noob-mode/SKILL.md",
+      "name": "noob-mode",
+      "description": "Plain-English translation layer for non-technical Copilot CLI users. Translates every approval prompt, error message, and technical output into clear, jargon-free English with color-coded risk indicators."
+    },
+    {
       "filename": "nuget-manager/SKILL.md",
       "name": "nuget-manager",
       "description": "Manage NuGet packages in .NET projects/solutions. Use this skill when adding, removing, or updating NuGet package versions. It enforces using \u0060dotnet\u0060 CLI for package management and provides strict procedures for direct file edits only when updating versions."
@@ -2575,7 +2580,7 @@
     {
       "filename": "winapp-cli/SKILL.md",
       "name": "winapp-cli",
-      "description": "Windows App Development CLI (winapp) for building, packaging, and deploying Windows applications. Use when asked to initialize Windows app projects, create MSIX packages, generate AppxManifest.xml, manage development certificates, add package identity for debugging, sign packages, or access Windows SDK build tools. Supports .NET, C\u002B\u002B, Electron, Rust, Tauri, and cross-platform frameworks targeting Windows."
+      "description": "Windows App Development CLI (winapp) for building, packaging, and deploying Windows applications. Use when asked to initialize Windows app projects, create MSIX packages, generate AppxManifest.xml, manage development certificates, add package identity for debugging, sign packages, publish to the Microsoft Store, create external catalogs, or access Windows SDK build tools. Supports .NET (csproj), C\u002B\u002B, Electron, Rust, Tauri, and cross-platform frameworks targeting Windows."
     },
     {
       "filename": "workiq-copilot/SKILL.md",
