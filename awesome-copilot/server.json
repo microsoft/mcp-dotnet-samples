@@ -17,7 +17,6 @@
     {
       "registryType": "oci",
       "identifier": "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest",
-      "version": "1.0.0",
       "transport": {
         "type": "stdio"
       }

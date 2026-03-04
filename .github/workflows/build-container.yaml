@@ -95,6 +95,7 @@ jobs:
 
           $server.version = $revised
           $server.packages[0].version = $revised
+          $server.packages[0].identifier = $server.packages[0].identifier -replace ":latest", ":$revised"
           $server | ConvertTo-Json -Depth 10 | Out-File -FilePath ./server.json -Encoding utf8 -Force
 
           echo "version=$revised" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
