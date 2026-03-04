@@ -11,6 +11,8 @@ RUN dotnet publish -c Release -o /app --self-contained false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
 
+LABEL io.modelcontextprotocol.server.name="io.github.microsoft/awesome-copilot"
+
 WORKDIR /app
 
 COPY --from=build /app .
