@@ -213,4 +213,9 @@ jobs:
         if: inputs.image_name == 'awesome-copilot'
         shell: bash
         run: |
+          pushd awesome-copilot
+
           ./mcp-publisher publish
+
+          popd
+
