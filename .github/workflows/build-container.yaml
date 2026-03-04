@@ -150,7 +150,7 @@ jobs:
           (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
           steps.check-dockerfile.outputs.exists == 'true' &&
           inputs.image_name == 'awesome-copilot'
-        id: push-multiplatform
+        id: push-multiplatform-awesome-copilot
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
@@ -175,10 +175,22 @@ jobs:
           tags: '${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}:latest'
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Generate artifact attestation - multi-platform
+      - name: Generate artifact attestation - multi-platform for awesome-copilot
         if: |
           (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
-          steps.check-dockerfile.outputs.exists == 'true'
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name == 'awesome-copilot'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
+          subject-digest: ${{ steps.push-multiplatform-awesome-copilot.outputs.digest }}
+          push-to-registry: true
+
+      - name: Generate artifact attestation - multi-platform for other images
+        if: |
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name != 'awesome-copilot'
         uses: actions/attest-build-provenance@v2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
