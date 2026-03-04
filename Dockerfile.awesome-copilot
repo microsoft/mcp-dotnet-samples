@@ -17,6 +17,8 @@ RUN case "$TARGETARCH" in \
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
 
+LABEL io.modelcontextprotocol.server.name="io.github.microsoft/awesome-copilot"
+
 WORKDIR /app
 
 COPY --from=build /app .

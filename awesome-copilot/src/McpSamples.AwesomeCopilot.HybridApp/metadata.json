@@ -435,6 +435,11 @@
       "name": "Mentor mode"
     },
     {
+      "filename": "mentoring-juniors.agent.md",
+      "description": "Socratic mentor for junior developers. Guides through questions, never gives direct answers. Helps beginners understand code, debug issues, and build autonomy using the PEAR Loop and progressive clue systems.",
+      "name": "Sensei - Junior Mentor"
+    },
+    {
       "filename": "meta-agentic-project-scaffold.agent.md",
       "description": "Meta agentic project creation assistant to help users create and manage project workflows effectively.",
       "name": "Meta Agentic Project Scaffold"
@@ -695,6 +700,11 @@
       "name": "Salesforce Expert Agent"
     },
     {
+      "filename": "scientific-paper-research.agent.md",
+      "name": "Scientific Paper Research",
+      "description": "Research agent that searches scientific papers and retrieves structured experimental data from full-text studies using the BGPT MCP server."
+    },
+    {
       "filename": "se-gitops-ci-specialist.agent.md",
       "name": "SE: DevOps/CI",
       "description": "DevOps specialist for CI/CD pipelines, deployment debugging, and GitOps workflows focused on making deployments boring and reliable"
@@ -835,6 +845,11 @@
       "description": "Terraform infrastructure specialist with automated HCP Terraform workflows. Leverages Terraform MCP server for registry integration, workspace management, and run orchestration. Generates compliant code using latest provider/module versions, manages private registries, automates variable sets, and orchestrates infrastructure deployments with proper validation and security practices."
     },
     {
+      "filename": "terratest-module-testing.agent.md",
+      "description": "Generate and refactor Go Terratest suites for Terraform modules, including CI-safe patterns, staged tests, and negative-path validation.",
+      "name": "Terratest Module Testing"
+    },
+    {
       "filename": "typescript-mcp-expert.agent.md",
       "description": "Expert assistant for developing Model Context Protocol (MCP) servers in TypeScript",
       "name": "TypeScript MCP Server Expert"
@@ -858,6 +873,11 @@
       "filename": "wg-code-sentinel.agent.md",
       "description": "Ask WG Code Sentinel to review your code for security issues.",
       "name": "WG Code Sentinel"
+    },
+    {
+      "filename": "winui3-expert.agent.md",
+      "name": "WinUI 3 Expert",
+      "description": "Expert agent for WinUI 3 and Windows App SDK development. Prevents common UWP-to-WinUI 3 API mistakes, guides XAML controls, MVVM patterns, windowing, threading, app lifecycle, dialogs, and deployment for desktop Windows apps."
     }
   ],
   "hooks": [
@@ -1561,6 +1581,10 @@
       "description": "VueJS 3 development standards and best practices with Composition API and TypeScript"
     },
     {
+      "filename": "winui3.instructions.md",
+      "description": "WinUI 3 and Windows App SDK coding guidelines. Prevents common UWP API misuse, enforces correct XAML namespaces, threading, windowing, and MVVM patterns for desktop Windows apps."
+    },
+    {
       "filename": "wordpress.instructions.md",
       "description": "Coding, security, and testing rules for WordPress plugins and themes"
     }
@@ -1883,6 +1907,11 @@
       "description": "Get best practices for XUnit unit testing, including data-driven tests"
     },
     {
+      "filename": "datanalysis-credit-risk/SKILL.md",
+      "name": "datanalysis-credit-risk",
+      "description": "Credit risk data cleaning and variable screening pipeline for pre-loan modeling. Use when working with raw credit data that needs quality assessment,  missing value analysis, or variable selection before modeling. it covers data loading and formatting, abnormal period filtering, missing rate calculation, high-missing variable removal,low-IV variable filtering, high-PSI variable removal, Null Importance denoising, high-correlation variable removal, and cleaning report generation. Applicable scenarios arecredit risk data cleaning, variable screening, pre-loan modeling preprocessing."
+    },
+    {
       "filename": "dataverse-python-advanced-patterns/SKILL.md",
       "name": "dataverse-python-advanced-patterns",
       "description": "Generate production code for Dataverse SDK using advanced patterns, error handling, and optimization techniques."
@@ -2043,6 +2072,11 @@
       "description": "Process and manipulate images using ImageMagick. Supports resizing, format conversion, batch processing, and retrieving image metadata. Use when working with images, creating thumbnails, resizing wallpapers, or performing batch image operations."
     },
     {
+      "filename": "import-infrastructure-as-code/SKILL.md",
+      "name": "import-infrastructure-as-code",
+      "description": "Import existing Azure resources into Terraform using Azure CLI discovery and Azure Verified Modules (AVM). Use when asked to reverse-engineer live Azure infrastructure, generate Infrastructure as Code from existing subscriptions/resource groups/resource IDs, map dependencies, derive exact import addresses from downloaded module source, prevent configuration drift, and produce AVM-based Terraform files ready for validation and planning across any Azure resource type."
+    },
+    {
       "filename": "java-add-graalvm-native-image-support/SKILL.md",
       "name": "java-add-graalvm-native-image-support",
       "description": "GraalVM Native Image expert that adds native image support to Java applications, builds the project, analyzes build errors, applies fixes, and iterates until successful compilation using Oracle best practices."
@@ -2153,6 +2187,11 @@
       "description": "Merges mature lessons from a domain memory file into its instruction file. Syntax: \u0060/memory-merger \u003Edomain [scope]\u0060 where scope is \u0060global\u0060 (default), \u0060user\u0060, \u0060workspace\u0060, or \u0060ws\u0060."
     },
     {
+      "filename": "mentoring-juniors/SKILL.md",
+      "name": "mentoring-juniors",
+      "description": "Socratic mentoring for junior developers and AI newcomers. Guides through questions, never answers. Triggers: \u0022help me understand\u0022, \u0022explain this code\u0022, \u0022I\u0027m stuck\u0022, \u0022Im stuck\u0022, \u0022I\u0027m confused\u0022, \u0022Im confused\u0022, \u0022I don\u0027t understand\u0022, \u0022I dont understand\u0022, \u0022can you teach me\u0022, \u0022teach me\u0022, \u0022mentor me\u0022, \u0022guide me\u0022, \u0022what does this error mean\u0022, \u0022why doesn\u0027t this work\u0022, \u0022why does not this work\u0022, \u0022I\u0027m a beginner\u0022, \u0022Im a beginner\u0022, \u0022I\u0027m learning\u0022, \u0022Im learning\u0022, \u0022I\u0027m new to this\u0022, \u0022Im new to this\u0022, \u0022walk me through\u0022, \u0022how does this work\u0022, \u0022what\u0027s wrong with my code\u0022, \u0022what\u0027s wrong\u0022, \u0022can you break this down\u0022, \u0022ELI5\u0022, \u0022step by step\u0022, \u0022where do I start\u0022, \u0022what am I missing\u0022, \u0022newbie here\u0022, \u0022junior dev\u0022, \u0022first time using\u0022, \u0022how do I\u0022, \u0022what is\u0022, \u0022is this right\u0022, \u0022not sure\u0022, \u0022need help\u0022, \u0022struggling\u0022, \u0022show me\u0022, \u0022help me debug\u0022, \u0022best practice\u0022, \u0022too complex\u0022, \u0022overwhelmed\u0022, \u0022lost\u0022, \u0022debug this\u0022, \u0022/socratic\u0022, \u0022/hint\u0022, \u0022/concept\u0022, \u0022/pseudocode\u0022. Progressive clue systems, teaching techniques, and success metrics."
+    },
+    {
       "filename": "microsoft-code-reference/SKILL.md",
       "name": "microsoft-code-reference",
       "description": "Look up Microsoft API references, find working code samples, and verify SDK code is correct. Use when working with Azure SDKs, .NET libraries, or Microsoft APIs\u2014to find the right method, check parameters, get working examples, or troubleshoot errors. Catches hallucinated methods, wrong signatures, and deprecated patterns by querying official docs."
@@ -2178,6 +2217,11 @@
       "description": "Analyze chatmode or prompt files and recommend optimal AI models based on task complexity, required capabilities, and cost-efficiency"
     },
     {
+      "filename": "msstore-cli/SKILL.md",
+      "name": "msstore-cli",
+      "description": "Microsoft Store Developer CLI (msstore) for publishing Windows applications to the Microsoft Store. Use when asked to configure Store credentials, list Store apps, check submission status, publish submissions, manage package flights, set up CI/CD for Store publishing, or integrate with Partner Center. Supports Windows App SDK/WinUI, UWP, .NET MAUI, Flutter, Electron, React Native, and PWA applications."
+    },
+    {
       "filename": "multi-stage-dockerfile/SKILL.md",
       "name": "multi-stage-dockerfile",
       "description": "Create optimized multi-stage Dockerfiles for any language or framework"
@@ -2201,6 +2245,11 @@
       "filename": "next-intl-add-language/SKILL.md",
       "name": "next-intl-add-language",
       "description": "Add new language to a Next.js \u002B next-intl application"
+    },
+    {
+      "filename": "noob-mode/SKILL.md",
+      "name": "noob-mode",
+      "description": "Plain-English translation layer for non-technical Copilot CLI users. Translates every approval prompt, error message, and technical output into clear, jargon-free English with color-coded risk indicators."
     },
     {
       "filename": "nuget-manager/SKILL.md",
@@ -2545,7 +2594,17 @@
     {
       "filename": "winapp-cli/SKILL.md",
       "name": "winapp-cli",
-      "description": "Windows App Development CLI (winapp) for building, packaging, and deploying Windows applications. Use when asked to initialize Windows app projects, create MSIX packages, generate AppxManifest.xml, manage development certificates, add package identity for debugging, sign packages, or access Windows SDK build tools. Supports .NET, C\u002B\u002B, Electron, Rust, Tauri, and cross-platform frameworks targeting Windows."
+      "description": "Windows App Development CLI (winapp) for building, packaging, and deploying Windows applications. Use when asked to initialize Windows app projects, create MSIX packages, generate AppxManifest.xml, manage development certificates, add package identity for debugging, sign packages, publish to the Microsoft Store, create external catalogs, or access Windows SDK build tools. Supports .NET (csproj), C\u002B\u002B, Electron, Rust, Tauri, and cross-platform frameworks targeting Windows."
+    },
+    {
+      "filename": "winmd-api-search/SKILL.md",
+      "name": "winmd-api-search",
+      "description": "Find and explore Windows desktop APIs. Use when building features that need platform capabilities \u2014 camera, file access, notifications, UI controls, AI/ML, sensors, networking, etc. Discovers the right API for a task and retrieves full type details (methods, properties, events, enumeration values)."
+    },
+    {
+      "filename": "winui3-migration-guide/SKILL.md",
+      "name": "winui3-migration-guide",
+      "description": "UWP-to-WinUI 3 migration reference. Maps legacy UWP APIs to correct Windows App SDK equivalents with before/after code snippets. Covers namespace changes, threading (CoreDispatcher to DispatcherQueue), windowing (CoreWindow to AppWindow), dialogs, pickers, sharing, printing, background tasks, and the most common Copilot code generation mistakes."
     },
     {
       "filename": "workiq-copilot/SKILL.md",
