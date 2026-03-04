@@ -94,7 +94,6 @@ jobs:
           $revised = "$([string]::Join(".", $version[0..1])).$release"
 
           $server.version = $revised
-          $server.packages[0].version = $revised
           $server.packages[0].identifier = $server.packages[0].identifier -replace ":latest", ":$revised"
           $server | ConvertTo-Json -Depth 10 | Out-File -FilePath ./server.json -Encoding utf8 -Force
 
