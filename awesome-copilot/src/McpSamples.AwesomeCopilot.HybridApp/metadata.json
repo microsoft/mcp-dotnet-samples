@@ -306,7 +306,7 @@
     },
     {
       "filename": "gem-browser-tester.agent.md",
-      "description": "Automates browser testing, UI/UX validation using browser automation tools and visual verification techniques",
+      "description": "Automates E2E scenarios with Chrome DevTools MCP, Playwright, Agent Browser. UI/UX validation using browser automation tools and visual verification techniques",
       "name": "gem-browser-tester"
     },
     {
@@ -326,7 +326,7 @@
     },
     {
       "filename": "gem-orchestrator.agent.md",
-      "description": "Coordinates multi-agent workflows, delegates tasks, synthesizes results via runSubagent",
+      "description": "Team Lead - Coordinates multi-agent workflows with energetic announcements, delegates tasks, synthesizes results via runSubagent",
       "name": "gem-orchestrator"
     },
     {
@@ -1780,6 +1780,11 @@
       "filename": "copilot-sdk/SKILL.md",
       "name": "copilot-sdk",
       "description": "Build agentic applications with GitHub Copilot SDK. Use when embedding AI agents in apps, creating custom tools, implementing streaming responses, managing sessions, connecting to MCP servers, or creating custom agents. Triggers on Copilot SDK, GitHub SDK, agentic app, embed Copilot, programmable agent, MCP server, custom agent."
+    },
+    {
+      "filename": "copilot-spaces/SKILL.md",
+      "name": "copilot-spaces",
+      "description": "Use Copilot Spaces to provide project-specific context to conversations. Use this skill when users mention a \u0022Copilot space\u0022, want to load context from a shared knowledge base, discover available spaces, or ask questions grounded in curated project documentation, code, and instructions."
     },
     {
       "filename": "copilot-usage-metrics/SKILL.md",
