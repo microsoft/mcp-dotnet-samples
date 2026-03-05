@@ -1657,6 +1657,11 @@
       "description": "Manage Azure DevOps resources via CLI including projects, repos, pipelines, builds, pull requests, work items, artifacts, and service endpoints. Use when working with Azure DevOps, az commands, devops automation, CI/CD, or when user mentions Azure DevOps CLI."
     },
     {
+      "filename": "azure-pricing/SKILL.md",
+      "name": "azure-pricing",
+      "description": "Fetches real-time Azure retail pricing using the Azure Retail Prices API (prices.azure.com) and estimates Copilot Studio agent credit consumption. Use when the user asks about the cost of any Azure service, wants to compare SKU prices, needs pricing data for a cost estimate, mentions Azure pricing, Azure costs, Azure billing, or asks about Copilot Studio pricing, Copilot Credits, or agent usage estimation. Covers compute, storage, networking, databases, AI, Copilot Studio, and all other Azure service families."
+    },
+    {
       "filename": "azure-resource-health-diagnose/SKILL.md",
       "name": "azure-resource-health-diagnose",
       "description": "Analyze Azure resource health, diagnose issues from logs and telemetry, and create a remediation plan for identified problems."
@@ -2059,7 +2064,7 @@
     {
       "filename": "github-issues/SKILL.md",
       "name": "github-issues",
-      "description": "Create, update, and manage GitHub issues using MCP tools. Use this skill when users want to create bug reports, feature requests, or task issues, update existing issues, add labels/assignees/milestones, or manage issue workflows. Triggers on requests like \u0022create an issue\u0022, \u0022file a bug\u0022, \u0022request a feature\u0022, \u0022update issue X\u0022, or any GitHub issue management task."
+      "description": "Create, update, and manage GitHub issues using MCP tools. Use this skill when users want to create bug reports, feature requests, or task issues, update existing issues, add labels/assignees/milestones, set issue fields (dates, priority, custom fields), set issue types, or manage issue workflows. Triggers on requests like \u0022create an issue\u0022, \u0022file a bug\u0022, \u0022request a feature\u0022, \u0022update issue X\u0022, \u0022set the priority\u0022, \u0022set the start date\u0022, or any GitHub issue management task."
     },
     {
       "filename": "go-mcp-server-generator/SKILL.md",
@@ -2575,6 +2580,11 @@
       "filename": "vscode-ext-localization/SKILL.md",
       "name": "vscode-ext-localization",
       "description": "Guidelines for proper localization of VS Code extensions, following VS Code extension development guidelines, libraries and good practices"
+    },
+    {
+      "filename": "web-coder/SKILL.md",
+      "name": "web-coder",
+      "description": "Expert 10x engineer with comprehensive knowledge of web development, internet protocols, and web standards. Use when working with HTML, CSS, JavaScript, web APIs, HTTP/HTTPS, web security, performance optimization, accessibility, or any web/internet concepts. Specializes in translating web terminology accurately and implementing modern web standards across frontend and backend development."
     },
     {
       "filename": "web-design-reviewer/SKILL.md",
