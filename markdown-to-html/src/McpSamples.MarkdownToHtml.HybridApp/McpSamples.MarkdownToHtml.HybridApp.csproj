@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
 
     <Nullable>enable</Nullable>
@@ -14,8 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Markdig" Version="0.*" />
-    <PackageReference Include="ReverseMarkdown" Version="4.7.0" />
+    <PackageReference Include="Markdig" Version="1.*" />
+    <PackageReference Include="ReverseMarkdown" Version="5.*" />
   </ItemGroup>
 
   <ItemGroup>

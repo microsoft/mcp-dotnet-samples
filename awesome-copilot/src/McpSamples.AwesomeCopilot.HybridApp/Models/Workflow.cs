@@ -1,17 +1,17 @@
 namespace McpSamples.AwesomeCopilot.HybridApp.Models;
 
 /// <summary>
-/// This represents the data entity for an instruction.
+/// This represents the data entity for a workflow.
 /// </summary>
-public class Instruction
+public class Workflow
 {
     /// <summary>
-    /// Gets or sets the name of the instruction file.
+    /// Gets or sets the name of the workflow file.
     /// </summary>
     public required string Filename { get; set; }
 
     /// <summary>
-    /// Gets or sets the display name.
+    /// Gets or sets the name of the workflow.
     /// </summary>
     public string? Name { get; set; }
 

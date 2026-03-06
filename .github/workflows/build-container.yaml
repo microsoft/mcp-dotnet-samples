@@ -35,7 +35,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.x'
+          dotnet-version: '10.x'
 
       - name: Pull the latest metadata.json
         if: inputs.image_name == 'awesome-copilot'
@@ -51,19 +51,13 @@ jobs:
           path: awesome-copilot/src/awesome-copilot
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Node.js
-        if: inputs.image_name == 'awesome-copilot'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.x'
-
       - name: Update metadata.json
         if: inputs.image_name == 'awesome-copilot'
         shell: bash
         run: |
           pushd awesome-copilot
 
-          node update-metadata.js
+          dotnet run ./update-metadata.cs
 
           popd
 
@@ -85,6 +79,29 @@ jobs:
             git commit -m "Update metadata.json"
             git push origin main
           fi
+
+      - name: Get registry version
+        if: |
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
+          inputs.image_name == 'awesome-copilot'
+        id: registry
+        shell: pwsh
+        run: |
+          pushd awesome-copilot
+
+          $server = Get-Content ./server.json | ConvertFrom-Json
+          $version = $($server.version).Split(".")
+          $release = Get-Date -Format "yyyyMMddHH" -AsUTC
+
+          $revised = "$([string]::Join(".", $version[0..1])).$release"
+
+          $server.version = $revised
+          $server.packages[0].identifier = $server.packages[0].identifier -replace ":latest", ":$revised"
+          $server | ConvertTo-Json -Depth 10 | Out-File -FilePath ./server.json -Encoding utf8 -Force
+
+          echo "version=$revised" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+          popd
 
       - name: Build app
         if: env.BUILD_IMAGE == 'true' || inputs.force == true
@@ -130,10 +147,26 @@ jobs:
           steps.check-dockerfile.outputs.exists == 'true'
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image - multi-platform
+      - name: Build and push Docker image - multi-platform for awesome-copilot
         if: |
           (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
-          steps.check-dockerfile.outputs.exists == 'true'
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name == 'awesome-copilot'
+        id: push-multiplatform-awesome-copilot
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          context: ${{ github.workspace }}
+          file: ${{ github.workspace }}/Dockerfile.${{ inputs.image_name }}
+          tags: '${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}:latest,${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}:${{ steps.registry.outputs.version }}'
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push Docker image - multi-platform for other images
+        if: |
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name != 'awesome-copilot'
         id: push-multiplatform
         uses: docker/build-push-action@v6
         with:
@@ -144,12 +177,52 @@ jobs:
           tags: '${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}:latest'
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Generate artifact attestation - multi-platform
+      - name: Generate artifact attestation - multi-platform for awesome-copilot
         if: |
           (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
-          steps.check-dockerfile.outputs.exists == 'true'
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name == 'awesome-copilot'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
+          subject-digest: ${{ steps.push-multiplatform-awesome-copilot.outputs.digest }}
+          push-to-registry: true
+
+      - name: Generate artifact attestation - multi-platform for other images
+        if: |
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name != 'awesome-copilot'
         uses: actions/attest-build-provenance@v2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ inputs.image_name }}
           subject-digest: ${{ steps.push-multiplatform.outputs.digest }}
           push-to-registry: true
+
+      - name: Install mcp-publisher
+        if: |
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name == 'awesome-copilot'
+        shell: bash
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      - name: Authenticate to MCP Registry
+        if: |
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name == 'awesome-copilot'
+        shell: bash
+        run: |
+          ./mcp-publisher login github-oidc
+
+      - name: Publish server to MCP Registry
+        if: |
+          (env.BUILD_IMAGE == 'true' || inputs.force == true) &&
+          steps.check-dockerfile.outputs.exists == 'true' &&
+          inputs.image_name == 'awesome-copilot'
+        shell: bash
+        run: |
+          ./mcp-publisher publish ./awesome-copilot/server.json
+          

@@ -1,10 +1,10 @@
+using System.Text.Json.Nodes;
+
 using McpSamples.Shared.Configurations;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Interfaces;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace McpSamples.Shared.OpenApi;
 
@@ -34,12 +34,12 @@ public class McpDocumentTransformer<T>(T appsettings, IHttpContextAccessor acces
             }
         ];
         var pathItem = new OpenApiPathItem();
-        pathItem.AddOperation(OperationType.Post, new OpenApiOperation
+        pathItem.AddOperation(HttpMethod.Post, new OpenApiOperation
         {
             Summary = "Invoke operation",
             Extensions = new Dictionary<string, IOpenApiExtension>
             {
-                ["x-ms-agentic-protocol"] = new OpenApiString("mcp-streamable-1.0")
+                ["x-ms-agentic-protocol"] = new JsonNodeExtension(JsonValue.Create("mcp-streamable-1.0"))
             },
             OperationId = "InvokeMCP",
             Responses = new OpenApiResponses

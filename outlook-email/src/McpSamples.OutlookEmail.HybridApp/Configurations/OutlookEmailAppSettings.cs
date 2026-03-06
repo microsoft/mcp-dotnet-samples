@@ -1,6 +1,6 @@
 using McpSamples.Shared.Configurations;
 
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace McpSamples.OutlookEmail.HybridApp.Configurations;
 

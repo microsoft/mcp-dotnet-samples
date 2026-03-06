@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace McpSamples.AwesomeCopilot.HybridApp.Models;
 
 /// <summary>
@@ -11,17 +13,18 @@ public class Prompt
     public required string Filename { get; set; }
 
     /// <summary>
+    /// Gets or sets the name of the prompt.
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
     /// Gets or sets the description.
     /// </summary>
     public required string Description { get; set; }
 
     /// <summary>
-    /// Gets or sets the execution mode.
+    /// Gets or sets the argument hint.
     /// </summary>
-    public string? Mode { get; set; }
-
-    /// <summary>
-    /// Gets or sets the list of tools.
-    /// </summary>
-    public List<string>? Tools { get; set; }
+    [JsonPropertyName("argument-hint")]
+    public string? ArgumentHint { get; set; }
 }

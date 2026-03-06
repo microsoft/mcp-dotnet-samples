@@ -8,7 +8,7 @@ namespace McpSamples.AwesomeCopilot.HybridApp.Services;
 public interface IMetadataService
 {
     /// <summary>
-    /// Searches for relevant data in chatmodes, instructions, and prompts based on keywords in their description fields
+    /// Searches for relevant data in agents, hooks, instructions, prompts, skills, and workflows based on keywords in their description fields.
     /// </summary>
     /// <param name="keywords">The keywords to search for</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -16,19 +16,11 @@ public interface IMetadataService
     Task<Metadata> SearchAsync(string keywords, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Loads file contents from the awesome-copilot repository
+    /// Loads file contents from the awesome-copilot repository.
     /// </summary>
-    /// <param name="directory">The mode directory (chatmodes, instructions, or prompts)</param>
+    /// <param name="directory">The category directory (agents, hooks, instructions, prompts, skills, or workflows)</param>
     /// <param name="filename">The filename to load</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Returns the file contents as a string</returns>
     Task<string> LoadAsync(string directory, string filename, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Gets a collection by its id (from the metadata collections array)
-    /// </summary>
-    /// <param name="id">Collection id</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Returns the <see cref="Models.Collection"/> or null if not found</returns>
-    Task<Collection?> GetCollectionAsync(string id, CancellationToken cancellationToken = default);
 }
