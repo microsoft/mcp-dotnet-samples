@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Markdig" Version="0.*" />
+    <PackageReference Include="Markdig" Version="1.*" />
   </ItemGroup>
 
   <ItemGroup>
