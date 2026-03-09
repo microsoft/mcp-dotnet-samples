@@ -2507,11 +2507,6 @@
       "description": "Suggest relevant GitHub Copilot instruction files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing instructions in this repository, and identifying outdated instructions that need updates."
     },
     {
-      "filename": "suggest-awesome-github-copilot-prompts/SKILL.md",
-      "name": "suggest-awesome-github-copilot-prompts",
-      "description": "Suggest relevant GitHub Copilot prompt files from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing prompts in this repository, and identifying outdated prompts that need updates."
-    },
-    {
       "filename": "suggest-awesome-github-copilot-skills/SKILL.md",
       "name": "suggest-awesome-github-copilot-skills",
       "description": "Suggest relevant GitHub Copilot skills from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing skills in this repository, and identifying outdated skills that need updates."
