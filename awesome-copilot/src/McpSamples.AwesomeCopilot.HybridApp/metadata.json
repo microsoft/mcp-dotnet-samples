@@ -1737,6 +1737,11 @@
       "description": "Expert-level browser automation, debugging, and performance analysis using Chrome DevTools MCP. Use for interacting with web pages, capturing screenshots, analyzing network traffic, and profiling performance."
     },
     {
+      "filename": "cli-mastery/SKILL.md",
+      "name": "cli-mastery",
+      "description": "Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference covering slash commands, shortcuts, modes, agents, skills, MCP, and configuration. Say \u0022cliexpert\u0022 to start."
+    },
+    {
       "filename": "code-exemplars-blueprint-generator/SKILL.md",
       "name": "code-exemplars-blueprint-generator",
       "description": "Technology-agnostic prompt generator that creates customizable AI prompts for scanning codebases and identifying high-quality code exemplars. Supports multiple programming languages (.NET, Java, JavaScript, TypeScript, React, Angular, Python) with configurable analysis depth, categorization methods, and documentation formats to establish coding standards and maintain consistency across development teams."
@@ -2270,6 +2275,11 @@
       "filename": "nano-banana-pro-openrouter/SKILL.md",
       "name": "nano-banana-pro-openrouter",
       "description": "Generate or edit images via OpenRouter with the Gemini 3 Pro Image model. Use for prompt-only image generation, image edits, and multi-image compositing; supports 1K/2K/4K output."
+    },
+    {
+      "filename": "napkin/SKILL.md",
+      "name": "napkin",
+      "description": "Visual whiteboard collaboration for Copilot CLI. Creates an interactive whiteboard that opens in your browser \u2014 draw, sketch, add sticky notes, then share everything back with Copilot. Copilot sees your drawings and text, and responds with analysis, suggestions, and ideas."
     },
     {
       "filename": "next-intl-add-language/SKILL.md",
