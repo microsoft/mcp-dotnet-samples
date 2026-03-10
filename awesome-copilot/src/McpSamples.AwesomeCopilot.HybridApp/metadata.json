@@ -650,6 +650,11 @@
       "name": "Python MCP Server Expert"
     },
     {
+      "filename": "python-notebook-sample-builder.agent.md",
+      "description": "Custom agent for building Python Notebooks in VS Code that demonstrate Azure and AI features",
+      "name": "Python Notebook Sample Builder"
+    },
+    {
       "filename": "qa-subagent.agent.md",
       "name": "QA",
       "description": "Meticulous QA subagent for test planning, bug hunting, edge-case analysis, and implementation verification."
@@ -2094,7 +2099,7 @@
     {
       "filename": "github-issues/SKILL.md",
       "name": "github-issues",
-      "description": "Create, update, and manage GitHub issues using MCP tools. Use this skill when users want to create bug reports, feature requests, or task issues, update existing issues, add labels/assignees/milestones, set issue fields (dates, priority, custom fields), set issue types, or manage issue workflows. Triggers on requests like \u0022create an issue\u0022, \u0022file a bug\u0022, \u0022request a feature\u0022, \u0022update issue X\u0022, \u0022set the priority\u0022, \u0022set the start date\u0022, or any GitHub issue management task."
+      "description": "Create, update, and manage GitHub issues using MCP tools. Use this skill when users want to create bug reports, feature requests, or task issues, update existing issues, add labels/assignees/milestones, set issue fields (dates, priority, custom fields), set issue types, manage issue workflows, link issues, add dependencies, or track blocked-by/blocking relationships. Triggers on requests like \u0022create an issue\u0022, \u0022file a bug\u0022, \u0022request a feature\u0022, \u0022update issue X\u0022, \u0022set the priority\u0022, \u0022set the start date\u0022, \u0022link issues\u0022, \u0022add dependency\u0022, \u0022blocked by\u0022, \u0022blocking\u0022, or any GitHub issue management task."
     },
     {
       "filename": "go-mcp-server-generator/SKILL.md",
