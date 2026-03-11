@@ -515,6 +515,11 @@
       "name": "OpenAPI to Application Generator"
     },
     {
+      "filename": "oracle-to-postgres-migration-expert.agent.md",
+      "description": "Agent for Oracle-to-PostgreSQL application migrations. Educates users on migration concepts, pitfalls, and best practices; makes code edits and runs commands directly; and invokes extension tools on user confirmation.",
+      "name": "Oracle-to-PostgreSQL Migration Expert"
+    },
+    {
       "filename": "pagerduty-incident-responder.agent.md",
       "name": "PagerDuty Incident Responder",
       "description": "Responds to PagerDuty incidents by analyzing incident context, identifying recent code changes, and suggesting fixes via GitHub PRs."
@@ -1897,6 +1902,21 @@
       "description": "Create robust, accessible web forms with best practices for HTML structure, CSS styling, JavaScript interactivity, form validation, and server-side processing. Use when asked to \u0022create a form\u0022, \u0022build a web form\u0022, \u0022add a contact form\u0022, \u0022make a signup form\u0022, or when building any HTML form with data handling. Covers PHP and Python backends, MySQL database integration, REST APIs, XML data exchange, accessibility (ARIA), and progressive web apps."
     },
     {
+      "filename": "creating-oracle-to-postgres-master-migration-plan/SKILL.md",
+      "name": "creating-oracle-to-postgres-master-migration-plan",
+      "description": "Discovers all projects in a .NET solution, classifies each for Oracle-to-PostgreSQL migration eligibility, and produces a persistent master migration plan. Use when starting a multi-project Oracle-to-PostgreSQL migration, creating a migration inventory, or assessing which .NET projects contain Oracle dependencies."
+    },
+    {
+      "filename": "creating-oracle-to-postgres-migration-bug-report/SKILL.md",
+      "name": "creating-oracle-to-postgres-migration-bug-report",
+      "description": "Creates structured bug reports for defects found during Oracle-to-PostgreSQL migration. Use when documenting behavioral differences between Oracle and PostgreSQL as actionable bug reports with severity, root cause, and remediation steps."
+    },
+    {
+      "filename": "creating-oracle-to-postgres-migration-integration-tests/SKILL.md",
+      "name": "creating-oracle-to-postgres-migration-integration-tests",
+      "description": "Creates integration test cases for .NET data access artifacts during Oracle-to-PostgreSQL database migrations. Generates DB-agnostic xUnit tests with deterministic seed data that validate behavior consistency across both database systems. Use when creating integration tests for a migrated project, generating test coverage for data access layers, or writing Oracle-to-PostgreSQL migration validation tests."
+    },
+    {
       "filename": "csharp-async/SKILL.md",
       "name": "csharp-async",
       "description": "Get best practices for C# async programming"
@@ -2247,6 +2267,11 @@
       "description": "Create agent skills for Microsoft technologies using Learn MCP tools. Use when users want to create a skill that teaches agents about any Microsoft technology, library, framework, or service (Azure, .NET, M365, VS Code, Bicep, etc.). Investigates topics deeply, then generates a hybrid skill storing essential knowledge locally while enabling dynamic deeper investigation."
     },
     {
+      "filename": "migrating-oracle-to-postgres-stored-procedures/SKILL.md",
+      "name": "migrating-oracle-to-postgres-stored-procedures",
+      "description": "Migrates Oracle PL/SQL stored procedures to PostgreSQL PL/pgSQL. Translates Oracle-specific syntax, preserves method signatures and type-anchored parameters, leverages orafce where appropriate, and applies COLLATE \u0022C\u0022 for Oracle-compatible text sorting. Use when converting Oracle stored procedures or functions to PostgreSQL equivalents during a database migration."
+    },
+    {
       "filename": "mkdocs-translations/SKILL.md",
       "name": "mkdocs-translations",
       "description": "Generate a language translation for a mkdocs documentation stack."
@@ -2320,6 +2345,11 @@
       "filename": "php-mcp-server-generator/SKILL.md",
       "name": "php-mcp-server-generator",
       "description": "Generate a complete PHP Model Context Protocol server project with tools, resources, prompts, and tests using the official PHP SDK"
+    },
+    {
+      "filename": "planning-oracle-to-postgres-migration-integration-testing/SKILL.md",
+      "name": "planning-oracle-to-postgres-migration-integration-testing",
+      "description": "Creates an integration testing plan for .NET data access artifacts during Oracle-to-PostgreSQL database migrations. Analyzes a single project to identify repositories, DAOs, and service layers that interact with the database, then produces a structured testing plan. Use when planning integration test coverage for a migrated project, identifying which data access methods need tests, or preparing for Oracle-to-PostgreSQL migration validation."
     },
     {
       "filename": "plantuml-ascii/SKILL.md",
@@ -2462,6 +2492,11 @@
       "description": "Review and refactor code in your project according to defined instructions"
     },
     {
+      "filename": "reviewing-oracle-to-postgres-migration/SKILL.md",
+      "name": "reviewing-oracle-to-postgres-migration",
+      "description": "Identifies Oracle-to-PostgreSQL migration risks by cross-referencing code against known behavioral differences (empty strings, refcursors, type coercion, sorting, timestamps, concurrent transactions, etc.). Use when planning a database migration, reviewing migration artifacts, or validating that integration tests cover Oracle/PostgreSQL differences."
+    },
+    {
       "filename": "ruby-mcp-server-generator/SKILL.md",
       "name": "ruby-mcp-server-generator",
       "description": "Generate a complete Model Context Protocol server project in Ruby using the official MCP Ruby SDK gem."
@@ -2470,6 +2505,11 @@
       "filename": "rust-mcp-server-generator/SKILL.md",
       "name": "rust-mcp-server-generator",
       "description": "Generate a complete Rust Model Context Protocol server project with tools, prompts, resources, and tests using the official rmcp SDK"
+    },
+    {
+      "filename": "scaffolding-oracle-to-postgres-migration-test-project/SKILL.md",
+      "name": "scaffolding-oracle-to-postgres-migration-test-project",
+      "description": "Scaffolds an xUnit integration test project for validating Oracle-to-PostgreSQL database migration behavior in .NET solutions. Creates the test project, transaction-rollback base class, and seed data manager. Use when setting up test infrastructure before writing migration integration tests, or when a test project is needed for Oracle-to-PostgreSQL validation."
     },
     {
       "filename": "scoutqa-test/SKILL.md",
