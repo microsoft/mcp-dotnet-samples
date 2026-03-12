@@ -255,6 +255,11 @@
       "name": ".NET Upgrade"
     },
     {
+      "filename": "doublecheck.agent.md",
+      "description": "Interactive verification agent for AI-generated output. Runs a three-layer pipeline (self-audit, source verification, adversarial review) and produces structured reports with source links for human review.",
+      "name": "Doublecheck"
+    },
+    {
       "filename": "droid.agent.md",
       "name": "droid",
       "description": "Provides installation guidance, usage examples, and automation patterns for the Droid CLI, with emphasis on droid exec for CI/CD and non-interactive automation"
@@ -1752,6 +1757,11 @@
       "description": "Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference covering slash commands, shortcuts, modes, agents, skills, MCP, and configuration. Say \u0022cliexpert\u0022 to start."
     },
     {
+      "filename": "cloud-design-patterns/SKILL.md",
+      "name": "cloud-design-patterns",
+      "description": "Cloud design patterns for distributed systems architecture covering 42 industry-standard patterns across reliability, performance, messaging, security, and deployment categories. Use when designing, reviewing, or implementing distributed system architectures."
+    },
+    {
       "filename": "code-exemplars-blueprint-generator/SKILL.md",
       "name": "code-exemplars-blueprint-generator",
       "description": "Technology-agnostic prompt generator that creates customizable AI prompts for scanning codebases and identifying high-quality code exemplars. Supports multiple programming languages (.NET, Java, JavaScript, TypeScript, React, Angular, Python) with configurable analysis depth, categorization methods, and documentation formats to establish coding standards and maintain consistency across development teams."
@@ -2010,6 +2020,11 @@
       "filename": "dotnet-upgrade/SKILL.md",
       "name": "dotnet-upgrade",
       "description": "Ready-to-use prompts for comprehensive .NET framework upgrade analysis and execution"
+    },
+    {
+      "filename": "doublecheck/SKILL.md",
+      "name": "doublecheck",
+      "description": "Three-layer verification pipeline for AI output. Extracts verifiable claims, finds supporting or contradicting sources via web search, runs adversarial review for hallucination patterns, and produces a structured verification report with source links for human review."
     },
     {
       "filename": "editorconfig/SKILL.md",
