@@ -2152,6 +2152,11 @@
       "description": "Import existing Azure resources into Terraform using Azure CLI discovery and Azure Verified Modules (AVM). Use when asked to reverse-engineer live Azure infrastructure, generate Infrastructure as Code from existing subscriptions/resource groups/resource IDs, map dependencies, derive exact import addresses from downloaded module source, prevent configuration drift, and produce AVM-based Terraform files ready for validation and planning across any Azure resource type."
     },
     {
+      "filename": "issue-fields-migration/SKILL.md",
+      "name": "issue-fields-migration",
+      "description": "Migrate field values from GitHub Project V2 fields or repo labels to org-level issue fields. Use this skill when users need to bulk-copy metadata (priority, status, dates, text, numbers) from project fields or labels to issue fields, or when they ask about migrating, transferring, or copying project field data or labels to issue fields."
+    },
+    {
       "filename": "java-add-graalvm-native-image-support/SKILL.md",
       "name": "java-add-graalvm-native-image-support",
       "description": "GraalVM Native Image expert that adds native image support to Java applications, builds the project, analyzes build errors, applies fixes, and iterates until successful compilation using Oracle best practices."
@@ -2529,7 +2534,7 @@
     {
       "filename": "scoutqa-test/SKILL.md",
       "name": "scoutqa-test",
-      "description": "This skill should be used when the user asks to \u0022test this website\u0022, \u0022run exploratory testing\u0022, \u0022check for accessibility issues\u0022, \u0022verify the login flow works\u0022, \u0022find bugs on this page\u0022, or requests automated QA testing. Triggers on web application testing scenarios including smoke tests, accessibility audits, e-commerce flows, and user flow validation using ScoutQA CLI. IMPORTANT: Use this skill proactively after implementing web application features to verify they work correctly - don\u0027t wait for the user to ask for testing."
+      "description": "This skill should be used when the user asks to \u0022test this website\u0022, \u0022run exploratory testing\u0022, \u0022check for accessibility issues\u0022, \u0022verify the login flow works\u0022, \u0022find bugs on this page\u0022, or requests automated QA testing. Triggers on web application testing scenarios including smoke tests, accessibility audits, e-commerce flows, and user flow validation using ScoutQA CLI. Use this skill proactively after implementing web application features to verify they work correctly."
     },
     {
       "filename": "shuffle-json-data/SKILL.md",
