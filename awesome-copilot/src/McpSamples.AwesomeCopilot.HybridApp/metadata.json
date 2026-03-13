@@ -934,10 +934,6 @@
       "description": "Comprehensive best practices for AI prompt engineering, safety frameworks, bias mitigation, and responsible AI usage for Copilot and LLMs."
     },
     {
-      "filename": "angular.instructions.md",
-      "description": "Angular-specific coding standards and best practices"
-    },
-    {
       "filename": "ansible.instructions.md",
       "description": "Ansible conventions and best practices"
     },
@@ -1215,10 +1211,6 @@
       "description": "Best practices and patterns for building Model Context Protocol (MCP) servers in Java using the official MCP Java SDK with reactive streams and Spring integration."
     },
     {
-      "filename": "java.instructions.md",
-      "description": "Guidelines for building Java base applications"
-    },
-    {
       "filename": "joyride-user-project.instructions.md",
       "description": "Expert assistance for Joyride User Script projects - REPL-driven ClojureScript and user space automation of VS Code"
     },
@@ -1460,10 +1452,6 @@
       "description": "Instructions for building Model Context Protocol (MCP) servers using the Python SDK"
     },
     {
-      "filename": "python.instructions.md",
-      "description": "Python coding conventions and guidelines"
-    },
-    {
       "filename": "quarkus-mcp-server-sse.instructions.md",
       "description": "Quarkus and MCP Server with HTTP SSE transport development standards and instructions"
     },
@@ -1474,10 +1462,6 @@
     {
       "filename": "r.instructions.md",
       "description": "R language and document formats (R, Rmd, Quarto): coding standards and Copilot guidance for idiomatic, safe, and consistent code generation."
-    },
-    {
-      "filename": "reactjs.instructions.md",
-      "description": "ReactJS development standards and best practices"
     },
     {
       "filename": "ruby-mcp-server.instructions.md",
@@ -1568,10 +1552,6 @@
       "description": "Terraform Conventions and Guidelines"
     },
     {
-      "filename": "typescript-5-es2022.instructions.md",
-      "description": "Guidelines for TypeScript Development targeting TypeScript 5.x and ES2022 output"
-    },
-    {
       "filename": "typescript-mcp-server.instructions.md",
       "description": "Instructions for building Model Context Protocol (MCP) servers using the TypeScript SDK"
     },
@@ -1590,10 +1570,6 @@
     {
       "filename": "vsixtoolkit.instructions.md",
       "description": "Guidelines for Visual Studio extension (VSIX) development using Community.VisualStudio.Toolkit"
-    },
-    {
-      "filename": "vuejs3.instructions.md",
-      "description": "VueJS 3 development standards and best practices with Composition API and TypeScript"
     },
     {
       "filename": "winui3.instructions.md",
@@ -1905,11 +1881,6 @@
       "filename": "create-tldr-page/SKILL.md",
       "name": "create-tldr-page",
       "description": "Create a tldr page from documentation URLs and command examples, requiring both URL and command name."
-    },
-    {
-      "filename": "create-web-form/SKILL.md",
-      "name": "create-web-form",
-      "description": "Create robust, accessible web forms with best practices for HTML structure, CSS styling, JavaScript interactivity, form validation, and server-side processing. Use when asked to \u0022create a form\u0022, \u0022build a web form\u0022, \u0022add a contact form\u0022, \u0022make a signup form\u0022, or when building any HTML form with data handling. Covers PHP and Python backends, MySQL database integration, REST APIs, XML data exchange, accessibility (ARIA), and progressive web apps."
     },
     {
       "filename": "creating-oracle-to-postgres-master-migration-plan/SKILL.md",
