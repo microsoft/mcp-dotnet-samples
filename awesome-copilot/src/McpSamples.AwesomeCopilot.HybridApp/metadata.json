@@ -220,6 +220,11 @@
       "description": "No description provided"
     },
     {
+      "filename": "defender-scout-kql.agent.md",
+      "name": "Defender Scout KQL",
+      "description": "Generates, validates, and optimizes KQL queries for Microsoft Defender XDR Advanced Hunting across Endpoint, Identity, Office 365, Cloud Apps, and Identity."
+    },
+    {
       "filename": "demonstrate-understanding.agent.md",
       "description": "Validate user understanding of code, design patterns, and implementation details through guided questioning.",
       "name": "Demonstrate Understanding mode instructions"
@@ -2185,11 +2190,6 @@
       "filename": "mcp-cli/SKILL.md",
       "name": "mcp-cli",
       "description": "Interface for MCP (Model Context Protocol) servers via CLI. Use when you need to interact with external tools, APIs, or data sources through MCP servers, list available MCP servers/tools, or call MCP tools from command line."
-    },
-    {
-      "filename": "mcp-configure/SKILL.md",
-      "name": "mcp-configure",
-      "description": "Configure an MCP server for GitHub Copilot with your Dataverse environment."
     },
     {
       "filename": "mcp-copilot-studio-server-generator/SKILL.md",
