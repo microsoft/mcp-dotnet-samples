@@ -2422,6 +2422,11 @@
       "description": "Guide users through creating high-quality GitHub Copilot prompts with proper structure, tools, and best practices."
     },
     {
+      "filename": "publish-to-pages/SKILL.md",
+      "name": "publish-to-pages",
+      "description": "Publish presentations and web content to GitHub Pages. Converts PPTX, PDF, HTML, or Google Slides to a live GitHub Pages URL. Handles repo creation, file conversion, Pages enablement, and returns the live URL. Use when the user wants to publish, deploy, or share a presentation or HTML file via GitHub Pages."
+    },
+    {
       "filename": "pytest-coverage/SKILL.md",
       "name": "pytest-coverage",
       "description": "Run pytest tests with coverage, discover lines missing coverage, and increase coverage to 100%."
