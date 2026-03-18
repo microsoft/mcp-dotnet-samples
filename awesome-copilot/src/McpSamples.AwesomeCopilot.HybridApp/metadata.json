@@ -1732,6 +1732,11 @@
       "description": "Technology-agnostic prompt generator that creates customizable AI prompts for scanning codebases and identifying high-quality code exemplars. Supports multiple programming languages (.NET, Java, JavaScript, TypeScript, React, Angular, Python) with configurable analysis depth, categorization methods, and documentation formats to establish coding standards and maintain consistency across development teams."
     },
     {
+      "filename": "codeql/SKILL.md",
+      "name": "codeql",
+      "description": "Comprehensive guide for setting up and configuring CodeQL code scanning via GitHub Actions workflows and the CodeQL CLI. This skill should be used when users need help with code scanning configuration, CodeQL workflow files, CodeQL CLI commands, SARIF output, security analysis setup, or troubleshooting CodeQL analysis."
+    },
+    {
       "filename": "comment-code-generate-a-tutorial/SKILL.md",
       "name": "comment-code-generate-a-tutorial",
       "description": "Transform this Python script into a polished, beginner-friendly project by refactoring the code, adding clear instructional comments, and generating a complete markdown tutorial."
@@ -1950,6 +1955,11 @@
       "filename": "declarative-agents/SKILL.md",
       "name": "declarative-agents",
       "description": "Complete development kit for Microsoft 365 Copilot declarative agents with three comprehensive workflows (basic, advanced, validation), TypeSpec support, and Microsoft 365 Agents Toolkit integration"
+    },
+    {
+      "filename": "dependabot/SKILL.md",
+      "name": "dependabot",
+      "description": "Comprehensive guide for configuring and managing GitHub Dependabot. Use this skill when users ask about creating or optimizing dependabot.yml files, managing Dependabot pull requests, configuring dependency update strategies, setting up grouped updates, monorepo patterns, multi-ecosystem groups, security update configuration, auto-triage rules, or any GitHub Advanced Security (GHAS) supply chain security topic related to Dependabot."
     },
     {
       "filename": "devops-rollout-plan/SKILL.md",
@@ -2412,6 +2422,11 @@
       "description": "Generate high-quality Product Requirements Documents (PRDs) for software systems and AI-powered features. Includes executive summaries, user stories, technical specifications, and risk analysis."
     },
     {
+      "filename": "premium-frontend-ui/SKILL.md",
+      "name": "premium-frontend-ui",
+      "description": "A comprehensive guide for GitHub Copilot to craft immersive, high-performance web experiences with advanced motion, typography, and architectural craftsmanship."
+    },
+    {
       "filename": "project-workflow-analysis-blueprint-generator/SKILL.md",
       "name": "project-workflow-analysis-blueprint-generator",
       "description": "Comprehensive technology-agnostic prompt generator for documenting end-to-end application workflows. Automatically detects project architecture patterns, technology stacks, and data flow patterns to generate detailed implementation blueprints covering entry points, service layers, data access, error handling, and testing approaches across multiple technologies including .NET, Java/Spring, React, and microservices architectures."
@@ -2510,6 +2525,11 @@
       "filename": "scoutqa-test/SKILL.md",
       "name": "scoutqa-test",
       "description": "This skill should be used when the user asks to \u0022test this website\u0022, \u0022run exploratory testing\u0022, \u0022check for accessibility issues\u0022, \u0022verify the login flow works\u0022, \u0022find bugs on this page\u0022, or requests automated QA testing. Triggers on web application testing scenarios including smoke tests, accessibility audits, e-commerce flows, and user flow validation using ScoutQA CLI. Use this skill proactively after implementing web application features to verify they work correctly."
+    },
+    {
+      "filename": "secret-scanning/SKILL.md",
+      "name": "secret-scanning",
+      "description": "Guide for configuring and managing GitHub secret scanning, push protection, custom patterns, and secret alert remediation. This skill should be used when users need help enabling secret scanning, setting up push protection, defining custom secret patterns, triaging secret scanning alerts, or resolving blocked pushes."
     },
     {
       "filename": "semantic-kernel/SKILL.md",
