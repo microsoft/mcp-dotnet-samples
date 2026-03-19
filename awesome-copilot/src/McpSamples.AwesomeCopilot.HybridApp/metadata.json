@@ -877,6 +877,11 @@
   ],
   "hooks": [
     {
+      "filename": "dependency-license-checker/README.md",
+      "name": "Dependency License Checker",
+      "description": "Scans newly added dependencies for license compliance (GPL, AGPL, etc.) at session end"
+    },
+    {
       "filename": "governance-audit/README.md",
       "name": "Governance Audit",
       "description": "Scans Copilot agent prompts for threat signals and logs governance events"
@@ -1625,6 +1630,16 @@
       "filename": "automate-this/SKILL.md",
       "name": "automate-this",
       "description": "Analyze a screen recording of a manual process and produce targeted, working automation scripts. Extracts frames and audio narration from video files, reconstructs the step-by-step workflow, and proposes automation at multiple complexity levels using tools already installed on the user machine."
+    },
+    {
+      "filename": "autoresearch/SKILL.md",
+      "name": "autoresearch",
+      "description": "Autonomous iterative experimentation loop for any programming task. Guides the user through defining goals, measurable metrics, and scope constraints, then runs an autonomous loop of code changes, testing, measuring, and keeping/discarding results. Inspired by Karpathy\u0027s autoresearch. USE FOR: autonomous improvement, iterative optimization, experiment loop, auto research, performance tuning, automated experimentation, hill climbing, try things automatically, optimize code, run experiments, autonomous coding loop. DO NOT USE FOR: one-shot tasks, simple bug fixes, code review, or tasks without a measurable metric."
+    },
+    {
+      "filename": "aws-cdk-python-setup/SKILL.md",
+      "name": "aws-cdk-python-setup",
+      "description": "Setup and initialization guide for developing AWS CDK (Cloud Development Kit) applications in Python. This skill enables users to configure environment prerequisites, create new CDK projects, manage dependencies, and deploy to AWS."
     },
     {
       "filename": "az-cost-optimize/SKILL.md",
