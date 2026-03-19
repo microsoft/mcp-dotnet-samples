@@ -900,6 +900,11 @@
       "filename": "session-logger/README.md",
       "name": "Session Logger",
       "description": "Logs all Copilot coding agent session activity for audit and analysis"
+    },
+    {
+      "filename": "tool-guardian/README.md",
+      "name": "Tool Guardian",
+      "description": "Blocks dangerous tool operations (destructive file ops, force pushes, DB drops) before the Copilot coding agent executes them"
     }
   ],
   "instructions": [
