@@ -2132,6 +2132,61 @@
       "description": "Generate a complete Go MCP server project with proper structure, dependencies, and implementation using the official github.com/modelcontextprotocol/go-sdk."
     },
     {
+      "filename": "gtm-0-to-1-launch/SKILL.md",
+      "name": "gtm-0-to-1-launch",
+      "description": "Launch new products from idea to first customers. Use when launching products, finding early adopters, building launch week playbooks, diagnosing why adoption stalls, or learning that press coverage does not equal growth. Includes the three-layer diagnosis, the 2-week experiment cycle, and the launch that got 50K impressions and 12 signups."
+    },
+    {
+      "filename": "gtm-ai-gtm/SKILL.md",
+      "name": "gtm-ai-gtm",
+      "description": "Go-to-market strategy for AI products. Use when positioning AI products, handling \u0022who is responsible when it breaks\u0022 objections, pricing variable-cost AI, choosing between copilot/agent/teammate framing, or selling autonomous tools into enterprises."
+    },
+    {
+      "filename": "gtm-board-and-investor-communication/SKILL.md",
+      "name": "gtm-board-and-investor-communication",
+      "description": "Board meeting preparation, investor updates, and executive communication. Use when preparing board decks, writing investor updates, handling bad news with the board, structuring QBRs, or building board-level metric discipline. Includes the \u0022Three Things\u0022 narrative model, the 4-tier metric hierarchy, and the pre-brief pattern that prevents board surprises."
+    },
+    {
+      "filename": "gtm-developer-ecosystem/SKILL.md",
+      "name": "gtm-developer-ecosystem",
+      "description": "Build and scale developer-led adoption through ecosystem programs. Use when deciding open vs curated ecosystems, building developer programs, scaling platform adoption, or designing student program pipelines."
+    },
+    {
+      "filename": "gtm-enterprise-account-planning/SKILL.md",
+      "name": "gtm-enterprise-account-planning",
+      "description": "Strategic account planning and execution for enterprise deals. Use when planning complex sales cycles, managing multiple stakeholders, applying MEDDICC qualification, tracking deal health, or building mutual action plans. Includes the \u0022stale MAP equals dead deal\u0022 pattern."
+    },
+    {
+      "filename": "gtm-enterprise-onboarding/SKILL.md",
+      "name": "gtm-enterprise-onboarding",
+      "description": "Four-phase framework for onboarding enterprise customers from contract to value realization. Use when implementing new enterprise customers, preventing churn during onboarding, or solving the adoption cliff that kills deals post-go-live. Includes the Week 4 ghosting pattern."
+    },
+    {
+      "filename": "gtm-operating-cadence/SKILL.md",
+      "name": "gtm-operating-cadence",
+      "description": "Design meeting rhythms, metric reporting, quarterly planning, and decision-making velocity for scaling companies. Use when decisions are slow, planning is broken, the company is growing but alignment is worse, or leadership meetings consume all time without producing decisions."
+    },
+    {
+      "filename": "gtm-partnership-architecture/SKILL.md",
+      "name": "gtm-partnership-architecture",
+      "description": "Build and scale partner ecosystems that drive revenue and platform adoption. Use when building partner programs from scratch, tiering partnerships, managing co-marketing, making build-vs-partner decisions, or structuring crawl-walk-run partner deployment."
+    },
+    {
+      "filename": "gtm-positioning-strategy/SKILL.md",
+      "name": "gtm-positioning-strategy",
+      "description": "Find and own a defensible market position. Use when messaging sounds like competitors, conversion is weak despite awareness, repositioning a product, or testing positioning claims. Includes Crawl-Walk-Run rollout methodology and the word change that improved enterprise deal progression."
+    },
+    {
+      "filename": "gtm-product-led-growth/SKILL.md",
+      "name": "gtm-product-led-growth",
+      "description": "Build self-serve acquisition and expansion motions. Use when deciding PLG vs sales-led, optimizing activation, driving freemium conversion, building growth equations, or recognizing when product complexity demands human touch. Includes the parallel test where sales-led won 10x on revenue."
+    },
+    {
+      "filename": "gtm-technical-product-pricing/SKILL.md",
+      "name": "gtm-technical-product-pricing",
+      "description": "Pricing strategy for technical products. Use when choosing usage-based vs seat-based, designing freemium thresholds, structuring enterprise pricing conversations, deciding when to raise prices, or using price as a positioning signal."
+    },
+    {
       "filename": "image-manipulation-image-magick/SKILL.md",
       "name": "image-manipulation-image-magick",
       "description": "Process and manipulate images using ImageMagick. Supports resizing, format conversion, batch processing, and retrieving image metadata. Use when working with images, creating thumbnails, resizing wallpapers, or performing batch image operations."
