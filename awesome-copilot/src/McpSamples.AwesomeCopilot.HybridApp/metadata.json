@@ -705,9 +705,29 @@
       "name": "Rust MCP Expert"
     },
     {
+      "filename": "salesforce-apex-triggers.agent.md",
+      "name": "Salesforce Apex \u0026 Triggers Development",
+      "description": "Implement Salesforce business logic using Apex classes and triggers with production-quality code following Salesforce best practices."
+    },
+    {
+      "filename": "salesforce-aura-lwc.agent.md",
+      "name": "Salesforce UI Development (Aura \u0026 LWC)",
+      "description": "Implement Salesforce UI components using Lightning Web Components and Aura components following Lightning framework best practices."
+    },
+    {
       "filename": "salesforce-expert.agent.md",
       "description": "Provide expert Salesforce Platform guidance, including Apex Enterprise Patterns, LWC, integration, and Aura-to-LWC migration.",
       "name": "Salesforce Expert Agent"
+    },
+    {
+      "filename": "salesforce-flow.agent.md",
+      "name": "Salesforce Flow Development",
+      "description": "Implement business automation using Salesforce Flow following declarative automation best practices."
+    },
+    {
+      "filename": "salesforce-visualforce.agent.md",
+      "name": "Salesforce Visualforce Development",
+      "description": "Implement Visualforce pages and controllers following Salesforce MVC architecture and best practices."
     },
     {
       "filename": "scientific-paper-research.agent.md",
