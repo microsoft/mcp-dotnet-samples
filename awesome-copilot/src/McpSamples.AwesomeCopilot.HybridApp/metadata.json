@@ -505,6 +505,11 @@
       "description": "Generate release notes for a release in Octopus Deploy. The tools for this MCP server provide access to the Octopus Deploy APIs."
     },
     {
+      "filename": "one-shot-feature-issue-planner.agent.md",
+      "description": "Cloud Agent to Turn a single new-feature request into a complete, issue-ready implementation plan without follow-up questions.",
+      "name": "one-shot-feature-issue-planner"
+    },
+    {
       "filename": "openapi-to-application.agent.md",
       "description": "Expert assistant for generating working applications from OpenAPI specifications",
       "name": "OpenAPI to Application Generator"
@@ -2625,6 +2630,11 @@
       "filename": "sponsor-finder/SKILL.md",
       "name": "sponsor-finder",
       "description": "Find which of a GitHub repository\u0027s dependencies are sponsorable via GitHub Sponsors. Uses deps.dev API for dependency resolution across npm, PyPI, Cargo, Go, RubyGems, Maven, and NuGet. Checks npm funding metadata, FUNDING.yml files, and web search. Verifies every link. Shows direct and transitive dependencies with OSSF Scorecard health data. Invoke with /sponsor followed by a GitHub owner/repo (e.g. \u0022/sponsor expressjs/express\u0022)."
+    },
+    {
+      "filename": "spring-boot-testing/SKILL.md",
+      "name": "spring-boot-testing",
+      "description": "Expert Spring Boot 4 testing specialist that selects the best Spring Boot testing techniques for your situation with Junit 6 and AssertJ."
     },
     {
       "filename": "sql-code-review/SKILL.md",
