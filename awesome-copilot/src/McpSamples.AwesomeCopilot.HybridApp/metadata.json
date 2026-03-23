@@ -366,6 +366,11 @@
       "description": "GitHub Actions specialist focused on secure CI/CD workflows, action pinning, OIDC authentication, permissions least privilege, and supply-chain security"
     },
     {
+      "filename": "github-actions-node-upgrade.agent.md",
+      "name": "GitHub Actions Node Runtime Upgrade",
+      "description": "Upgrade a GitHub Actions JavaScript/TypeScript action to a newer Node runtime version (e.g., node20 to node24) with major version bump, CI updates, and full validation"
+    },
+    {
       "filename": "go-mcp-expert.agent.md",
       "description": "Expert assistant for building Model Context Protocol (MCP) servers in Go using the official SDK.",
       "name": "Go MCP Server Development Expert"
