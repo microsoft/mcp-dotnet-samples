@@ -256,6 +256,11 @@
       "description": "Support development of .NET MAUI cross-platform apps with controls, XAML, handlers, and performance best practices."
     },
     {
+      "filename": "dotnet-self-learning-architect.agent.md",
+      "name": ".NET Self-Learning Architect",
+      "description": "Senior .NET architect for complex delivery: designs .NET 6\u002B systems, decides between parallel subagents and orchestrated team execution, documents lessons learned, and captures durable project memory for future work."
+    },
+    {
       "filename": "dotnet-upgrade.agent.md",
       "description": "Perform janitorial tasks on C#/.NET code including cleanup, modernization, and tech debt remediation.",
       "name": ".NET Upgrade"
