@@ -103,6 +103,12 @@
       "name": "Azure Logic Apps Expert Mode"
     },
     {
+      "filename": "azure-policy-analyzer.agent.md",
+      "name": "Azure Policy Analyzer",
+      "description": "Analyze Azure Policy compliance posture (NIST SP 800-53, MCSB, CIS, ISO 27001, PCI DSS, SOC 2), auto-discover scope, and return a structured single-pass risk report with evidence and remediation commands.",
+      "argument-hint": "Describe the Azure Policy analysis task. Scope is auto-detected unless explicitly provided."
+    },
+    {
       "filename": "azure-principal-architect.agent.md",
       "description": "Provide expert Azure Principal Architect guidance using Azure Well-Architected Framework principles and Microsoft best practices.",
       "name": "Azure Principal Architect mode instructions"
@@ -2027,6 +2033,11 @@
       "description": "Review the C#/.NET code for design pattern implementation and suggest improvements."
     },
     {
+      "filename": "dotnet-timezone/SKILL.md",
+      "name": "dotnet-timezone",
+      "description": ".NET timezone handling guidance for C# applications. Use when working with TimeZoneInfo, DateTimeOffset, NodaTime, UTC conversion, daylight saving time, scheduling across timezones, cross-platform Windows/IANA timezone IDs, or when a .NET user needs the timezone for a city, address, region, or country and copy-paste-ready C# code."
+    },
+    {
       "filename": "dotnet-upgrade/SKILL.md",
       "name": "dotnet-upgrade",
       "description": "Ready-to-use prompts for comprehensive .NET framework upgrade analysis and execution"
@@ -2054,7 +2065,7 @@
     {
       "filename": "eval-driven-dev/SKILL.md",
       "name": "eval-driven-dev",
-      "description": "Instrument Python LLM apps, build golden datasets, write eval-based tests, run them, and root-cause failures \u2014 covering the full eval-driven development cycle. Make sure to use this skill whenever a user is developing, testing, QA-ing, evaluating, or benchmarking a Python project that calls an LLM, even if they don\u0027t say \u0022evals\u0022 explicitly. Use for making sure an AI app works correctly, catching regressions after prompt changes, debugging why an agent started behaving differently, or validating output quality before shipping."
+      "description": "Add instrumentation, build golden datasets, write eval-based tests, run them, root-cause failures, and iterate \u2014 Ensure your Python LLM application works correctly. Make sure to use this skill whenever a user is developing, testing, QA-ing, evaluating, or benchmarking a Python project that calls an LLM. Use for making sure an LLM application works correctly, catching regressions after prompt changes, fixing unexpected behavior, or validating output quality before shipping."
     },
     {
       "filename": "excalidraw-diagram-generator/SKILL.md",
