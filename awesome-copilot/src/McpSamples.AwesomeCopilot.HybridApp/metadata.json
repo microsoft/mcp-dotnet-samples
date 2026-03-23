@@ -1287,8 +1287,16 @@
       "description": "Markdown accessibility guidelines based on GitHub\u0027s 5 best practices for inclusive documentation"
     },
     {
+      "filename": "markdown-content-creation.instructions.md",
+      "description": "Markdown guidelines and content creation standards for blog posts"
+    },
+    {
+      "filename": "markdown-gfm.instructions.md",
+      "description": "Markdown formatting for GitHub-flavored markdown (GFM) files"
+    },
+    {
       "filename": "markdown.instructions.md",
-      "description": "Documentation and content creation standards"
+      "description": "Markdown formatting aligned to the CommonMark specification (0.31.2)"
     },
     {
       "filename": "mcp-m365-copilot.instructions.md",
