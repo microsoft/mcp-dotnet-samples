@@ -836,6 +836,11 @@
       "name": "Task Researcher Instructions"
     },
     {
+      "filename": "taxcore-technical-writer.agent.md",
+      "description": "A domain-expert technical writer for the TaxCore electronic fiscal invoicing ecosystem. Use this agent to create, improve, or review documentation for TaxCore applications \u2014 including the Secure Element Reader, smart card workflows, fiscal invoicing concepts, audit processes, and PKI/SE security topics. Covers end-user guides, developer docs, reference material, and setup guides across all TaxCore-related surfaces.",
+      "name": "TaxCore Technical Writer"
+    },
+    {
       "filename": "tdd-green.agent.md",
       "description": "Implement minimal code to satisfy GitHub issue requirements and make failing tests pass without over-engineering.",
       "name": "TDD Green Phase - Make Tests Pass Quickly"
@@ -2591,6 +2596,11 @@
       "description": "Generate a complete MCP server project in Python with tools, resources, and proper configuration"
     },
     {
+      "filename": "quality-playbook/SKILL.md",
+      "name": "quality-playbook",
+      "description": "Explore any codebase from scratch and generate six quality artifacts: a quality constitution (QUALITY.md), spec-traced functional tests, a code review protocol, an integration testing protocol, a multi-model spec audit (Council of Three), and an AI bootstrap file (AGENTS.md). Works with any language (Python, Java, Scala, TypeScript, Go, Rust, etc.). Use this skill whenever the user asks to set up a quality playbook, generate functional tests from specifications, create a quality constitution, build testing protocols, audit code against specs, or establish a repeatable quality system for a project. Also trigger when the user mentions \u0027quality playbook\u0027, \u0027spec audit\u0027, \u0027Council of Three\u0027, \u0027fitness-to-purpose\u0027, \u0027coverage theater\u0027, or wants to go beyond basic test generation to build a full quality system grounded in their actual codebase."
+    },
+    {
       "filename": "quasi-coder/SKILL.md",
       "name": "quasi-coder",
       "description": "Expert 10x engineer skill for interpreting and implementing code from shorthand, quasi-code, and natural language descriptions. Use when collaborators provide incomplete code snippets, pseudo-code, or descriptions with potential typos or incorrect terminology. Excels at translating non-technical or semi-technical descriptions into production-quality code."
@@ -2639,6 +2649,16 @@
       "filename": "reviewing-oracle-to-postgres-migration/SKILL.md",
       "name": "reviewing-oracle-to-postgres-migration",
       "description": "Identifies Oracle-to-PostgreSQL migration risks by cross-referencing code against known behavioral differences (empty strings, refcursors, type coercion, sorting, timestamps, concurrent transactions, etc.). Use when planning a database migration, reviewing migration artifacts, or validating that integration tests cover Oracle/PostgreSQL differences."
+    },
+    {
+      "filename": "roundup-setup/SKILL.md",
+      "name": "roundup-setup",
+      "description": "Interactive onboarding that learns your communication style, audiences, and data sources to configure personalized status briefings. Paste in examples of updates you already write, answer a few questions, and roundup calibrates itself to your workflow."
+    },
+    {
+      "filename": "roundup/SKILL.md",
+      "name": "roundup",
+      "description": "Generate personalized status briefings on demand. Pulls from your configured data sources (GitHub, email, Teams, Slack, and more), synthesizes across them, and drafts updates in your own communication style for any audience you define."
     },
     {
       "filename": "ruby-mcp-server-generator/SKILL.md",
