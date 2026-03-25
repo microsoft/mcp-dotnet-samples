@@ -1701,6 +1701,11 @@
       "description": "Analyze Azure resources used in the app (IaC files and/or resources in a target rg) and optimize costs - creating GitHub issues for identified optimizations."
     },
     {
+      "filename": "azure-architecture-autopilot/SKILL.md",
+      "name": "azure-architecture-autopilot",
+      "description": "Design Azure infrastructure using natural language, or analyze existing Azure resources to auto-generate architecture diagrams, refine them through conversation, and deploy with Bicep.\nWhen to use this skill: - \u0022Create X on Azure\u0022, \u0022Set up a RAG architecture\u0022 (new design) - \u0022Analyze my current Azure infrastructure\u0022, \u0022Draw a diagram for rg-xxx\u0022 (existing analysis) - \u0022Foundry is slow\u0022, \u0022I want to reduce costs\u0022, \u0022Strengthen security\u0022 (natural language modification) - Azure resource deployment, Bicep template generation, IaC code generation - Microsoft Foundry, AI Search, OpenAI, Fabric, ADLS Gen2, Databricks, and all Azure services"
+    },
+    {
       "filename": "azure-deployment-preflight/SKILL.md",
       "name": "azure-deployment-preflight",
       "description": "Performs comprehensive preflight validation of Bicep deployments to Azure, including template syntax validation, what-if analysis, and permission checks. Use this skill before any deployment to Azure to preview changes, identify potential issues, and ensure the deployment will succeed. Activate when users mention deploying to Azure, validating Bicep files, checking deployment permissions, previewing infrastructure changes, running what-if, or preparing for azd provision."
