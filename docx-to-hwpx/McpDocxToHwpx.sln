@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSamples.DocxToHwpx.HybridApp", "src\McpSamples.DocxToHwpx.HybridApp\McpSamples.DocxToHwpx.HybridApp.csproj", "{34F5E910-B800-425B-BD65-C965F00671D0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSamples.Shared", "..\shared\McpSamples.Shared\McpSamples.Shared.csproj", "{6C4914A6-E47B-49C5-BC11-65F4123B270B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSamples.DocxToHwpx.HybridApp", "src\McpSamples.DocxToHwpx.HybridApp\McpSamples.DocxToHwpx.HybridApp.csproj", "{34F5E910-B800-425B-BD65-C965F00671D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +48,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{6C4914A6-E47B-49C5-BC11-65F4123B270B} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{34F5E910-B800-425B-BD65-C965F00671D0} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal
