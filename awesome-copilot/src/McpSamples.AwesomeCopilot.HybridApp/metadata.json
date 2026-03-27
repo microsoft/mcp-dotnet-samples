@@ -1200,6 +1200,10 @@
       "description": ".NET WPF component and application patterns"
     },
     {
+      "filename": "draw-io.instructions.md",
+      "description": "Use when creating, editing, or reviewing draw.io diagrams and mxGraph XML in .drawio, .drawio.svg, or .drawio.png files."
+    },
+    {
       "filename": "fedora-linux.instructions.md",
       "description": "Guidance for Fedora (Red Hat family) systems, dnf workflows, SELinux, and modern systemd practices."
     },
@@ -2001,6 +2005,11 @@
       "description": "Get best practices for XUnit unit testing, including data-driven tests"
     },
     {
+      "filename": "daily-prep/SKILL.md",
+      "name": "daily-prep",
+      "description": "Prepare for tomorrow\u0027s meetings and tasks. Pulls calendar from Outlook via WorkIQ, cross-references open tasks and workspace context, classifies meetings, detects conflicts and day-fit issues, finds learning and deep-work slots, and generates a structured HTML prep file with productivity recommendations."
+    },
+    {
       "filename": "datanalysis-credit-risk/SKILL.md",
       "name": "datanalysis-credit-risk",
       "description": "Credit risk data cleaning and variable screening pipeline for pre-loan modeling. Use when working with raw credit data that needs quality assessment,  missing value analysis, or variable selection before modeling. it covers data loading and formatting, abnormal period filtering, missing rate calculation, high-missing variable removal,low-IV variable filtering, high-PSI variable removal, Null Importance denoising, high-correlation variable removal, and cleaning report generation. Applicable scenarios arecredit risk data cleaning, variable screening, pre-loan modeling preprocessing."
@@ -2076,6 +2085,11 @@
       "description": "Three-layer verification pipeline for AI output. Extracts verifiable claims, finds supporting or contradicting sources via web search, runs adversarial review for hallucination patterns, and produces a structured verification report with source links for human review."
     },
     {
+      "filename": "draw-io-diagram-generator/SKILL.md",
+      "name": "draw-io-diagram-generator",
+      "description": "Use when creating, editing, or generating draw.io diagram files (.drawio, .drawio.svg, .drawio.png). Covers mxGraph XML authoring, shape libraries, style strings, flowcharts, system architecture, sequence diagrams, ER diagrams, UML class diagrams, network topology, layout strategy, the hediet.vscode-drawio VS Code extension, and the full agent workflow from request to a ready-to-open file."
+    },
+    {
       "filename": "editorconfig/SKILL.md",
       "name": "editorconfig",
       "description": "Generates a comprehensive and best-practice-oriented .editorconfig file based on project analysis and user preferences."
@@ -2084,6 +2098,11 @@
       "filename": "ef-core/SKILL.md",
       "name": "ef-core",
       "description": "Get best practices for Entity Framework Core"
+    },
+    {
+      "filename": "email-drafter/SKILL.md",
+      "name": "email-drafter",
+      "description": "Draft and review professional emails that match your personal writing style. Analyzes your sent emails for tone, greeting, structure, and sign-off patterns via WorkIQ, then generates context-aware drafts for any recipient. USE FOR: draft email, write email, compose email, reply email, follow-up email, analyze email tone, email style."
     },
     {
       "filename": "entra-agent-user/SKILL.md",
@@ -2664,6 +2683,11 @@
       "filename": "ruby-mcp-server-generator/SKILL.md",
       "name": "ruby-mcp-server-generator",
       "description": "Generate a complete Model Context Protocol server project in Ruby using the official MCP Ruby SDK gem."
+    },
+    {
+      "filename": "ruff-recursive-fix/SKILL.md",
+      "name": "ruff-recursive-fix",
+      "description": "Run Ruff checks with optional scope and rule overrides, apply safe and unsafe autofixes iteratively, review each change, and resolve remaining findings with targeted edits or user decisions."
     },
     {
       "filename": "rust-mcp-server-generator/SKILL.md",
