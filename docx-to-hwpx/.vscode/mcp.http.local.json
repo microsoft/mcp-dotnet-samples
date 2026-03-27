@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "markdown-to-html": {
+      "type": "http",
+      "url": "http://localhost:5280/mcp"
+    }
+  }
+}

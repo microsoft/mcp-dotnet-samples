@@ -1,0 +1,23 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "consoleapp-project-path",
+      "description": "The absolute path to the console app project Directory"
+    }
+  ],
+  "servers": {
+    "markdown-to-html": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${input:consoleapp-project-path}",
+        "--",
+        "-tc",
+        "-p"
+      ]
+    }
+  }
+}
