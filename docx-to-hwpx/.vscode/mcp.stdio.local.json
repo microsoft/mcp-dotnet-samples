@@ -7,16 +7,13 @@
     }
   ],
   "servers": {
-    "markdown-to-html": {
+    "docx-to-hwpx": {
       "type": "stdio",
       "command": "dotnet",
       "args": [
         "run",
         "--project",
-        "${input:consoleapp-project-path}",
-        "--",
-        "-tc",
-        "-p"
+        "${input:consoleapp-project-path}"
       ]
     }
   }

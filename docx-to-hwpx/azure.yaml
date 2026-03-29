@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 
-name: markdown-to-html
+name: docx-to-hwpx
 
 metadata:
-  template: azd-init@1.14.0
+  template: docx-to-hwpx@1.14.0
 
 services:
-  markdown-to-html:
-    project: src/McpSamples.MarkdownToHtml.HybridApp
+  docx-to-hwpx:
+    project: src/McpSamples.DocxToHwpx.HybridApp
     host: containerapp
     language: dotnet
     docker:
-      path: ../../../Dockerfile.markdown-to-html-azure
+      path: ../../../Dockerfile.docx-to-hwpx-azure
       context: ../../../
       remoteBuild: true

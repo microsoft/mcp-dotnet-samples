@@ -7,7 +7,8 @@
     "ghcr.io/azure/azure-dev/azd:latest": {},
     "ghcr.io/devcontainers/features/common-utils:latest": {},
     "ghcr.io/devcontainers/features/dotnet:latest": {
-      "version": "9.0"
+      "version": "10.0",
+      "additionalVersions": "9.0"
     },
     "ghcr.io/devcontainers/features/azure-cli:latest": {
       "extensions": "account,containerapp,deploy-to-azure,subscription"
@@ -16,6 +17,10 @@
     "ghcr.io/devcontainers/features/github-cli:latest": {},
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:latest": {},
     "ghcr.io/devcontainers/features/node:latest": {},
+    "ghcr.io/devcontainers/features/python:latest": {
+      "installTools": true,
+      "toolsToInstall": "flake8,autopep8,black,yapf,mypy,pydocstyle,pycodestyle,bandit,pipenv,virtualenv,pytest,pylint,uv"
+    },
     "ghcr.io/prom3theu5/aspirational-manifests/aspirate:latest": {}
   },
 

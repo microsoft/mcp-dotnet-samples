@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1
+
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+COPY ./shared/McpSamples.Shared /source/shared/McpSamples.Shared
+COPY ./docx-to-hwpx/src/McpSamples.DocxToHwpx.HybridApp /source/docx-to-hwpx/src/McpSamples.DocxToHwpx.HybridApp
+
+WORKDIR /source/docx-to-hwpx/src/McpSamples.DocxToHwpx.HybridApp
+
+RUN dotnet publish -c Release -o /app --self-contained false
+
+RUN dotnet tool install --global CSnakes.Stage
+ENV PATH="/root/.dotnet/tools:${PATH}"
+RUN setup-python --python 3.12 --venv /app/.venv --verbose
+
+RUN uv pip install -r /source/docx-to-hwpx/src/McpSamples.DocxToHwpx.HybridApp/requirements.txt --python /app/.venv
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends pandoc && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=build /app .
+COPY --from=build /root/.config/CSnakes /home/app/.config/CSnakes
+COPY --from=build /app/.venv /app/.venv
+
+USER $APP_UID
+
+ENTRYPOINT ["dotnet", "McpSamples.DocxToHwpx.HybridApp.dll"]

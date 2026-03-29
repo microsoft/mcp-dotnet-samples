@@ -7,7 +7,7 @@
     }
   ],
   "servers": {
-    "markdown-to-html": {
+    "docx-to-hwpx": {
       "type": "http",
       "url": "https://${input:acaapp-server-fqdn}/mcp"
     }

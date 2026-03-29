@@ -1,6 +1,6 @@
 {
   "servers": {
-    "markdown-to-html": {
+    "docx-to-hwpx": {
       "type": "http",
       "url": "http://localhost:8080/mcp"
     }

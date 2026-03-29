@@ -1,15 +1,13 @@
 {
   "servers": {
-    "markdown-to-html": {
+    "docx-to-hwpx": {
       "type": "stdio",
       "command": "docker",
       "args": [
         "run",
         "-i",
         "--rm",
-        "ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest",
-        "-tc",
-        "-p"
+        "ghcr.io/microsoft/mcp-dotnet-samples/docx-to-hwpx:latest"
       ]
     }
   }

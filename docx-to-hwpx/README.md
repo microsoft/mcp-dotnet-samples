@@ -1,27 +1,33 @@
-# MCP Server: Markdown to HTML
+# MCP Server: .docx to .hwpx Converter
 
-This is an MCP server that converts markdown text to HTML.
+This is an MCP server that converts `.docx`, `.html`, and `.md` files to `.hwpx` (Hangul Word Processor XML) format using [pypandoc-hwpx](https://pypi.org/project/pypandoc-hwpx/).
 
 ## Install
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%7B%22name%22%3A%22markdown-to-html%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Fmarkdown-to-html%3Alatest%22%5D%7D) [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%7B%22name%22%3A%22markdown-to-html%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Fmarkdown-to-html%3Alatest%22%5D%7D) [![Install in Visual Studio](https://img.shields.io/badge/Visual_Studio-Install-C16FDE?logo=visualstudio&logoColor=white)](https://aka.ms/vs/mcp-install?%7B%22name%22%3A%22markdown-to-html%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Fmarkdown-to-html%3Alatest%22%5D%7D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%7B%22name%22%3A%22docx-to-hwpx%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Fdocx-to-hwpx%3Alatest%22%5D%7D) [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%7B%22name%22%3A%22docx-to-hwpx%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Fdocx-to-hwpx%3Alatest%22%5D%7D) [![Install in Visual Studio](https://img.shields.io/badge/Visual_Studio-Install-C16FDE?logo=visualstudio&logoColor=white)](https://aka.ms/vs/mcp-install?%7B%22name%22%3A%22docx-to-hwpx%22%2C%22gallery%22%3Afalse%2C%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22ghcr.io%2Fmicrosoft%2Fmcp-dotnet-samples%2Fdocx-to-hwpx%3Alatest%22%5D%7D)
 
 ## Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [Pandoc](https://pandoc.org/installing.html)
+- [uv](https://docs.astral.sh/uv/) package manager
 - [Visual Studio Code](https://code.visualstudio.com/) with
   - [C# Dev Kit](https://marketplace.visualstudio.com/items/?itemName=ms-dotnettools.csdevkit) extension
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
 - [Docker Desktop](https://docs.docker.com/get-started/get-docker/)
 
+> **Note**: Python is automatically downloaded and managed by [CSnakes](https://github.com/tonybaloney/CSnakes) at runtime. You do not need to install Python separately.
+
 ## What's Included
 
-Markdown to HTML MCP server includes:
+.docx to .hwpx MCP server includes:
 
-| Building Block | Name                       | Description                         | Usage                       |
-|----------------|----------------------------|-------------------------------------|-----------------------------|
-| Tools          | `convert_markdown_to_html` | Converts markdown document to HTML. | `#convert_markdown_to_html` |
+| Building Block | Name                    | Description                       | Usage                    |
+|----------------|-------------------------|-----------------------------------|--------------------------|
+| Tools          | `convert_docx_to_hwpx`  | Converts .docx file to .hwpx.    | `#convert_docx_to_hwpx`  |
+| Tools          | `convert_html_to_hwpx`  | Converts .html file to .hwpx.    | `#convert_html_to_hwpx`  |
+| Tools          | `convert_md_to_hwpx`    | Converts .md file to .hwpx.      | `#convert_md_to_hwpx`    |
 
 ## Getting Started
 
@@ -54,23 +60,20 @@ Markdown to HTML MCP server includes:
 1. Run the MCP server app.
 
     ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
-    dotnet run --project ./src/McpSamples.MarkdownToHtml.HybridApp
+    cd $REPOSITORY_ROOT/docx-to-hwpx
+    dotnet run --project ./src/McpSamples.DocxToHwpx.HybridApp
     ```
 
-   > Make sure take note the absolute directory path of the `McpSamples.MarkdownToHtml.HybridApp` project.
+   > Make sure take note the absolute directory path of the `McpSamples.DocxToHwpx.HybridApp` project.
 
    **Parameters**:
 
-   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5280`.
-   - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5270`.
 
    With these parameters, you can run the MCP server like:
 
    ```bash
-   dotnet run --project ./src/McpSamples.MarkdownToHtml.HybridApp -- --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   dotnet run --project ./src/McpSamples.DocxToHwpx.HybridApp -- --http
    ```
 
 #### In a container
@@ -79,38 +82,35 @@ Markdown to HTML MCP server includes:
 
     ```bash
     cd $REPOSITORY_ROOT
-    docker build -f Dockerfile.markdown-to-html -t markdown-to-html:latest .
+    docker build -f Dockerfile.docx-to-hwpx -t docx-to-hwpx:latest .
     ```
 
 1. Run the MCP server app in a container.
 
     ```bash
-    docker run -i --rm -p 8080:8080 markdown-to-html:latest
+    docker run -i --rm -p 8080:8080 docx-to-hwpx:latest
     ```
 
    Alternatively, use the container image from the container registry.
 
     ```bash
-    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest
+    docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/docx-to-hwpx:latest
     ```
 
    **Parameters**:
 
    - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:8080`.
-   - `--tech-community`/`-tc`: The switch that indicates to convert the markdown text to HTML specific to Microsoft Tech Community.
-   - `--extra-paragraph`/`-p`: The switch that indicates whether to put extra paragraph between the given HTML elements that is defined by the `--tags` argument.
-   - `--tags`: The comma delimited list of HTML tags that adds extra paragraph in between. Default value is `p,blockquote,h1,h2,h3,h4,h5,h6,ol,ul,dl`
 
    With these parameters, you can run the MCP server like:
 
    ```bash
    # use local container image
-   docker run -i --rm -p 8080:8080 markdown-to-html:latest --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   docker run -i --rm -p 8080:8080 docx-to-hwpx:latest --http
    ```
 
    ```bash
    # use container image from the container registry
-   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/markdown-to-html:latest --http -tc -p --tags "p,h1,h2,h3,ol,ul,dl"
+   docker run -i --rm -p 8080:8080 ghcr.io/microsoft/mcp-dotnet-samples/docx-to-hwpx:latest --http
    ```
 
 #### On Azure
@@ -118,7 +118,7 @@ Markdown to HTML MCP server includes:
 1. Navigate to the directory.
 
     ```bash
-    cd $REPOSITORY_ROOT/markdown-to-html
+    cd $REPOSITORY_ROOT/docx-to-hwpx
     ```
 
 1. Login to Azure.
@@ -141,7 +141,7 @@ Markdown to HTML MCP server includes:
    - Azure Container Apps FQDN:
 
      ```bash
-     azd env get-value AZURE_RESOURCE_MCP_MD2HTML_FQDN
+     azd env get-value AZURE_RESOURCE_MCP_DOCX2HWPX_FQDN
      ```
 
 ### Connect MCP server to an MCP host/client
@@ -154,13 +154,13 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.local.json \
+    cp $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.stdio.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.stdio.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -168,13 +168,13 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.local.json \
+    cp $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.http.local.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.local.json `
+    Copy-Item -Path $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.http.local.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -182,13 +182,13 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json \
+    cp $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.stdio.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.stdio.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.stdio.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -196,13 +196,13 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.container.json \
+    cp $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.http.container.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.container.json `
+    Copy-Item -Path $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.http.container.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
@@ -210,25 +210,25 @@ Markdown to HTML MCP server includes:
 
     ```bash
     mkdir -p $REPOSITORY_ROOT/.vscode
-    cp $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.remote.json \
+    cp $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.http.remote.json \
        $REPOSITORY_ROOT/.vscode/mcp.json
     ```
 
     ```powershell
     New-Item -Type Directory -Path $REPOSITORY_ROOT/.vscode -Force
-    Copy-Item -Path $REPOSITORY_ROOT/markdown-to-html/.vscode/mcp.http.remote.json `
+    Copy-Item -Path $REPOSITORY_ROOT/docx-to-hwpx/.vscode/mcp.http.remote.json `
               -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
 1. Open Command Palette by typing `F1` or `Ctrl`+`Shift`+`P` on Windows or `Cmd`+`Shift`+`P` on Mac OS, and search `MCP: List Servers`.
-1. Choose `markdown-to-html` then click `Start Server`.
+1. Choose `docx-to-hwpx` then click `Start Server`.
 1. When prompted, enter one of the following values:
-   - The absolute directory path of the `McpSamples.MarkdownToHtml.HybridApp` project
+   - The absolute directory path of the `McpSamples.DocxToHwpx.HybridApp` project
    - The FQDN of Azure Container Apps.
 1. Enter prompt like:
 
     ```text
-    Convert the highlighted markdown text to HTML and save it to `converted.html` at the repository root. DO NOT alter the converted HTML.
+    Convert the given .docx file to .hwpx and save it to `converted.hwpx` at the repository root.
     ```
 
 1. Confirm the result.

@@ -1,3 +1,5 @@
+using CSnakes.Runtime;
+
 using McpSamples.DocxToHwpx.HybridApp.Configurations;
 using McpSamples.Shared.Configurations;
 using McpSamples.Shared.Extensions;
@@ -9,6 +11,16 @@ IHostApplicationBuilder builder = useStreamableHttp
                                 : Host.CreateApplicationBuilder(args);
 
 builder.Services.AddAppSettings<DocxToHwpxAppSettings>(builder.Configuration, args);
+
+var home = Path.Join(AppContext.BaseDirectory, ".");
+var venvPath = Path.Join(home, ".venv");
+
+builder.Services
+    .WithPython()
+    .WithHome(home)
+    .FromRedistributable()
+    .WithVirtualEnvironment(venvPath)
+    .WithUvInstaller("requirements.txt");
 
 IHost app = builder.BuildApp(useStreamableHttp);
 
