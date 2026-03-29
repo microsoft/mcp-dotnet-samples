@@ -1625,6 +1625,10 @@
       "description": "Automatically update README.md and documentation files when application code changes require documentation updates"
     },
     {
+      "filename": "use-cliche-data-in-docs.instructions.md",
+      "description": "Ensure documentation and examples use only generic, cliche placeholder data \u2014 never real or sensitive data sourced from local scripts, configuration, task files, or prompt context."
+    },
+    {
       "filename": "vsixtoolkit.instructions.md",
       "description": "Guidelines for Visual Studio extension (VSIX) development using Community.VisualStudio.Toolkit"
     },
@@ -2112,7 +2116,7 @@
     {
       "filename": "eval-driven-dev/SKILL.md",
       "name": "eval-driven-dev",
-      "description": "Add instrumentation, build golden datasets, write eval-based tests, run them, root-cause failures, and iterate \u2014 Ensure your Python LLM application works correctly. Make sure to use this skill whenever a user is developing, testing, QA-ing, evaluating, or benchmarking a Python project that calls an LLM. Use for making sure an LLM application works correctly, catching regressions after prompt changes, fixing unexpected behavior, or validating output quality before shipping."
+      "description": "Set up eval-based QA for Python LLM applications: instrument the app, build golden datasets, write and run eval tests, and iterate on failures. ALWAYS USE THIS SKILL when the user asks to set up QA, add tests, add evals, evaluate, benchmark, fix wrong behaviors, improve quality, or do quality assurance for any Python project that calls an LLM model.\n"
     },
     {
       "filename": "excalidraw-diagram-generator/SKILL.md",
@@ -2793,6 +2797,11 @@
       "filename": "terraform-azurerm-set-diff-analyzer/SKILL.md",
       "name": "terraform-azurerm-set-diff-analyzer",
       "description": "Analyze Terraform plan JSON output for AzureRM Provider to distinguish between false-positive diffs (order-only changes in Set-type attributes) and actual resource changes. Use when reviewing terraform plan output for Azure resources like Application Gateway, Load Balancer, Firewall, Front Door, NSG, and other resources with Set-type attributes that cause spurious diffs due to internal ordering changes."
+    },
+    {
+      "filename": "threat-model-analyst/SKILL.md",
+      "name": "threat-model-analyst",
+      "description": "Full STRIDE-A threat model analysis and incremental update skill for repositories and systems. Supports two modes: (1) Single analysis \u2014 full STRIDE-A threat model of a repository, producing architecture overviews, DFD diagrams, STRIDE-A analysis, prioritized findings, and executive assessments. (2) Incremental analysis \u2014 takes a previous threat model report as baseline, compares the codebase at the latest (or a given commit), and produces an updated report with change tracking (new, resolved, still-present threats), STRIDE heatmap, findings diff, and an embedded HTML comparison. Only activate when the user explicitly requests a threat model analysis, incremental update, or invokes /threat-model-analyst directly."
     },
     {
       "filename": "tldr-prompt/SKILL.md",
