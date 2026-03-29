@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 using McpSamples.Shared.Configurations;
 
 using Microsoft.OpenApi;

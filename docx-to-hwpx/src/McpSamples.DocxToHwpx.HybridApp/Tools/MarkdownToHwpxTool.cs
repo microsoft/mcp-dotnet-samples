@@ -12,16 +12,16 @@ namespace McpSamples.DocxToHwpx.HybridApp.Tools;
 /// <param name="settings"><see cref="DocxToHwpxAppSettings"/> instance.</param>
 /// <param name="logger"><see cref="ILogger{TCategoryName}"/> instance.</param>
 [McpServerToolType]
-public class DocxToHwpxTool(DocxToHwpxAppSettings settings, ILogger<DocxToHwpxTool> logger) : IDocumentToHwpxTool
+public class MarkdownToHwpxTool(DocxToHwpxAppSettings settings, ILogger<MarkdownToHwpxTool> logger) : IDocumentToHwpxTool
 {
     private readonly DocxToHwpxAppSettings _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-    private readonly ILogger<DocxToHwpxTool> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly ILogger<MarkdownToHwpxTool> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <inheritdoc />
-    [McpServerTool(Name = "convert_docx_to_hwpx", Title = "Convert .docx to .hwpx")]
-    [Description("Converts .docx file to .hwpx file.")]
+    [McpServerTool(Name = "convert_md_to_hwpx", Title = "Convert .md to .hwpx")]
+    [Description("Converts .md file to .hwpx file.")]
     public async Task<string> ConvertAsync(
-        [Description("The input .docx filepath")] string? input,
+        [Description("The input .md filepath")] string? input,
         [Description("The output .hwpx filepath")] string? output,
         [Description("The reference template filepath")] string? reference = null)
     {
