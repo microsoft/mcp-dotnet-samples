@@ -322,42 +322,42 @@
     },
     {
       "filename": "gem-browser-tester.agent.md",
-      "description": "Automates E2E scenarios with Chrome DevTools MCP, Playwright, Agent Browser. UI/UX validation using browser automation tools and visual verification techniques",
+      "description": "E2E browser testing, UI/UX validation, visual regression, Playwright automation. Use when the user asks to test UI, run browser tests, verify visual appearance, check responsive design, or automate E2E scenarios. Triggers: \u0027test UI\u0027, \u0027browser test\u0027, \u0027E2E\u0027, \u0027visual regression\u0027, \u0027Playwright\u0027, \u0027responsive\u0027, \u0027click through\u0027, \u0027automate browser\u0027.",
       "name": "gem-browser-tester"
     },
     {
       "filename": "gem-devops.agent.md",
-      "description": "Manages containers, CI/CD pipelines, and infrastructure deployment",
+      "description": "Container management, CI/CD pipelines, infrastructure deployment, environment configuration. Use when the user asks to deploy, configure infrastructure, set up CI/CD, manage containers, or handle DevOps tasks. Triggers: \u0027deploy\u0027, \u0027CI/CD\u0027, \u0027Docker\u0027, \u0027container\u0027, \u0027pipeline\u0027, \u0027infrastructure\u0027, \u0027environment\u0027, \u0027staging\u0027, \u0027production\u0027.",
       "name": "gem-devops"
     },
     {
       "filename": "gem-documentation-writer.agent.md",
-      "description": "Generates technical docs, diagrams, maintains code-documentation parity",
+      "description": "Generates technical documentation, README files, API docs, diagrams, and walkthroughs. Use when the user asks to document, write docs, create README, generate API documentation, or produce technical writing. Triggers: \u0027document\u0027, \u0027write docs\u0027, \u0027README\u0027, \u0027API docs\u0027, \u0027walkthrough\u0027, \u0027technical writing\u0027, \u0027diagrams\u0027.",
       "name": "gem-documentation-writer"
     },
     {
       "filename": "gem-implementer.agent.md",
-      "description": "Executes TDD code changes, ensures verification, maintains quality",
+      "description": "Writes code using TDD (Red-Green), implements features, fixes bugs, refactors. Use when the user asks to implement, build, create, code, write, fix, or refactor. Never reviews its own work. Triggers: \u0027implement\u0027, \u0027build\u0027, \u0027create\u0027, \u0027code\u0027, \u0027write\u0027, \u0027fix\u0027, \u0027refactor\u0027, \u0027add feature\u0027.",
       "name": "gem-implementer"
     },
     {
       "filename": "gem-orchestrator.agent.md",
-      "description": "Team Lead - Coordinates multi-agent workflows with energetic announcements, delegates tasks, synthesizes results via runSubagent",
+      "description": "Multi-agent orchestration for project execution, feature implementation, and automated verification. Primary entry point for all tasks. Detects phase, routes to agents, synthesizes results. Never executes directly. Triggers: any user request, multi-step tasks, complex implementations, project coordination.",
       "name": "gem-orchestrator"
     },
     {
       "filename": "gem-planner.agent.md",
-      "description": "Creates DAG-based plans with pre-mortem analysis and task decomposition from research findings",
+      "description": "Creates DAG-based execution plans with task decomposition, wave scheduling, and pre-mortem risk analysis. Use when the user asks to plan, design an approach, break down work, estimate effort, or create an implementation strategy. Triggers: \u0027plan\u0027, \u0027design\u0027, \u0027break down\u0027, \u0027decompose\u0027, \u0027strategy\u0027, \u0027approach\u0027, \u0027how to implement\u0027.",
       "name": "gem-planner"
     },
     {
       "filename": "gem-researcher.agent.md",
-      "description": "Research specialist: gathers codebase context, identifies relevant files/patterns, returns structured findings",
+      "description": "Explores codebase, identifies patterns, maps dependencies, discovers architecture. Use when the user asks to research, explore, analyze code, find patterns, understand architecture, investigate dependencies, or gather context before implementation. Triggers: \u0027research\u0027, \u0027explore\u0027, \u0027find patterns\u0027, \u0027analyze\u0027, \u0027investigate\u0027, \u0027understand\u0027, \u0027look into\u0027.",
       "name": "gem-researcher"
     },
     {
       "filename": "gem-reviewer.agent.md",
-      "description": "Security gatekeeper for critical tasks\u2014OWASP, secrets, compliance",
+      "description": "Security auditing, code review, OWASP scanning, secrets/PII detection, PRD compliance verification. Use when the user asks to review, audit, check security, validate, or verify compliance. Never modifies code. Triggers: \u0027review\u0027, \u0027audit\u0027, \u0027check security\u0027, \u0027validate\u0027, \u0027verify\u0027, \u0027compliance\u0027, \u0027OWASP\u0027, \u0027secrets\u0027.",
       "name": "gem-reviewer"
     },
     {
