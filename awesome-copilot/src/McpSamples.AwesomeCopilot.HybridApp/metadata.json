@@ -326,6 +326,26 @@
       "name": "gem-browser-tester"
     },
     {
+      "filename": "gem-code-simplifier.agent.md",
+      "description": "Refactoring specialist \u2014 removes dead code, reduces complexity, consolidates duplicates, improves readability. Use when the user asks to simplify, refactor, clean up, reduce complexity, or remove dead code. Never adds features \u2014 only restructures existing code. Triggers: \u0027simplify\u0027, \u0027refactor\u0027, \u0027clean up\u0027, \u0027reduce complexity\u0027, \u0027dead code\u0027, \u0027remove unused\u0027, \u0027consolidate\u0027, \u0027improve naming\u0027.",
+      "name": "gem-code-simplifier"
+    },
+    {
+      "filename": "gem-critic.agent.md",
+      "description": "Challenges assumptions, finds edge cases, identifies over-engineering, spots logic gaps in plans and code. Use when the user asks to critique, challenge assumptions, find edge cases, review quality, or check for over-engineering. Never implements. Triggers: \u0027critique\u0027, \u0027challenge\u0027, \u0027edge cases\u0027, \u0027over-engineering\u0027, \u0027logic gaps\u0027, \u0027quality check\u0027, \u0027is this a good idea\u0027.",
+      "name": "gem-critic"
+    },
+    {
+      "filename": "gem-debugger.agent.md",
+      "description": "Root-cause analysis, stack trace diagnosis, regression bisection, error reproduction. Use when the user asks to debug, diagnose, find root cause, trace errors, or investigate failures. Never implements fixes. Triggers: \u0027debug\u0027, \u0027diagnose\u0027, \u0027root cause\u0027, \u0027why is this failing\u0027, \u0027trace error\u0027, \u0027bisect\u0027, \u0027regression\u0027.",
+      "name": "gem-debugger"
+    },
+    {
+      "filename": "gem-designer.agent.md",
+      "description": "UI/UX design specialist \u2014 creates layouts, themes, color schemes, design systems, and validates visual hierarchy, responsive design, and accessibility. Use when the user asks for design help, UI review, visual feedback, create a theme, responsive check, or design system. Triggers: \u0027design\u0027, \u0027UI\u0027, \u0027layout\u0027, \u0027theme\u0027, \u0027color\u0027, \u0027typography\u0027, \u0027responsive\u0027, \u0027design system\u0027, \u0027visual\u0027, \u0027accessibility\u0027, \u0027WCAG\u0027, \u0027design review\u0027.",
+      "name": "gem-designer"
+    },
+    {
       "filename": "gem-devops.agent.md",
       "description": "Container management, CI/CD pipelines, infrastructure deployment, environment configuration. Use when the user asks to deploy, configure infrastructure, set up CI/CD, manage containers, or handle DevOps tasks. Triggers: \u0027deploy\u0027, \u0027CI/CD\u0027, \u0027Docker\u0027, \u0027container\u0027, \u0027pipeline\u0027, \u0027infrastructure\u0027, \u0027environment\u0027, \u0027staging\u0027, \u0027production\u0027.",
       "name": "gem-devops"
@@ -2177,6 +2197,11 @@
       "filename": "game-engine/SKILL.md",
       "name": "game-engine",
       "description": "Expert skill for building web-based game engines and games using HTML5, Canvas, WebGL, and JavaScript. Use when asked to create games, build game engines, implement game physics, handle collision detection, set up game loops, manage sprites, add game controls, or work with 2D/3D rendering. Covers techniques for platformers, breakout-style games, maze games, tilemaps, audio, multiplayer via WebRTC, and publishing games."
+    },
+    {
+      "filename": "gdpr-compliant/SKILL.md",
+      "name": "gdpr-compliant",
+      "description": "Apply GDPR-compliant engineering practices across your codebase. Use this skill whenever you are designing APIs, writing data models, building authentication flows, implementing logging, handling user data, writing retention/deletion jobs, designing cloud infrastructure, or reviewing pull requests for privacy compliance. Trigger this skill for any task involving personal data, user accounts, cookies, analytics, emails, audit logs, encryption, pseudonymization, anonymization, data exports, breach response, CI/CD pipelines that process real data, or any question framed as \u0022is this GDPR-compliant?\u0022. Inspired by CNIL developer guidance and GDPR Articles 5, 25, 32, 33, 35."
     },
     {
       "filename": "gen-specs-as-issues/SKILL.md",
