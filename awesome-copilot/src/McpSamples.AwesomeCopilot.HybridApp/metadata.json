@@ -1704,6 +1704,51 @@
       "description": "Comprehensive project architecture blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks and architectural patterns, generates visual diagrams, documents implementation patterns, and provides extensible blueprints for maintaining architectural consistency and guiding new development."
     },
     {
+      "filename": "arize-ai-provider-integration/SKILL.md",
+      "name": "arize-ai-provider-integration",
+      "description": "INVOKE THIS SKILL when creating, reading, updating, or deleting Arize AI integrations. Covers listing integrations, creating integrations for any supported LLM provider (OpenAI, Anthropic, Azure OpenAI, AWS Bedrock, Vertex AI, Gemini, NVIDIA NIM, custom), updating credentials or metadata, and deleting integrations using the ax CLI."
+    },
+    {
+      "filename": "arize-annotation/SKILL.md",
+      "name": "arize-annotation",
+      "description": "INVOKE THIS SKILL when creating, managing, or using annotation configs on Arize (categorical, continuous, freeform), or applying human annotations to project spans via the Python SDK. Configs are the label schema for human feedback on spans and other surfaces in the Arize UI. Triggers: annotation config, label schema, human feedback schema, bulk annotate spans, update_annotations."
+    },
+    {
+      "filename": "arize-dataset/SKILL.md",
+      "name": "arize-dataset",
+      "description": "INVOKE THIS SKILL when creating, managing, or querying Arize datasets and examples. Covers dataset CRUD, appending examples, exporting data, and file-based dataset creation using the ax CLI."
+    },
+    {
+      "filename": "arize-evaluator/SKILL.md",
+      "name": "arize-evaluator",
+      "description": "INVOKE THIS SKILL for LLM-as-judge evaluation workflows on Arize: creating/updating evaluators, running evaluations on spans or experiments, tasks, trigger-run, column mapping, and continuous monitoring. Use when the user says: create an evaluator, LLM judge, hallucination/faithfulness/correctness/relevance, run eval, score my spans or experiment, ax tasks, trigger-run, trigger eval, column mapping, continuous monitoring, query filter for evals, evaluator version, or improve an evaluator prompt."
+    },
+    {
+      "filename": "arize-experiment/SKILL.md",
+      "name": "arize-experiment",
+      "description": "INVOKE THIS SKILL when creating, running, or analyzing Arize experiments. Covers experiment CRUD, exporting runs, comparing results, and evaluation workflows using the ax CLI."
+    },
+    {
+      "filename": "arize-instrumentation/SKILL.md",
+      "name": "arize-instrumentation",
+      "description": "INVOKE THIS SKILL when adding Arize AX tracing to an application. Follow the Agent-Assisted Tracing two-phase flow: analyze the codebase (read-only), then implement instrumentation after user confirmation. When the app uses LLM tool/function calling, add manual CHAIN \u002B TOOL spans so traces show each tool\u0027s input and output. Leverages https://arize.com/docs/ax/alyx/tracing-assistant and https://arize.com/docs/PROMPT.md."
+    },
+    {
+      "filename": "arize-link/SKILL.md",
+      "name": "arize-link",
+      "description": "Generate deep links to the Arize UI. Use when the user wants a clickable URL to open a specific trace, span, session, dataset, labeling queue, evaluator, or annotation config."
+    },
+    {
+      "filename": "arize-prompt-optimization/SKILL.md",
+      "name": "arize-prompt-optimization",
+      "description": "INVOKE THIS SKILL when optimizing, improving, or debugging LLM prompts using production trace data, evaluations, and annotations. Covers extracting prompts from spans, gathering performance signal, and running a data-driven optimization loop using the ax CLI."
+    },
+    {
+      "filename": "arize-trace/SKILL.md",
+      "name": "arize-trace",
+      "description": "INVOKE THIS SKILL when downloading or exporting Arize traces and spans. Covers exporting traces by ID, sessions by ID, and debugging LLM application issues using the ax CLI."
+    },
+    {
       "filename": "aspire/SKILL.md",
       "name": "aspire",
       "description": "Aspire skill covering the Aspire CLI, AppHost orchestration, service discovery, integrations, MCP server, VS Code extension, Dev Containers, GitHub Codespaces, templates, dashboard, and deployment. Use when the user asks to create, run, debug, configure, deploy, or troubleshoot an Aspire distributed application."
@@ -2314,6 +2359,11 @@
       "description": "Import existing Azure resources into Terraform using Azure CLI discovery and Azure Verified Modules (AVM). Use when asked to reverse-engineer live Azure infrastructure, generate Infrastructure as Code from existing subscriptions/resource groups/resource IDs, map dependencies, derive exact import addresses from downloaded module source, prevent configuration drift, and produce AVM-based Terraform files ready for validation and planning across any Azure resource type."
     },
     {
+      "filename": "integrate-context-matic/SKILL.md",
+      "name": "integrate-context-matic",
+      "description": "Discovers and integrates third-party APIs using the context-matic MCP server. Uses \u0060fetch_api\u0060 to find available API SDKs, \u0060ask\u0060 for integration guidance, \u0060model_search\u0060 and \u0060endpoint_search\u0060 for SDK details. Use when the user asks to integrate a third-party API, add an API client, implement features with an external API, or work with any third-party API or SDK."
+    },
+    {
       "filename": "issue-fields-migration/SKILL.md",
       "name": "issue-fields-migration",
       "description": "Bulk-migrate metadata to GitHub issue fields from two sources: repo labels (e.g. priority labels to a Priority field) and Project V2 fields. Use when users say \u0022migrate my labels to issue fields\u0022, \u0022migrate project fields to issue fields\u0022, \u0022convert labels to issue fields\u0022, \u0022copy project field values to issue fields\u0022, or ask about adopting issue fields. Issue fields are org-level typed metadata (single select, text, number, date) that replace label-based workarounds with structured, searchable, cross-repo fields."
@@ -2509,6 +2559,11 @@
       "description": "Manage NuGet packages in .NET projects/solutions. Use this skill when adding, removing, or updating NuGet package versions. It enforces using \u0060dotnet\u0060 CLI for package management and provides strict procedures for direct file edits only when updating versions."
     },
     {
+      "filename": "onboard-context-matic/SKILL.md",
+      "name": "onboard-context-matic",
+      "description": "Interactive onboarding tour for the context-matic MCP server. Walks the user through what the server does, shows all available APIs, lets them pick one to explore, explains it in their project language, demonstrates model_search and endpoint_search live, and ends with a menu of things the user can ask the agent to do. USE FOR: first-time setup; \u0022what can this MCP do?\u0022; \u0022show me the available APIs\u0022; \u0022onboard me\u0022; \u0022how do I use the context-matic server\u0022; \u0022give me a tour\u0022. DO NOT USE FOR: actually integrating an API end-to-end (use integrate-context-matic instead)."
+    },
+    {
       "filename": "oo-component-documentation/SKILL.md",
       "name": "oo-component-documentation",
       "description": "Create or update standardized object-oriented component documentation using a shared template plus mode-specific guidance for new and existing docs."
@@ -2527,6 +2582,21 @@
       "filename": "penpot-uiux-design/SKILL.md",
       "name": "penpot-uiux-design",
       "description": "Comprehensive guide for creating professional UI/UX designs in Penpot using MCP tools. Use this skill when: (1) Creating new UI/UX designs for web, mobile, or desktop applications, (2) Building design systems with components and tokens, (3) Designing dashboards, forms, navigation, or landing pages, (4) Applying accessibility standards and best practices, (5) Following platform guidelines (iOS, Android, Material Design), (6) Reviewing or improving existing Penpot designs for usability. Triggers: \u0022design a UI\u0022, \u0022create interface\u0022, \u0022build layout\u0022, \u0022design dashboard\u0022, \u0022create form\u0022, \u0022design landing page\u0022, \u0022make it accessible\u0022, \u0022design system\u0022, \u0022component library\u0022."
+    },
+    {
+      "filename": "phoenix-cli/SKILL.md",
+      "name": "phoenix-cli",
+      "description": "Debug LLM applications using the Phoenix CLI. Fetch traces, analyze errors, review experiments, inspect datasets, and query the GraphQL API. Use when debugging AI/LLM applications, analyzing trace data, working with Phoenix observability, or investigating LLM performance issues."
+    },
+    {
+      "filename": "phoenix-evals/SKILL.md",
+      "name": "phoenix-evals",
+      "description": "Build and run evaluators for AI/LLM applications using Phoenix."
+    },
+    {
+      "filename": "phoenix-tracing/SKILL.md",
+      "name": "phoenix-tracing",
+      "description": "OpenInference semantic conventions and instrumentation for Phoenix AI observability. Use when implementing LLM tracing, creating custom spans, or deploying to production."
     },
     {
       "filename": "php-mcp-server-generator/SKILL.md",
