@@ -327,62 +327,77 @@
     },
     {
       "filename": "gem-browser-tester.agent.md",
-      "description": "E2E browser testing, UI/UX validation, visual regression, Playwright automation. Use when the user asks to test UI, run browser tests, verify visual appearance, check responsive design, or automate E2E scenarios. Triggers: \u0027test UI\u0027, \u0027browser test\u0027, \u0027E2E\u0027, \u0027visual regression\u0027, \u0027Playwright\u0027, \u0027responsive\u0027, \u0027click through\u0027, \u0027automate browser\u0027.",
+      "description": "E2E browser testing, UI/UX validation, visual regression with browser.",
       "name": "gem-browser-tester"
     },
     {
       "filename": "gem-code-simplifier.agent.md",
-      "description": "Refactoring specialist \u2014 removes dead code, reduces complexity, consolidates duplicates, improves readability. Use when the user asks to simplify, refactor, clean up, reduce complexity, or remove dead code. Never adds features \u2014 only restructures existing code. Triggers: \u0027simplify\u0027, \u0027refactor\u0027, \u0027clean up\u0027, \u0027reduce complexity\u0027, \u0027dead code\u0027, \u0027remove unused\u0027, \u0027consolidate\u0027, \u0027improve naming\u0027.",
+      "description": "Refactoring specialist \u2014 removes dead code, reduces complexity, consolidates duplicates.",
       "name": "gem-code-simplifier"
     },
     {
       "filename": "gem-critic.agent.md",
-      "description": "Challenges assumptions, finds edge cases, identifies over-engineering, spots logic gaps in plans and code. Use when the user asks to critique, challenge assumptions, find edge cases, review quality, or check for over-engineering. Never implements. Triggers: \u0027critique\u0027, \u0027challenge\u0027, \u0027edge cases\u0027, \u0027over-engineering\u0027, \u0027logic gaps\u0027, \u0027quality check\u0027, \u0027is this a good idea\u0027.",
+      "description": "Challenges assumptions, finds edge cases, spots over-engineering and logic gaps.",
       "name": "gem-critic"
     },
     {
       "filename": "gem-debugger.agent.md",
-      "description": "Root-cause analysis, stack trace diagnosis, regression bisection, error reproduction. Use when the user asks to debug, diagnose, find root cause, trace errors, or investigate failures. Never implements fixes. Triggers: \u0027debug\u0027, \u0027diagnose\u0027, \u0027root cause\u0027, \u0027why is this failing\u0027, \u0027trace error\u0027, \u0027bisect\u0027, \u0027regression\u0027.",
+      "description": "Root-cause analysis, stack trace diagnosis, regression bisection, error reproduction.",
       "name": "gem-debugger"
     },
     {
+      "filename": "gem-designer-mobile.agent.md",
+      "description": "Mobile UI/UX specialist \u2014 HIG, Material Design, safe areas, touch targets.",
+      "name": "gem-designer-mobile"
+    },
+    {
       "filename": "gem-designer.agent.md",
-      "description": "UI/UX design specialist \u2014 creates layouts, themes, color schemes, design systems, and validates visual hierarchy, responsive design, and accessibility. Use when the user asks for design help, UI review, visual feedback, create a theme, responsive check, or design system. Triggers: \u0027design\u0027, \u0027UI\u0027, \u0027layout\u0027, \u0027theme\u0027, \u0027color\u0027, \u0027typography\u0027, \u0027responsive\u0027, \u0027design system\u0027, \u0027visual\u0027, \u0027accessibility\u0027, \u0027WCAG\u0027, \u0027design review\u0027.",
+      "description": "UI/UX design specialist \u2014 layouts, themes, color schemes, design systems, accessibility.",
       "name": "gem-designer"
     },
     {
       "filename": "gem-devops.agent.md",
-      "description": "Container management, CI/CD pipelines, infrastructure deployment, environment configuration. Use when the user asks to deploy, configure infrastructure, set up CI/CD, manage containers, or handle DevOps tasks. Triggers: \u0027deploy\u0027, \u0027CI/CD\u0027, \u0027Docker\u0027, \u0027container\u0027, \u0027pipeline\u0027, \u0027infrastructure\u0027, \u0027environment\u0027, \u0027staging\u0027, \u0027production\u0027.",
+      "description": "Infrastructure deployment, CI/CD pipelines, container management.",
       "name": "gem-devops"
     },
     {
       "filename": "gem-documentation-writer.agent.md",
-      "description": "Generates technical documentation, README files, API docs, diagrams, and walkthroughs. Use when the user asks to document, write docs, create README, generate API documentation, or produce technical writing. Triggers: \u0027document\u0027, \u0027write docs\u0027, \u0027README\u0027, \u0027API docs\u0027, \u0027walkthrough\u0027, \u0027technical writing\u0027, \u0027diagrams\u0027.",
+      "description": "Technical documentation, README files, API docs, diagrams, walkthroughs.",
       "name": "gem-documentation-writer"
     },
     {
+      "filename": "gem-implementer-mobile.agent.md",
+      "description": "Mobile implementation \u2014 React Native, Expo, Flutter with TDD.",
+      "name": "gem-implementer-mobile"
+    },
+    {
       "filename": "gem-implementer.agent.md",
-      "description": "Writes code using TDD (Red-Green), implements features, fixes bugs, refactors. Use when the user asks to implement, build, create, code, write, fix, or refactor. Never reviews its own work. Triggers: \u0027implement\u0027, \u0027build\u0027, \u0027create\u0027, \u0027code\u0027, \u0027write\u0027, \u0027fix\u0027, \u0027refactor\u0027, \u0027add feature\u0027.",
+      "description": "TDD code implementation \u2014 features, bugs, refactoring. Never reviews own work.",
       "name": "gem-implementer"
     },
     {
+      "filename": "gem-mobile-tester.agent.md",
+      "description": "Mobile E2E testing \u2014 Detox, Maestro, iOS/Android simulators.",
+      "name": "gem-mobile-tester"
+    },
+    {
       "filename": "gem-orchestrator.agent.md",
-      "description": "Multi-agent orchestration for project execution, feature implementation, and automated verification. Primary entry point for all tasks. Detects phase, routes to agents, synthesizes results. Never executes directly. Triggers: any user request, multi-step tasks, complex implementations, project coordination.",
+      "description": "The team lead: Orchestrates research, planning, implementation, and verification.",
       "name": "gem-orchestrator"
     },
     {
       "filename": "gem-planner.agent.md",
-      "description": "Creates DAG-based execution plans with task decomposition, wave scheduling, and pre-mortem risk analysis. Use when the user asks to plan, design an approach, break down work, estimate effort, or create an implementation strategy. Triggers: \u0027plan\u0027, \u0027design\u0027, \u0027break down\u0027, \u0027decompose\u0027, \u0027strategy\u0027, \u0027approach\u0027, \u0027how to implement\u0027.",
+      "description": "DAG-based execution plans \u2014 task decomposition, wave scheduling, risk analysis.",
       "name": "gem-planner"
     },
     {
       "filename": "gem-researcher.agent.md",
-      "description": "Explores codebase, identifies patterns, maps dependencies, discovers architecture. Use when the user asks to research, explore, analyze code, find patterns, understand architecture, investigate dependencies, or gather context before implementation. Triggers: \u0027research\u0027, \u0027explore\u0027, \u0027find patterns\u0027, \u0027analyze\u0027, \u0027investigate\u0027, \u0027understand\u0027, \u0027look into\u0027.",
+      "description": "Codebase exploration \u2014 patterns, dependencies, architecture discovery.",
       "name": "gem-researcher"
     },
     {
       "filename": "gem-reviewer.agent.md",
-      "description": "Security auditing, code review, OWASP scanning, secrets/PII detection, PRD compliance verification. Use when the user asks to review, audit, check security, validate, or verify compliance. Never modifies code. Triggers: \u0027review\u0027, \u0027audit\u0027, \u0027check security\u0027, \u0027validate\u0027, \u0027verify\u0027, \u0027compliance\u0027, \u0027OWASP\u0027, \u0027secrets\u0027.",
+      "description": "Security auditing, code review, OWASP scanning, PRD compliance verification.",
       "name": "gem-reviewer"
     },
     {
@@ -2817,6 +2832,21 @@
       "filename": "rust-mcp-server-generator/SKILL.md",
       "name": "rust-mcp-server-generator",
       "description": "Generate a complete Rust Model Context Protocol server project with tools, prompts, resources, and tests using the official rmcp SDK"
+    },
+    {
+      "filename": "salesforce-apex-quality/SKILL.md",
+      "name": "salesforce-apex-quality",
+      "description": "Apex code quality guardrails for Salesforce development. Enforces bulk-safety rules (no SOQL/DML in loops), sharing model requirements, CRUD/FLS security, SOQL injection prevention, PNB test coverage (Positive / Negative / Bulk), and modern Apex idioms. Use this skill when reviewing or generating Apex classes, trigger handlers, batch jobs, or test classes to catch governor limit risks, security gaps, and quality issues before deployment."
+    },
+    {
+      "filename": "salesforce-component-standards/SKILL.md",
+      "name": "salesforce-component-standards",
+      "description": "Quality standards for Salesforce Lightning Web Components (LWC), Aura components, and Visualforce pages. Covers SLDS 2 compliance, accessibility (WCAG 2.1 AA), data access pattern selection, component communication rules, XSS prevention, CSRF enforcement, FLS/CRUD in AuraEnabled methods, view state management, and Jest test requirements. Use this skill when building or reviewing any Salesforce UI component to enforce platform-specific security and quality standards."
+    },
+    {
+      "filename": "salesforce-flow-design/SKILL.md",
+      "name": "salesforce-flow-design",
+      "description": "Salesforce Flow architecture decisions, flow type selection, bulk safety validation, and fault handling standards. Use this skill when designing or reviewing Record-Triggered, Screen, Autolaunched, Scheduled, or Platform Event flows to ensure correct type selection, no DML/Get Records in loops, proper fault connectors on all data-changing elements, and appropriate automation density checks before deployment."
     },
     {
       "filename": "sandbox-npm-install/SKILL.md",
