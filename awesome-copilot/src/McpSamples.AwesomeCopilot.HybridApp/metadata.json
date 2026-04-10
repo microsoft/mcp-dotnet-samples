@@ -26,6 +26,11 @@
       "description": "Support development of .NET (OOP) WinForms Designer compatible Apps."
     },
     {
+      "filename": "accessibility-runtime-tester.agent.md",
+      "name": "Accessibility Runtime Tester",
+      "description": "Runtime accessibility specialist for keyboard flows, focus management, dialog behavior, form errors, and evidence-backed WCAG validation in the browser."
+    },
+    {
       "filename": "accessibility.agent.md",
       "description": "Expert assistant for web accessibility (WCAG 2.1/2.2), inclusive UX, and a11y testing",
       "name": "Accessibility Expert"
@@ -246,6 +251,11 @@
       "description": "DevOps specialist following the infinity loop principle (Plan \u2192 Code \u2192 Build \u2192 Test \u2192 Release \u2192 Deploy \u2192 Operate \u2192 Monitor) with focus on automation, collaboration, and continuous improvement"
     },
     {
+      "filename": "devtools-regression-investigator.agent.md",
+      "name": "DevTools Regression Investigator",
+      "description": "Browser regression specialist for reproducing broken user flows, collecting console and network evidence, and narrowing likely root causes with Chrome DevTools MCP."
+    },
+    {
       "filename": "diffblue-cover.agent.md",
       "name": "DiffblueCover",
       "description": "Expert agent for creating unit tests for java applications using Diffblue Cover."
@@ -324,6 +334,11 @@
       "filename": "fedora-linux-expert.agent.md",
       "name": "Fedora Linux Expert",
       "description": "Fedora (Red Hat family) Linux specialist focused on dnf, SELinux, and modern systemd-based workflows."
+    },
+    {
+      "filename": "frontend-performance-investigator.agent.md",
+      "name": "Frontend Performance Investigator",
+      "description": "Runtime web-performance specialist for diagnosing Core Web Vitals, Lighthouse regressions, layout shifts, long tasks, and slow network paths with Chrome DevTools MCP."
     },
     {
       "filename": "gem-browser-tester.agent.md",
@@ -2396,6 +2411,11 @@
       "description": "Generate a complete Go MCP server project with proper structure, dependencies, and implementation using the official github.com/modelcontextprotocol/go-sdk."
     },
     {
+      "filename": "gsap-framer-scroll-animation/SKILL.md",
+      "name": "gsap-framer-scroll-animation",
+      "description": "Use this skill whenever the user wants to build scroll animations, scroll effects, parallax, scroll-triggered reveals, pinned sections, horizontal scroll, text animations, or any motion tied to scroll position \u2014 in vanilla JS, React, or Next.js. Covers GSAP ScrollTrigger (pinning, scrubbing, snapping, timelines, horizontal scroll, ScrollSmoother, matchMedia) and Framer Motion / Motion v12 (useScroll, useTransform, useSpring, whileInView, variants). Use this skill even if the user just says \u0022animate on scroll\u0022, \u0022fade in as I scroll\u0022, \u0022make it scroll like Apple\u0022, \u0022parallax effect\u0022, \u0022sticky section\u0022, \u0022scroll progress bar\u0022, or \u0022entrance animation\u0022. Also triggers for Copilot prompt patterns for GSAP or Framer Motion code generation. Pairs with the premium-frontend-ui skill for creative philosophy and design-level polish."
+    },
+    {
       "filename": "gtm-0-to-1-launch/SKILL.md",
       "name": "gtm-0-to-1-launch",
       "description": "Launch new products from idea to first customers. Use when launching products, finding early adopters, building launch week playbooks, diagnosing why adoption stalls, or learning that press coverage does not equal growth. Includes the three-layer diagnosis, the 2-week experiment cycle, and the launch that got 50K impressions and 12 signups."
@@ -2524,6 +2544,11 @@
       "filename": "legacy-circuit-mockups/SKILL.md",
       "name": "legacy-circuit-mockups",
       "description": "Generate breadboard circuit mockups and visual diagrams using HTML5 Canvas drawing techniques. Use when asked to create circuit layouts, visualize electronic component placements, draw breadboard diagrams, mockup 6502 builds, generate retro computer schematics, or design vintage electronics projects. Supports 555 timers, W65C02S microprocessors, 28C256 EEPROMs, W65C22 VIA chips, 7400-series logic gates, LEDs, resistors, capacitors, switches, buttons, crystals, and wires."
+    },
+    {
+      "filename": "lsp-setup/SKILL.md",
+      "name": "lsp-setup",
+      "description": "Enable code intelligence (go-to-definition, find-references, hover, type info) for any programming language by installing and configuring an LSP server for Copilot CLI. Detects the OS, installs the right server, and generates the JSON configuration (user-level or repo-level). Use when you need deeper code understanding and no LSP server is configured, or when the user asks to set up, install, or configure an LSP server."
     },
     {
       "filename": "make-repo-contribution/SKILL.md",
