@@ -1,11 +1,6 @@
 {
   "agents": [
     {
-      "filename": "4.1-Beast.agent.md",
-      "description": "GPT 4.1 as a top-notch coding agent.",
-      "name": "4.1 Beast Mode v3.1"
-    },
-    {
       "filename": "CSharpExpert.agent.md",
       "name": "C# Expert",
       "description": "An agent designed to assist with software development tasks for .NET projects."
@@ -436,11 +431,6 @@
       "name": "Go MCP Server Development Expert"
     },
     {
-      "filename": "gpt-5-beast-mode.agent.md",
-      "description": "Beast Mode 2.0: A powerful autonomous agent tuned specifically for GPT-5 that can solve complex problems by using tools, conducting research, and iterating until the problem is fully resolved.",
-      "name": "GPT 5 Beast Mode"
-    },
-    {
       "filename": "hlbpa.agent.md",
       "description": "Your perfect AI chat mode for high-level architectural documentation and review. Perfect for targeted updates after a story or researching that legacy system when nobody remembers what it\u0027s supposed to be doing.",
       "name": "High-Level Big Picture Architect (HLBPA)"
@@ -769,7 +759,7 @@
     {
       "filename": "react19-auditor.agent.md",
       "name": "react19-auditor",
-      "description": "Deep-scan specialist that identifies every React 19 breaking change and deprecated pattern across the entire codebase. Produces a prioritized migration report at .github/react19-audit.md. Reads everything  touches nothing. Invoked as a subagent by react19-commander."
+      "description": "Deep-scan specialist that identifies every React 19 breaking change and deprecated pattern across the entire codebase. Produces a prioritized migration report at .github/react19-audit.md. Reads everything, touches nothing. Invoked as a subagent by react19-commander."
     },
     {
       "filename": "react19-commander.agent.md",
@@ -821,11 +811,6 @@
       "filename": "rug-orchestrator.agent.md",
       "name": "RUG",
       "description": "Pure orchestration agent that decomposes requests, delegates all work to subagents, validates outcomes, and repeats until complete."
-    },
-    {
-      "filename": "rust-gpt-4.1-beast-mode.agent.md",
-      "description": "Rust GPT-4.1 Coding Beast Mode for VS Code",
-      "name": "Rust Beast Mode"
     },
     {
       "filename": "rust-mcp-expert.agent.md",
@@ -918,6 +903,11 @@
       "name": "Software Engineer Agent"
     },
     {
+      "filename": "spark-performance.agent.md",
+      "name": "PySpark Expert Agent",
+      "description": "Diagnose PySpark performance bottlenecks, distributed execution pitfalls, and suggest Spark-native rewrites and safer distributed patterns (incl. mapInPandas guidance)."
+    },
+    {
       "filename": "specification.agent.md",
       "description": "Generate or update specification documents for new or existing functionality.",
       "name": "Specification"
@@ -1006,11 +996,6 @@
       "filename": "typescript-mcp-expert.agent.md",
       "description": "Expert assistant for developing Model Context Protocol (MCP) servers in TypeScript",
       "name": "TypeScript MCP Server Expert"
-    },
-    {
-      "filename": "voidbeast-gpt41enhanced.agent.md",
-      "description": "4.1 voidBeast_GPT41Enhanced 1.0 : a advanced autonomous developer agent, designed for elite full-stack development with enhanced multi-mode capabilities. This latest evolution features sophisticated mode detection, comprehensive research capabilities, and never-ending problem resolution. Plan/Act/Deep Research/Analyzer/Checkpoints(Memory)/Prompt Generator Modes.",
-      "name": "voidBeast_GPT41Enhanced 1.0 - Elite Developer AI Assistant"
     },
     {
       "filename": "vuejs-expert.agent.md",
@@ -2349,6 +2334,11 @@
       "filename": "folder-structure-blueprint-generator/SKILL.md",
       "name": "folder-structure-blueprint-generator",
       "description": "Comprehensive technology-agnostic prompt for analyzing and documenting project folder structures. Auto-detects project types (.NET, Java, React, Angular, Python, Node.js, Flutter), generates detailed blueprints with visualization options, naming conventions, file placement patterns, and extension templates for maintaining consistent code organization across diverse technology stacks."
+    },
+    {
+      "filename": "freecad-scripts/SKILL.md",
+      "name": "freecad-scripts",
+      "description": "Expert skill for writing FreeCAD Python scripts, macros, and automation. Use when asked to create FreeCAD models, parametric objects, Part/Mesh/Sketcher scripts, workbench tools, GUI dialogs with PySide, Coin3D scenegraph manipulation, or any FreeCAD Python API task. Covers FreeCAD scripting basics, geometry creation, FeaturePython objects, interface tools, and macro development."
     },
     {
       "filename": "from-the-other-side-vega/SKILL.md",
