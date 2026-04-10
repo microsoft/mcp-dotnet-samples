@@ -1053,7 +1053,7 @@
   "instructions": [
     {
       "filename": "a11y.instructions.md",
-      "description": "Guidance for creating more accessible code"
+      "description": "Comprehensive web accessibility standards based on WCAG 2.2 AA, with 38\u002B anti-patterns, legal enforcement context (EAA, ADA Title II), WAI-ARIA patterns, and framework-specific fixes for modern web frameworks and libraries."
     },
     {
       "filename": "agent-safety.instructions.md",
@@ -1098,6 +1098,14 @@
     {
       "filename": "azure-devops-pipelines.instructions.md",
       "description": "Best practices for Azure DevOps Pipeline YAML files"
+    },
+    {
+      "filename": "azure-durable-functions-csharp.instructions.md",
+      "description": "Guidelines and best practices for building Azure Durable Functions in C# using the isolated worker model"
+    },
+    {
+      "filename": "azure-functions-csharp.instructions.md",
+      "description": "Guidelines and best practices for building Azure Functions in C# using the isolated worker model"
     },
     {
       "filename": "azure-functions-typescript.instructions.md",
@@ -1527,7 +1535,7 @@
     },
     {
       "filename": "performance-optimization.instructions.md",
-      "description": "The most comprehensive, practical, and engineer-authored performance optimization instructions for all languages, frameworks, and stacks. Covers frontend, backend, and database best practices with actionable guidance, scenario-based checklists, troubleshooting, and pro tips."
+      "description": "Comprehensive web performance standards based on Core Web Vitals (LCP, INP, CLS), with 50\u002B anti-patterns, detection regex, framework-specific fixes for modern web frameworks, and modern API guidance."
     },
     {
       "filename": "php-mcp-server.instructions.md",
@@ -1639,7 +1647,7 @@
     },
     {
       "filename": "security-and-owasp.instructions.md",
-      "description": "Comprehensive secure coding instructions for all languages and frameworks, based on OWASP Top 10 and industry best practices."
+      "description": "Comprehensive secure coding standards based on OWASP Top 10 2025, with 55\u002B anti-patterns, detection regex, framework-specific fixes for modern web and backend frameworks, and AI/LLM security guidance."
     },
     {
       "filename": "self-explanatory-code-commenting.instructions.md",
