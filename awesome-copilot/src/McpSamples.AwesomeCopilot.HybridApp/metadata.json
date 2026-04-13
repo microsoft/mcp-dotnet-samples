@@ -1979,6 +1979,11 @@
       "description": "Technology-agnostic prompt generator that creates customizable AI prompts for scanning codebases and identifying high-quality code exemplars. Supports multiple programming languages (.NET, Java, JavaScript, TypeScript, React, Angular, Python) with configurable analysis depth, categorization methods, and documentation formats to establish coding standards and maintain consistency across development teams."
     },
     {
+      "filename": "code-tour/SKILL.md",
+      "name": "code-tour",
+      "description": "Use this skill to create CodeTour .tour files \u2014 persona-targeted, step-by-step walkthroughs that link to real files and line numbers. Trigger for: \u0022create a tour\u0022, \u0022make a code tour\u0022, \u0022generate a tour\u0022, \u0022onboarding tour\u0022, \u0022tour for this PR\u0022, \u0022tour for this bug\u0022, \u0022RCA tour\u0022, \u0022architecture tour\u0022, \u0022explain how X works\u0022, \u0022vibe check\u0022, \u0022PR review tour\u0022, \u0022contributor guide\u0022, \u0022help someone ramp up\u0022, or any request for a structured walkthrough through code. Supports 20 developer personas (new joiner, bug fixer, architect, PR reviewer, vibecoder, security reviewer, and more), all CodeTour step types (file/line, selection, pattern, uri, commands, view), and tour-level fields (ref, isPrimary, nextTour). Works with any repository in any language."
+    },
+    {
       "filename": "codeql/SKILL.md",
       "name": "codeql",
       "description": "Comprehensive guide for setting up and configuring CodeQL code scanning via GitHub Actions workflows and the CodeQL CLI. This skill should be used when users need help with code scanning configuration, CodeQL workflow files, CodeQL CLI commands, SARIF output, security analysis setup, or troubleshooting CodeQL analysis."
