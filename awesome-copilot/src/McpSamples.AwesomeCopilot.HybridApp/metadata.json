@@ -701,6 +701,11 @@
       "name": "Principal software engineer"
     },
     {
+      "filename": "project-architecture-planner.agent.md",
+      "name": "Project Architecture Planner",
+      "description": "Holistic software architecture planner that evaluates tech stacks, designs scalability roadmaps, performs cloud-agnostic cost analysis, reviews existing codebases, and delivers interactive Mermaid diagrams with HTML preview and draw.io export"
+    },
+    {
       "filename": "prompt-builder.agent.md",
       "description": "Expert prompt engineering and validation system for creating high-quality prompts - Brought to you by microsoft/edge-ai",
       "name": "Prompt Builder"
@@ -1748,6 +1753,12 @@
   ],
   "prompts": [],
   "skills": [
+    {
+      "filename": "acquire-codebase-knowledge/SKILL.md",
+      "name": "acquire-codebase-knowledge",
+      "description": "Use this skill when the user explicitly asks to map, document, or onboard into an existing codebase. Trigger for prompts like \u0022map this codebase\u0022, \u0022document this architecture\u0022, \u0022onboard me to this repo\u0022, or \u0022create codebase docs\u0022. Do not trigger for routine feature implementation, bug fixes, or narrow code edits unless the user asks for repository-level discovery.",
+      "argument-hint": "Optional: specific area to focus on, e.g. \u0022architecture only\u0022, \u0022testing and concerns\u0022"
+    },
     {
       "filename": "add-educational-comments/SKILL.md",
       "name": "add-educational-comments",
