@@ -337,78 +337,93 @@
     },
     {
       "filename": "gem-browser-tester.agent.md",
-      "description": "E2E browser testing, UI/UX validation, visual regression with browser.",
-      "name": "gem-browser-tester"
+      "description": "E2E browser testing, UI/UX validation, visual regression.",
+      "name": "gem-browser-tester",
+      "argument-hint": "Enter task_id, plan_id, plan_path, and test validation_matrix or flow definitions."
     },
     {
       "filename": "gem-code-simplifier.agent.md",
       "description": "Refactoring specialist \u2014 removes dead code, reduces complexity, consolidates duplicates.",
-      "name": "gem-code-simplifier"
+      "name": "gem-code-simplifier",
+      "argument-hint": "Enter task_id, scope (single_file|multiple_files|project_wide), targets (file paths/patterns), and focus (dead_code|complexity|duplication|naming|all)."
     },
     {
       "filename": "gem-critic.agent.md",
       "description": "Challenges assumptions, finds edge cases, spots over-engineering and logic gaps.",
-      "name": "gem-critic"
+      "name": "gem-critic",
+      "argument-hint": "Enter plan_id, plan_path, scope (plan|code|architecture), and target to critique."
     },
     {
       "filename": "gem-debugger.agent.md",
       "description": "Root-cause analysis, stack trace diagnosis, regression bisection, error reproduction.",
-      "name": "gem-debugger"
+      "name": "gem-debugger",
+      "argument-hint": "Enter task_id, plan_id, plan_path, and error_context (error message, stack trace, failing test) to diagnose."
     },
     {
       "filename": "gem-designer-mobile.agent.md",
       "description": "Mobile UI/UX specialist \u2014 HIG, Material Design, safe areas, touch targets.",
-      "name": "gem-designer-mobile"
+      "name": "gem-designer-mobile",
+      "argument-hint": "Enter task_id, plan_id (optional), plan_path (optional), mode (create|validate), scope (component|screen|navigation|design_system), target, context (framework, library), and constraints (platform, responsive, accessible, dark_mode)."
     },
     {
       "filename": "gem-designer.agent.md",
       "description": "UI/UX design specialist \u2014 layouts, themes, color schemes, design systems, accessibility.",
-      "name": "gem-designer"
+      "name": "gem-designer",
+      "argument-hint": "Enter task_id, plan_id (optional), plan_path (optional), mode (create|validate), scope (component|page|layout|design_system), target, context (framework, library), and constraints (responsive, accessible, dark_mode)."
     },
     {
       "filename": "gem-devops.agent.md",
       "description": "Infrastructure deployment, CI/CD pipelines, container management.",
-      "name": "gem-devops"
+      "name": "gem-devops",
+      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition, environment (dev|staging|prod), requires_approval flag, and devops_security_sensitive flag."
     },
     {
       "filename": "gem-documentation-writer.agent.md",
       "description": "Technical documentation, README files, API docs, diagrams, walkthroughs.",
-      "name": "gem-documentation-writer"
+      "name": "gem-documentation-writer",
+      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|walkthrough|update), audience, coverage_matrix."
     },
     {
       "filename": "gem-implementer-mobile.agent.md",
       "description": "Mobile implementation \u2014 React Native, Expo, Flutter with TDD.",
-      "name": "gem-implementer-mobile"
+      "name": "gem-implementer-mobile",
+      "argument-hint": "Enter task_id, plan_id, plan_path, and mobile task_definition to implement for iOS/Android."
     },
     {
       "filename": "gem-implementer.agent.md",
       "description": "TDD code implementation \u2014 features, bugs, refactoring. Never reviews own work.",
-      "name": "gem-implementer"
+      "name": "gem-implementer",
+      "argument-hint": "Enter task_id, plan_id, plan_path, and task_definition with tech_stack to implement."
     },
     {
       "filename": "gem-mobile-tester.agent.md",
       "description": "Mobile E2E testing \u2014 Detox, Maestro, iOS/Android simulators.",
-      "name": "gem-mobile-tester"
+      "name": "gem-mobile-tester",
+      "argument-hint": "Enter task_id, plan_id, plan_path, and mobile test definition to run E2E tests on iOS/Android."
     },
     {
       "filename": "gem-orchestrator.agent.md",
       "description": "The team lead: Orchestrates research, planning, implementation, and verification.",
-      "name": "gem-orchestrator"
+      "name": "gem-orchestrator",
+      "argument-hint": "Describe your objective or task. Include plan_id if resuming."
     },
     {
       "filename": "gem-planner.agent.md",
       "description": "DAG-based execution plans \u2014 task decomposition, wave scheduling, risk analysis.",
-      "name": "gem-planner"
+      "name": "gem-planner",
+      "argument-hint": "Enter plan_id, objective, complexity (simple|medium|complex), and task_clarifications."
     },
     {
       "filename": "gem-researcher.agent.md",
       "description": "Codebase exploration \u2014 patterns, dependencies, architecture discovery.",
-      "name": "gem-researcher"
+      "name": "gem-researcher",
+      "argument-hint": "Enter plan_id, objective, focus_area (optional), complexity (simple|medium|complex), and task_clarifications array."
     },
     {
       "filename": "gem-reviewer.agent.md",
       "description": "Security auditing, code review, OWASP scanning, PRD compliance verification.",
-      "name": "gem-reviewer"
+      "name": "gem-reviewer",
+      "argument-hint": "Enter task_id, plan_id, plan_path, review_scope (plan|task|wave), and review criteria for compliance and security audit."
     },
     {
       "filename": "gilfoyle.agent.md",
@@ -2365,6 +2380,11 @@
       "description": "Comprehensive technology-agnostic prompt for analyzing and documenting project folder structures. Auto-detects project types (.NET, Java, React, Angular, Python, Node.js, Flutter), generates detailed blueprints with visualization options, naming conventions, file placement patterns, and extension templates for maintaining consistent code organization across diverse technology stacks."
     },
     {
+      "filename": "foundry-agent-sync/SKILL.md",
+      "name": "foundry-agent-sync",
+      "description": "Create and synchronize prompt-based AI agents directly within Azure AI Foundry via REST API, from a local JSON manifest. Unlike scaffolding skills that only generate local code, this skill registers agents in the Foundry service itself \u2014 making them immediately available for invocation. Use when the user asks to create agents in Foundry, sync, deploy, register, or push agents to Foundry, update agent instructions, or scaffold the manifest and sync script for a new repository. Triggers: \u0027create agent in foundry\u0027, \u0027sync foundry agents\u0027, \u0027deploy agents to foundry\u0027, \u0027register agents in foundry\u0027, \u0027push agents\u0027, \u0027create foundry agent manifest\u0027, \u0027scaffold agent sync\u0027."
+    },
+    {
       "filename": "freecad-scripts/SKILL.md",
       "name": "freecad-scripts",
       "description": "Expert skill for writing FreeCAD Python scripts, macros, and automation. Use when asked to create FreeCAD models, parametric objects, Part/Mesh/Sketcher scripts, workbench tools, GUI dialogs with PySide, Coin3D scenegraph manipulation, or any FreeCAD Python API task. Covers FreeCAD scripting basics, geometry creation, FeaturePython objects, interface tools, and macro development."
@@ -2825,6 +2845,11 @@
       "description": "Power BI report visualization design prompt for creating effective, user-friendly, and accessible reports with optimal chart selection and layout design."
     },
     {
+      "filename": "power-platform-architect/SKILL.md",
+      "name": "power-platform-architect",
+      "description": "Use this skill when the user needs to transform business requirements, use case descriptions, or meeting transcripts into a technical Power Platform solution architecture, including component selection and Mermaid.js diagrams."
+    },
+    {
       "filename": "power-platform-mcp-connector-suite/SKILL.md",
       "name": "power-platform-mcp-connector-suite",
       "description": "Generate complete Power Platform custom connector with MCP integration for Copilot Studio - includes schema generation, troubleshooting, and validation"
@@ -2873,6 +2898,46 @@
       "filename": "python-pypi-package-builder/SKILL.md",
       "name": "python-pypi-package-builder",
       "description": "End-to-end skill for building, testing, linting, versioning, and publishing a production-grade Python library to PyPI. Covers all four build backends (setuptools\u002Bsetuptools_scm, hatchling, flit, poetry), PEP 440 versioning, semantic versioning, dynamic git-tag versioning, OOP/SOLID design, type hints (PEP 484/526/544/561), Trusted Publishing (OIDC), and the full PyPA packaging flow. Use for: creating Python packages, pip-installable SDKs, CLI tools, framework plugins, pyproject.toml setup, py.typed, setuptools_scm, semver, mypy, pre-commit, GitHub Actions CI/CD, or PyPI publishing."
+    },
+    {
+      "filename": "qdrant-clients-sdk/SKILL.md",
+      "name": "qdrant-clients-sdk",
+      "description": "Qdrant provides client SDKs for various programming languages, allowing easy integration with Qdrant deployments."
+    },
+    {
+      "filename": "qdrant-deployment-options/SKILL.md",
+      "name": "qdrant-deployment-options",
+      "description": "Guides Qdrant deployment selection. Use when someone asks \u0027how to deploy Qdrant\u0027, \u0027Docker vs Cloud\u0027, \u0027local mode\u0027, \u0027embedded Qdrant\u0027, \u0027Qdrant EDGE\u0027, \u0027which deployment option\u0027, \u0027self-hosted vs cloud\u0027, or \u0027need lowest latency deployment\u0027. Also use when choosing between deployment types for a new project."
+    },
+    {
+      "filename": "qdrant-model-migration/SKILL.md",
+      "name": "qdrant-model-migration",
+      "description": "Guides embedding model migration in Qdrant without downtime. Use when someone asks \u0027how to switch embedding models\u0027, \u0027how to migrate vectors\u0027, \u0027how to update to a new model\u0027, \u0027zero-downtime model change\u0027, \u0027how to re-embed my data\u0027, or \u0027can I use two models at once\u0027. Also use when upgrading model dimensions, switching providers, or A/B testing models."
+    },
+    {
+      "filename": "qdrant-monitoring/SKILL.md",
+      "name": "qdrant-monitoring",
+      "description": "Guides Qdrant monitoring and observability setup. Use when someone asks \u0027how to monitor Qdrant\u0027, \u0027what metrics to track\u0027, \u0027is Qdrant healthy\u0027, \u0027optimizer stuck\u0027, \u0027why is memory growing\u0027, \u0027requests are slow\u0027, or needs to set up Prometheus, Grafana, or health checks. Also use when debugging production issues that require metric analysis."
+    },
+    {
+      "filename": "qdrant-performance-optimization/SKILL.md",
+      "name": "qdrant-performance-optimization",
+      "description": "Different techniques to optimize the performance of Qdrant, including indexing strategies, query optimization, and hardware considerations. Use when you want to improve the speed and efficiency of your Qdrant deployment."
+    },
+    {
+      "filename": "qdrant-scaling/SKILL.md",
+      "name": "qdrant-scaling",
+      "description": "Guides Qdrant scaling decisions. Use when someone asks \u0027how many nodes do I need\u0027, \u0027data doesn\u0027t fit on one node\u0027, \u0027need more throughput\u0027, \u0027cluster is slow\u0027, \u0027too many tenants\u0027, \u0027vertical or horizontal\u0027, \u0027how to shard\u0027, or \u0027need to add capacity\u0027."
+    },
+    {
+      "filename": "qdrant-search-quality/SKILL.md",
+      "name": "qdrant-search-quality",
+      "description": "Diagnoses and improves Qdrant search relevance. Use when someone reports \u0027search results are bad\u0027, \u0027wrong results\u0027, \u0027low precision\u0027, \u0027low recall\u0027, \u0027irrelevant matches\u0027, \u0027missing expected results\u0027, or asks \u0027how to improve search quality?\u0027, \u0027which embedding model?\u0027, \u0027should I use hybrid search?\u0027, \u0027should I use reranking?\u0027. Also use when search quality degrades after quantization, model change, or data growth."
+    },
+    {
+      "filename": "qdrant-version-upgrade/SKILL.md",
+      "name": "qdrant-version-upgrade",
+      "description": "Guidance on how to upgrade your Qdrant version without interrupting the availability of your application and ensuring data integrity."
     },
     {
       "filename": "quality-playbook/SKILL.md",
