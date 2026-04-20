@@ -2315,6 +2315,11 @@
       "description": "Set up eval-based QA for Python LLM applications: instrument the app, build golden datasets, write and run eval tests, and iterate on failures. ALWAYS USE THIS SKILL when the user asks to set up QA, add tests, add evals, evaluate, benchmark, fix wrong behaviors, improve quality, or do quality assurance for any Python project that calls an LLM model.\n"
     },
     {
+      "filename": "exam-ready/SKILL.md",
+      "name": "exam-ready",
+      "description": "Activate this skill when a student provides study material (PDF or pasted notes) and a syllabus, and wants to prepare for an exam. Extracts key definitions, points, keywords, diagrams, exam-ready sentences, and practice questions strictly from the provided material."
+    },
+    {
       "filename": "excalidraw-diagram-generator/SKILL.md",
       "name": "excalidraw-diagram-generator",
       "description": "Generate Excalidraw diagrams from natural language descriptions. Use when asked to \u0022create a diagram\u0022, \u0022make a flowchart\u0022, \u0022visualize a process\u0022, \u0022draw a system architecture\u0022, \u0022create a mind map\u0022, or \u0022generate an Excalidraw file\u0022. Supports flowcharts, relationship diagrams, mind maps, and system architecture diagrams. Outputs .excalidraw JSON files that can be opened directly in Excalidraw."
