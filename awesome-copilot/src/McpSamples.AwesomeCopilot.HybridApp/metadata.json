@@ -772,6 +772,11 @@
       "description": "Holistic software architecture planner that evaluates tech stacks, designs scalability roadmaps, performs cloud-agnostic cost analysis, reviews existing codebases, and delivers interactive Mermaid diagrams with HTML preview and draw.io export"
     },
     {
+      "filename": "project-documenter.agent.md",
+      "name": "Project Documenter",
+      "description": "Generates professional MS Word project documentation with draw.io architecture diagrams and embedded PNG images. Automatically discovers any project\u0027s technology stack, architecture, and code structure. Produces Markdown, draw.io diagrams, PNG exports, and .docx output."
+    },
+    {
       "filename": "prompt-builder.agent.md",
       "description": "Expert prompt engineering and validation system for creating high-quality prompts - Brought to you by microsoft/edge-ai",
       "name": "Prompt Builder"
@@ -2409,6 +2414,11 @@
       "description": "Use when creating, editing, or generating draw.io diagram files (.drawio, .drawio.svg, .drawio.png). Covers mxGraph XML authoring, shape libraries, style strings, flowcharts, system architecture, sequence diagrams, ER diagrams, UML class diagrams, network topology, layout strategy, the hediet.vscode-drawio VS Code extension, and the full agent workflow from request to a ready-to-open file."
     },
     {
+      "filename": "drawio/SKILL.md",
+      "name": "drawio",
+      "description": "Generate draw.io diagrams as .drawio files and export to PNG/SVG/PDF with embedded XML"
+    },
+    {
       "filename": "editorconfig/SKILL.md",
       "name": "editorconfig",
       "description": "Generates a comprehensive and best-practice-oriented .editorconfig file based on project analysis and user preferences."
@@ -2442,6 +2452,11 @@
       "filename": "excalidraw-diagram-generator/SKILL.md",
       "name": "excalidraw-diagram-generator",
       "description": "Generate Excalidraw diagrams from natural language descriptions. Use when asked to \u0022create a diagram\u0022, \u0022make a flowchart\u0022, \u0022visualize a process\u0022, \u0022draw a system architecture\u0022, \u0022create a mind map\u0022, or \u0022generate an Excalidraw file\u0022. Supports flowcharts, relationship diagrams, mind maps, and system architecture diagrams. Outputs .excalidraw JSON files that can be opened directly in Excalidraw."
+    },
+    {
+      "filename": "eyeball/SKILL.md",
+      "name": "eyeball",
+      "description": "Document analysis with inline source screenshots. When you ask Copilot to analyze a document, Eyeball generates a Word doc where every factual claim includes a highlighted screenshot from the source material so you can verify it with your own eyes."
     },
     {
       "filename": "fabric-lakehouse/SKILL.md",
@@ -2778,6 +2793,11 @@
       "filename": "mcp-security-audit/SKILL.md",
       "name": "mcp-security-audit",
       "description": "Audit MCP (Model Context Protocol) server configurations for security issues. Use this skill when:\n- Reviewing .mcp.json files for security risks\n- Checking MCP server args for hardcoded secrets or shell injection patterns\n- Validating that MCP servers use pinned versions (not @latest)\n- Detecting unpinned dependencies in MCP server configurations\n- Auditing which MCP servers a project registers and whether they\u0027re on an approved list\n- Checking for environment variable usage vs. hardcoded credentials in MCP configs\n- Any request like \u0022is my MCP config secure?\u0022, \u0022audit my MCP servers\u0022, or \u0022check .mcp.json\u0022\nkeywords: [mcp, security, audit, secrets, shell-injection, supply-chain, governance]"
+    },
+    {
+      "filename": "md-to-docx/SKILL.md",
+      "name": "md-to-docx",
+      "description": "Convert Markdown files to professionally formatted Word (.docx) documents with embedded PNG images \u2014 pure JavaScript, no external tools required"
     },
     {
       "filename": "meeting-minutes/SKILL.md",
