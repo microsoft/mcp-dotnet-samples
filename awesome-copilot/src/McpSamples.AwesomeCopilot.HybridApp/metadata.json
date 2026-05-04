@@ -1935,12 +1935,12 @@
     {
       "filename": "arize-annotation/SKILL.md",
       "name": "arize-annotation",
-      "description": "INVOKE THIS SKILL when creating, managing, or using annotation configs on Arize (categorical, continuous, freeform), or applying human annotations to project spans via the Python SDK. Configs are the label schema for human feedback on spans and other surfaces in the Arize UI. Triggers: annotation config, label schema, human feedback schema, bulk annotate spans, update_annotations."
+      "description": "INVOKE THIS SKILL when creating, managing, or using annotation configs or annotation queues on Arize (categorical, continuous, freeform), or applying human annotations to project spans via the Python SDK. Configs are the label schema for human feedback; queues are review workflows that route records to annotators. Triggers: annotation config, annotation queue, label schema, human feedback schema, bulk annotate spans, update_annotations, labeling queue, annotate record."
     },
     {
       "filename": "arize-dataset/SKILL.md",
       "name": "arize-dataset",
-      "description": "INVOKE THIS SKILL when creating, managing, or querying Arize datasets and examples. Covers dataset CRUD, appending examples, exporting data, and file-based dataset creation using the ax CLI."
+      "description": "INVOKE THIS SKILL when creating, managing, or querying Arize datasets and examples. Also use when the user needs test data or evaluation examples for their model. Covers dataset CRUD, appending examples, exporting data, and file-based dataset creation using the ax CLI."
     },
     {
       "filename": "arize-evaluator/SKILL.md",
@@ -1950,27 +1950,27 @@
     {
       "filename": "arize-experiment/SKILL.md",
       "name": "arize-experiment",
-      "description": "INVOKE THIS SKILL when creating, running, or analyzing Arize experiments. Covers experiment CRUD, exporting runs, comparing results, and evaluation workflows using the ax CLI."
+      "description": "INVOKE THIS SKILL when creating, running, or analyzing Arize experiments. Also use when the user wants to evaluate or measure model performance, compare models (including GPT-4, Claude, or others), or assess how well their AI is doing. Covers experiment CRUD, exporting runs, comparing results, and evaluation workflows using the ax CLI."
     },
     {
       "filename": "arize-instrumentation/SKILL.md",
       "name": "arize-instrumentation",
-      "description": "INVOKE THIS SKILL when adding Arize AX tracing to an application. Follow the Agent-Assisted Tracing two-phase flow: analyze the codebase (read-only), then implement instrumentation after user confirmation. When the app uses LLM tool/function calling, add manual CHAIN \u002B TOOL spans so traces show each tool\u0027s input and output. Leverages https://arize.com/docs/ax/alyx/tracing-assistant and https://arize.com/docs/PROMPT.md."
+      "description": "INVOKE THIS SKILL when adding Arize AX tracing or observability to an app for the first time, or when the user wants to instrument their LLM app or get started with LLM observability. Follow the Agent-Assisted Tracing two-phase flow: analyze the codebase (read-only), then implement after user confirmation. When the app uses LLM tool/function calling, add manual CHAIN \u002B TOOL spans. Leverages https://arize.com/docs/ax/alyx/tracing-assistant and https://arize.com/docs/PROMPT.md."
     },
     {
       "filename": "arize-link/SKILL.md",
       "name": "arize-link",
-      "description": "Generate deep links to the Arize UI. Use when the user wants a clickable URL to open a specific trace, span, session, dataset, labeling queue, evaluator, or annotation config."
+      "description": "Generate deep links to the Arize UI. Use when the user wants a clickable URL to open or share a specific trace, span, session, dataset, labeling queue, evaluator, or annotation config, or when sharing Arize resources with team members."
     },
     {
       "filename": "arize-prompt-optimization/SKILL.md",
       "name": "arize-prompt-optimization",
-      "description": "INVOKE THIS SKILL when optimizing, improving, or debugging LLM prompts using production trace data, evaluations, and annotations. Covers extracting prompts from spans, gathering performance signal, and running a data-driven optimization loop using the ax CLI."
+      "description": "INVOKE THIS SKILL when optimizing, improving, or debugging LLM prompts using production trace data, evaluations, and annotations. Also use when the user wants to make their AI respond better or improve AI output quality. Covers extracting prompts from spans, gathering performance signal, and running a data-driven optimization loop using the ax CLI."
     },
     {
       "filename": "arize-trace/SKILL.md",
       "name": "arize-trace",
-      "description": "INVOKE THIS SKILL when downloading or exporting Arize traces and spans. Covers exporting traces by ID, sessions by ID, and debugging LLM application issues using the ax CLI."
+      "description": "INVOKE THIS SKILL when downloading, exporting, or inspecting Arize traces and spans, or when a user wants to look at what their LLM app is doing using existing trace data, or when an already-instrumented app has a bug or error to investigate. Use for debugging unknown runtime issues, failures, and behavior regressions. Covers exporting traces by ID, spans by ID, sessions by ID, and root-cause investigation with the ax CLI."
     },
     {
       "filename": "aspire/SKILL.md",
@@ -2152,6 +2152,11 @@
       "filename": "containerize-aspnetcore/SKILL.md",
       "name": "containerize-aspnetcore",
       "description": "Containerize an ASP.NET Core project by creating Dockerfile and .dockerfile files customized for the project."
+    },
+    {
+      "filename": "content-management-systems/SKILL.md",
+      "name": "content-management-systems",
+      "description": "Workflow for building and modifying content management systems across WordPress, Shopify, Wix, Squarespace, Drupal, WooCommerce, Joomla, HubSpot CMS Hub, Webflow, Adobe Experience Manager, and similar platforms. Use when working on CMS themes, plugins, apps, modules, admin panels, media uploads, content models, editors, markdown pipelines, or static export workflows."
     },
     {
       "filename": "context-map/SKILL.md",
@@ -2927,7 +2932,7 @@
     {
       "filename": "phoenix-cli/SKILL.md",
       "name": "phoenix-cli",
-      "description": "Debug LLM applications using the Phoenix CLI. Fetch traces, analyze errors, review experiments, inspect datasets, and query the GraphQL API. Use when debugging AI/LLM applications, analyzing trace data, working with Phoenix observability, or investigating LLM performance issues."
+      "description": "Debug LLM applications using the Phoenix CLI. Fetch traces, analyze errors, structure trace review with open coding and axial coding, inspect datasets, review experiments, query annotation configs, and use the GraphQL API. Use whenever the user is analyzing traces or spans, investigating LLM/agent failures, deciding what to do after instrumenting an app, building failure taxonomies, choosing what evals to write, or asking \u0022what\u0027s going wrong\u0022, \u0022what kinds of mistakes\u0022, or \u0022where do I focus\u0022 \u2014 even without naming a technique."
     },
     {
       "filename": "phoenix-evals/SKILL.md",
@@ -3472,7 +3477,7 @@
     {
       "filename": "winapp-cli/SKILL.md",
       "name": "winapp-cli",
-      "description": "Windows App Development CLI (winapp) for building, packaging, and deploying Windows applications. Use when asked to initialize Windows app projects, create MSIX packages, generate AppxManifest.xml, manage development certificates, add package identity for debugging, sign packages, publish to the Microsoft Store, create external catalogs, or access Windows SDK build tools. Supports .NET (csproj), C\u002B\u002B, Electron, Rust, Tauri, and cross-platform frameworks targeting Windows."
+      "description": "Windows App Development CLI (winapp) for building, packaging, signing, debugging, and UI-automating Windows applications. Use when asked to initialize Windows app projects, create MSIX packages, manage AppxManifest.xml or development certificates, run an app as packaged for debugging, automate Windows UI via Microsoft UI Automation, publish to the Microsoft Store, or access Windows SDK build tools. Covers commands like init, pack, run, unregister, manifest, cert, sign, store, ui, and tool. Supports .NET (csproj), C\u002B\u002B, Electron, Rust, Tauri, Flutter, and other Windows frameworks."
     },
     {
       "filename": "winmd-api-search/SKILL.md",
