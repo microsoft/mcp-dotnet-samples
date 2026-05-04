@@ -51,6 +51,12 @@
       "name": "Agent Governance Reviewer"
     },
     {
+      "filename": "ai-readiness-reporter.agent.md",
+      "name": "ai-readiness-reporter",
+      "description": "Runs the AgentRC readiness assessment on the current repository and produces a self-contained, static HTML dashboard at reports/index.html. Explains every readiness pillar, the maturity level, and an actionable remediation plan, framed by AgentRC measure \u2192 generate \u2192 maintain loop. Use when asked to assess, audit, score, report on, or visualise the AI readiness of a repo.",
+      "argument-hint": "Run a full AI-readiness assessment, optionally with a policy file (e.g. examples/policies/strict.json). Ask about specific pillars (repo health vs AI setup) or extras."
+    },
+    {
       "filename": "ai-team-dev.agent.md",
       "name": "ai-team-dev",
       "description": "AI development team agent (Nova, Sage, Milo). Use when: building features, writing application code, fixing bugs, implementing UI components, creating APIs, styling with CSS, writing database queries, or executing sprint plans. The team switches between frontend, backend, and design roles as needed."
@@ -1858,6 +1864,24 @@
       "argument-hint": "Optional: specific area to focus on, e.g. \u0022architecture only\u0022, \u0022testing and concerns\u0022"
     },
     {
+      "filename": "acreadiness-assess/SKILL.md",
+      "name": "acreadiness-assess",
+      "description": "Run the AgentRC readiness assessment on the current repository and produce a static HTML dashboard at reports/index.html. Wraps \u0060npx github:microsoft/agentrc readiness\u0060 and hands off rendering to the @ai-readiness-reporter custom agent. Supports policies (--policy) for org-specific scoring. Use when asked to assess, audit, or score the AI readiness of a repo.",
+      "argument-hint": "[--policy \u003Cpath-or-pkg\u003E] [--per-area] \u2014 e.g. /acreadiness-assess, /acreadiness-assess --policy ./policies/strict.json"
+    },
+    {
+      "filename": "acreadiness-generate-instructions/SKILL.md",
+      "name": "acreadiness-generate-instructions",
+      "description": "Generate tailored AI agent instruction files via AgentRC instructions command. Produces .github/copilot-instructions.md (default, recommended for Copilot in VS Code) plus optional per-area .instructions.md files with applyTo globs for monorepos. Use after running /acreadiness-assess to close gaps in the AI Tooling pillar.",
+      "argument-hint": "[--output .github/copilot-instructions.md|AGENTS.md] [--strategy flat|nested] [--areas | --area \u003Cname\u003E] [--apply-to \u003Cglob\u003E] [--claude-md] [--dry-run]"
+    },
+    {
+      "filename": "acreadiness-policy/SKILL.md",
+      "name": "acreadiness-policy",
+      "description": "Help the user pick, write, or apply an AgentRC policy. Policies customise readiness scoring by disabling irrelevant checks, overriding impact/level, setting pass-rate thresholds, or chaining org baselines with team overrides. Use when the user asks about strict mode, AI-only scoring, custom weights, CI gating, or wants org-wide standardisation.",
+      "argument-hint": "[show | new \u003Cname\u003E | apply \u003Cpath-or-pkg\u003E] \u2014 e.g. /acreadiness-policy show, /acreadiness-policy new strict-frontend"
+    },
+    {
       "filename": "add-educational-comments/SKILL.md",
       "name": "add-educational-comments",
       "description": "Add educational comments to the file specified, or prompt asking for file to comment if one is not provided."
@@ -2142,6 +2166,11 @@
       "filename": "comment-code-generate-a-tutorial/SKILL.md",
       "name": "comment-code-generate-a-tutorial",
       "description": "Transform this Python script into a polished, beginner-friendly project by refactoring the code, adding clear instructional comments, and generating a complete markdown tutorial."
+    },
+    {
+      "filename": "commit-message-storyteller/SKILL.md",
+      "name": "commit-message-storyteller",
+      "description": "Analyzes git diffs or staged changes and generates narrative commit messages that explain WHY a change was made, not just what changed \u2014 following Conventional Commits format. Use when asked to \u0022write a commit message\u0022, \u0022generate a commit\u0022, \u0022describe my changes\u0022, \u0022what should I commit this as\u0022, \u0022commit this\u0022, \u0022summarize my diff\u0022, or \u0022help me commit\u0022. Works with git diff output, staged files, or plain descriptions of changes."
     },
     {
       "filename": "containerize-aspnet-framework/SKILL.md",
