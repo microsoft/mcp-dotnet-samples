@@ -2879,6 +2879,11 @@
       "description": "Use this skill when building or modifying Minecraft server plugins for Paper, Spigot, or Bukkit, including plugin.yml setup, commands, listeners, schedulers, player state, team or arena systems, persistent progression, economy or profile data, configuration files, Adventure text, and version-safe API usage. Trigger for requests like \u0022build a Minecraft plugin\u0022, \u0022add a Paper command\u0022, \u0022fix a Bukkit listener\u0022, \u0022create plugin.yml\u0022, \u0022implement a minigame mechanic\u0022, \u0022add a perk or quest system\u0022, or \u0022debug server plugin behavior\u0022."
     },
     {
+      "filename": "mini-context-graph/SKILL.md",
+      "name": "mini-context-graph",
+      "description": "A persistent, compounding knowledge base combining Karpathy\u0027s LLM Wiki pattern\nwith a structured knowledge graph. Ingest documents once \u2014 the LLM writes wiki\npages, extracts entities/relations into the graph, and stores raw content for\nevidence retrieval. Knowledge accumulates and cross-references; it is never\nre-derived from scratch."
+    },
+    {
       "filename": "mkdocs-translations/SKILL.md",
       "name": "mkdocs-translations",
       "description": "Generate a language translation for a mkdocs documentation stack."
