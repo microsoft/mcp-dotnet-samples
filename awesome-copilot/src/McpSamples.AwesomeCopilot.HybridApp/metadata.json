@@ -292,6 +292,11 @@
       "description": "Expert agent for creating unit tests for java applications using Diffblue Cover."
     },
     {
+      "filename": "dotnet-fullstack-mentor.agent.md",
+      "name": "dotnet-fullstack-mentor",
+      "description": "Opinionated mentor for .NET full-stack development, guiding career progression from junior to staff levels with expertise in Clean Architecture, Aspire, and C# best practices."
+    },
+    {
       "filename": "dotnet-maui.agent.md",
       "name": "MAUI Expert",
       "description": "Support development of .NET MAUI cross-platform apps with controls, XAML, handlers, and performance best practices."
@@ -2411,6 +2416,11 @@
       "filename": "devops-rollout-plan/SKILL.md",
       "name": "devops-rollout-plan",
       "description": "Generate comprehensive rollout plans with preflight checks, step-by-step deployment, verification signals, rollback procedures, and communication plans for infrastructure and application changes"
+    },
+    {
+      "filename": "diagnose/SKILL.md",
+      "name": "diagnose",
+      "description": "Perform a systematic diagnostic scan of an AI workflow across 5 quality dimensions \u2014 prompt quality, context efficiency, tool health, architecture fitness, and safety \u2014 producing a scored report with prioritized remediation actions."
     },
     {
       "filename": "documentation-writer/SKILL.md",
