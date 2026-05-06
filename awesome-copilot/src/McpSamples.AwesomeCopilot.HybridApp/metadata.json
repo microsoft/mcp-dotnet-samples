@@ -2974,6 +2974,11 @@
       "description": "Comprehensive guide for creating professional UI/UX designs in Penpot using MCP tools. Use this skill when: (1) Creating new UI/UX designs for web, mobile, or desktop applications, (2) Building design systems with components and tokens, (3) Designing dashboards, forms, navigation, or landing pages, (4) Applying accessibility standards and best practices, (5) Following platform guidelines (iOS, Android, Material Design), (6) Reviewing or improving existing Penpot designs for usability. Triggers: \u0022design a UI\u0022, \u0022create interface\u0022, \u0022build layout\u0022, \u0022design dashboard\u0022, \u0022create form\u0022, \u0022design landing page\u0022, \u0022make it accessible\u0022, \u0022design system\u0022, \u0022component library\u0022."
     },
     {
+      "filename": "performance-review-writer/SKILL.md",
+      "name": "performance-review-writer",
+      "description": "Draft performance reviews, self-assessments, peer reviews, and upward feedback in your own voice. Analyzes your contributions, emails, and meeting history via WorkIQ, then produces honest, impact-focused drafts using the STAR format. USE FOR: write my performance review, draft self-assessment, peer review, 360 feedback, annual review, mid-year review, upward feedback, write review for colleague, performance appraisal."
+    },
+    {
       "filename": "phoenix-cli/SKILL.md",
       "name": "phoenix-cli",
       "description": "Debug LLM applications using the Phoenix CLI. Fetch traces, analyze errors, structure trace review with open coding and axial coding, inspect datasets, review experiments, query annotation configs, and use the GraphQL API. Use whenever the user is analyzing traces or spans, investigating LLM/agent failures, deciding what to do after instrumenting an app, building failure taxonomies, choosing what evals to write, or asking \u0022what\u0027s going wrong\u0022, \u0022what kinds of mistakes\u0022, or \u0022where do I focus\u0022 \u2014 even without naming a technique."
