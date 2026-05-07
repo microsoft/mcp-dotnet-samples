@@ -1218,6 +1218,10 @@
       "description": "Guidelines for developing Azure Logic Apps and Power Automate workflows with best practices for Workflow Definition Language (WDL), integration patterns, and enterprise automation"
     },
     {
+      "filename": "azure-naming.instructions.md",
+      "description": "Azure resource naming conventions based on Microsoft CAF (Cloud Adoption Framework). Use when creating, reviewing, or suggesting names for Azure resources."
+    },
+    {
       "filename": "azure-verified-modules-bicep.instructions.md",
       "description": "Azure Verified Modules (AVM) and Bicep"
     },
