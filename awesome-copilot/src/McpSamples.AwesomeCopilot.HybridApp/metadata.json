@@ -2342,11 +2342,6 @@
       "description": "Ensure that C# types are documented with XML comments and follow best practices for documentation."
     },
     {
-      "filename": "csharp-mcp-server-generator/SKILL.md",
-      "name": "csharp-mcp-server-generator",
-      "description": "Generate a complete MCP server project in C# with tools, prompts, and proper configuration"
-    },
-    {
       "filename": "csharp-mstest/SKILL.md",
       "name": "csharp-mstest",
       "description": "Get best practices for MSTest 3.x/4.x unit testing, including modern assertion APIs and data-driven tests"
@@ -2440,6 +2435,11 @@
       "filename": "dotnet-design-pattern-review/SKILL.md",
       "name": "dotnet-design-pattern-review",
       "description": "Review the C#/.NET code for design pattern implementation and suggest improvements."
+    },
+    {
+      "filename": "dotnet-mcp-builder/SKILL.md",
+      "name": "dotnet-mcp-builder",
+      "description": "Build Model Context Protocol (MCP) servers in C#/.NET against the current ModelContextProtocol 1.x NuGet packages. Especially helps with cases the model often gets wrong without guidance \u2014 stale preview versions (it tends to pick 0.3 or 0.4 preview), MCP Apps (interactive UI rendered in the host), elicitation URL mode, per-session HTTP wiring, OAuth and reverse-proxy deploy specifics, and debugging concrete MapMcp / STDIO / Streamable-HTTP errors. Also covers the routine work \u2014 STDIO and Streamable HTTP transports (SSE is deprecated), tools, prompts, resources, sampling, roots, completions, logging \u2014 and a basic .NET MCP client. Trigger when the user says or implies any .NET MCP server work: ModelContextProtocol, McpServerTool, MapMcp, WithStdioServerTransport, \u0022MCP server in C#\u0022, \u0022MCP tool in dotnet\u0022, \u0022expose this as MCP\u0022, or names a primitive (prompt/resource/elicitation/MCP App) in a .NET context. Skip for MCP work in other languages."
     },
     {
       "filename": "dotnet-timezone/SKILL.md",
