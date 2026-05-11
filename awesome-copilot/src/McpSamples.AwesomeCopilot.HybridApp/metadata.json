@@ -813,6 +813,11 @@
       "description": "Meticulous QA subagent for test planning, bug hunting, edge-case analysis, and implementation verification."
     },
     {
+      "filename": "quality-playbook.agent.md",
+      "name": "quality-playbook",
+      "description": "Run a complete quality engineering audit on any codebase. Orchestrates six phases \u2014 explore, generate, review, audit, reconcile, verify \u2014 each in its own context window for maximum depth. Then runs iteration strategies to find even more bugs. Finds the 35% of real defects that structural code review alone cannot catch."
+    },
+    {
       "filename": "react18-auditor.agent.md",
       "name": "react18-auditor",
       "description": "Deep-scan specialist for React 16/17 class-component codebases targeting React 18.3.1. Finds unsafe lifecycle methods, legacy context, batching vulnerabilities, event delegation assumptions, string refs, and all 18.3.1 deprecation surface. Reads everything, touches nothing. Saves .github/react18-audit.md."
@@ -1549,6 +1554,10 @@
     {
       "filename": "ms-sql-dba.instructions.md",
       "description": "Instructions for customizing GitHub Copilot behavior for MS-SQL DBA chat mode."
+    },
+    {
+      "filename": "mvvm-toolkit.instructions.md",
+      "description": "CommunityToolkit.Mvvm (MVVM Toolkit) coding conventions for ViewModels, commands, messaging, validation, and DI across WPF, WinUI 3, .NET MAUI, Uno Platform, and Avalonia."
     },
     {
       "filename": "nestjs.instructions.md",
@@ -2549,12 +2558,12 @@
     {
       "filename": "flowstudio-power-automate-mcp/SKILL.md",
       "name": "flowstudio-power-automate-mcp",
-      "description": "Foundation skill for Power Automate via FlowStudio MCP \u2014 auth setup, the reusable MCP helper (Python \u002B Node.js), tool discovery via \u0060list_skills\u0060 / \u0060tool_search\u0060, and oversized-response handling. Load this skill first when connecting an agent to Power Automate. For specialized workflows, load \u0060power-automate-build\u0060, \u0060power-automate-debug\u0060, \u0060power-automate-monitoring\u0060 (Pro\u002B), or \u0060power-automate-governance\u0060 (Pro\u002B) \u2014 each contains the workflow narrative, this skill provides the plumbing they all rely on. Requires a FlowStudio MCP subscription or compatible server \u2014 see https://mcp.flowstudio.app"
+      "description": "Foundation skill for Power Automate via FlowStudio MCP \u2014 auth setup, the reusable MCP helper (Python \u002B Node.js), tool discovery via \u0060list_skills\u0060 / \u0060tool_search\u0060, and oversized-response handling. Load this skill first when connecting an agent to Power Automate. For specialized workflows, load \u0060flowstudio-power-automate-build\u0060, \u0060flowstudio-power-automate-debug\u0060, \u0060flowstudio-power-automate-monitoring\u0060 (Pro\u002B), or \u0060flowstudio-power-automate-governance\u0060 (Pro\u002B) \u2014 each contains the workflow narrative, this skill provides the plumbing they all rely on. Requires a FlowStudio MCP subscription or compatible server \u2014 see https://mcp.flowstudio.app"
     },
     {
       "filename": "flowstudio-power-automate-monitoring/SKILL.md",
       "name": "flowstudio-power-automate-monitoring",
-      "description": "**Pro\u002B subscription required.** Tenant-wide Power Automate flow health monitoring, failure rate analytics, and asset inventory using the FlowStudio MCP cached store. Load this skill ONLY for tenant-wide aggregated views \u2014 not for listing flows in a single environment or debugging a specific run (use power-automate-mcp or power-automate-debug for those). Not the same as the server\u0027s \u0060monitor-flow\u0060 tool bundle (\u0060tool_search query: \u0022skill:monitor-flow\u0022\u0060) \u2014 that bundle is for runtime control of a single flow (start/stop/trigger/ cancel/resubmit); this skill is for tenant-wide health analytics over the cached store. Load when asked to: monitor tenant health, get aggregated failure rates over a time window, review tenant-wide error trends, find inactive makers across the tenant, inventory all Power Apps in the tenant, compute governance scores, generate a compliance report, or run a tenant-wide health overview. Requires a FlowStudio for Teams or MCP Pro\u002B subscription \u2014 see https://mcp.flowstudio.app"
+      "description": "Pro\u002B subscription required. Tenant-wide Power Automate monitoring using the FlowStudio MCP cached store: failure rates, run-health trends, maker/app inventory, inactive owners, and compliance/health reports. Use only for aggregated tenant views. For one environment, one flow, run control, or root-cause debugging, use flowstudio-power-automate-mcp, flowstudio-power-automate-debug, or the server monitor-flow bundle. Requires FlowStudio for Teams or MCP Pro\u002B."
     },
     {
       "filename": "fluentui-blazor/SKILL.md",
@@ -2918,6 +2927,21 @@
       "description": "Create optimized multi-stage Dockerfiles for any language or framework"
     },
     {
+      "filename": "mvvm-toolkit-di/SKILL.md",
+      "name": "mvvm-toolkit-di",
+      "description": "Wire CommunityToolkit.Mvvm ViewModels into Microsoft.Extensions.DependencyInjection. Covers the .NET Generic Host composition root, constructor injection, service lifetimes (Singleton / Transient / Scoped), IMessenger registration, resolving ViewModels in Views, keyed services, testing seams, and the legacy Ioc.Default escape hatch. Use across WPF, WinUI 3, .NET MAUI, Uno, and Avalonia."
+    },
+    {
+      "filename": "mvvm-toolkit-messenger/SKILL.md",
+      "name": "mvvm-toolkit-messenger",
+      "description": "CommunityToolkit.Mvvm Messenger pub/sub for decoupled communication between ViewModels (or any objects). Covers WeakReferenceMessenger vs StrongReferenceMessenger, IRecipient\u003CTMessage\u003E, RequestMessage\u003CT\u003E / AsyncRequestMessage\u003CT\u003E / CollectionRequestMessage\u003CT\u003E, ValueChangedMessage\u003CT\u003E, channels (tokens), and the ObservableRecipient activation lifecycle. Use across WPF, WinUI 3, .NET MAUI, Uno, and Avalonia."
+    },
+    {
+      "filename": "mvvm-toolkit/SKILL.md",
+      "name": "mvvm-toolkit",
+      "description": "CommunityToolkit.Mvvm (the MVVM Toolkit) core: source generators ([ObservableProperty], [RelayCommand], [NotifyPropertyChangedFor], [NotifyCanExecuteChangedFor], [NotifyDataErrorInfo]), base classes (ObservableObject / ObservableValidator / ObservableRecipient), commands (RelayCommand / AsyncRelayCommand), and validation. Companion skills: mvvm-toolkit-messenger for pub/sub, mvvm-toolkit-di for Microsoft.Extensions.DependencyInjection wiring. Works across WPF, WinUI 3, MAUI, Uno, and Avalonia."
+    },
+    {
       "filename": "my-issues/SKILL.md",
       "name": "my-issues",
       "description": "List my issues in the current repository"
@@ -3175,7 +3199,7 @@
     {
       "filename": "quality-playbook/SKILL.md",
       "name": "quality-playbook",
-      "description": "Explore any codebase from scratch and generate six quality artifacts: a quality constitution (QUALITY.md), spec-traced functional tests, a code review protocol with regression test generation, an integration testing protocol, a multi-model spec audit (Council of Three), and an AI bootstrap file (AGENTS.md). Includes state machine completeness analysis and missing safeguard detection. Works with any language (Python, Java, Scala, TypeScript, Go, Rust, etc.). Use this skill whenever the user asks to set up a quality playbook, generate functional tests from specifications, create a quality constitution, build testing protocols, audit code against specs, or establish a repeatable quality system for a project. Also trigger when the user mentions \u0027quality playbook\u0027, \u0027spec audit\u0027, \u0027Council of Three\u0027, \u0027fitness-to-purpose\u0027, \u0027coverage theater\u0027, or wants to go beyond basic test generation to build a full quality system grounded in their actual codebase."
+      "description": "Run a complete quality engineering audit on any codebase. Derives behavioral requirements from the code, generates spec-traced functional tests, runs a three-pass code review with regression tests, executes a multi-model spec audit (Council of Three), and produces a consolidated bug report with TDD-verified patches. Finds the 35% of real defects that structural code review alone cannot catch. Works with any language. Trigger on \u0027quality playbook\u0027, \u0027spec audit\u0027, \u0027Council of Three\u0027, \u0027fitness-to-purpose\u0027, or \u0027coverage theater\u0027."
     },
     {
       "filename": "quasi-coder/SKILL.md",
