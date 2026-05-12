@@ -3382,6 +3382,11 @@
       "description": "Shuffle repetitive JSON objects safely by validating schema consistency before randomising entries."
     },
     {
+      "filename": "slang-shader-engineer/SKILL.md",
+      "name": "slang-shader-engineer",
+      "description": "Use when working with Slang shaders, shader modules, HLSL-compatible GPU code, graphics pipelines, compute shaders, tessellation, ray tracing, parameter blocks, generics, interfaces, capabilities, cross-compilation, shader optimization, shader review, or C\u002B\u002B engine integration for Slang. Trigger on any mention of Slang, .slang files, slangc, SPIR-V from Slang, Slang modules, [shader(\u0022compute\u0022)], [shader(\u0022vertex\u0022)], or requests to write/review/refactor shader code with modern language features. Also trigger for Slang-to-HLSL/GLSL/Metal/CUDA cross-compile questions, or when the user says \u0022shader\u0022 alongside \u0022generics\u0022, \u0022interfaces\u0022, \u0022parameter blocks\u0022, \u0022autodiff\u0022, or \u0022capabilities\u0022."
+    },
+    {
       "filename": "snowflake-semanticview/SKILL.md",
       "name": "snowflake-semanticview",
       "description": "Create, alter, and validate Snowflake semantic views using Snowflake CLI (snow). Use when asked to build or troubleshoot semantic views/semantic layer definitions with CREATE/ALTER SEMANTIC VIEW, to validate semantic-view DDL against Snowflake via CLI, or to guide Snowflake CLI installation and connection setup."
