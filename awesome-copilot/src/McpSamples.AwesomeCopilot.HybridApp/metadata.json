@@ -693,46 +693,6 @@
       "name": "Playwright Tester Mode"
     },
     {
-      "filename": "polyglot-test-builder.agent.md",
-      "description": "Runs build/compile commands for any language and reports results. Discovers build command from project files if not specified.",
-      "name": "Polyglot Test Builder"
-    },
-    {
-      "filename": "polyglot-test-fixer.agent.md",
-      "description": "Fixes compilation errors in source or test files. Analyzes error messages and applies corrections.",
-      "name": "Polyglot Test Fixer"
-    },
-    {
-      "filename": "polyglot-test-generator.agent.md",
-      "description": "Orchestrates comprehensive test generation using Research-Plan-Implement pipeline. Use when asked to generate tests, write unit tests, improve test coverage, or add tests.",
-      "name": "Polyglot Test Generator"
-    },
-    {
-      "filename": "polyglot-test-implementer.agent.md",
-      "description": "Implements a single phase from the test plan. Writes test files and verifies they compile and pass. Calls builder, tester, and fixer agents as needed.",
-      "name": "Polyglot Test Implementer"
-    },
-    {
-      "filename": "polyglot-test-linter.agent.md",
-      "description": "Runs code formatting/linting for any language. Discovers lint command from project files if not specified.",
-      "name": "Polyglot Test Linter"
-    },
-    {
-      "filename": "polyglot-test-planner.agent.md",
-      "description": "Creates structured test implementation plans from research findings. Organizes tests into phases by priority and complexity. Works with any language.",
-      "name": "Polyglot Test Planner"
-    },
-    {
-      "filename": "polyglot-test-researcher.agent.md",
-      "description": "Analyzes codebases to understand structure, testing patterns, and testability. Identifies source files, existing tests, build commands, and testing framework. Works with any language.",
-      "name": "Polyglot Test Researcher"
-    },
-    {
-      "filename": "polyglot-test-tester.agent.md",
-      "description": "Runs test commands for any language and reports results. Discovers test command from project files if not specified.",
-      "name": "Polyglot Test Tester"
-    },
-    {
       "filename": "postgresql-dba.agent.md",
       "description": "Work with PostgreSQL databases using the PostgreSQL extension.",
       "name": "PostgreSQL Database Administrator"
@@ -1972,47 +1932,47 @@
     {
       "filename": "arize-ai-provider-integration/SKILL.md",
       "name": "arize-ai-provider-integration",
-      "description": "INVOKE THIS SKILL when creating, reading, updating, or deleting Arize AI integrations. Covers listing integrations, creating integrations for any supported LLM provider (OpenAI, Anthropic, Azure OpenAI, AWS Bedrock, Vertex AI, Gemini, NVIDIA NIM, custom), updating credentials or metadata, and deleting integrations using the ax CLI."
+      "description": "Creates, reads, updates, and deletes Arize AI integrations that store LLM provider credentials used by evaluators and other Arize features. Supports any LLM provider (e.g. OpenAI, Anthropic, Azure OpenAI, AWS Bedrock, Vertex AI, Gemini, NVIDIA NIM). Use when the user mentions AI integration, LLM provider credentials, create integration, list integrations, update credentials, delete integration, or connecting an LLM provider to Arize."
     },
     {
       "filename": "arize-annotation/SKILL.md",
       "name": "arize-annotation",
-      "description": "INVOKE THIS SKILL when creating, managing, or using annotation configs or annotation queues on Arize (categorical, continuous, freeform), or applying human annotations to project spans via the Python SDK. Configs are the label schema for human feedback; queues are review workflows that route records to annotators. Triggers: annotation config, annotation queue, label schema, human feedback schema, bulk annotate spans, update_annotations, labeling queue, annotate record."
+      "description": "Creates and manages annotation configs (categorical, continuous, freeform label schemas) and annotation queues (human review workflows) on Arize. Applies human annotations to project spans via the Python SDK. Use when the user mentions annotation config, annotation queue, label schema, human feedback, bulk annotate spans, update_annotations, labeling queue, annotate record, or human review."
     },
     {
       "filename": "arize-dataset/SKILL.md",
       "name": "arize-dataset",
-      "description": "INVOKE THIS SKILL when creating, managing, or querying Arize datasets and examples. Also use when the user needs test data or evaluation examples for their model. Covers dataset CRUD, appending examples, exporting data, and file-based dataset creation using the ax CLI."
+      "description": "Creates, manages, and queries Arize datasets and examples. Covers dataset CRUD, appending examples, exporting data, and file-based dataset creation using the ax CLI. Use when the user needs test data, evaluation examples, or mentions create dataset, list datasets, export dataset, append examples, dataset version, golden dataset, or test set."
     },
     {
       "filename": "arize-evaluator/SKILL.md",
       "name": "arize-evaluator",
-      "description": "INVOKE THIS SKILL for LLM-as-judge evaluation workflows on Arize: creating/updating evaluators, running evaluations on spans or experiments, tasks, trigger-run, column mapping, and continuous monitoring. Use when the user says: create an evaluator, LLM judge, hallucination/faithfulness/correctness/relevance, run eval, score my spans or experiment, ax tasks, trigger-run, trigger eval, column mapping, continuous monitoring, query filter for evals, evaluator version, or improve an evaluator prompt."
+      "description": "Handles LLM-as-judge evaluation workflows on Arize including creating/updating evaluators, running evaluations on spans or experiments, managing tasks, trigger-run operations, column mapping, and continuous monitoring. Use when the user mentions create evaluator, LLM judge, hallucination, faithfulness, correctness, relevance, run eval, score spans, score experiment, trigger-run, column mapping, continuous monitoring, or improve evaluator prompt."
     },
     {
       "filename": "arize-experiment/SKILL.md",
       "name": "arize-experiment",
-      "description": "INVOKE THIS SKILL when creating, running, or analyzing Arize experiments. Also use when the user wants to evaluate or measure model performance, compare models (including GPT-4, Claude, or others), or assess how well their AI is doing. Covers experiment CRUD, exporting runs, comparing results, and evaluation workflows using the ax CLI."
+      "description": "Creates, runs, and analyzes Arize experiments for evaluating and comparing model performance. Covers experiment CRUD, exporting runs, comparing results, and evaluation workflows using the ax CLI. Use when the user mentions create experiment, run experiment, compare models, model performance, evaluate AI, experiment results, benchmark, A/B test models, or measure accuracy."
     },
     {
       "filename": "arize-instrumentation/SKILL.md",
       "name": "arize-instrumentation",
-      "description": "INVOKE THIS SKILL when adding Arize AX tracing or observability to an app for the first time, or when the user wants to instrument their LLM app or get started with LLM observability. Follow the Agent-Assisted Tracing two-phase flow: analyze the codebase (read-only), then implement after user confirmation. When the app uses LLM tool/function calling, add manual CHAIN \u002B TOOL spans. Leverages https://arize.com/docs/ax/alyx/tracing-assistant and https://arize.com/docs/PROMPT.md."
+      "description": "Adds Arize AX tracing to an LLM application for the first time. Follows a two-phase agent-assisted flow to analyze the codebase then implement instrumentation after user confirmation. Use when the user wants to instrument their app, add tracing from scratch, set up LLM observability, integrate OpenTelemetry or openinference, or get started with Arize tracing."
     },
     {
       "filename": "arize-link/SKILL.md",
       "name": "arize-link",
-      "description": "Generate deep links to the Arize UI. Use when the user wants a clickable URL to open or share a specific trace, span, session, dataset, labeling queue, evaluator, or annotation config, or when sharing Arize resources with team members."
+      "description": "Generates deep links to the Arize UI for traces, spans, sessions, datasets, labeling queues, evaluators, and annotation configs. Produces clickable URLs for sharing Arize resources with team members. Use when the user wants to link to or open a trace, span, session, dataset, evaluator, or annotation config in the Arize UI."
     },
     {
       "filename": "arize-prompt-optimization/SKILL.md",
       "name": "arize-prompt-optimization",
-      "description": "INVOKE THIS SKILL when optimizing, improving, or debugging LLM prompts using production trace data, evaluations, and annotations. Also use when the user wants to make their AI respond better or improve AI output quality. Covers extracting prompts from spans, gathering performance signal, and running a data-driven optimization loop using the ax CLI."
+      "description": "Optimizes, improves, and debugs LLM prompts using production trace data, evaluations, and annotations. Extracts prompts from spans, gathers performance signal, and runs a data-driven optimization loop using the ax CLI. Use when the user mentions optimize prompt, improve prompt, make AI respond better, improve output quality, prompt engineering, prompt tuning, or system prompt improvement."
     },
     {
       "filename": "arize-trace/SKILL.md",
       "name": "arize-trace",
-      "description": "INVOKE THIS SKILL when downloading, exporting, or inspecting Arize traces and spans, or when a user wants to look at what their LLM app is doing using existing trace data, or when an already-instrumented app has a bug or error to investigate. Use for debugging unknown runtime issues, failures, and behavior regressions. Covers exporting traces by ID, spans by ID, sessions by ID, and root-cause investigation with the ax CLI."
+      "description": "Downloads, exports, and inspects existing Arize traces and spans to understand what an LLM app is doing or debug runtime issues. Covers exporting traces by ID, spans by ID, sessions by ID, and root-cause investigation using the ax CLI. Use when the user wants to look at existing trace data, see what their LLM app is doing, export traces, download spans, investigate errors, or analyze behavior regressions."
     },
     {
       "filename": "aspire/SKILL.md",
@@ -3050,11 +3010,6 @@
       "filename": "playwright-generate-test/SKILL.md",
       "name": "playwright-generate-test",
       "description": "Generate a Playwright test based on a scenario using Playwright MCP"
-    },
-    {
-      "filename": "polyglot-test-agent/SKILL.md",
-      "name": "polyglot-test-agent",
-      "description": "Generates comprehensive, workable unit tests for any programming language using a multi-agent pipeline. Use when asked to generate tests, write unit tests, improve test coverage, add test coverage, create test files, or test a codebase. Supports C#, TypeScript, JavaScript, Python, Go, Rust, Java, and more. Orchestrates research, planning, and implementation phases to produce tests that compile, pass, and follow project conventions."
     },
     {
       "filename": "postgresql-code-review/SKILL.md",
