@@ -2576,11 +2576,6 @@
       "description": "Use this skill whenever the user mentions IP geolocation feeds, RFC 8805, geofeeds, or wants help creating, tuning, validating, or publishing a self-published IP geolocation feed in CSV format. Intended user audience is a network operator, ISP, mobile carrier, cloud provider, hosting company, IXP, or satellite provider asking about IP geolocation accuracy, or geofeed authoring best practices. Helps create, refine, and improve CSV-format IP geolocation feeds with opinionated recommendations beyond RFC 8805 compliance. Do NOT use for private or internal IP address management \u2014 applies only to publicly routable IP addresses.\n"
     },
     {
-      "filename": "gh-cli/SKILL.md",
-      "name": "gh-cli",
-      "description": "GitHub CLI (gh) comprehensive reference for repositories, issues, pull requests, Actions, projects, releases, gists, codespaces, organizations, extensions, and all GitHub operations from the command line."
-    },
-    {
       "filename": "git-commit/SKILL.md",
       "name": "git-commit",
       "description": "Execute git commit with conventional commit message analysis, intelligent staging, and message generation. Use when user asks to commit changes, create a git commit, or mentions \u0022/commit\u0022. Supports: (1) Auto-detecting type and scope from changes, (2) Generating conventional commit messages from diff, (3) Interactive commit with optional type/scope/description overrides, (4) Intelligent file staging for logical grouping"
@@ -3085,6 +3080,11 @@
       "filename": "prompt-builder/SKILL.md",
       "name": "prompt-builder",
       "description": "Guide users through creating high-quality GitHub Copilot prompts with proper structure, tools, and best practices."
+    },
+    {
+      "filename": "prompt-optimizer/SKILL.md",
+      "name": "prompt-optimizer",
+      "description": "Turn any rough prompt, half-formed idea, or task description into a finished, ready-to-send prompt optimized for any LLM model inside a chat interface \u2014 NOT the API. Use this skill whenever the user wants to write, rewrite, optimize, improve, sharpen, or polish a prompt for chat. Trigger phrases include \u0022rewrite this prompt\u0022, \u0022make this a better prompt\u0022, \u0022optimize this prompt\u0022, \u0022turn this into a prompt\u0022, \u0022help me prompt this\u0022, \u0022draft a prompt that...\u0022, \u0022I want to ask...\u0022, or whenever the user pastes a draft prompt and asks for improvements. Also trigger when the user describes a task they plan to send to an LLM model and clearly wants a reusable, well-structured prompt rather than a direct answer. The output is always a single, copy-pasteable prompt in a code block that the user sends as-is \u2014 never a template with placeholders."
     },
     {
       "filename": "publish-to-pages/SKILL.md",
