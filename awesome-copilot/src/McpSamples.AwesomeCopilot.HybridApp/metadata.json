@@ -1074,11 +1074,6 @@
       "filename": "wg-code-sentinel.agent.md",
       "description": "Ask WG Code Sentinel to review your code for security issues.",
       "name": "WG Code Sentinel"
-    },
-    {
-      "filename": "winui3-expert.agent.md",
-      "name": "WinUI 3 Expert",
-      "description": "Expert agent for WinUI 3 and Windows App SDK development. Prevents common UWP-to-WinUI 3 API mistakes, guides XAML controls, MVVM patterns, windowing, threading, app lifecycle, dialogs, and deployment for desktop Windows apps."
     }
   ],
   "hooks": [
@@ -2571,6 +2566,12 @@
       "description": "Migration and code evolution instructions generator for GitHub Copilot. Analyzes differences between two project versions (branches, commits, or releases) to create precise instructions allowing Copilot to maintain consistency during technology migrations, major refactoring, or framework version upgrades."
     },
     {
+      "filename": "generate-image/SKILL.md",
+      "name": "generate-image",
+      "description": "Generate images using AI. Use when asked to generate, create, or make images, textures, icons, sprites, artwork, visual assets, or mockups. Supports OpenAI (gpt-image-2) and Google Gemini (Nano Banana). Requires an API key for the chosen provider.",
+      "argument-hint": "[description of the image to generate]"
+    },
+    {
       "filename": "geofeed-tuner/SKILL.md",
       "name": "geofeed-tuner",
       "description": "Use this skill whenever the user mentions IP geolocation feeds, RFC 8805, geofeeds, or wants help creating, tuning, validating, or publishing a self-published IP geolocation feed in CSV format. Intended user audience is a network operator, ISP, mobile carrier, cloud provider, hosting company, IXP, or satellite provider asking about IP geolocation accuracy, or geofeed authoring best practices. Helps create, refine, and improve CSV-format IP geolocation feeds with opinionated recommendations beyond RFC 8805 compliance. Do NOT use for private or internal IP address management \u2014 applies only to publicly routable IP addresses.\n"
@@ -3267,6 +3268,11 @@
       "description": "Identifies Oracle-to-PostgreSQL migration risks by cross-referencing code against known behavioral differences (empty strings, refcursors, type coercion, sorting, timestamps, concurrent transactions, etc.). Use when planning a database migration, reviewing migration artifacts, or validating that integration tests cover Oracle/PostgreSQL differences."
     },
     {
+      "filename": "rhino3d-scripts/SKILL.md",
+      "name": "rhino3d-scripts",
+      "description": "Authoring and debugging scripts for Rhinoceros 3D (Rhino 8 and later). Use when asked to write RhinoScript (VBScript / .rvb / .vbs), RhinoPython, or RhinoCommon-based scripts; automate Rhino modeling tasks; build command macros; manipulate Rhino geometry, layers, blocks, or document objects; pick objects from the viewport; control redraw and undo; or load and run scripts from the Rhino Script Editor. Covers \u0060rhinoscriptsyntax\u0060, \u0060scriptcontext\u0060, the \u0060Rhino.*\u0060 RhinoCommon namespaces (\u0060Rhino.Geometry\u0060, \u0060Rhino.DocObjects\u0060, \u0060Rhino.Input\u0060, \u0060Rhino.UI\u0060, \u0060Rhino.Display\u0060, \u0060Rhino.FileIO\u0060), and the Rhino 8 unified Script Editor."
+    },
+    {
       "filename": "roundup-setup/SKILL.md",
       "name": "roundup-setup",
       "description": "Interactive onboarding that learns your communication style, audiences, and data sources to configure personalized status briefings. Paste in examples of updates you already write, answer a few questions, and roundup calibrates itself to your workflow."
@@ -3370,6 +3376,11 @@
       "filename": "sql-optimization/SKILL.md",
       "name": "sql-optimization",
       "description": "Universal SQL performance optimization assistant for comprehensive query tuning, indexing strategies, and database performance analysis across all SQL databases (MySQL, PostgreSQL, SQL Server, Oracle). Provides execution plan analysis, pagination optimization, batch operations, and performance monitoring guidance."
+    },
+    {
+      "filename": "ssma-console/SKILL.md",
+      "name": "ssma-console",
+      "description": "Use when: SSMA console operations \u2014 create project, generate assessment report, convert schema, migrate data, Oracle to SQL Server migration, schema conversion, data migration"
     },
     {
       "filename": "structured-autonomy-generate/SKILL.md",
@@ -3515,11 +3526,6 @@
       "filename": "what-context-needed/SKILL.md",
       "name": "what-context-needed",
       "description": "Ask Copilot what files it needs to see before answering a question"
-    },
-    {
-      "filename": "winapp-cli/SKILL.md",
-      "name": "winapp-cli",
-      "description": "Windows App Development CLI (winapp) for building, packaging, signing, debugging, and UI-automating Windows applications. Use when asked to initialize Windows app projects, create MSIX packages, manage AppxManifest.xml or development certificates, run an app as packaged for debugging, automate Windows UI via Microsoft UI Automation, publish to the Microsoft Store, or access Windows SDK build tools. Covers commands like init, pack, run, unregister, manifest, cert, sign, store, ui, and tool. Supports .NET (csproj), C\u002B\u002B, Electron, Rust, Tauri, Flutter, and other Windows frameworks."
     },
     {
       "filename": "winmd-api-search/SKILL.md",
