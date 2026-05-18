@@ -2953,6 +2953,11 @@
       "description": "Generate a complete, production-ready application from an OpenAPI specification"
     },
     {
+      "filename": "optimize-simplicite-logs/SKILL.md",
+      "name": "optimize-simplicite-logs",
+      "description": "capability to parse Simplicit\u00E9 logs from a raw \u0060.txt\u0060 file, filter fields to reduce noise, and output the result as structured JSON."
+    },
+    {
       "filename": "pdftk-server/SKILL.md",
       "name": "pdftk-server",
       "description": "Skill for using the command-line tool pdftk (PDFtk Server) for working with PDF files. Use when asked to merge PDFs, split PDFs, rotate pages, encrypt or decrypt PDFs, fill PDF forms, apply watermarks, stamp overlays, extract metadata, burst documents into pages, repair corrupted PDFs, attach or extract files, or perform any PDF manipulation from the command line."
