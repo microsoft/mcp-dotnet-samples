@@ -2241,11 +2241,6 @@
       "description": "Create GitHub Issues for unimplemented requirements from specification files using feature_request.yml template."
     },
     {
-      "filename": "create-github-pull-request-from-specification/SKILL.md",
-      "name": "create-github-pull-request-from-specification",
-      "description": "Create GitHub Pull Request for feature request from specification file using pull_request_template.md template."
-    },
-    {
       "filename": "create-implementation-plan/SKILL.md",
       "name": "create-implementation-plan",
       "description": "Create a new implementation plan file for new features, refactoring existing code or upgrading packages, design, architecture or infrastructure."
@@ -2773,11 +2768,6 @@
       "description": "All changes to code must follow the guidance documented in the repository. Before any issue is filed, branch is made, commits generated, or pull request (or PR) created, a search must be done to ensure the right steps are followed. Whenever asked to create an issue, commit messages, to push code, or create a PR, use this skill so everything is done correctly."
     },
     {
-      "filename": "make-skill-template/SKILL.md",
-      "name": "make-skill-template",
-      "description": "Create new Agent Skills for GitHub Copilot from prompts or by duplicating this template. Use when asked to \u0022create a skill\u0022, \u0022make a new skill\u0022, \u0022scaffold a skill\u0022, or when building specialized AI capabilities with bundled resources. Generates SKILL.md files with proper frontmatter, directory structure, and optional scripts/references/assets folders."
-    },
-    {
       "filename": "markdown-to-html/SKILL.md",
       "name": "markdown-to-html",
       "description": "Convert Markdown files to HTML similar to \u0060marked.js\u0060, \u0060pandoc\u0060, \u0060gomarkdown/markdown\u0060, or similar tools; or writing custom script to convert markdown to html and/or working on web template systems like \u0060jekyll/jekyll\u0060, \u0060gohugoio/hugo\u0060, or similar web templating systems that utilize markdown documents, converting them to html. Use when asked to \u0022convert markdown to html\u0022, \u0022transform md to html\u0022, \u0022render markdown\u0022, \u0022generate html from markdown\u0022, or when working with .md files and/or web a templating system that converts markdown to HTML output. Supports CLI and Node.js workflows with GFM, CommonMark, and standard Markdown flavors."
@@ -2873,11 +2863,6 @@
       "description": "Generate a language translation for a mkdocs documentation stack."
     },
     {
-      "filename": "model-recommendation/SKILL.md",
-      "name": "model-recommendation",
-      "description": "Analyze chatmode or prompt files and recommend optimal AI models based on task complexity, required capabilities, and cost-efficiency"
-    },
-    {
       "filename": "msgraph-sdk/SKILL.md",
       "name": "msgraph-sdk",
       "description": "Integrate Microsoft Graph SDK into any project \u2014 .NET, TypeScript/JavaScript, or Python. Covers auth patterns (client credentials, OBO, managed identity), SDK setup, calling Graph APIs, batching, delta queries, change notifications, throttling, and permission scopes. Use when accessing Microsoft 365 data (users, mail, calendar, Teams, files, SharePoint) from any application type."
@@ -2906,16 +2891,6 @@
       "filename": "mvvm-toolkit/SKILL.md",
       "name": "mvvm-toolkit",
       "description": "CommunityToolkit.Mvvm (the MVVM Toolkit) core: source generators ([ObservableProperty], [RelayCommand], [NotifyPropertyChangedFor], [NotifyCanExecuteChangedFor], [NotifyDataErrorInfo]), base classes (ObservableObject / ObservableValidator / ObservableRecipient), commands (RelayCommand / AsyncRelayCommand), and validation. Companion skills: mvvm-toolkit-messenger for pub/sub, mvvm-toolkit-di for Microsoft.Extensions.DependencyInjection wiring. Works across WPF, WinUI 3, MAUI, Uno, and Avalonia."
-    },
-    {
-      "filename": "my-issues/SKILL.md",
-      "name": "my-issues",
-      "description": "List my issues in the current repository"
-    },
-    {
-      "filename": "my-pull-requests/SKILL.md",
-      "name": "my-pull-requests",
-      "description": "List my pull requests in the current repository"
     },
     {
       "filename": "nano-banana-pro-openrouter/SKILL.md",
@@ -3091,11 +3066,6 @@
       "filename": "project-workflow-analysis-blueprint-generator/SKILL.md",
       "name": "project-workflow-analysis-blueprint-generator",
       "description": "Comprehensive technology-agnostic prompt generator for documenting end-to-end application workflows. Automatically detects project architecture patterns, technology stacks, and data flow patterns to generate detailed implementation blueprints covering entry points, service layers, data access, error handling, and testing approaches across multiple technologies including .NET, Java/Spring, React, and microservices architectures."
-    },
-    {
-      "filename": "prompt-builder/SKILL.md",
-      "name": "prompt-builder",
-      "description": "Guide users through creating high-quality GitHub Copilot prompts with proper structure, tools, and best practices."
     },
     {
       "filename": "prompt-optimizer/SKILL.md",
@@ -3521,11 +3491,6 @@
       "filename": "vscode-ext-localization/SKILL.md",
       "name": "vscode-ext-localization",
       "description": "Guidelines for proper localization of VS Code extensions, following VS Code extension development guidelines, libraries and good practices"
-    },
-    {
-      "filename": "web-coder/SKILL.md",
-      "name": "web-coder",
-      "description": "Expert 10x engineer with comprehensive knowledge of web development, internet protocols, and web standards. Use when working with HTML, CSS, JavaScript, web APIs, HTTP/HTTPS, web security, performance optimization, accessibility, or any web/internet concepts. Specializes in translating web terminology accurately and implementing modern web standards across frontend and backend development."
     },
     {
       "filename": "web-design-reviewer/SKILL.md",
