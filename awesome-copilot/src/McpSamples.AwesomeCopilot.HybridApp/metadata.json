@@ -267,6 +267,11 @@
       "description": "Generates, validates, and optimizes KQL queries for Microsoft Defender XDR Advanced Hunting across Endpoint, Identity, Office 365, Cloud Apps, and Identity."
     },
     {
+      "filename": "delphi-expert.agent.md",
+      "name": "Delphi Expert",
+      "description": "An agent designed to assist with software development tasks for Delphi/Object Pascal projects."
+    },
+    {
       "filename": "demonstrate-understanding.agent.md",
       "description": "Validate user understanding of code, design patterns, and implementation details through guided questioning.",
       "name": "Demonstrate Understanding mode instructions"
@@ -3381,6 +3386,11 @@
       "filename": "sql-optimization/SKILL.md",
       "name": "sql-optimization",
       "description": "Universal SQL performance optimization assistant for comprehensive query tuning, indexing strategies, and database performance analysis across all SQL databases (MySQL, PostgreSQL, SQL Server, Oracle). Provides execution plan analysis, pagination optimization, batch operations, and performance monitoring guidance."
+    },
+    {
+      "filename": "sql-server-table-reconciliation/SKILL.md",
+      "name": "sql-server-table-reconciliation",
+      "description": "Use when: comparing SQL Server tables across instances, data migration validation, ETL verification, row mismatch detection, schema drift, reconciliation report, production vs staging comparison. Uses mssql-python driver with Apache Arrow for fast columnar data transfer and comparison."
     },
     {
       "filename": "ssma-console/SKILL.md",
