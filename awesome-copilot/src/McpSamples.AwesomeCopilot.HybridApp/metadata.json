@@ -155,6 +155,12 @@
       "name": "Azure AVM Bicep mode"
     },
     {
+      "filename": "azure-verified-modules-owner-triage.agent.md",
+      "description": "Triage open GitHub issues across the Azure Verified Modules (AVM) repos an owner maintains. Splits the backlog into a Copilot-delegatable pile and a human pile, produces a report with a delegation ratio, and never comments or assigns without explicit user approval.",
+      "name": "AVM Owner Triage",
+      "argument-hint": "Start a deep or quick triage: \u003Cowner_alias\u003E \u003Cquick|deep\u003E, e.g., \u0022octocat quick\u0022 or \u0022octocat deep\u0022. Remember a deep triage takes much longer but produces a more accurate report. If you don\u0027t specify the mode, I\u0027ll ask you before I start."
+    },
+    {
       "filename": "azure-verified-modules-terraform.agent.md",
       "description": "Create, update, or review Azure IaC in Terraform using Azure Verified Modules (AVM).",
       "name": "Azure AVM Terraform mode"
