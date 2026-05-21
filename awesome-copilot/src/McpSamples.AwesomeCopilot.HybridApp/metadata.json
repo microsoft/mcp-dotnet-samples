@@ -2605,7 +2605,7 @@
     {
       "filename": "github-release/SKILL.md",
       "name": "github-release",
-      "description": "Guides IA through releasing a new version of a GitHub library end-to-end.  Handles SemVer versioning and Keep a Changelog formatting automatically.\n"
+      "description": "Guides IA through releasing a new version of a GitHub library end-to-end. Handles SemVer versioning and Keep a Changelog formatting automatically.\n"
     },
     {
       "filename": "go-mcp-server-generator/SKILL.md",
