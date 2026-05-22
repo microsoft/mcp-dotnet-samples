@@ -908,7 +908,7 @@
     {
       "filename": "sast-sca-security-analyzer.agent.md",
       "description": "Use when: performing SAST (Static Application Security Testing), SCA (Software Composition Analysis), scanning source code or binaries for security flaws, auditing third-party dependency vulnerabilities, checking policy compliance, generating structured security reports, identifying CWE-mapped flaws with file/line precision, reviewing open-source license risk, or producing CI/CD-gate security findings.",
-      "name": "SAST/SCA Security Analyzer",
+      "name": "sast-sca-security-analyzer",
       "argument-hint": "Describe what to scan (e.g. \u0027scan src/ for SAST flaws\u0027, \u0027SCA audit of package.json\u0027, \u0027full SAST\u002BSCA on the authentication module\u0027, \u0027policy compliance check for PCI-DSS\u0027)"
     },
     {
