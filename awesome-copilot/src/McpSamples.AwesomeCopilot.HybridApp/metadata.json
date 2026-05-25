@@ -403,7 +403,7 @@
       "filename": "gem-critic.agent.md",
       "description": "Challenges assumptions, finds edge cases, spots over-engineering and logic gaps.",
       "name": "gem-critic",
-      "argument-hint": "Enter plan_id, plan_path, scope (plan|code|architecture), and target to critique."
+      "argument-hint": "Enter plan_id, plan_path, and target to critique."
     },
     {
       "filename": "gem-debugger.agent.md",
@@ -433,7 +433,7 @@
       "filename": "gem-documentation-writer.agent.md",
       "description": "Technical documentation, README files, API docs, diagrams, walkthroughs.",
       "name": "gem-documentation-writer",
-      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|walkthrough|update), audience, coverage_matrix."
+      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|update|prd|agents_md), audience, coverage_matrix."
     },
     {
       "filename": "gem-implementer-mobile.agent.md",
@@ -455,7 +455,7 @@
     },
     {
       "filename": "gem-orchestrator.agent.md",
-      "description": "The team lead: Orchestrates research, planning, implementation, and verification.",
+      "description": "The team lead: Orchestrates planning, implementation, and verification.",
       "name": "gem-orchestrator",
       "argument-hint": "Describe your objective or task. Include plan_id if resuming."
     },
@@ -463,19 +463,25 @@
       "filename": "gem-planner.agent.md",
       "description": "DAG-based execution plans \u2014 task decomposition, wave scheduling, risk analysis.",
       "name": "gem-planner",
-      "argument-hint": "Enter plan_id, objective, and task_clarifications."
+      "argument-hint": "Plan_id, objective."
     },
     {
       "filename": "gem-researcher.agent.md",
       "description": "Codebase exploration \u2014 patterns, dependencies, architecture discovery.",
       "name": "gem-researcher",
-      "argument-hint": "Enter plan_id, objective, focus_area (optional), and task_clarifications array."
+      "argument-hint": "Objective, focus_area (optional)"
     },
     {
       "filename": "gem-reviewer.agent.md",
       "description": "Security auditing, code review, OWASP scanning, PRD compliance verification.",
       "name": "gem-reviewer",
-      "argument-hint": "Enter task_id, plan_id, plan_path, review_scope (plan|task|wave), and review criteria for compliance and security audit."
+      "argument-hint": "Enter task_id, plan_id, plan_path, review_scope (plan|wave), and review criteria for compliance and security audit."
+    },
+    {
+      "filename": "gem-skill-creator.agent.md",
+      "description": "Pattern-to-skill extraction \u2014 creates agent skills files from high-confidence learnings.",
+      "name": "gem-skill-creator",
+      "argument-hint": "Enter task_id, plan_id, plan_path, patterns, source_task_id."
     },
     {
       "filename": "gilfoyle.agent.md",
@@ -1269,6 +1275,11 @@
       "filename": "copilot-sdk-go.instructions.md",
       "description": "This file provides guidance on building Go applications using GitHub Copilot SDK.",
       "name": "GitHub Copilot SDK Go Instructions"
+    },
+    {
+      "filename": "copilot-sdk-java.instructions.md",
+      "description": "This file provides guidance on building Java applications using GitHub Copilot SDK for Java.",
+      "name": "GitHub Copilot SDK Java Instructions"
     },
     {
       "filename": "copilot-sdk-nodejs.instructions.md",
@@ -2447,6 +2458,11 @@
       "description": "Get best practices for Entity Framework Core"
     },
     {
+      "filename": "efcore-d2-db-diagram/SKILL.md",
+      "name": "efcore-d2-db-diagram",
+      "description": "Generate D2 database diagrams from Entity Framework Core models. USE FOR: EF Core database diagram, Entity Framework Core ERD, DbContext diagram, C# entity relationship diagram, PostgreSQL schema visualization, generate .d2 file from EF Core entities, Fluent API mapping diagram, migrations-based database diagram, table relationships, owned types, many-to-many join tables, indexes and constraints. DO NOT USE FOR: runtime debugging, database migration execution, schema deployment, SQL performance tuning, or draw.io diagrams."
+    },
+    {
       "filename": "email-drafter/SKILL.md",
       "name": "email-drafter",
       "description": "Draft and review professional emails that match your personal writing style. Analyzes your sent emails for tone, greeting, structure, and sign-off patterns via WorkIQ, then generates context-aware drafts for any recipient. USE FOR: draft email, write email, compose email, reply email, follow-up email, analyze email tone, email style."
@@ -2593,6 +2609,16 @@
       "description": "Intelligent Git Flow branch creator that analyzes git status/diff and creates appropriate branches following the nvie Git Flow branching model."
     },
     {
+      "filename": "github-actions-efficiency/SKILL.md",
+      "name": "github-actions-efficiency",
+      "description": "Audit GitHub Actions workflow efficiency and recommend fixes to reduce CI minutes and costs."
+    },
+    {
+      "filename": "github-codespaces-efficiency/SKILL.md",
+      "name": "github-codespaces-efficiency",
+      "description": "Audit and improve GitHub Codespaces efficiency. Use this skill when a user wants faster Codespaces startup, lower Codespaces spend, slim devcontainers, right-size machines, tune idle timeout, or scope prebuilds to branches with sustained usage."
+    },
+    {
       "filename": "github-copilot-starter/SKILL.md",
       "name": "github-copilot-starter",
       "description": "Set up complete GitHub Copilot configuration for a new project based on technology stack"
@@ -2671,6 +2697,11 @@
       "filename": "gtm-technical-product-pricing/SKILL.md",
       "name": "gtm-technical-product-pricing",
       "description": "Pricing strategy for technical products. Use when choosing usage-based vs seat-based, designing freemium thresholds, structuring enterprise pricing conversations, deciding when to raise prices, or using price as a positioning signal."
+    },
+    {
+      "filename": "image-annotations/SKILL.md",
+      "name": "image-annotations",
+      "description": "Annotate screenshots, diagrams, and images with callout rectangles, arrows, labels, and color-coded highlights using PIL. Includes rules for animated GIF annotations with timing and pacing."
     },
     {
       "filename": "image-manipulation-image-magick/SKILL.md",
@@ -3059,6 +3090,11 @@
       "description": "Open a GitHub PR dashboard in the browser. Use when the user asks to see their pull requests, open the PR dashboard, show PRs for a date range, or check PR status. Trigger phrases include \u0022show my PRs\u0022, \u0022open PR dashboard\u0022, \u0022pull request dashboard\u0022."
     },
     {
+      "filename": "pr-screenshots/SKILL.md",
+      "name": "pr-screenshots",
+      "description": "Embed before/after screenshots and annotated images in pull request descriptions. Covers PR description patterns, image upload for Azure DevOps and GitHub, and sizing best practices."
+    },
+    {
       "filename": "prd/SKILL.md",
       "name": "prd",
       "description": "Generate high-quality Product Requirements Documents (PRDs) for software systems and AI-powered features. Includes executive summaries, user stories, technical specifications, and risk analysis."
@@ -3314,6 +3350,11 @@
       "description": "This skill should be used when the user asks to \u0022test this website\u0022, \u0022run exploratory testing\u0022, \u0022check for accessibility issues\u0022, \u0022verify the login flow works\u0022, \u0022find bugs on this page\u0022, or requests automated QA testing. Triggers on web application testing scenarios including smoke tests, accessibility audits, e-commerce flows, and user flow validation using ScoutQA CLI. Use this skill proactively after implementing web application features to verify they work correctly."
     },
     {
+      "filename": "screen-recording/SKILL.md",
+      "name": "screen-recording",
+      "description": "Create annotated animated GIF demos and screen recordings for pull requests and documentation. Covers frame capture, timing, imageio-based GIF creation, and per-frame annotation workflows."
+    },
+    {
       "filename": "secret-scanning/SKILL.md",
       "name": "secret-scanning",
       "description": "Guide for configuring and managing GitHub secret scanning, push protection, custom patterns, and secret alert remediation. For pre-commit secret scanning in AI coding agents via the GitHub MCP Server, this skill references the Advanced Security plugin (\u0060advanced-security@copilot-plugins\u0060). Use this skill when enabling secret scanning, setting up push protection, defining custom patterns, triaging alerts, resolving blocked pushes, or when an agent needs to scan code for secrets before committing."
@@ -3452,6 +3493,11 @@
       "filename": "typespec-create-api-plugin/SKILL.md",
       "name": "typespec-create-api-plugin",
       "description": "Generate a TypeSpec API plugin with REST operations, authentication, and Adaptive Cards for Microsoft 365 Copilot"
+    },
+    {
+      "filename": "ui-screenshots/SKILL.md",
+      "name": "ui-screenshots",
+      "description": "Capture screenshots of web apps during development using Playwright and PIL. Supports full-page captures, interactive states, and an iterate-on-crop workflow that avoids slow re-screenshots."
     },
     {
       "filename": "unit-test-vue-pinia/SKILL.md",
