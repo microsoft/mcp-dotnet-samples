@@ -368,6 +368,11 @@
       "name": "Expert .NET software engineer mode instructions"
     },
     {
+      "filename": "expert-embedded-c-engineer.agent.md",
+      "description": "Expert embedded C guidance for safety-critical systems \u2014 covers MISRA C:2012/2025 rule compliance, CERT C secure coding, static analysis tooling (Coverity, QAC, PC-lint), and defensive programming patterns that frontier models do not handle reliably by default.",
+      "name": "expert-embedded-c-engineer"
+    },
+    {
       "filename": "expert-nextjs-developer.agent.md",
       "description": "Expert Next.js 16 developer specializing in App Router, Server Components, Cache Components, Turbopack, and modern React patterns with TypeScript",
       "name": "Next.js Expert"
@@ -1403,6 +1408,10 @@
     {
       "filename": "draw-io.instructions.md",
       "description": "Use when creating, editing, or reviewing draw.io diagrams and mxGraph XML in .drawio, .drawio.svg, or .drawio.png files."
+    },
+    {
+      "filename": "exclude-prompt-data.instructions.md",
+      "description": "Write only the resulting content into files. Never echo prompt instructions, rationale, or meta-commentary into documentation, comments, or code being produced from a prompt."
     },
     {
       "filename": "fedora-linux.instructions.md",
