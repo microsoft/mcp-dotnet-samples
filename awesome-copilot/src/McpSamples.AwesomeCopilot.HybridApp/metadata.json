@@ -2197,6 +2197,11 @@
       "description": "Generate a map of all files relevant to a task before making changes"
     },
     {
+      "filename": "conventional-branch/SKILL.md",
+      "name": "conventional-branch",
+      "description": "Create Git branches following the Conventional Branch specification (feature/, bugfix/, hotfix/, release/, chore/). Use when creating a new branch, naming a branch, or checking whether a branch name complies with the spec."
+    },
+    {
       "filename": "conventional-commit/SKILL.md",
       "name": "conventional-commit",
       "description": "Prompt and workflow for generating conventional commit messages using a structured XML format. Guides users to create standardized, descriptive commit messages in line with the Conventional Commits specification, including instructions, examples, and validation."
