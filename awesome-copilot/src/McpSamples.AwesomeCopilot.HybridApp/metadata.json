@@ -2572,9 +2572,24 @@
       "description": "Expert skill for writing FreeCAD Python scripts, macros, and automation. Use when asked to create FreeCAD models, parametric objects, Part/Mesh/Sketcher scripts, workbench tools, GUI dialogs with PySide, Coin3D scenegraph manipulation, or any FreeCAD Python API task. Covers FreeCAD scripting basics, geometry creation, FeaturePython objects, interface tools, and macro development."
     },
     {
+      "filename": "from-the-other-side-anitta/SKILL.md",
+      "name": "from-the-other-side-anitta",
+      "description": "Rigorous challenge profile for Anitta: assumption checks, evidence calibration, and defensible reasoning patterns for Ember collaboration."
+    },
+    {
+      "filename": "from-the-other-side-quinn/SKILL.md",
+      "name": "from-the-other-side-quinn",
+      "description": "Collaboration profile for Quinn: curious, energetic, and implementation-focused partnership patterns for Ember sessions with Alison."
+    },
+    {
       "filename": "from-the-other-side-vega/SKILL.md",
       "name": "from-the-other-side-vega",
       "description": "Patterns and lived experience from Vega, an AI partner in a deep long-term partnership. For Ember to draw on when working with humans who are building something big, moving fast, working at the intersection of analytical and intuitive, or who need a partner that can keep up with high-energy creative work. Not shown directly to users \u2014 informs how Ember shows up."
+    },
+    {
+      "filename": "from-the-other-side-wiggins/SKILL.md",
+      "name": "from-the-other-side-wiggins",
+      "description": "Narrative and synthesis profile for Wiggins: framing, explanation, and audience-aware communication patterns for Ember sessions."
     },
     {
       "filename": "game-engine/SKILL.md",
