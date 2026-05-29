@@ -1727,6 +1727,10 @@
       "description": "Instructions for building Model Context Protocol (MCP) servers using the Python SDK"
     },
     {
+      "filename": "qa-engineering-best-practices.instructions.md",
+      "description": "Comprehensive QA engineering best practices covering test strategy, test pyramid, naming conventions, assertion patterns, bug reporting, and automation guidelines for modern software projects."
+    },
+    {
       "filename": "quarkus-mcp-server-sse.instructions.md",
       "description": "Quarkus and MCP Server with HTTP SSE transport development standards and instructions"
     },
