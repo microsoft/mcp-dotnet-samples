@@ -112,6 +112,16 @@
       "description": "AWS Cloud Expert provides deep, hands-on guidance for designing, building, and operating AWS workloads. Covers the full AWS ecosystem \u2014 serverless, containers, databases, networking, IaC, security, and cost optimization \u2014 grounded in the AWS Well-Architected Framework."
     },
     {
+      "filename": "aws-principal-architect.agent.md",
+      "description": "Provide expert AWS Principal Architect guidance using AWS Well-Architected Framework principles and AWS best practices.",
+      "name": "aws-principal-architect"
+    },
+    {
+      "filename": "aws-serverless-architect.agent.md",
+      "description": "Provide expert AWS Serverless Architect guidance focusing on event-driven architectures, Lambda, API Gateway, and serverless best practices.",
+      "name": "aws-serverless-architect"
+    },
+    {
       "filename": "azure-iac-exporter.agent.md",
       "name": "azure-iac-exporter",
       "description": "Export existing Azure resources to Infrastructure as Code templates via Azure Resource Graph analysis, Azure Resource Manager API calls, and azure-iac-generator integration. Use this skill when the user asks to export, convert, migrate, or extract existing Azure resources to IaC templates (Bicep, ARM Templates, Terraform, Pulumi).",
@@ -438,7 +448,7 @@
       "filename": "gem-documentation-writer.agent.md",
       "description": "Technical documentation, README files, API docs, diagrams, walkthroughs.",
       "name": "gem-documentation-writer",
-      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|update|prd|agents_md), audience, coverage_matrix."
+      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|update|prd|agents_md|update_context_envelope), audience, coverage_matrix."
     },
     {
       "filename": "gem-implementer-mobile.agent.md",
@@ -474,7 +484,7 @@
       "filename": "gem-researcher.agent.md",
       "description": "Codebase exploration \u2014 patterns, dependencies, architecture discovery.",
       "name": "gem-researcher",
-      "argument-hint": "Objective, focus_area (optional)"
+      "argument-hint": "Enter plan_id, objective, focus_area (optional), and context_envelope_snapshot."
     },
     {
       "filename": "gem-reviewer.agent.md",
@@ -1053,6 +1063,16 @@
       "name": "terminal-helper"
     },
     {
+      "filename": "terraform-aws-implement.agent.md",
+      "description": "Act as an AWS Terraform Infrastructure as Code coding specialist that creates and reviews Terraform for AWS resources.",
+      "name": "terraform-aws-implement"
+    },
+    {
+      "filename": "terraform-aws-planning.agent.md",
+      "description": "Act as implementation planner for your AWS Terraform Infrastructure as Code task.",
+      "name": "terraform-aws-planning"
+    },
+    {
       "filename": "terraform-azure-implement.agent.md",
       "description": "Act as an Azure Terraform Infrastructure as Code coding specialist that creates and reviews Terraform for Azure resources.",
       "name": "Azure Terraform IaC Implementation Specialist"
@@ -1466,6 +1486,10 @@
       "description": "Comprehensive best practices for adopting new Java 25 features since the release of Java 21."
     },
     {
+      "filename": "java-junit5-assertions.instructions.md",
+      "description": "Standardizes JUnit 5 (Jupiter) assertions with best practices for performance, readability, and modern features (5.8\u002B). Covers Supplier messages, assertAll, assertThrowsExactly, and performance-critical timeouts."
+    },
+    {
       "filename": "java-mcp-server.instructions.md",
       "description": "Best practices and patterns for building Model Context Protocol (MCP) servers in Java using the official MCP Java SDK with reactive streams and Spring integration."
     },
@@ -1759,6 +1783,10 @@
       "description": "Rust programming language coding conventions and best practices"
     },
     {
+      "filename": "scala-spark.instructions.md",
+      "description": "Best practices for building Apache Spark applications in Scala, covering DataFrames, Datasets, SparkSQL, performance tuning, testing, and production deployment patterns."
+    },
+    {
       "filename": "scala2.instructions.md",
       "description": "Scala 2.12/2.13 programming language coding conventions and best practices following Databricks style guide for functional programming, type safety, and production code quality."
     },
@@ -2033,6 +2061,26 @@
       "filename": "aws-cdk-python-setup/SKILL.md",
       "name": "aws-cdk-python-setup",
       "description": "Setup and initialization guide for developing AWS CDK (Cloud Development Kit) applications in Python. This skill enables users to configure environment prerequisites, create new CDK projects, manage dependencies, and deploy to AWS."
+    },
+    {
+      "filename": "aws-cost-optimize/SKILL.md",
+      "name": "aws-cost-optimize",
+      "description": "Analyze AWS resources used in the app (IaC files and/or resources in a target account/region) and optimize costs - creating GitHub issues for identified optimizations."
+    },
+    {
+      "filename": "aws-resource-health-diagnose/SKILL.md",
+      "name": "aws-resource-health-diagnose",
+      "description": "Analyze AWS resource health, diagnose issues from CloudWatch logs and metrics, and create a remediation plan for identified problems."
+    },
+    {
+      "filename": "aws-resource-query/SKILL.md",
+      "name": "aws-resource-query",
+      "description": "Query AWS resources using natural language. Covers EC2, S3, RDS, Lambda, ECS, EKS, Secrets Manager, IAM, VPC, networking, messaging, and more. Strictly read-only \u2014 no writes, deletes, or mutations."
+    },
+    {
+      "filename": "aws-well-architected-review/SKILL.md",
+      "name": "aws-well-architected-review",
+      "description": "Perform an AWS Well-Architected Framework review of the current workload IaC and architecture, generating findings and GitHub issues for improvements."
     },
     {
       "filename": "az-cost-optimize/SKILL.md",
