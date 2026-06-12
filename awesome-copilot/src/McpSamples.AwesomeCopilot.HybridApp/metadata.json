@@ -1883,6 +1883,10 @@
       "description": "Guidelines for Visual Studio extension (VSIX) development using Community.VisualStudio.Toolkit"
     },
     {
+      "filename": "vue.instructions.md",
+      "description": "Comprehensive Vue 3 development standards and best practices: Composition API, \u0060\u003Cscript setup\u003E\u0060, the full reactivity system, compiler macros (defineModel/defineSlots/defineOptions), built-in components (Teleport/Suspense/Transition/KeepAlive), provide/inject, composables, Pinia, Vue Router, TypeScript, testing, performance, SSR, and security."
+    },
+    {
       "filename": "winui3.instructions.md",
       "description": "WinUI 3 and Windows App SDK coding guidelines. Prevents common UWP API misuse, enforces correct XAML namespaces, threading, windowing, and MVVM patterns for desktop Windows apps."
     },
