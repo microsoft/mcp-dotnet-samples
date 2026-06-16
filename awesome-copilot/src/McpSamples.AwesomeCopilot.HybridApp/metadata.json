@@ -2693,6 +2693,11 @@
       "description": "Audit GitHub Actions workflow efficiency and recommend fixes to reduce CI minutes and costs."
     },
     {
+      "filename": "github-actions-hardening/SKILL.md",
+      "name": "github-actions-hardening",
+      "description": "Security hardening reviewer for GitHub Actions workflow files (.github/workflows/*.yml). Reasons about the Actions threat model that pattern matchers and general code linters miss \u2014 untrusted-input script injection, privileged triggers running fork code, mutable action references, and over-scoped tokens. Use this skill when asked to review, audit, harden, or secure a GitHub Actions workflow, when writing a new workflow, or for any request like \u0022is this workflow safe?\u0022, \u0022review my CI for security issues\u0022, \u0022why is pull_request_target dangerous here?\u0022, \u0022pin my actions\u0022, or \u0022lock down GITHUB_TOKEN permissions\u0022. Covers script injection via ${{ }} interpolation, pull_request_target / workflow_run privilege escalation, SHA-pinning of third-party actions, least-privilege permissions, GITHUB_ENV/GITHUB_OUTPUT injection, secret exposure, OIDC over long-lived credentials, and self-hosted runner exposure on public repositories."
+    },
+    {
       "filename": "github-codespaces-efficiency/SKILL.md",
       "name": "github-codespaces-efficiency",
       "description": "Audit and improve GitHub Codespaces efficiency. Use this skill when a user wants faster Codespaces startup, lower Codespaces spend, slim devcontainers, right-size machines, tune idle timeout, or scope prebuilds to branches with sustained usage."
