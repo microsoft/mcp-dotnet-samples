@@ -2808,6 +2808,11 @@
       "description": "Import existing Azure resources into Terraform using Azure CLI discovery and Azure Verified Modules (AVM). Use when asked to reverse-engineer live Azure infrastructure, generate Infrastructure as Code from existing subscriptions/resource groups/resource IDs, map dependencies, derive exact import addresses from downloaded module source, prevent configuration drift, and produce AVM-based Terraform files ready for validation and planning across any Azure resource type."
     },
     {
+      "filename": "incident-postmortem/SKILL.md",
+      "name": "incident-postmortem",
+      "description": "Use when an outage, production incident, or significant service degradation has occurred and the team needs to write a structured blameless post-mortem. Triggers on phrases like \u0022write a post-mortem\u0022, \u0022incident review\u0022, \u0022what went wrong\u0022, \u0022outage report\u0022, \u0022root cause analysis\u0022, or \u0022RCA\u0022. Covers timeline reconstruction, contributing factor analysis, impact quantification, and action item generation with owners."
+    },
+    {
       "filename": "integrate-context-matic/SKILL.md",
       "name": "integrate-context-matic",
       "description": "Discovers and integrates third-party APIs using the context-matic MCP server. Uses \u0060fetch_api\u0060 to find available API SDKs, \u0060ask\u0060 for integration guidance, \u0060model_search\u0060 and \u0060endpoint_search\u0060 for SDK details. Use when the user asks to integrate a third-party API, add an API client, implement features with an external API, or work with any third-party API or SDK."
