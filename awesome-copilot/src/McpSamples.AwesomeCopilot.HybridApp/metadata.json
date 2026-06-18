@@ -1119,6 +1119,11 @@
       "description": "Scans newly added dependencies for license compliance (GPL, AGPL, etc.) at session end"
     },
     {
+      "filename": "fix-broken-links/README.md",
+      "name": "Fix Broken Links",
+      "description": "Checks changed web files for broken hyperlinks and SEO anchor issues after each Copilot tool use."
+    },
+    {
       "filename": "governance-audit/README.md",
       "name": "Governance Audit",
       "description": "Scans Copilot agent prompts for threat signals and logs governance events"
