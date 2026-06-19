@@ -534,6 +534,11 @@
       "description": "Specialized agent for tracking and analyzing accessibility improvements in VS Code Insiders builds"
     },
     {
+      "filename": "interview-prep.agent.md",
+      "description": "Technical interview coach for software engineers. Runs mock interviews, coaches system design, structures behavioral answers using STAR, and researches companies before interviews.",
+      "name": "interview-prep"
+    },
+    {
       "filename": "janitor.agent.md",
       "description": "Perform janitorial tasks on any codebase including cleanup, simplification, and tech debt remediation.",
       "name": "Universal Janitor"
@@ -2708,6 +2713,11 @@
       "description": "Security hardening reviewer for GitHub Actions workflow files (.github/workflows/*.yml). Reasons about the Actions threat model that pattern matchers and general code linters miss \u2014 untrusted-input script injection, privileged triggers running fork code, mutable action references, and over-scoped tokens. Use this skill when asked to review, audit, harden, or secure a GitHub Actions workflow, when writing a new workflow, or for any request like \u0022is this workflow safe?\u0022, \u0022review my CI for security issues\u0022, \u0022why is pull_request_target dangerous here?\u0022, \u0022pin my actions\u0022, or \u0022lock down GITHUB_TOKEN permissions\u0022. Covers script injection via ${{ }} interpolation, pull_request_target / workflow_run privilege escalation, SHA-pinning of third-party actions, least-privilege permissions, GITHUB_ENV/GITHUB_OUTPUT injection, secret exposure, OIDC over long-lived credentials, and self-hosted runner exposure on public repositories."
     },
     {
+      "filename": "github-actions-runtime-upgrade-conventions/SKILL.md",
+      "name": "github-actions-runtime-upgrade-conventions",
+      "description": "Upgrade GitHub Actions to supported runtimes by selecting safe action versions, preserving workflow behavior, and validating post-upgrade execution."
+    },
+    {
       "filename": "github-codespaces-efficiency/SKILL.md",
       "name": "github-codespaces-efficiency",
       "description": "Audit and improve GitHub Codespaces efficiency. Use this skill when a user wants faster Codespaces startup, lower Codespaces spend, slim devcontainers, right-size machines, tune idle timeout, or scope prebuilds to branches with sustained usage."
@@ -3588,6 +3598,11 @@
       "filename": "threat-model-analyst/SKILL.md",
       "name": "threat-model-analyst",
       "description": "Full STRIDE-A threat model analysis and incremental update skill for repositories and systems. Supports two modes: (1) Single analysis \u2014 full STRIDE-A threat model of a repository, producing architecture overviews, DFD diagrams, STRIDE-A analysis, prioritized findings, and executive assessments. (2) Incremental analysis \u2014 takes a previous threat model report as baseline, compares the codebase at the latest (or a given commit), and produces an updated report with change tracking (new, resolved, still-present threats), STRIDE heatmap, findings diff, and an embedded HTML comparison. Only activate when the user explicitly requests a threat model analysis, incremental update, or invokes /threat-model-analyst directly."
+    },
+    {
+      "filename": "tiny-stepping/SKILL.md",
+      "name": "tiny-stepping",
+      "description": "Incremental development workflow that makes the smallest meaningful change per step and pauses for feedback, so the direction gets validated early before continuing. Use for careful, iterative implementation with continuous validation."
     },
     {
       "filename": "tldr-prompt/SKILL.md",
