@@ -3585,6 +3585,12 @@
       "description": "Generate a complete Model Context Protocol server project in Swift using the official MCP Swift SDK package."
     },
     {
+      "filename": "technical-job-search/SKILL.md",
+      "name": "technical-job-search",
+      "description": "Use this skill when a software engineer asks for help with job search tasks: parsing or analyzing a job description, tailoring a CV/resume, writing a cover letter, evaluating a job offer, or drafting a post-interview follow-up email. Do not activate for general career advice unrelated to an active job search action.",
+      "argument-hint": "Optional: the specific task \u2014 e.g. \u0022analyze this JD\u0022, \u0022tailor my CV\u0022, \u0022write cover letter\u0022, \u0022evaluate this offer\u0022"
+    },
+    {
       "filename": "technology-stack-blueprint-generator/SKILL.md",
       "name": "technology-stack-blueprint-generator",
       "description": "Comprehensive technology stack blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks, programming languages, and implementation patterns across multiple platforms (.NET, Java, JavaScript, React, Python). Generates configurable blueprints with version information, licensing details, usage patterns, coding conventions, and visual diagrams. Provides implementation-ready templates and maintains architectural consistency for guided development."
