@@ -112,6 +112,11 @@
       "description": "AWS Cloud Expert provides deep, hands-on guidance for designing, building, and operating AWS workloads. Covers the full AWS ecosystem \u2014 serverless, containers, databases, networking, IaC, security, and cost optimization \u2014 grounded in the AWS Well-Architected Framework."
     },
     {
+      "filename": "aws-incident-triage.agent.md",
+      "name": "AWS Incident Triage",
+      "description": "On-call SRE agent that drives structured CloudWatch-based incident investigation from alarms through root-cause hypothesis."
+    },
+    {
       "filename": "aws-principal-architect.agent.md",
       "description": "Provide expert AWS Principal Architect guidance using AWS Well-Architected Framework principles and AWS best practices.",
       "name": "aws-principal-architect"
@@ -2069,6 +2074,11 @@
       "filename": "aws-cdk-python-setup/SKILL.md",
       "name": "aws-cdk-python-setup",
       "description": "Setup and initialization guide for developing AWS CDK (Cloud Development Kit) applications in Python. This skill enables users to configure environment prerequisites, create new CDK projects, manage dependencies, and deploy to AWS."
+    },
+    {
+      "filename": "aws-cloudwatch-investigation/SKILL.md",
+      "name": "AWS CloudWatch Investigation",
+      "description": "Reusable investigation patterns for AWS CloudWatch: Logs Insights query templates, alarm-to-deployment correlation, blast-radius narrowing decision tree, and PromQL-style metric query patterns for structured incident triage."
     },
     {
       "filename": "aws-cost-optimize/SKILL.md",
