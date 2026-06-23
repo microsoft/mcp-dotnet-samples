@@ -3738,7 +3738,7 @@
     {
       "filename": "x-twitter-scraper/SKILL.md",
       "name": "x-twitter-scraper",
-      "description": "Build GitHub Copilot workflows with Xquik X API SDKs, REST endpoints, MCP tools, signed webhooks, tweet search, user lookup, follower exports, media actions, and agent automation."
+      "description": "Build GitHub Copilot workflows with Xquik X API SDKs, REST endpoints, MCP tools, TweetClaw OpenClaw plugin installs, signed webhooks, tweet search, user lookup, follower exports, media actions, and agent automation."
     }
   ],
   "workflows": [
