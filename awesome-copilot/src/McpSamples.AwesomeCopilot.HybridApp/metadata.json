@@ -1198,7 +1198,7 @@
     },
     {
       "filename": "astro.instructions.md",
-      "description": "Astro development standards and best practices for content-driven websites"
+      "description": "Astro 7 development standards and best practices for content-driven websites"
     },
     {
       "filename": "aws-appsync.instructions.md",
@@ -1829,7 +1829,7 @@
     },
     {
       "filename": "svelte.instructions.md",
-      "description": "Svelte 5 and SvelteKit development standards and best practices for component-based user interfaces and full-stack applications"
+      "description": "Svelte 5 and SvelteKit 2 development standards and best practices for component-based user interfaces and full-stack applications"
     },
     {
       "filename": "swift-mcp-server.instructions.md",
