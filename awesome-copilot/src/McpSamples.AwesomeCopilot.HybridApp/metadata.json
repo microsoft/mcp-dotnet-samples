@@ -1560,7 +1560,7 @@
     },
     {
       "filename": "memory-bank.instructions.md",
-      "description": "No description provided"
+      "description": "Memory Bank pattern: persistent project documentation under a memory-bank/ folder so the AI can resume context across sessions."
     },
     {
       "filename": "mongo-dba.instructions.md",
