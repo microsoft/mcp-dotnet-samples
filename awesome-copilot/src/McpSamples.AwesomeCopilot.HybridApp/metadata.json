@@ -2292,6 +2292,11 @@
       "description": "Technology-agnostic blueprint generator for creating comprehensive copilot-instructions.md files that guide GitHub Copilot to produce code consistent with project standards, architecture patterns, and exact technology versions by analyzing existing codebase patterns and avoiding assumptions."
     },
     {
+      "filename": "copilot-pr-autopilot/SKILL.md",
+      "name": "copilot-pr-autopilot",
+      "description": "Copilot left 14 review comments on your PR \u2014 half are nits. Hours of fix \u2192 reply \u2192 resolve \u2192 re-request, and each round lands MORE comments. This skill runs loop engineering: auto-triggers Copilot Code Review via GraphQL (no @copilot mention), triages every open thread (Copilot, humans, advanced-security) with a fix / decline / escalate rubric, dispatches parallel fix sub-agents that obey the repo build/test/lint conventions, commits per iteration, replies\u002Bresolves citing the pushed SHA, then re-triggers until HEAD is reviewed with zero threads awaiting the agent\u0027s reply (remaining open threads are explicit hand-offs to the human \u2014 escalated declines, design tradeoffs). You merge a clean PR; the bot runs it. Trigger phrases: \u0022address copilot comments\u0022, \u0022run a copilot review loop\u0022, \u0022fix this PR\u0022, \u0022iterate on copilot feedback\u0022. Repo-agnostic, gh CLI \u002B PowerShell. Full autopilot needs repo Triage/Write; external PR authors get single-iteration mode plus manual re-trigger (UI \uD83D\uDD04 or substantive-commit push)."
+    },
+    {
       "filename": "copilot-sdk/SKILL.md",
       "name": "copilot-sdk",
       "description": "Build agentic applications with GitHub Copilot SDK. Use when embedding AI agents in apps, creating custom tools, implementing streaming responses, managing sessions, connecting to MCP servers, or creating custom agents. Triggers on Copilot SDK, GitHub SDK, agentic app, embed Copilot, programmable agent, MCP server, custom agent."
