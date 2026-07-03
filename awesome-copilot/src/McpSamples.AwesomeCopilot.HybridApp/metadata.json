@@ -804,6 +804,11 @@
       "name": "Python Notebook Sample Builder"
     },
     {
+      "filename": "python-win-arm64-gha-wheel-builder.agent.md",
+      "name": "GitHub Actions Windows ARM64 wheel builder",
+      "description": "Adds native Windows ARM64 wheel builds and tests to a Python package\u0027s existing GitHub Actions workflows using the \u0027windows-11-arm\u0027 runner."
+    },
+    {
       "filename": "qa-subagent.agent.md",
       "name": "QA",
       "description": "Meticulous QA subagent for test planning, bug hunting, edge-case analysis, and implementation verification."
@@ -3127,6 +3132,12 @@
       "filename": "pester-migration/SKILL.md",
       "name": "pester-migration",
       "description": "Experimental (preview) Pester migration skill for upgrading PowerShell Pester test suites across major versions \u2014 v3\u2192v4, v4\u2192v5, and v5\u2192v6. The v5\u2192v6 path tracks Pester 6, which is still a release candidate, so that guidance may change. Covers the Discovery/Run two-phase model, moving setup into BeforeAll, $PSScriptRoot vs $MyInvocation, mock changes (Assert-MockCalled \u2192 Should -Invoke, removed fall-through), Invoke-Pester parameters \u2192 PesterConfiguration, data-driven -ForEach/-TestCases, and the v6 breaking changes. Use when the user asks to upgrade, migrate, or modernize Pester tests, fix *.Tests.ps1 files that broke after bumping the Pester version, or convert legacy Should / Invoke-Pester syntax."
+    },
+    {
+      "filename": "pester-should-migration/SKILL.md",
+      "name": "pester-should-migration",
+      "description": "Experimental (preview) Pester skill for migrating classic Should -Be (v5) assertion syntax to the new Should-* (v6) assertions (note the hyphen, no space), e.g. \u0060Should -Be\u0060 -\u003E \u0060Should-Be\u0060, \u0060Should -Not -Be\u0060 -\u003E \u0060Should-NotBe\u0060. Tracks Pester 6, which is still a release candidate, so this guidance may change; verified against Pester 6.0.0-rc2. Use when converting Pester v5 assertions to Pester v6 Should-* operators, modernizing a Pester test suite, or when a user asks to migrate, convert, or rewrite \u0060Should -...\u0060 calls in .Tests.ps1 / PowerShell files.",
+      "argument-hint": "File, folder, or test suite to migrate"
     },
     {
       "filename": "phoenix-cli/SKILL.md",
