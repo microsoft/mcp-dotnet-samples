@@ -2657,6 +2657,11 @@
       "description": "Create and synchronize prompt-based AI agents directly within Azure AI Foundry via REST API, from a local JSON manifest. Unlike scaffolding skills that only generate local code, this skill registers agents in the Foundry service itself \u2014 making them immediately available for invocation. Use when the user asks to create agents in Foundry, sync, deploy, register, or push agents to Foundry, update agent instructions, or scaffold the manifest and sync script for a new repository. Triggers: \u0027create agent in foundry\u0027, \u0027sync foundry agents\u0027, \u0027deploy agents to foundry\u0027, \u0027register agents in foundry\u0027, \u0027push agents\u0027, \u0027create foundry agent manifest\u0027, \u0027scaffold agent sync\u0027."
     },
     {
+      "filename": "foundry-hosted-agent-copilotkit/SKILL.md",
+      "name": "foundry-hosted-agent-copilotkit",
+      "description": "Ongoing development guidance for agentic web apps that pair a CopilotKit frontend with Microsoft Agent Framework agents on Azure AI Foundry hosted agents over the AG-UI protocol - add and gate agent tools, wire human-in-the-loop approvals, build generative UI and shared state, debug the event stream, upgrade pre-1.0 packages safely, and deploy hosted agent updates."
+    },
+    {
       "filename": "freecad-scripts/SKILL.md",
       "name": "freecad-scripts",
       "description": "Expert skill for writing FreeCAD Python scripts, macros, and automation. Use when asked to create FreeCAD models, parametric objects, Part/Mesh/Sketcher scripts, workbench tools, GUI dialogs with PySide, Coin3D scenegraph manipulation, or any FreeCAD Python API task. Covers FreeCAD scripting basics, geometry creation, FeaturePython objects, interface tools, and macro development."
@@ -2972,6 +2977,11 @@
       "filename": "mcp-security-audit/SKILL.md",
       "name": "mcp-security-audit",
       "description": "Audit MCP (Model Context Protocol) server configurations for security issues. Use this skill when:\n- Reviewing .mcp.json files for security risks\n- Checking MCP server args for hardcoded secrets or shell injection patterns\n- Validating that MCP servers use pinned versions (not @latest)\n- Detecting unpinned dependencies in MCP server configurations\n- Auditing which MCP servers a project registers and whether they\u0027re on an approved list\n- Checking for environment variable usage vs. hardcoded credentials in MCP configs\n- Any request like \u0022is my MCP config secure?\u0022, \u0022audit my MCP servers\u0022, or \u0022check .mcp.json\u0022\nkeywords: [mcp, security, audit, secrets, shell-injection, supply-chain, governance]"
+    },
+    {
+      "filename": "mcp-security-baseline/SKILL.md",
+      "name": "mcp-security-baseline",
+      "description": "Review MCP (Model Context Protocol) server and client source code against a security baseline \u2014 authentication, sessions, rate limiting, input-schema validation, official-SDK usage, RCE vectors, and the OWASP MCP Top 10 \u2014 producing a report with file/line evidence. Use this skill when:\n- Reviewing an MCP server implementation for security before release\n- Checking a server against the baseline controls (MCP-01 to MCP-05) and the OWASP MCP Top 10\n- Auditing tools for RCE vectors (command/code injection, unsafe deserialization, path traversal, SSTI, dependency hijacking, SSRF)\n- Verifying auth, session, rate-limiting, and input-validation controls on a network-exposed server\n- Reviewing MCP client code that handles untrusted server responses and session IDs\n- Requests like \u0022review this MCP server for security\u0022 or \u0022is my MCP server implementation secure?\u0022"
     },
     {
       "filename": "md-to-docx/SKILL.md",
