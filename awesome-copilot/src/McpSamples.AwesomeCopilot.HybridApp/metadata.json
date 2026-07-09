@@ -415,7 +415,7 @@
     },
     {
       "filename": "gem-code-simplifier.agent.md",
-      "description": "Refactoring specialist \u2014 removes dead code, reduces complexity, consolidates duplicates.",
+      "description": "Refactoring specialist: removes dead code, reduces complexity, consolidates duplicates.",
       "name": "gem-code-simplifier",
       "argument-hint": "Enter task_id, scope (single_file|multiple_files|project_wide), targets (file paths/patterns), and focus (dead_code|complexity|duplication|naming|all)."
     },
@@ -433,13 +433,13 @@
     },
     {
       "filename": "gem-designer-mobile.agent.md",
-      "description": "Mobile UI/UX specialist \u2014 HIG, Material Design, safe areas, touch targets.",
+      "description": "Mobile UI/UX specialist: HIG, Material Design, safe areas, touch targets.",
       "name": "gem-designer-mobile",
       "argument-hint": "Enter task_id, plan_id (optional), plan_path (optional), mode (create|validate), scope (component|screen|navigation|design_system), target, context (framework, library), and constraints (platform, responsive, accessible, dark_mode)."
     },
     {
       "filename": "gem-designer.agent.md",
-      "description": "UI/UX design specialist \u2014 layouts, themes, color schemes, design systems, accessibility.",
+      "description": "UI/UX design specialist: layouts, themes, color schemes, design systems, accessibility.",
       "name": "gem-designer",
       "argument-hint": "Enter task_id, plan_id (optional), plan_path (optional), mode (create|validate), scope (component|page|layout|design_system), target, context (framework, library), and constraints (responsive, accessible, dark_mode)."
     },
@@ -457,19 +457,19 @@
     },
     {
       "filename": "gem-implementer-mobile.agent.md",
-      "description": "Mobile implementation \u2014 React Native, Expo, Flutter with TDD.",
+      "description": "Mobile implementation: React Native, Expo, Flutter with TDD.",
       "name": "gem-implementer-mobile",
       "argument-hint": "Enter task_id, plan_id, plan_path, and mobile task_definition to implement for iOS/Android."
     },
     {
       "filename": "gem-implementer.agent.md",
-      "description": "TDD code implementation \u2014 features, bugs, refactoring. Never reviews own work.",
+      "description": "TDD code implementation: features, bugs, refactoring. Never reviews own work.",
       "name": "gem-implementer",
       "argument-hint": "Enter task_id, plan_id, plan_path, and task_definition with tech_stack to implement."
     },
     {
       "filename": "gem-mobile-tester.agent.md",
-      "description": "Mobile E2E testing \u2014 Detox, Maestro, iOS/Android simulators.",
+      "description": "Mobile E2E testing: Detox, Maestro, iOS/Android simulators.",
       "name": "gem-mobile-tester",
       "argument-hint": "Enter task_id, plan_id, plan_path, and mobile test definition to run E2E tests on iOS/Android."
     },
@@ -481,13 +481,13 @@
     },
     {
       "filename": "gem-planner.agent.md",
-      "description": "DAG-based execution plans \u2014 task decomposition, wave scheduling, risk analysis.",
+      "description": "DAG-based execution plans: task decomposition, wave scheduling, risk analysis.",
       "name": "gem-planner",
       "argument-hint": "Plan_id, objective."
     },
     {
       "filename": "gem-researcher.agent.md",
-      "description": "Codebase exploration \u2014 patterns, dependencies, architecture discovery. Supports multiple exploration modes for cost-controlled research.",
+      "description": "Codebase exploration: patterns, dependencies, architecture discovery. Supports multiple exploration modes for cost-controlled research.",
       "name": "gem-researcher",
       "argument-hint": "Enter plan_id, objective, focus_area (optional), exploration_mode (optional), and context_envelope_snapshot."
     },
@@ -499,7 +499,7 @@
     },
     {
       "filename": "gem-skill-creator.agent.md",
-      "description": "Pattern-to-skill extraction \u2014 creates agent skills files from high-confidence learnings.",
+      "description": "Pattern-to-skill extraction: creates agent skills files from high-confidence learnings.",
       "name": "gem-skill-creator",
       "argument-hint": "Enter task_id, plan_id, plan_path, patterns, source_task_id."
     },
