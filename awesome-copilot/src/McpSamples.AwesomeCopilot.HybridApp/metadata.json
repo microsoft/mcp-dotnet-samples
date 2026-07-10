@@ -2497,6 +2497,11 @@
       "description": "Perform a systematic diagnostic scan of an AI workflow across 5 quality dimensions \u2014 prompt quality, context efficiency, tool health, architecture fitness, and safety \u2014 producing a scored report with prioritized remediation actions."
     },
     {
+      "filename": "doc-and-modernize/SKILL.md",
+      "name": "doc-and-modernize",
+      "description": "Two related workflows for a locally-cloned codebase, in one skill. Documentation mode produces a single, comprehensive, verifiable architecture document primarily by reading files on disk (local-first) \u2014 use it whenever the user wants to understand, map, document, research, or onboard onto a codebase (\u0022research this repo\u0022, \u0022write up the architecture\u0022, \u0022do an architecture deep dive\u0022, \u0022document how this codebase works\u0022, \u0022map the system design\u0022, \u0022create an onboarding doc\u0022). Modernization mode generates a phased plan to modernize, migrate, upgrade, or rewrite a legacy system (\u0022modernize this\u0022, \u0022plan the migration\u0022, \u0022how would we rewrite this\u0022, \u0022how do we get off this legacy stack\u0022); if no architecture document exists yet it first runs Documentation mode, then continues straight through to the plan. It assumes the legacy stack may be dead, runs a time-boxed feasibility spike, and picks the highest achievable rung on a safety ladder instead of demanding a fully-green legacy CI gate up front."
+    },
+    {
       "filename": "documentation-writer/SKILL.md",
       "name": "documentation-writer",
       "description": "Di\u00E1taxis Documentation Expert. An expert technical writer specializing in creating high-quality software documentation, guided by the principles and structure of the Di\u00E1taxis technical documentation authoring framework."
