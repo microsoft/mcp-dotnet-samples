@@ -3146,7 +3146,7 @@
     {
       "filename": "pester-migration/SKILL.md",
       "name": "pester-migration",
-      "description": "Experimental (preview) Pester migration skill for upgrading PowerShell Pester test suites across major versions \u2014 v3\u2192v4, v4\u2192v5, and v5\u2192v6. The v5\u2192v6 path tracks Pester 6, which is still a release candidate, so that guidance may change. Covers the Discovery/Run two-phase model, moving setup into BeforeAll, $PSScriptRoot vs $MyInvocation, mock changes (Assert-MockCalled \u2192 Should -Invoke, removed fall-through), Invoke-Pester parameters \u2192 PesterConfiguration, data-driven -ForEach/-TestCases, and the v6 breaking changes. Use when the user asks to upgrade, migrate, or modernize Pester tests, fix *.Tests.ps1 files that broke after bumping the Pester version, or convert legacy Should / Invoke-Pester syntax."
+      "description": "Pester migration skill for upgrading PowerShell Pester test suites across major versions \u2014 v3\u2192v4, v4\u2192v5, and v5\u2192v6. Covers the Discovery/Run two-phase model, moving setup into BeforeAll, $PSScriptRoot vs $MyInvocation, mock changes (Assert-MockCalled \u2192 Should -Invoke, removed fall-through), Invoke-Pester parameters \u2192 PesterConfiguration, data-driven -ForEach/-TestCases, and the v6 breaking changes. Use when the user asks to upgrade, migrate, or modernize Pester tests, fix *.Tests.ps1 files that broke after bumping the Pester version, or convert legacy Should / Invoke-Pester syntax."
     },
     {
       "filename": "pester-should-migration/SKILL.md",
