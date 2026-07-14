@@ -3031,7 +3031,7 @@
     {
       "filename": "migrating-oracle-to-postgres-stored-procedures/SKILL.md",
       "name": "migrating-oracle-to-postgres-stored-procedures",
-      "description": "Migrates Oracle PL/SQL stored procedures to PostgreSQL PL/pgSQL. Translates Oracle-specific syntax, preserves method signatures and type-anchored parameters, leverages orafce where appropriate, and applies COLLATE \u0022C\u0022 for Oracle-compatible text sorting. Use when converting Oracle stored procedures or functions to PostgreSQL equivalents during a database migration."
+      "description": "Migrates Oracle PL/SQL stored procedures to PostgreSQL PL/pgSQL. Translates Oracle-specific syntax, preserves method signatures and type-anchored parameters, leverages orafce where appropriate, and applies explicit collation mapping (\u0060COLLATE \u0022C\u0022\u0060 only when appropriate, locale collations when required). Use when converting Oracle stored procedures or functions to PostgreSQL equivalents during a database migration."
     },
     {
       "filename": "minecraft-plugin-development/SKILL.md",
@@ -3463,7 +3463,7 @@
     {
       "filename": "reviewing-oracle-to-postgres-migration/SKILL.md",
       "name": "reviewing-oracle-to-postgres-migration",
-      "description": "Identifies Oracle-to-PostgreSQL migration risks by cross-referencing code against known behavioral differences (empty strings, refcursors, type coercion, sorting, timestamps, concurrent transactions, etc.). Use when planning a database migration, reviewing migration artifacts, or validating that integration tests cover Oracle/PostgreSQL differences."
+      "description": "Identifies Oracle-to-PostgreSQL migration risks by cross-referencing code against known behavioral differences (empty strings, refcursors, type coercion, sorting/collations, UNION ALL planner risks, materialized-view refresh requirements, timestamps, concurrent transactions, etc.). Use when planning a database migration, reviewing migration artifacts, or validating that integration tests cover Oracle/PostgreSQL differences."
     },
     {
       "filename": "rhino3d-scripts/SKILL.md",
@@ -3594,6 +3594,11 @@
       "filename": "ssma-console/SKILL.md",
       "name": "ssma-console",
       "description": "Use when: SSMA console operations \u2014 create project, generate assessment report, convert schema, migrate data, Oracle to SQL Server migration, schema conversion, data migration"
+    },
+    {
+      "filename": "steno-mode/SKILL.md",
+      "name": "steno-mode",
+      "description": "Shorthand-first response compression that cuts ~40% of response tokens while preserving technical precision and exact literals. Use when the user says \u0022steno mode\u0022, \u0022shorthand mode\u0022, \u0022compressed responses\u0022, \u0022token reduction\u0022, \u0022brief structured output\u0022, or invokes /steno. Supports four compression levels: lite, brief, court, machine. Do not trigger for requests needing polished prose such as onboarding/tutorial content, stakeholder or customer-facing copy, or teaching-focused explanations."
     },
     {
       "filename": "structured-autonomy-generate/SKILL.md",
