@@ -3667,6 +3667,11 @@
       "description": "Create tldr summaries for GitHub Copilot files (prompts, agents, instructions, collections), MCP servers, or documentation from URLs and queries."
     },
     {
+      "filename": "tm7-threat-model/SKILL.md",
+      "name": "tm7-threat-model",
+      "description": "Creates valid Microsoft Threat Modeling Tool (.tm7) files compatible with the Microsoft Threat Modeling Tool v7.3\u002B. Use this skill whenever asked to create, generate, or modify a .tm7 threat model file, or when performing STRIDE threat modeling that should output a .tm7 file that opens cleanly in the Microsoft Threat Modeling Tool."
+    },
+    {
       "filename": "transloadit-media-processing/SKILL.md",
       "name": "transloadit-media-processing",
       "description": "Process media files (video, audio, images, documents) using Transloadit. Use when asked to encode video to HLS/MP4, generate thumbnails, resize or watermark images, extract audio, concatenate clips, add subtitles, OCR documents, or run any media processing pipeline. Covers 86\u002B processing robots for file transformation at scale."
