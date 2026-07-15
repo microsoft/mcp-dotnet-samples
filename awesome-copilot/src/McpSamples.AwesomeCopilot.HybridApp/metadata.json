@@ -2282,9 +2282,24 @@
       "description": "Prompt and workflow for generating conventional commit messages using a structured XML format. Guides users to create standardized, descriptive commit messages in line with the Conventional Commits specification, including instructions, examples, and validation."
     },
     {
+      "filename": "convert-excel-to-md/SKILL.md",
+      "name": "convert-excel-to-md",
+      "description": "Converts Excel (.xlsx) workbooks into Markdown so their contents can be accurately analyzed, summarized, searched, or extracted from. Use this skill whenever the user shares, references, or asks about a .xlsx file \u2014 even if they don\u0027t say \u0022convert\u0022 or \u0022markdown\u0022 explicitly. This includes requests to \u0022read\u0022, \u0022summarize\u0022, \u0022review\u0022, \u0022extract data from\u0022, \u0022compare\u0022, \u0022chart\u0022, or \u0022analyze\u0022 a spreadsheet, workbook, budget, data export, or tracker. Always run the bundled conversion script to produce Markdown first; do not attempt to parse .xlsx content directly or write ad-hoc extraction code. Also use this skill for batch requests involving a whole folder of Excel workbooks. IMPORTANT: When the user references a folder or set of documents containing multiple file types (.pdf, .docx, .xlsx), invoke ALL three sibling skills \u2014 convert-pdf-to-md, convert-word-to-md, and convert-excel-to-md \u2014 so no file type is silently skipped."
+    },
+    {
+      "filename": "convert-pdf-to-md/SKILL.md",
+      "name": "convert-pdf-to-md",
+      "description": "Converts PDF (.pdf) documents into Markdown so their contents can be accurately analyzed, summarized, searched, or extracted from. Use this skill whenever the user shares, references, or asks about a .pdf file \u2014 even if they don\u0027t say \u0022convert\u0022 or \u0022markdown\u0022 explicitly. This includes requests to \u0022read\u0022, \u0022summarize\u0022, \u0022review\u0022, \u0022extract data from\u0022, \u0022compare\u0022, or \u0022analyze\u0022 a PDF report, paper, invoice, form, contract, or scanned document. Always run the bundled conversion script to produce Markdown first; do not attempt to parse PDF content directly or write ad-hoc extraction code. Also use this skill for batch requests involving a whole folder of PDF documents. IMPORTANT: When the user references a folder or set of documents containing multiple file types (.pdf, .docx, .xlsx), invoke ALL three sibling skills \u2014 convert-pdf-to-md, convert-word-to-md, and convert-excel-to-md \u2014 so no file type is silently skipped."
+    },
+    {
       "filename": "convert-plaintext-to-md/SKILL.md",
       "name": "convert-plaintext-to-md",
       "description": "Convert a text-based document to markdown following instructions from prompt, or if a documented option is passed, follow the instructions for that option."
+    },
+    {
+      "filename": "convert-word-to-md/SKILL.md",
+      "name": "convert-word-to-md",
+      "description": "Converts Word (.docx) documents into Markdown so their contents can be accurately analyzed, summarized, searched, or extracted from. Use this skill whenever the user shares, references, or asks about a .docx file \u2014 even if they don\u0027t say \u0022convert\u0022 or \u0022markdown\u0022 explicitly. This includes requests to \u0022read\u0022, \u0022summarize\u0022, \u0022review\u0022, \u0022extract data from\u0022, \u0022compare\u0022, or \u0022analyze\u0022 a Word document, resume, report, contract, or proposal. Always run the bundled conversion script to produce Markdown first; do not attempt to parse .docx content directly or write ad-hoc conversion code. Also use this skill for batch requests involving a whole folder of Word documents. IMPORTANT: When the user references a folder or set of documents containing multiple file types (.pdf, .docx, .xlsx), invoke ALL three sibling skills \u2014 convert-pdf-to-md, convert-word-to-md, and convert-excel-to-md \u2014 so no file type is silently skipped."
     },
     {
       "filename": "copilot-cli-quickstart/SKILL.md",
