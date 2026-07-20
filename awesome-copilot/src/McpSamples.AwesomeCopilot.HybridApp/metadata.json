@@ -1125,6 +1125,11 @@
       "filename": "wg-code-sentinel.agent.md",
       "description": "Ask WG Code Sentinel to review your code for security issues.",
       "name": "WG Code Sentinel"
+    },
+    {
+      "filename": "workshop-ta.agent.md",
+      "name": "Workshop TA",
+      "description": "Room coordinator for a multi-agent workshop. Sees all desks, routes work, tracks state, manages journals, and emits coordination signals. Not a desk \u2014 the person who sees the whole room."
     }
   ],
   "hooks": [
@@ -2161,6 +2166,11 @@
       "description": "Expert-level Windows batch file (.bat/.cmd) skill for writing, debugging, and maintaining CMD scripts. Use when asked to \u0022create a batch file\u0022, \u0022write a .bat script\u0022, \u0022automate a Windows task\u0022, \u0022CMD scripting\u0022, \u0022batch automation\u0022, \u0022scheduled task script\u0022, \u0022Windows shell script\u0022, or when working with .bat/.cmd files in the workspace. Covers cmd.exe syntax, environment variables, control flow, string processing, error handling, and integration with system tools."
     },
     {
+      "filename": "bench-read/SKILL.md",
+      "name": "bench-read",
+      "description": "Read artifacts from the shared bench \u2014 the workspace where desks leave findings, verdicts, and work products for each other and the operator."
+    },
+    {
       "filename": "bigquery-pipeline-audit/SKILL.md",
       "name": "bigquery-pipeline-audit",
       "description": "Audits Python \u002B BigQuery pipelines for cost safety, idempotency, and production readiness. Returns a structured report with exact patch locations."
@@ -2500,6 +2510,16 @@
       "filename": "dependabot/SKILL.md",
       "name": "dependabot",
       "description": "Comprehensive guide for configuring and managing GitHub Dependabot. Use this skill when users ask about creating or optimizing dependabot.yml files, managing Dependabot pull requests, configuring dependency update strategies, setting up grouped updates, monorepo patterns, multi-ecosystem groups, security update configuration, auto-triage rules, or any GitHub Advanced Security (GHAS) supply chain security topic related to Dependabot. For pre-commit dependency vulnerability scanning in AI coding agents via the GitHub MCP Server, this skill references the Advanced Security plugin (\u0060advanced-security@copilot-plugins\u0060). Use this skill when an agent needs to scan dependencies for known vulnerabilities before committing."
+    },
+    {
+      "filename": "desk-journal/SKILL.md",
+      "name": "desk-journal",
+      "description": "Write, append, or read desk journal entries. The journal is persistent memory \u2014 what survives session boundaries. A good entry has: what was done, current state, next step."
+    },
+    {
+      "filename": "desk-open/SKILL.md",
+      "name": "desk-open",
+      "description": "Create and open a new desk in the workshop. Sets up the folder structure, initial journal, and desk identity so the next session that sits down finds the trail."
     },
     {
       "filename": "devops-rollout-plan/SKILL.md",
@@ -3571,6 +3591,11 @@
       "description": "Shuffle repetitive JSON objects safely by validating schema consistency before randomising entries."
     },
     {
+      "filename": "signal-write/SKILL.md",
+      "name": "signal-write",
+      "description": "Emit structured agent signals \u2014 hands-up, blocked, done, checkpoint, partnership. Signals are written as JSON to .signals/ for dashboard consumption and noted in the journal for persistence."
+    },
+    {
       "filename": "slang-shader-engineer/SKILL.md",
       "name": "slang-shader-engineer",
       "description": "Use when working with Slang shaders, shader modules, HLSL-compatible GPU code, graphics pipelines, compute shaders, tessellation, ray tracing, parameter blocks, generics, interfaces, capabilities, cross-compilation, shader optimization, shader review, or C\u002B\u002B engine integration for Slang. Trigger on any mention of Slang, .slang files, slangc, SPIR-V from Slang, Slang modules, [shader(\u0022compute\u0022)], [shader(\u0022vertex\u0022)], or requests to write/review/refactor shader code with modern language features. Also trigger for Slang-to-HLSL/GLSL/Metal/CUDA cross-compile questions, or when the user says \u0022shader\u0022 alongside \u0022generics\u0022, \u0022interfaces\u0022, \u0022parameter blocks\u0022, \u0022autodiff\u0022, or \u0022capabilities\u0022."
@@ -3790,6 +3815,11 @@
       "filename": "workiq-copilot/SKILL.md",
       "name": "workiq-copilot",
       "description": "Guides the Copilot CLI on how to use the WorkIQ CLI/MCP server to query Microsoft 365 Copilot data (emails, meetings, docs, Teams, people) for live context, summaries, and recommendations."
+    },
+    {
+      "filename": "workshop-create/SKILL.md",
+      "name": "workshop-create",
+      "description": "Create a new workshop or use an existing directory as one. Handles two paths: (A) use an existing local directory the operator points at, or (B) create a new private GitHub repo in the signed-in account. Never creates a repo inside another repo."
     },
     {
       "filename": "write-coding-standards-from-file/SKILL.md",
