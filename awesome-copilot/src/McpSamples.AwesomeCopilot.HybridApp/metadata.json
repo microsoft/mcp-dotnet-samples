@@ -1134,6 +1134,11 @@
   ],
   "hooks": [
     {
+      "filename": "attester-import-check/README.md",
+      "name": "Attester Import Check",
+      "description": "Verifies PyPI and npm package names against the attester.dev existence oracle before the Copilot coding agent writes them into code, blocking hallucinated dependencies"
+    },
+    {
       "filename": "dependency-license-checker/README.md",
       "name": "Dependency License Checker",
       "description": "Scans newly added dependencies for license compliance (GPL, AGPL, etc.) at session end"
@@ -1209,6 +1214,10 @@
     {
       "filename": "astro.instructions.md",
       "description": "Astro 7 development standards and best practices for content-driven websites"
+    },
+    {
+      "filename": "attester-verify-packages.instructions.md",
+      "description": "Verify PyPI and npm package and symbol names against the attester.dev existence oracle before installing or importing, so hallucinated dependencies never reach code"
     },
     {
       "filename": "aws-appsync.instructions.md",
@@ -1941,6 +1950,11 @@
       "argument-hint": "[show | new \u003Cname\u003E | apply \u003Cpath-or-pkg\u003E] \u2014 e.g. /acreadiness-policy show, /acreadiness-policy new strict-frontend"
     },
     {
+      "filename": "ad-campaign-analyzer/SKILL.md",
+      "name": "ad-campaign-analyzer",
+      "description": "Use this skill when the user shares ad campaign performance data and asks what to cut, scale, or test. Trigger for prompts like \u0022analyze my ad campaigns\u0022, \u0022where am I wasting ad spend\u0022, \u0022reallocate my ad budget\u0022, \u0022which ads are actually working\u0022, or \u0022ROAS analysis\u0022. Do not trigger for campaign planning or creative generation without performance data."
+    },
+    {
       "filename": "add-educational-comments/SKILL.md",
       "name": "add-educational-comments",
       "description": "Add educational comments to the file specified, or prompt asking for file to comment if one is not provided."
@@ -1959,6 +1973,11 @@
       "filename": "agent-owasp-compliance/SKILL.md",
       "name": "agent-owasp-compliance",
       "description": "Check any AI agent codebase against the OWASP Agentic Security Initiative (ASI) Top 10 risks.\nUse this skill when:\n- Evaluating an agent system\u0027s security posture before production deployment\n- Running a compliance check against OWASP ASI 2026 standards\n- Mapping existing security controls to the 10 agentic risks\n- Generating a compliance report for security review or audit\n- Comparing agent framework security features against the standard\n- Any request like \u0022is my agent OWASP compliant?\u0022, \u0022check ASI compliance\u0022, or \u0022agentic security audit\u0022"
+    },
+    {
+      "filename": "agent-skill-stack/SKILL.md",
+      "name": "agent-skill-stack",
+      "description": "Find, evaluate, and assemble the smallest compatible set of AI Agent Skills for an end-to-end natural-language goal. Use when a user wants Skills for a multi-step workflow, asks which Skills fit a project, needs an installed-Skill audit or conflict check, has low Skill recall, wants indirect helpers such as humanizers or compliance checks, or wants a project-specific Skill Stack with controlled installation. Search local Skills, registries, GitHub, and OpenCLI; compare adoption, verified fit, safety, and overlap. Do not use for locating one known or common Skill; use the generic find-skills workflow."
     },
     {
       "filename": "agent-supply-chain/SKILL.md",
@@ -2270,6 +2289,11 @@
       "filename": "commit-message-storyteller/SKILL.md",
       "name": "commit-message-storyteller",
       "description": "Analyzes git diffs or staged changes and generates narrative commit messages that explain WHY a change was made, not just what changed \u2014 following Conventional Commits format. Use when asked to \u0022write a commit message\u0022, \u0022generate a commit\u0022, \u0022describe my changes\u0022, \u0022what should I commit this as\u0022, \u0022commit this\u0022, \u0022summarize my diff\u0022, or \u0022help me commit\u0022. Works with git diff output, staged files, or plain descriptions of changes."
+    },
+    {
+      "filename": "competitor-ad-intelligence/SKILL.md",
+      "name": "competitor-ad-intelligence",
+      "description": "Use this skill when the user asks to analyze, tear down, or reverse-engineer a competitor\u0027s paid ads. Trigger for prompts like \u0022what ads is [competitor] running\u0022, \u0022tear down their ad strategy\u0022, \u0022competitor ad analysis\u0022, \u0022find ad angles we haven\u0027t tried\u0022, or \u0022reverse-engineer their paid funnel\u0022. Do not trigger for organic/SEO competitor research or website positioning analysis."
     },
     {
       "filename": "containerize-aspnet-framework/SKILL.md",
@@ -2977,6 +3001,11 @@
       "filename": "kotlin-springboot/SKILL.md",
       "name": "kotlin-springboot",
       "description": "Get best practices for developing applications with Spring Boot and Kotlin."
+    },
+    {
+      "filename": "latchshot-page-capture/SKILL.md",
+      "name": "latchshot-page-capture",
+      "description": "Use this skill when a user needs a screenshot, website thumbnail, full-page capture, or PDF of a public HTTP(S) webpage saved as a local artifact through Latchshot, including report, QA, archive, and social-preview workflows. Do not use it for private or authenticated pages, raw HTML, scraping or extraction, arbitrary browser actions, CAPTCHA or anti-bot bypass, or local-file capture."
     },
     {
       "filename": "legacy-circuit-mockups/SKILL.md",
@@ -3820,6 +3849,12 @@
       "filename": "webapp-testing/SKILL.md",
       "name": "webapp-testing",
       "description": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs."
+    },
+    {
+      "filename": "webmcpify/SKILL.md",
+      "name": "webmcpify",
+      "description": "Make a web app agent-ready \u2014 propose a WebMCP tool manifest, integrate, verify in a real browser, heal; unrelated code stays untouched. Use for \u0022webmcpify\u0022, \u0022add WebMCP\u0022, or \u0022expose app actions to AI agents\u0022.",
+      "argument-hint": "[inventory|integrate|verify|status|full] [scope notes]"
     },
     {
       "filename": "what-context-needed/SKILL.md",
