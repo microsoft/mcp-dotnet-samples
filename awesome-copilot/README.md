@@ -64,12 +64,12 @@ Awesome Copilot MCP server includes:
 
    **Parameters**:
 
-   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5250`.
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:5250/mcp`.
 
    With this parameter, you can run the MCP server like:
 
    ```bash
-   dotnet run --project ./src/McpSamples.AwesomeCopilot.HybridApp -- --http
+   dotnet run --project ./src/McpSamples.AwesomeCopilot.HybridApp --http
    ```
 
 #### In a container
@@ -95,7 +95,7 @@ Awesome Copilot MCP server includes:
 
    **Parameters**:
 
-   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:8080`.
+   - `--http`: The switch that indicates to run this MCP server as a streamable HTTP type. When this switch is added, the MCP server URL is `http://localhost:8080/mcp`.
 
    With this parameter, you can run the MCP server like:
 
