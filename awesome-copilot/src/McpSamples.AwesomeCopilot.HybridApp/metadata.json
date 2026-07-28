@@ -2190,6 +2190,11 @@
       "description": "Helps create, configure, and deploy Azure Static Web Apps using the SWA CLI. Use when deploying static sites to Azure, setting up SWA local development, configuring staticwebapp.config.json, adding Azure Functions APIs to SWA, or setting up GitHub Actions CI/CD for Static Web Apps."
     },
     {
+      "filename": "azure-well-architected-review/SKILL.md",
+      "name": "azure-well-architected-review",
+      "description": "Perform an Azure Well-Architected Framework review of the current workload IaC and architecture, generating findings and GitHub issues for improvements."
+    },
+    {
       "filename": "batch-files/SKILL.md",
       "name": "batch-files",
       "description": "Expert-level Windows batch file (.bat/.cmd) skill for writing, debugging, and maintaining CMD scripts. Use when asked to \u0022create a batch file\u0022, \u0022write a .bat script\u0022, \u0022automate a Windows task\u0022, \u0022CMD scripting\u0022, \u0022batch automation\u0022, \u0022scheduled task script\u0022, \u0022Windows shell script\u0022, or when working with .bat/.cmd files in the workspace. Covers cmd.exe syntax, environment variables, control flow, string processing, error handling, and integration with system tools."
