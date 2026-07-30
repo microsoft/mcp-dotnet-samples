@@ -2251,6 +2251,11 @@
       "description": "Test Planning and Quality Assurance prompt that generates comprehensive test strategies, task breakdowns, and quality validation plans for GitHub projects."
     },
     {
+      "filename": "bug-reproduction-brief/SKILL.md",
+      "name": "bug-reproduction-brief",
+      "description": "Turn a vague, intermittent, or environment-specific bug report into a minimal evidence-backed reproduction before proposing a fix."
+    },
+    {
       "filename": "centos-linux-triage/SKILL.md",
       "name": "centos-linux-triage",
       "description": "Triage and resolve CentOS issues using RHEL-compatible tooling, SELinux-aware practices, and firewalld."
