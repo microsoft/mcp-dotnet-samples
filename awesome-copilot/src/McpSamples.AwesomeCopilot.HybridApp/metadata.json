@@ -1112,6 +1112,11 @@
       "name": "Terratest Module Testing"
     },
     {
+      "filename": "trojan-skill-hunter.agent.md",
+      "description": "Audits agent, skill, instruction, hook, and MCP-config contributions for hidden prompt injection, tool poisoning, unicode steganography, and excessive-agency red flags before they are merged, installed, or trusted \u2014 mapped to the OWASP Top 10 for LLM Applications and real-world MCP attack research.",
+      "name": "Trojan Skill Hunter"
+    },
+    {
       "filename": "typescript-mcp-expert.agent.md",
       "description": "Expert assistant for developing Model Context Protocol (MCP) servers in TypeScript",
       "name": "TypeScript MCP Server Expert"
