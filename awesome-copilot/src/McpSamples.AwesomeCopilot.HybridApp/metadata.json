@@ -59,17 +59,17 @@
     {
       "filename": "ai-team-dev.agent.md",
       "name": "ai-team-dev",
-      "description": "AI development team agent (Nova, Sage, Milo). Use when: building features, writing application code, fixing bugs, implementing UI components, creating APIs, styling with CSS, writing database queries, or executing sprint plans. The team switches between frontend, backend, and design roles as needed."
+      "description": "AI development team (Nova, Sage, Milo). Use when implementing features, fixing bugs, writing tests, improving user experience, or preparing a pull request across the project\u0027s actual stack."
     },
     {
       "filename": "ai-team-producer.agent.md",
       "name": "ai-team-producer",
-      "description": "AI team producer agent (Remy). Use when: planning sprints, creating PROJECT_BRIEF.md, triaging bugs, merging PRs, coordinating between dev and QA teams, filing GitHub Issues, writing sprint plans, running brainstorms, or recovering project context. NEVER writes application code."
+      "description": "AI team producer (Remy). Use when planning work, clarifying scope, coordinating Dev and optional QA, triaging issues, maintaining project context, or preparing and merging pull requests. Never writes application code."
     },
     {
       "filename": "ai-team-qa.agent.md",
       "name": "ai-team-qa",
-      "description": "AI QA engineer agent (Ivy). Use when: testing features, running E2E tests, playtesting, filing bug reports, writing test automation, creating QA sign-off documents, or verifying bug fixes. Reports bugs as GitHub Issues."
+      "description": "Optional AI QA engineer (Ivy). Use when testing behavior, running automated or exploratory checks, filing reproducible bugs, verifying fixes, or providing release confidence for changes that warrant dedicated QA."
     },
     {
       "filename": "amplitude-experiment-implementation.agent.md",
@@ -2012,7 +2012,7 @@
     {
       "filename": "ai-team-orchestration/SKILL.md",
       "name": "ai-team-orchestration",
-      "description": "Bootstrap and run a multi-agent AI development team. Use when: starting a new software project with AI agents, setting up parallel dev/QA teams, creating sprint plans, writing brainstorm prompts with distinct agent voices, recovering a project workflow, or planning sprints."
+      "description": "Bootstrap and run a lightweight multi-agent development team. Use when starting or adopting a project, planning work, coordinating implementation and optional QA, brainstorming with distinct perspectives, or preserving context across sessions."
     },
     {
       "filename": "anti-ui-slop/SKILL.md",
@@ -2153,6 +2153,11 @@
       "filename": "azure-architecture-autopilot/SKILL.md",
       "name": "azure-architecture-autopilot",
       "description": "Design Azure infrastructure using natural language, or analyze existing Azure resources to auto-generate architecture diagrams, refine them through conversation, and deploy with Bicep.\nWhen to use this skill: - \u0022Create X on Azure\u0022, \u0022Set up a RAG architecture\u0022 (new design) - \u0022Analyze my current Azure infrastructure\u0022, \u0022Draw a diagram for rg-xxx\u0022 (existing analysis) - \u0022Foundry is slow\u0022, \u0022I want to reduce costs\u0022, \u0022Strengthen security\u0022 (natural language modification) - Azure resource deployment, Bicep template generation, IaC code generation - Microsoft Foundry, AI Search, OpenAI, Fabric, ADLS Gen2, Databricks, and all Azure services"
+    },
+    {
+      "filename": "azure-container-registry-cli/SKILL.md",
+      "name": "azure-container-registry-cli",
+      "description": "Manage Azure Container Registry via the az acr CLI including registries, images, cloud builds, ACR Tasks, authentication, tokens, geo-replication, and networking. Use when working with ACR, az acr commands, pushing/importing/purging container images in Azure, or when the user mentions Azure Container Registry."
     },
     {
       "filename": "azure-deployment-preflight/SKILL.md",
@@ -3914,7 +3919,7 @@
     {
       "filename": "x-twitter-scraper/SKILL.md",
       "name": "x-twitter-scraper",
-      "description": "Build GitHub Copilot workflows with Xquik X API SDKs, REST endpoints, MCP tools, TweetClaw OpenClaw plugin installs, signed webhooks, tweet search, user lookup, follower exports, media actions, and agent automation."
+      "description": "Build GitHub Copilot workflows with Xquik X API SDKs, REST endpoints, hosted Apify Actor runs, MCP tools, TweetClaw OpenClaw plugin installs, signed webhooks, tweet search, user lookup, follower exports, media actions, and agent automation."
     }
   ],
   "workflows": [
