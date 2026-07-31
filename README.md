@@ -1,5 +1,7 @@
 # Model Context Protocol .NET Samples
 
+[![MCP Toplist](https://mcptoplist.com/badge/io.github.microsoft%2Fawesome-copilot.svg)](https://mcptoplist.com/server/io.github.microsoft%2Fawesome-copilot)
+
 [![Microsoft Foundry Community Discord](https://dcbadge.limes.pink/api/server/ByRwuEEgH4)](https://discord.com/invite/ByRwuEEgH4)
 [![Microsoft Foundry Developer Forum](https://img.shields.io/badge/GitHub-Microsoft_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 
