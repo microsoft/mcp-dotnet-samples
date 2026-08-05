@@ -453,7 +453,7 @@
       "filename": "gem-documentation-writer.agent.md",
       "description": "Technical documentation, README files, API docs, diagrams, walkthroughs.",
       "name": "gem-documentation-writer",
-      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|update|prd|agents_md|update_context_envelope), audience, coverage_matrix."
+      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|update|prd|agents_md|update_plan_context), audience, coverage_matrix."
     },
     {
       "filename": "gem-implementer-mobile.agent.md",
@@ -489,7 +489,7 @@
       "filename": "gem-researcher.agent.md",
       "description": "Codebase exploration: patterns, dependencies, architecture discovery. Supports multiple exploration modes for cost-controlled research.",
       "name": "gem-researcher",
-      "argument-hint": "Enter plan_id, objective, focus_area (optional), exploration_mode (optional), and context_envelope_snapshot."
+      "argument-hint": "Enter plan_id, objective, focus_area (optional), exploration_mode (optional), and plan_context_snapshot."
     },
     {
       "filename": "gem-reviewer.agent.md",
@@ -3859,6 +3859,11 @@
       "filename": "vcpkg/SKILL.md",
       "name": "vcpkg",
       "description": "Guide for setting up vcpkg in C\u002B\u002B projects, managing dependency versions, and cross-compiling. Covers manifest initialization, CMake and Visual Studio integration, classic-to-manifest migration, version pinning, baselines, overrides, triplets, and cross-compilation. Use when a user is working with vcpkg project setup, installation, version management, or cross-platform builds. For specialized tasks, additional references cover custom registries and overlay ports (references/registries.md), CI/CD and binary caching (references/ci.md), and troubleshooting and dependency lifecycle (references/troubleshooting.md)."
+    },
+    {
+      "filename": "verify-agent-action/SKILL.md",
+      "name": "verify-agent-action",
+      "description": "Review a proposed AI-agent action or human-approval packet before execution. Use when an agent wants to run a consequential tool, command, deployment, message, purchase, credential operation, or data mutation; when checking whether approval still matches the exact action; or when auditing action evidence for forged results, parameter swaps, replay, correlated reviewers, missing evidence, expiry, or stale monitoring. Produce an evidence-based review only\u2014never execute or authorize the action."
     },
     {
       "filename": "vscode-ext-commands/SKILL.md",
