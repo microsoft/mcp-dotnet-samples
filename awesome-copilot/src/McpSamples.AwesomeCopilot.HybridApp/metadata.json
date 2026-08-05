@@ -226,6 +226,11 @@
       "name": "Clojure Interactive Programming"
     },
     {
+      "filename": "cloud-saas-outage-triage.agent.md",
+      "name": "Cloud and SaaS Outage Triage",
+      "description": "Distinguish upstream cloud or SaaS incidents from application failures before changing code, using live official-feed status and incident timelines."
+    },
+    {
       "filename": "code-tour.agent.md",
       "description": "Expert agent for creating and maintaining VSCode CodeTour files with comprehensive schema support and best practices",
       "name": "VSCode Tour Expert"
@@ -2266,6 +2271,11 @@
       "description": "Turn a vague, intermittent, or environment-specific bug report into a minimal evidence-backed reproduction before proposing a fix."
     },
     {
+      "filename": "build-evidence-map/SKILL.md",
+      "name": "build-evidence-map",
+      "description": "Build an auditable evidence map for a contested technical choice, research synthesis, proposal review, or consequential decision. Use when Copilot must preserve supporting, contradicting, qualifying, and missing evidence with exact source regions instead of collapsing disagreement into prose."
+    },
+    {
       "filename": "centos-linux-triage/SKILL.md",
       "name": "centos-linux-triage",
       "description": "Triage and resolve CentOS issues using RHEL-compatible tooling, SELinux-aware practices, and firewalld."
@@ -2815,6 +2825,11 @@
       "filename": "geofeed-tuner/SKILL.md",
       "name": "geofeed-tuner",
       "description": "Use this skill whenever the user mentions IP geolocation feeds, RFC 8805, geofeeds, or wants help creating, tuning, validating, or publishing a self-published IP geolocation feed in CSV format. Intended user audience is a network operator, ISP, mobile carrier, cloud provider, hosting company, IXP, or satellite provider asking about IP geolocation accuracy, or geofeed authoring best practices. Helps create, refine, and improve CSV-format IP geolocation feeds with opinionated recommendations beyond RFC 8805 compliance. Do NOT use for private or internal IP address management \u2014 applies only to publicly routable IP addresses.\n"
+    },
+    {
+      "filename": "gh-attach/SKILL.md",
+      "name": "gh-attach",
+      "description": "Uploads a local file (screenshot, image, PDF, zip, video) to GitHub user-attachments, downloads GitHub user-attachments, and embeds local files in a PR, issue, or comment. Use when asked to \u0022attach a screenshot to the PR\u0022, \u0022add an image to the issue\u0022, \u0022embed before/after screenshots\u0022, \u0022attach this file\u0022, or \u0022download this GitHub attachment\u0022. Powered by \u0060gh-attach\u0060."
     },
     {
       "filename": "git-commit/SKILL.md",
@@ -3663,6 +3678,11 @@
       "filename": "setup-my-iq/SKILL.md",
       "name": "setup-my-iq",
       "description": "Create, set up, or update the personal context portfolio: structured markdown files describing\nwho you are, how you work, your teams, and your tool/ADO configuration. Runs the interview\nworkflow for first-time setup and targeted edits for updates.\n\nTrigger this skill when the user asks to: set up their context, create or update their context\nportfolio, \u0022create my IQ\u0022, \u0022set up my IQ\u0022, edit their profile, add/remove a stakeholder,\nupdate ADO config, change team info, update pillars, or set up any plugin configuration.\nTrigger when another skill fails to find context (missing files or TODO markers) and needs\ncontext populated. Also trigger when the user mentions a context change in passing\n(e.g., \u0022my manager changed\u0022, \u0022we added someone to the team\u0022) to offer a context file update.\n\nDo NOT trigger for read-only questions like \u0022who\u0027s on my team?\u0022 or \u0022what\u0027s my ADO config?\u0022.\nThose are answered directly from the context files referenced in the loaded custom\ninstructions; no skill is needed."
+    },
+    {
+      "filename": "shopify-review-triage/SKILL.md",
+      "name": "shopify-review-triage",
+      "description": "Use this skill when someone wants public Shopify App Store reviews, low-star reviews, or merchant feedback triaged, prioritized, clustered, or turned into a product or support brief. Trigger for prompts like \u0022triage these app store reviews\u0022, \u0022what should we fix first from this feedback\u0022, \u0022cluster our 1-star reviews\u0022, or \u0022write a weekly low-star review brief\u0022, for a single Shopify app or a portfolio plus watched competitors. Produces a P0-P3 brief covering incident risk, repeated friction, pricing confusion, feature requests, and an explicit needs-human-read bucket, where every item keeps its public source link and stays labeled first pass or human-checked. Do not trigger for support tickets, order data, or any other private merchant data, and never use it to reply to or contact a reviewer."
     },
     {
       "filename": "shuffle-json-data/SKILL.md",
