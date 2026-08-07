@@ -1597,6 +1597,10 @@
       "description": "Memory Bank pattern: persistent project documentation under a memory-bank/ folder so the AI can resume context across sessions."
     },
     {
+      "filename": "microsoft-foundry.instructions.md",
+      "description": "Build agents with the Microsoft Foundry SDK (azure-ai-projects v2) in Python: versioned agents, the Responses/Conversations model, tools, and the SDK mistakes Copilot makes by default."
+    },
+    {
       "filename": "mongo-dba.instructions.md",
       "description": "Instructions for customizing GitHub Copilot behavior for MONGODB DBA chat mode."
     },
