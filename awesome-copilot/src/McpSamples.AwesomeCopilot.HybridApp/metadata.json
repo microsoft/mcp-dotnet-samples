@@ -1239,6 +1239,10 @@
       "description": "Production-grade guidance for AWS AppSync Event API handlers using APPSYNC_JS runtime restrictions, utilities, modules, and datasource patterns"
     },
     {
+      "filename": "azure-apim-ai-gateway.instructions.md",
+      "description": "Configure Azure API Management as an AI (GenAI) gateway in front of Microsoft Foundry and other LLM APIs: token-limit and token-metric policies, managed-identity auth, backend load balancing with circuit breakers, semantic caching, and content safety \u2014 plus the policy mistakes Copilot makes by default."
+    },
+    {
       "filename": "azure-devops-pipelines.instructions.md",
       "description": "Best practices for Azure DevOps Pipeline YAML files"
     },
