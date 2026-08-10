@@ -3062,6 +3062,11 @@
       "description": "Get best practices for developing applications with Spring Boot and Kotlin."
     },
     {
+      "filename": "landing-page-conversion-audit/SKILL.md",
+      "name": "landing-page-conversion-audit",
+      "description": "Audit a landing page, sales page or checkout page for conversion leaks and return a fix list ordered by expected revenue impact. Use when asked to review, critique or improve a landing page, sales page, opt-in page, product page or checkout flow, when conversion rate is low, when paid traffic is not converting, or when someone asks \u0022why isn\u0027t this page converting\u0022 or wants a CRO / landing page review."
+    },
+    {
       "filename": "latchshot-page-capture/SKILL.md",
       "name": "latchshot-page-capture",
       "description": "Use this skill when a user needs a screenshot, website thumbnail, full-page capture, or PDF of a public HTTP(S) webpage saved as a local artifact through Latchshot, including report, QA, archive, and social-preview workflows. Do not use it for private or authenticated pages, raw HTML, scraping or extraction, arbitrary browser actions, CAPTCHA or anti-bot bypass, or local-file capture."
@@ -3694,6 +3699,11 @@
       "description": "Create, update, refactor, explain, or review Semantic Kernel solutions using shared guidance plus language-specific references for .NET and Python."
     },
     {
+      "filename": "server-side-conversion-tracking/SKILL.md",
+      "name": "server-side-conversion-tracking",
+      "description": "Set up server-side conversion tracking so purchases are reported accurately to Facebook, TikTok, Google and Bing despite iOS restrictions, ad blockers and cookie loss. Use when conversions are under-reported, when platform-reported purchases do not match real orders, when asked about Conversions API / Events API / offline conversions / CAPI, click id passthrough (fbclid, ttclid, gclid, msclkid), or when ad optimization has degraded after tracking changes."
+    },
+    {
       "filename": "setup-my-iq/SKILL.md",
       "name": "setup-my-iq",
       "description": "Create, set up, or update the personal context portfolio: structured markdown files describing\nwho you are, how you work, your teams, and your tool/ADO configuration. Runs the interview\nworkflow for first-time setup and targeted edits for updates.\n\nTrigger this skill when the user asks to: set up their context, create or update their context\nportfolio, \u0022create my IQ\u0022, \u0022set up my IQ\u0022, edit their profile, add/remove a stakeholder,\nupdate ADO config, change team info, update pillars, or set up any plugin configuration.\nTrigger when another skill fails to find context (missing files or TODO markers) and needs\ncontext populated. Also trigger when the user mentions a context change in passing\n(e.g., \u0022my manager changed\u0022, \u0022we added someone to the team\u0022) to offer a context file update.\n\nDo NOT trigger for read-only questions like \u0022who\u0027s on my team?\u0022 or \u0022what\u0027s my ADO config?\u0022.\nThose are answered directly from the context files referenced in the loaded custom\ninstructions; no skill is needed."
@@ -3792,6 +3802,11 @@
       "filename": "swift-mcp-server-generator/SKILL.md",
       "name": "swift-mcp-server-generator",
       "description": "Generate a complete Model Context Protocol server project in Swift using the official MCP Swift SDK package."
+    },
+    {
+      "filename": "system-commandline-cli/SKILL.md",
+      "name": "system-commandline-cli",
+      "description": "Use this skill when adding, modifying, or reviewing CLI commands in a .NET project built with System.CommandLine. Triggers include: creating a new CLI command, adding options or arguments, wiring command handlers, registering subcommands, building command groups, or any architecture decision about CLI command structure. Also use when the user mentions \u0027System.CommandLine\u0027, \u0027CommandBase\u0027, \u0027SetAction\u0027, \u0027ParseResult\u0027, \u0027RootCommand\u0027, \u0027subcommand\u0027, or asks to add a verb to the CLI. Do NOT use for general C# coding, web APIs, UI work, or non-CLI projects."
     },
     {
       "filename": "technical-job-search/SKILL.md",
