@@ -700,7 +700,7 @@
     },
     {
       "filename": "oracle-to-postgres-migration-expert.agent.md",
-      "description": "Agent for Oracle-to-PostgreSQL application migrations. Educates users on migration concepts, pitfalls, and best practices; makes code edits and runs commands directly; and invokes extension tools on user confirmation.",
+      "description": "Agent for Oracle-to-PostgreSQL application migrations. Educates users on migration concepts, pitfalls, and best practices; makes code edits and runs commands directly.",
       "name": "Oracle-to-PostgreSQL Migration Expert"
     },
     {
@@ -2511,7 +2511,7 @@
     {
       "filename": "creating-oracle-to-postgres-migration-integration-tests/SKILL.md",
       "name": "creating-oracle-to-postgres-migration-integration-tests",
-      "description": "Creates integration test cases for .NET data access artifacts during Oracle-to-PostgreSQL database migrations. Generates DB-agnostic xUnit tests with deterministic seed data that validate behavior consistency across both database systems. Use when creating integration tests for a migrated project, generating test coverage for data access layers, or writing Oracle-to-PostgreSQL migration validation tests."
+      "description": "Creates integration test cases targeting Oracle for .NET data access artifacts. Tests capture Oracle expected behavior as the authoritative baseline; they are written once and later ported to PostgreSQL by migrating the test project in Phase 6. Use only during Phase 3, before any PostgreSQL migration work has begun. Do not invoke during Phase 6 or against a project that has already been migrated."
     },
     {
       "filename": "csharp-async/SKILL.md",
@@ -3186,6 +3186,11 @@
       "description": "Create agent skills for Microsoft technologies using Learn MCP tools. Use when users want to create a skill that teaches agents about any Microsoft technology, library, framework, or service (Azure, .NET, M365, VS Code, Bicep, etc.). Investigates topics deeply, then generates a hybrid skill storing essential knowledge locally while enabling dynamic deeper investigation."
     },
     {
+      "filename": "migrating-oracle-to-postgres-data-access-code/SKILL.md",
+      "name": "migrating-oracle-to-postgres-data-access-code",
+      "description": "Migrates .NET/C# data access code from Oracle to PostgreSQL (Npgsql). Replaces Oracle NuGet packages, rewrites OracleConnection/OracleCommand/OracleDataReader usage, fixes DbType mappings, updates stored procedure invocation patterns, and adapts connection string configuration. Use when migrating the application code layer of a .NET project during an Oracle-to-PostgreSQL database migration."
+    },
+    {
       "filename": "migrating-oracle-to-postgres-stored-procedures/SKILL.md",
       "name": "migrating-oracle-to-postgres-stored-procedures",
       "description": "Migrates Oracle PL/SQL stored procedures to PostgreSQL PL/pgSQL. Translates Oracle-specific syntax, preserves method signatures and type-anchored parameters, leverages orafce where appropriate, and applies explicit collation mapping (\u0060COLLATE \u0022C\u0022\u0060 only when appropriate, locale collations when required). Use when converting Oracle stored procedures or functions to PostgreSQL equivalents during a database migration."
@@ -3675,7 +3680,7 @@
     {
       "filename": "scaffolding-oracle-to-postgres-migration-test-project/SKILL.md",
       "name": "scaffolding-oracle-to-postgres-migration-test-project",
-      "description": "Scaffolds an xUnit integration test project for validating Oracle-to-PostgreSQL database migration behavior in .NET solutions. Creates the test project, transaction-rollback base class, and seed data manager. Use when setting up test infrastructure before writing migration integration tests, or when a test project is needed for Oracle-to-PostgreSQL validation."
+      "description": "Scaffolds an xUnit integration test project targeting Oracle in .NET solutions. Creates the test project, transaction-rollback base class, and seed data manager. Use only during Phase 3, before writing Oracle baseline integration tests. Do not invoke during Phase 6 \u2014 the PostgreSQL test project is produced by migrating this project, not by running this skill again."
     },
     {
       "filename": "scoutqa-test/SKILL.md",
