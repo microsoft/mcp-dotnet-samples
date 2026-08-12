@@ -2281,7 +2281,7 @@
     {
       "filename": "bug-receipt/SKILL.md",
       "name": "bug-receipt",
-      "description": "Fix software defects with an auditable proof receipt: reproduce, trace root cause, repair, verify, and report VERIFIED, PARTIAL, or BLOCKED. Use for bug fixes and regressions."
+      "description": "Close bugs and incidents with an auditable BUG RECEIPT and VERIFIED, PARTIAL, or BLOCKED status. Use for defect repair, regression proof, production incidents, and issue closeout."
     },
     {
       "filename": "bug-reproduction-brief/SKILL.md",
