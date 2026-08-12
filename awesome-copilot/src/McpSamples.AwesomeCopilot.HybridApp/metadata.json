@@ -416,7 +416,7 @@
       "filename": "gem-browser-tester.agent.md",
       "description": "E2E browser testing, UI/UX validation, visual regression.",
       "name": "gem-browser-tester",
-      "argument-hint": "Enter task_id, plan_id, plan_path, and test validation_matrix or flow definitions."
+      "argument-hint": "Enter task_id, plan_id, plan_path, and task acceptance criteria/handoff to derive test scenarios from."
     },
     {
       "filename": "gem-code-simplifier.agent.md",
@@ -440,13 +440,13 @@
       "filename": "gem-designer-mobile.agent.md",
       "description": "Mobile UI/UX specialist: HIG, Material Design, safe areas, touch targets.",
       "name": "gem-designer-mobile",
-      "argument-hint": "Enter task_id, plan_id (optional), plan_path (optional), mode (create|validate), scope (component|screen|navigation|design_system), target, context (framework, library), and constraints (platform, responsive, accessible, dark_mode)."
+      "argument-hint": "Enter task_id, plan_id (optional), plan_path (optional), mode (create|validate), scope (component|screen|navigation|design_system), context (framework, library), and constraints (platform, responsive, accessible, dark_mode)."
     },
     {
       "filename": "gem-designer.agent.md",
       "description": "UI/UX design specialist: layouts, themes, color schemes, design systems, accessibility.",
       "name": "gem-designer",
-      "argument-hint": "Enter task_id, plan_id (optional), plan_path (optional), mode (create|validate), scope (component|page|layout|design_system), target, context (framework, library), and constraints (responsive, accessible, dark_mode)."
+      "argument-hint": "Enter task_id, plan_id (optional), plan_path (optional), mode (create|validate), scope (component|page|layout|design_system), context (framework, library), and constraints (responsive, accessible, dark_mode)."
     },
     {
       "filename": "gem-devops.agent.md",
@@ -458,7 +458,7 @@
       "filename": "gem-documentation-writer.agent.md",
       "description": "Technical documentation, README files, API docs, diagrams, walkthroughs.",
       "name": "gem-documentation-writer",
-      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|update|prd|agents_md|update_plan_context), audience, coverage_matrix."
+      "argument-hint": "Enter task_id, plan_id, plan_path, task_definition with task_type (documentation|update|prd|agents_md), audience, coverage_matrix."
     },
     {
       "filename": "gem-implementer-mobile.agent.md",
@@ -470,7 +470,7 @@
       "filename": "gem-implementer.agent.md",
       "description": "TDD code implementation: features, bugs, refactoring. Never reviews own work.",
       "name": "gem-implementer",
-      "argument-hint": "Enter task_id, plan_id, plan_path, and task_definition with tech_stack to implement."
+      "argument-hint": "Enter task_id, plan_id, plan_path, and task_definition to implement."
     },
     {
       "filename": "gem-mobile-tester.agent.md",
@@ -494,7 +494,7 @@
       "filename": "gem-researcher.agent.md",
       "description": "Codebase exploration: patterns, dependencies, architecture discovery. Supports multiple exploration modes for cost-controlled research.",
       "name": "gem-researcher",
-      "argument-hint": "Enter plan_id, objective, focus_area (optional), exploration_mode (optional), and plan_context_snapshot."
+      "argument-hint": "Enter plan_id, objective, focus_area (optional), exploration_mode (optional), and task_definition."
     },
     {
       "filename": "gem-reviewer.agent.md",
@@ -1786,8 +1786,8 @@
       "description": "Instructions for developing Power Platform custom connectors with Model Context Protocol (MCP) integration for Microsoft Copilot Studio"
     },
     {
-      "filename": "powershell-pester-5.instructions.md",
-      "description": "PowerShell Pester testing best practices based on Pester v5 conventions"
+      "filename": "powershell-pester-6.instructions.md",
+      "description": "PowerShell Pester testing best practices based on Pester v6 conventions"
     },
     {
       "filename": "powershell.instructions.md",
@@ -2277,6 +2277,11 @@
       "filename": "breakdown-test/SKILL.md",
       "name": "breakdown-test",
       "description": "Test Planning and Quality Assurance prompt that generates comprehensive test strategies, task breakdowns, and quality validation plans for GitHub projects."
+    },
+    {
+      "filename": "bug-receipt/SKILL.md",
+      "name": "bug-receipt",
+      "description": "Fix software defects with an auditable proof receipt: reproduce, trace root cause, repair, verify, and report VERIFIED, PARTIAL, or BLOCKED. Use for bug fixes and regressions."
     },
     {
       "filename": "bug-reproduction-brief/SKILL.md",
