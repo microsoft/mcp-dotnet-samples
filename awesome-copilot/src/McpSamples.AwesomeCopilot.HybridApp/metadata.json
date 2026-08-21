@@ -3625,6 +3625,11 @@
       "description": "Deepfake detection and media safety \u2014 detect AI-generated audio, images, video, and text, trace synthesis sources, apply watermarks, verify speaker identity, and analyze media intelligence using Resemble AI"
     },
     {
+      "filename": "resx-source-generator-migration/SKILL.md",
+      "name": "resx-source-generator-migration",
+      "description": "Migrates a project that uses checked-in .designer.cs files behind .resx to using a source-generator instead"
+    },
+    {
       "filename": "review-and-refactor/SKILL.md",
       "name": "review-and-refactor",
       "description": "Review and refactor code in your project according to defined instructions"
