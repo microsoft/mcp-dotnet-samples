@@ -3610,6 +3610,11 @@
       "description": "Transforms lessons learned into domain-organized memory instructions (global or workspace). Syntax: \u0060/remember [\u003Edomain [scope]] lesson clue\u0060 where scope is \u0060global\u0060 (default), \u0060user\u0060, \u0060workspace\u0060, or \u0060ws\u0060."
     },
     {
+      "filename": "repo-standardizer/SKILL.md",
+      "name": "repo-standardizer",
+      "description": "Polish any GitHub repository\u0027s surface \u2014 labels (emoji rating tiers, P0\u2013P3 priority, impact severity), issue forms, PR template, CI workflows, CODEOWNERS, rulesets, docs. Repo meta \u0026 config only \u2014 no code logic touched. Use when creating a new repo or polishing an existing one."
+    },
+    {
       "filename": "repo-story-time/SKILL.md",
       "name": "repo-story-time",
       "description": "Generate a comprehensive repository summary and narrative story from commit history"
