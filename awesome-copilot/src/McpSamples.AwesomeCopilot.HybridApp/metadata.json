@@ -1512,6 +1512,10 @@
       "description": "Guidelines for creating high-quality custom instruction files for GitHub Copilot"
     },
     {
+      "filename": "intellij-java-kotlin.instructions.md",
+      "description": "Guidance for Java and Kotlin development in IntelliJ IDEA with portable Gradle/Maven builds, safe IDE workflows, and CI-aligned validation."
+    },
+    {
       "filename": "java-11-to-java-17-upgrade.instructions.md",
       "description": "Comprehensive best practices for adopting new Java 17 features since the release of Java 11."
     },
