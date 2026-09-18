@@ -3798,6 +3798,11 @@
       "description": "Universal SQL code review assistant that performs comprehensive security, maintainability, and code quality analysis across all SQL databases (MySQL, PostgreSQL, SQL Server, Oracle). Focuses on SQL injection prevention, access control, code standards, and anti-pattern detection. Complements SQL optimization prompt for complete development coverage."
     },
     {
+      "filename": "sql-object-impact-analysis/SKILL.md",
+      "name": "sql-object-impact-analysis",
+      "description": "Before modifying a table, column, stored procedure, view, or trigger in a legacy codebase, trace every place that references it \u2014 across other SQL objects (procs, views, triggers) AND application code (C#, Angular/TypeScript, JS, or any language in the repo) \u2014 and produce a structured blast-radius report so you know what breaks before you change it. Use when the user asks \u0027what uses this column/table/procedure\u0027, \u0027is it safe to change X\u0027, \u0027what depends on this\u0027, \u0027impact of renaming/dropping X\u0027, or before any schema/proc modification in an unfamiliar or legacy codebase. Not for privacy/PII exposure analysis (see data-breach-blast-radius) or query performance tuning (see sql-optimization)."
+    },
+    {
       "filename": "sql-optimization/SKILL.md",
       "name": "sql-optimization",
       "description": "Universal SQL performance optimization assistant for comprehensive query tuning, indexing strategies, and database performance analysis across all SQL databases (MySQL, PostgreSQL, SQL Server, Oracle). Provides execution plan analysis, pagination optimization, batch operations, and performance monitoring guidance."
