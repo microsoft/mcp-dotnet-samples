@@ -1983,6 +1983,11 @@
       "description": "Write, debug, and optimize Adobe Illustrator automation scripts using ExtendScript (JavaScript/JSX). Use when creating or modifying scripts that manipulate documents, layers, paths, text frames, colors, symbols, artboards, or any Illustrator DOM objects. Covers the complete JavaScript object model, coordinate system, measurement units, export workflows, and scripting best practices."
     },
     {
+      "filename": "agent-architecture/SKILL.md",
+      "name": "agent-architecture",
+      "description": "Design AI agent architectures through requirements discovery, or audit and diagnose architectural flaws in existing agents. Architecture only; excludes implementation and general code review."
+    },
+    {
       "filename": "agent-governance/SKILL.md",
       "name": "agent-governance",
       "description": "Patterns and techniques for adding governance, safety, and trust controls to AI agent systems. Use this skill when:\n- Building AI agents that call external tools (APIs, databases, file systems)\n- Implementing policy-based access controls for agent tool usage\n- Adding semantic intent classification to detect dangerous prompts\n- Creating trust scoring systems for multi-agent workflows\n- Building audit trails for agent actions and decisions\n- Enforcing rate limits, content filters, or tool restrictions on agents\n- Working with any agent framework (PydanticAI, CrewAI, OpenAI Agents, LangChain, AutoGen)"
@@ -3106,6 +3111,11 @@
       "description": "Enable code intelligence (go-to-definition, find-references, hover, type info) for any programming language by installing and configuring an LSP server for Copilot CLI. Detects the OS, installs the right server, and generates the JSON configuration (user-level or repo-level). Use when you need deeper code understanding and no LSP server is configured, or when the user asks to set up, install, or configure an LSP server."
     },
     {
+      "filename": "macos-golden-gate-design/SKILL.md",
+      "name": "macos-golden-gate-design",
+      "description": "Design, implement, review, or refactor native macOS 27 Golden Gate interfaces in SwiftUI or AppKit. Use when a Mac app must match Apple\u0027s current macOS 27 UI kit and restrained Liquid Glass language: integrated windows, full-height sidebars, native toolbars, flat lists, tables, and forms, clear pane boundaries, accessible materials, and removal of unnecessary nested cards, framed panels, or glassmorphism. Also use for Figma macOS 27 design-to-code work and audits of interfaces that feel too boxed."
+    },
+    {
       "filename": "make-repo-contribution/SKILL.md",
       "name": "make-repo-contribution",
       "description": "All changes to code must follow the guidance documented in the repository. Before any issue is filed, branch is made, commits generated, or pull request (or PR) created, a search must be done to ensure the right steps are followed. Whenever asked to create an issue, commit messages, to push code, or create a PR, use this skill so everything is done correctly."
@@ -3465,6 +3475,11 @@
       "filename": "prompt-optimizer/SKILL.md",
       "name": "prompt-optimizer",
       "description": "Turn any rough prompt, half-formed idea, or task description into a finished, ready-to-send prompt optimized for any LLM model inside a chat interface \u2014 NOT the API. Use this skill whenever the user wants to write, rewrite, optimize, improve, sharpen, or polish a prompt for chat. Trigger phrases include \u0022rewrite this prompt\u0022, \u0022make this a better prompt\u0022, \u0022optimize this prompt\u0022, \u0022turn this into a prompt\u0022, \u0022help me prompt this\u0022, \u0022draft a prompt that...\u0022, \u0022I want to ask...\u0022, or whenever the user pastes a draft prompt and asks for improvements. Also trigger when the user describes a task they plan to send to an LLM model and clearly wants a reusable, well-structured prompt rather than a direct answer. The output is always a single, copy-pasteable prompt in a code block that the user sends as-is \u2014 never a template with placeholders."
+    },
+    {
+      "filename": "protobuf-grpc-api-review/SKILL.md",
+      "name": "protobuf-grpc-api-review",
+      "description": "Review Protocol Buffer (.proto) and gRPC API changes for wire and JSON compatibility, safe schema evolution, rollout hazards, and RPC contract quality. Use when reviewing proto diffs, adding or changing messages and services, planning migrations, or diagnosing cross-version failures."
     },
     {
       "filename": "publish-to-pages/SKILL.md",
