@@ -2033,6 +2033,11 @@
       "description": "Stop coding agents from shipping generic UI. Use UIZZE\u0027s 800,000\u002B real web and iOS screens to build product-specific interfaces, define a design contract, cover required states, and run a hard finish gate. Use when designing, implementing, redesigning, critiquing, or pre-ship reviewing a web or iOS interface in Codex, Claude Code, Cursor, Copilot, or another coding agent. Trigger with \u0022anti-ui-slop\u0022, \u0022stop UI slop\u0022, \u0022ground this UI in real screens\u0022, or \u0022run the UI finish gate\u0022."
     },
     {
+      "filename": "api-breaking-change-detector/SKILL.md",
+      "name": "api-breaking-change-detector",
+      "description": "Cross-references C# Web API controllers/DTOs against their TypeScript/JavaScript consumers (React, Angular, Vue, Svelte, Node.js, or hand-written/auto-generated HTTP clients like Fetch, Axios, NSwag) to catch contract drift in both directions: backend changes that break client applications (renamed/removed JSON keys, new required parameters, status code shifts) and frontend code sending fields the backend no longer reads. Works directly against source code, not exported OpenAPI spec files. Use when the user asks to check for breaking API changes, verify frontend/backend contract sync, or audit a DTO/controller change against its TypeScript/JS consumers before merging. Not for generating new API code from a spec (see openapi-to-application-code) or scaffolding new endpoints (see aspnet-minimal-api-openapi)."
+    },
+    {
       "filename": "appinsights-instrumentation/SKILL.md",
       "name": "appinsights-instrumentation",
       "description": "Instrument a webapp to send useful telemetry data to Azure App Insights"
