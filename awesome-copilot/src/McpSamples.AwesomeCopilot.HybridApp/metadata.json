@@ -934,9 +934,9 @@
     },
     {
       "filename": "sast-sca-security-analyzer.agent.md",
-      "description": "Use when: performing SAST (Static Application Security Testing), SCA (Software Composition Analysis), scanning source code or binaries for security flaws, auditing third-party dependency vulnerabilities, checking policy compliance, generating structured security reports, identifying CWE-mapped flaws with file/line precision, reviewing open-source license risk, or producing CI/CD-gate security findings.",
+      "description": "Use when you perform SAST or SCA security scans. Identifies code flaws, audits third-party dependencies, checks policy compliance, and generates structured security reports with CWE mappings and file locations.",
       "name": "sast-sca-security-analyzer",
-      "argument-hint": "Describe what to scan (e.g. \u0027scan src/ for SAST flaws\u0027, \u0027SCA audit of package.json\u0027, \u0027full SAST\u002BSCA on the authentication module\u0027, \u0027policy compliance check for PCI-DSS\u0027)"
+      "argument-hint": "Describe what to scan (for example: \u0027scan src/ for SAST flaws\u0027, \u0027SCA audit of package.json\u0027, \u0027full SAST\u002BSCA on the authentication module\u0027, \u0027policy compliance check for PCI-DSS\u0027)"
     },
     {
       "filename": "scientific-paper-research.agent.md",
@@ -2120,7 +2120,7 @@
     {
       "filename": "audit-integrity/SKILL.md",
       "name": "audit-integrity",
-      "description": "Shared audit integrity framework for all AppSec agents \u2014 enforces output quality, intellectual honesty, and continuous improvement through anti-rationalization guards, self-critique loops, retry protocols, non-negotiable behaviors, self-reflection quality gates (1-10 scoring, \u22658 threshold), and a self-learning system with lesson/memory governance for security analysis agents."
+      "description": "Enforce output quality, evidence verification, and quality gates across security audits. Use this skill when you perform SAST, SCA, threat modeling, or security code reviews. Use this skill to verify code locations and taint traces for all findings. Use this skill to prevent the suppression of valid security findings. Use this skill to evaluate reports against quality thresholds (score \u2265 8/10) before delivery."
     },
     {
       "filename": "automate-this/SKILL.md",
@@ -3099,6 +3099,11 @@
       "filename": "latchshot-page-capture/SKILL.md",
       "name": "latchshot-page-capture",
       "description": "Use this skill when a user needs a screenshot, website thumbnail, full-page capture, or PDF of a public HTTP(S) webpage saved as a local artifact through Latchshot, including report, QA, archive, and social-preview workflows. Do not use it for private or authenticated pages, raw HTML, scraping or extraction, arbitrary browser actions, CAPTCHA or anti-bot bypass, or local-file capture."
+    },
+    {
+      "filename": "lean-comments/SKILL.md",
+      "name": "lean-comments",
+      "description": "Audits, writes, and refines maintained first-party source-code comments and declaration-level documentation across languages. Use when adding, editing, reviewing, cleaning up, or auditing comments, doc comments, docstrings, TODO, FIXME, NOTE, suppressions, or other source commentary, including while modifying code and deciding whether a comment is warranted at all. Defaults to no comment unless it preserves meaningful, non-obvious information that cannot reasonably be recovered from the code or nearby repository context."
     },
     {
       "filename": "legacy-circuit-mockups/SKILL.md",
