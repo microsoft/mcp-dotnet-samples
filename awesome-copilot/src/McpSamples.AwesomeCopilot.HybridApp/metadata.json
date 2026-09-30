@@ -3221,6 +3221,11 @@
       "description": "Create agent skills for Microsoft technologies using Learn MCP tools. Use when users want to create a skill that teaches agents about any Microsoft technology, library, framework, or service (Azure, .NET, M365, VS Code, Bicep, etc.). Investigates topics deeply, then generates a hybrid skill storing essential knowledge locally while enabling dynamic deeper investigation."
     },
     {
+      "filename": "microsoft-store-publisher/SKILL.md",
+      "name": "microsoft-store-publisher",
+      "description": "Prepare, validate, submit, and monitor Windows desktop apps in Microsoft Partner Center. Use for MSIX packaging, Store identity, listings, WACK, Partner Center automation, certification, and publishing."
+    },
+    {
       "filename": "migrating-oracle-to-postgres-data-access-code/SKILL.md",
       "name": "migrating-oracle-to-postgres-data-access-code",
       "description": "Migrates .NET/C# data access code from Oracle to PostgreSQL (Npgsql). Replaces Oracle NuGet packages, rewrites OracleConnection/OracleCommand/OracleDataReader usage, fixes DbType mappings, updates stored procedure invocation patterns, and adapts connection string configuration. Use when migrating the application code layer of a .NET project during an Oracle-to-PostgreSQL database migration."
