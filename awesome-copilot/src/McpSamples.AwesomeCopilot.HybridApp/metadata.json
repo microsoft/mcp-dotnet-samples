@@ -2806,7 +2806,7 @@
     {
       "filename": "foundry-hosted-agent-copilotkit/SKILL.md",
       "name": "foundry-hosted-agent-copilotkit",
-      "description": "Ongoing development guidance for agentic web apps that pair a CopilotKit frontend with Microsoft Agent Framework agents on Azure AI Foundry hosted agents over the AG-UI protocol - add and gate agent tools, wire human-in-the-loop approvals, build generative UI and shared state, debug the event stream, upgrade pre-1.0 packages safely, and deploy hosted agent updates."
+      "description": "Build and evolve agentic web apps that pair a CopilotKit React frontend with a Microsoft Agent Framework agent running as a Microsoft Foundry hosted agent, connected over the AG-UI protocol. Covers choosing the wiring, using Foundry-native primitives instead of hand-rolled plumbing, agent tools, human-in-the-loop approvals, generative UI and shared state, local run and azd deploy, debugging the event stream, and safe upgrades."
     },
     {
       "filename": "freecad-scripts/SKILL.md",
