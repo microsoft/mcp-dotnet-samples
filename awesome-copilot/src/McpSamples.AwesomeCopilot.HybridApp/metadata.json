@@ -3126,6 +3126,12 @@
       "description": "Design, implement, review, or refactor native macOS 27 Golden Gate interfaces in SwiftUI or AppKit. Use when a Mac app must match Apple\u0027s current macOS 27 UI kit and restrained Liquid Glass language: integrated windows, full-height sidebars, native toolbars, flat lists, tables, and forms, clear pane boundaries, accessible materials, and removal of unnecessary nested cards, framed panels, or glassmorphism. Also use for Figma macOS 27 design-to-code work and audits of interfaces that feel too boxed."
     },
     {
+      "filename": "make-blog-post/SKILL.md",
+      "name": "make-blog-post",
+      "description": "Turn code from the current session into a blog post written in the voice of its author. Covers one function, script, class, or tool as a focused walkthrough with a generalized sample and a usage example, learns tone and structure from existing posts or writing samples by the same author, takes the destination from what the user names or the blog repository in use instead of assumed folders, and saves no file until the draft is approved. Use when asked to write, draft, or turn code into a blog post, article, tutorial, or gist, or when invoked as /make-blog-post at the end of a turn.",
+      "argument-hint": "Optional: code or topic to cover, where the post goes, and links or files of your past posts"
+    },
+    {
       "filename": "make-repo-contribution/SKILL.md",
       "name": "make-repo-contribution",
       "description": "All changes to code must follow the guidance documented in the repository. Before any issue is filed, branch is made, commits generated, or pull request (or PR) created, a search must be done to ensure the right steps are followed. Whenever asked to create an issue, commit messages, to push code, or create a PR, use this skill so everything is done correctly."
@@ -3178,7 +3184,7 @@
     {
       "filename": "mcp-security-audit/SKILL.md",
       "name": "mcp-security-audit",
-      "description": "Audit MCP (Model Context Protocol) server configurations for security issues. Use this skill when:\n- Reviewing .mcp.json files for security risks\n- Checking MCP server args for hardcoded secrets or shell injection patterns\n- Validating that MCP servers use pinned versions (not @latest)\n- Detecting unpinned dependencies in MCP server configurations\n- Auditing which MCP servers a project registers and whether they\u0027re on an approved list\n- Checking for environment variable usage vs. hardcoded credentials in MCP configs\n- Any request like \u0022is my MCP config secure?\u0022, \u0022audit my MCP servers\u0022, or \u0022check .mcp.json\u0022\nkeywords: [mcp, security, audit, secrets, shell-injection, supply-chain, governance]"
+      "description": "Audit MCP (Model Context Protocol) server configurations for security issues. Use this skill when:\n- Reviewing .mcp.json files for security risks\n- Checking MCP server args for hardcoded secrets or shell injection patterns\n- Validating that MCP package-runner dependencies use exact reviewed versions, not bare names, @latest, or ranges\n- Detecting mutable npm/npx, bunx, pnpm dlx, yarn dlx, and npm exec references in MCP configurations\n- Auditing which MCP servers a project registers and whether they\u0027re on an approved list\n- Checking for environment variable usage vs. hardcoded credentials in MCP configs\n- Any request like \u0022is my MCP config secure?\u0022, \u0022audit my MCP servers\u0022, or \u0022check .mcp.json\u0022\nkeywords: [mcp, security, audit, secrets, shell-injection, supply-chain, governance]"
     },
     {
       "filename": "md-to-docx/SKILL.md",
