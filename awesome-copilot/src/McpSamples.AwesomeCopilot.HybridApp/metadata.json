@@ -1794,7 +1794,7 @@
     },
     {
       "filename": "python-mcp-server.instructions.md",
-      "description": "Instructions for building Model Context Protocol (MCP) servers using the Python SDK"
+      "description": "Instructions for building Model Context Protocol (MCP) servers using the Python SDK v2"
     },
     {
       "filename": "qa-engineering-best-practices.instructions.md",
@@ -3520,7 +3520,7 @@
     {
       "filename": "python-mcp-server-generator/SKILL.md",
       "name": "python-mcp-server-generator",
-      "description": "Generate a complete MCP server project in Python with tools, resources, and proper configuration"
+      "description": "Use this skill when the user wants to create a new Model Context Protocol (MCP) server in Python. Also use it to expose Python functions, an API, or a database to AI clients as MCP tools. The skill makes a uv project with the MCP Python SDK v2 (MCPServer), typed tools, in-memory tests, and client configuration. Do not use it for an MCP client or for a server in another language."
     },
     {
       "filename": "python-pypi-package-builder/SKILL.md",
