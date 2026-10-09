@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "awesome-azd": {
+      "type": "http",
+      "url": "http://0.0.0.0:5201/mcp"
+    }
+  }
+}
