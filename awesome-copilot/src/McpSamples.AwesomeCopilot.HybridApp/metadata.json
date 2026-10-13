@@ -2554,6 +2554,11 @@
       "description": "Get best practices for XUnit unit testing, including data-driven tests"
     },
     {
+      "filename": "cypress-flake-fixer/SKILL.md",
+      "name": "cypress-flake-fixer",
+      "description": "Find and fix flake-prone anti-patterns in an existing Cypress suite, and APIs removed in Cypress 12 to 16. Bundles a zero-dependency scanner for fixed cy.wait() delays, assigned command return values, async/await, force: true, chaining after actions, one-shot expect() inside .then(), conditional testing, and removed APIs such as Cypress.env(), cy.exec(), cy.server()/cy.route(). Use when asked to fix flaky Cypress tests, remove cy.wait, stabilize or harden a Cypress suite, audit Cypress specs, debug \u0022detached from the DOM\u0022 errors, or prepare an upgrade to Cypress 15 or 16."
+    },
+    {
       "filename": "d365-solution-blueprint/SKILL.md",
       "name": "d365-solution-blueprint",
       "description": "Authors a Dynamics 365 Finance and Supply Chain Management Solution Blueprint from scratch through a structured, section-by-section architect interview, establishing scope, target operating model, application and data architecture, integration landscape, migration strategy, security model, ALM, testing, deployment, and support approach, with a decision log capturing rationale and rejected alternatives. Use when the user wants to create D365 implementation architecture documentation, start a D365 implementation, design the architecture, prepare a Solution Blueprint, or identify the architectural decisions the programme must make. Do not use for critique of an existing design; that is a review task rather than blueprint authoring."
@@ -3637,6 +3642,11 @@
       "filename": "readme-blueprint-generator/SKILL.md",
       "name": "readme-blueprint-generator",
       "description": "Intelligent README.md generation prompt that analyzes project documentation structure and creates comprehensive repository documentation. Scans .github/copilot directory files and copilot-instructions.md to extract project information, technology stack, architecture, development workflow, coding standards, and testing approaches while generating well-structured markdown documentation with proper formatting, cross-references, and developer-focused content."
+    },
+    {
+      "filename": "rebase-current-branch/SKILL.md",
+      "name": "rebase-current-branch",
+      "description": "Rebase the currently checked out feature branch onto the latest upstream default branch. Use when asked to update a branch with main or master, rebase the current branch onto the default branch, or sync a feature branch before review. Detects whether the repository uses main or master and guides safe conflict handling."
     },
     {
       "filename": "refactor-method-complexity-reduce/SKILL.md",
