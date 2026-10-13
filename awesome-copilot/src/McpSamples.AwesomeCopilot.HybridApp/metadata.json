@@ -542,7 +542,7 @@
     },
     {
       "filename": "java-mcp-expert.agent.md",
-      "description": "Expert assistance for building Model Context Protocol servers in Java using reactive streams, the official MCP Java SDK, and Spring Boot integration.",
+      "description": "Expert assistant for developing Model Context Protocol (MCP) servers in Java with the MCP Java SDK 2.x",
       "name": "Java MCP Expert"
     },
     {
@@ -1533,7 +1533,7 @@
     },
     {
       "filename": "java-mcp-server.instructions.md",
-      "description": "Best practices and patterns for building Model Context Protocol (MCP) servers in Java using the official MCP Java SDK with reactive streams and Spring integration."
+      "description": "Instructions for building Model Context Protocol (MCP) servers in Java with the MCP Java SDK 2.x"
     },
     {
       "filename": "joyride-user-project.instructions.md",
@@ -3057,7 +3057,7 @@
     {
       "filename": "java-mcp-server-generator/SKILL.md",
       "name": "java-mcp-server-generator",
-      "description": "Generate a complete Model Context Protocol server project in Java using the official MCP Java SDK with reactive streams and optional Spring Boot integration."
+      "description": "Use this skill when the user wants to create a Model Context Protocol (MCP) server in Java or in a Spring Boot app. Also use it when the user wants AI agents, such as GitHub Copilot or Claude, to use Java code, an API, or a database. Use it even if the user does not say \u0022MCP\u0022. The skill makes a Maven or Gradle project with the MCP Java SDK 2.x, tools, JUnit tests, and client configuration. Do not use it for an MCP client or for a server in another language."
     },
     {
       "filename": "java-refactoring-extract-method/SKILL.md",
