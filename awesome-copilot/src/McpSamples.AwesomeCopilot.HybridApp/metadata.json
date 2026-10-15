@@ -2233,6 +2233,11 @@
       "description": "Expert-level Windows batch file (.bat/.cmd) skill for writing, debugging, and maintaining CMD scripts. Use when asked to \u0022create a batch file\u0022, \u0022write a .bat script\u0022, \u0022automate a Windows task\u0022, \u0022CMD scripting\u0022, \u0022batch automation\u0022, \u0022scheduled task script\u0022, \u0022Windows shell script\u0022, or when working with .bat/.cmd files in the workspace. Covers cmd.exe syntax, environment variables, control flow, string processing, error handling, and integration with system tools."
     },
     {
+      "filename": "batch-script-progress/SKILL.md",
+      "name": "batch-script-progress",
+      "description": "Design and verify runtime output when creating or modifying Python, PowerShell, or Node.js scripts that process multiple files, records, or API requests. Use for batch scripts, bulk operations, silent long-running loops, progress reporting, per-item failures, final counts, stdout separation, or exit-status consistency. Not for UI progress bars, monitoring infrastructure, or progress updates in the AI conversation."
+    },
+    {
       "filename": "bench-read/SKILL.md",
       "name": "bench-read",
       "description": "Read artifacts from the shared bench \u2014 the workspace where desks leave findings, verdicts, and work products for each other and the operator."
