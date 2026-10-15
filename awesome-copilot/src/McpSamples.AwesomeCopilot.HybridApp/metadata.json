@@ -1516,24 +1516,16 @@
       "description": "Guidance for Java and Kotlin development in IntelliJ IDEA with portable Gradle/Maven builds, safe IDE workflows, and CI-aligned validation."
     },
     {
-      "filename": "java-11-to-java-17-upgrade.instructions.md",
-      "description": "Comprehensive best practices for adopting new Java 17 features since the release of Java 11."
-    },
-    {
-      "filename": "java-17-to-java-21-upgrade.instructions.md",
-      "description": "Comprehensive best practices for adopting new Java 21 features since the release of Java 17."
-    },
-    {
-      "filename": "java-21-to-java-25-upgrade.instructions.md",
-      "description": "Comprehensive best practices for adopting new Java 25 features since the release of Java 21."
-    },
-    {
       "filename": "java-junit5-assertions.instructions.md",
       "description": "Standardizes JUnit 5 (Jupiter) assertions with best practices for performance, readability, and modern features (5.8\u002B). Covers Supplier messages, assertAll, assertThrowsExactly, and performance-critical timeouts."
     },
     {
       "filename": "java-mcp-server.instructions.md",
       "description": "Instructions for building Model Context Protocol (MCP) servers in Java with the MCP Java SDK 2.x"
+    },
+    {
+      "filename": "java-upgrade.instructions.md",
+      "description": "Pointer to the java-upgrade skill when changing the Java version in Maven or Gradle build files"
     },
     {
       "filename": "joyride-user-project.instructions.md",
@@ -1802,7 +1794,7 @@
     },
     {
       "filename": "quarkus-mcp-server-sse.instructions.md",
-      "description": "Quarkus and MCP Server with HTTP SSE transport development standards and instructions"
+      "description": "Quarkus MCP Server development standards and instructions, with Streamable HTTP (preferred) and legacy HTTP SSE transports"
     },
     {
       "filename": "quarkus.instructions.md",
@@ -2484,6 +2476,11 @@
       "description": "Create an llms.txt file from scratch based on repository structure following the llms.txt specification at https://llmstxt.org/"
     },
     {
+      "filename": "create-quarkus-project/SKILL.md",
+      "name": "create-quarkus-project",
+      "description": "Create a new Quarkus project (Maven or Gradle) with the Quarkus CLI, code.quarkus.io API or Maven plugin, choose extensions, and run it in dev mode. Use when asked to scaffold, bootstrap or start a Quarkus application or REST API."
+    },
+    {
       "filename": "create-readme/SKILL.md",
       "name": "create-readme",
       "description": "Create a README.md file for the project"
@@ -3080,6 +3077,11 @@
       "description": "Get best practices for developing applications with Spring Boot."
     },
     {
+      "filename": "java-upgrade/SKILL.md",
+      "name": "java-upgrade",
+      "description": "Upgrade a Java project to a newer JDK (11 to 17, 17 to 21, 21 to 25) and adopt the new language and library features. Detects the current Java version from the build files, then loads only the matching per-version guide. Use when the user asks to upgrade Java, modernize Java code, or adopt records, sealed classes, pattern matching, virtual threads or other new Java features. For automated end-to-end upgrades see the modernize-java plugin."
+    },
+    {
       "filename": "javascript-typescript-jest/SKILL.md",
       "name": "javascript-typescript-jest",
       "description": "Best practices for writing JavaScript/TypeScript tests using Jest, including mocking strategies, test structure, and common patterns."
@@ -3087,7 +3089,7 @@
     {
       "filename": "javax-to-jakarta-migration/SKILL.md",
       "name": "javax-to-jakarta-migration",
-      "description": "Migrate Java code from javax.* to jakarta.* namespace. Use when upgrading to Tomcat 11, Jakarta EE 10, or when javax imports are detected in the codebase.",
+      "description": "Migrate Java code from javax.* to jakarta.* namespace. Use only when the user explicitly asks for a javax to jakarta namespace or framework migration (for example to Tomcat 10\u002B/11 or Jakarta EE), or when java-upgrade or spring-boot-4-migration delegates it. Finding javax imports alone does not authorize a migration.",
       "argument-hint": "File, package, or module to migrate"
     },
     {
@@ -3581,6 +3583,21 @@
       "filename": "quality-playbook/SKILL.md",
       "name": "quality-playbook",
       "description": "Run a complete quality engineering audit on any codebase. Derives behavioral requirements from the code, generates spec-traced functional tests, runs a three-pass code review with regression tests, executes a multi-model spec audit (Council of Three), and produces a consolidated bug report with TDD-verified patches. Finds the 35% of real defects that structural code review alone cannot catch. Works with any language. Trigger on \u0027quality playbook\u0027, \u0027spec audit\u0027, \u0027Council of Three\u0027, \u0027fitness-to-purpose\u0027, or \u0027coverage theater\u0027."
+    },
+    {
+      "filename": "quarkus-application-development/SKILL.md",
+      "name": "quarkus-application-development",
+      "description": "Write Quarkus application code: REST with Quarkus REST, validation, exception mappers, OpenAPI, configuration, CDI (ArC), Hibernate ORM with Panache, Mutiny and virtual threads, Reactive Messaging with Kafka, OIDC security, health, metrics, OpenTelemetry, fault tolerance, REST Client, scheduler and cache. Use when implementing or changing features in an existing Quarkus project."
+    },
+    {
+      "filename": "quarkus-dev-services-and-testing/SKILL.md",
+      "name": "quarkus-dev-services-and-testing",
+      "description": "Quarkus Dev Services and testing: zero-config containers, @QuarkusTest, @QuarkusIntegrationTest, test resources, RestAssured, @InjectMock, profiles and continuous testing. Use when writing or fixing tests in a Quarkus project."
+    },
+    {
+      "filename": "quarkus-native-and-container/SKILL.md",
+      "name": "quarkus-native-and-container",
+      "description": "Build Quarkus native executables (Mandrel/GraalVM), fix native failures with reflection registration, test the native binary, and produce container images and Kubernetes/OpenShift manifests. Use for native, Docker, Jib or Kubernetes work in a Quarkus project."
     },
     {
       "filename": "quasi-coder/SKILL.md",
