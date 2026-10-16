@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <AssemblyName>McpSamples.OpenApiToSdk.HybridApp</AssemblyName>
+    <RootNamespace>McpSamples.OpenApiToSdk.HybridApp</RootNamespace>
+    
+    <UserSecretsId>8b94c6d9-feae-4416-8f70-4b50ea51170b</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
