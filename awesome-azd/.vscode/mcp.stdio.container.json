@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "awesome-azd": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "awesome-azd:latest"
+      ]
+    }
+  }
+}

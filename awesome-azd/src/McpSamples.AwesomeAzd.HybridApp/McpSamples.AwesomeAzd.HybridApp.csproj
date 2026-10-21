@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <AssemblyName>McpSamples.AwesomeAzd.HybridApp</AssemblyName>
+    <RootNamespace>McpSamples.AwesomeAzd.HybridApp</RootNamespace>
+
+    <UserSecretsId>e01e0699-c7a8-4900-be2b-6c4e27440ed7</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\McpSamples.Shared\McpSamples.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>
