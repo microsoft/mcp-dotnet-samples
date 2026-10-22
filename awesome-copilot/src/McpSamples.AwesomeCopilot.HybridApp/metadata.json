@@ -3505,6 +3505,12 @@
       "description": "Power BI semantic modeling assistant for building optimized data models. Use when working with Power BI semantic models, creating measures, designing star schemas, configuring relationships, implementing RLS, or optimizing model performance. Triggers on queries about DAX calculations, table relationships, dimension/fact table design, naming conventions, model documentation, cardinality, cross-filter direction, calculation groups, and data model best practices. Always connects to the active model first using power-bi-modeling MCP tools to understand the data structure before providing guidance."
     },
     {
+      "filename": "pr-address-feedback/SKILL.md",
+      "name": "pr-address-feedback",
+      "description": "Walk through PR review comments one-by-one, deciding for each whether to act on the feedback or reply with reasoning, and build an approvable resolution plan before changing anything. Use when the user wants to address, respond to, or triage PR review feedback.",
+      "argument-hint": "[PR number or URL] (defaults to current branch\u0027s PR)"
+    },
+    {
       "filename": "pr-dashboard/SKILL.md",
       "name": "pr-dashboard",
       "description": "Open a GitHub PR dashboard in the browser. Use when the user asks to see their pull requests, open the PR dashboard, show PRs for a date range, or check PR status. Trigger phrases include \u0022show my PRs\u0022, \u0022open PR dashboard\u0022, \u0022pull request dashboard\u0022."
