@@ -2343,7 +2343,7 @@
     {
       "filename": "commit-message-storyteller/SKILL.md",
       "name": "commit-message-storyteller",
-      "description": "Analyzes git diffs or staged changes and generates narrative commit messages that explain WHY a change was made, not just what changed \u2014 following Conventional Commits format. Use when asked to \u0022write a commit message\u0022, \u0022generate a commit\u0022, \u0022describe my changes\u0022, \u0022what should I commit this as\u0022, \u0022commit this\u0022, \u0022summarize my diff\u0022, or \u0022help me commit\u0022. Works with git diff output, staged files, or plain descriptions of changes."
+      "description": "Analyzes git diffs or staged changes and generates narrative commit messages that explain WHY a change was made, not just what changed \u2014 following Conventional Commits format. Use when asked to \u0022write a commit message\u0022, \u0022describe my changes\u0022, \u0022what should I commit this as\u0022, or \u0022summarize my diff\u0022. Works with git diff output, staged files, or plain descriptions of changes. Does not run git commit; to stage files and make the commit, use the git-commit skill."
     },
     {
       "filename": "competitor-ad-intelligence/SKILL.md",
@@ -2884,7 +2884,7 @@
     {
       "filename": "git-commit/SKILL.md",
       "name": "git-commit",
-      "description": "Execute git commit with conventional commit message analysis, intelligent staging, and message generation. Use when user asks to commit changes, create a git commit, or mentions \u0022/commit\u0022. Supports: (1) Auto-detecting type and scope from changes, (2) Generating conventional commit messages from diff, (3) Interactive commit with optional type/scope/description overrides, (4) Intelligent file staging for logical grouping"
+      "description": "Use this skill when the user wants to make a Git commit or split changes into more than one commit. Also use it when the user types \u0022/commit\u0022 or asks for a conventional commit. The skill examines the diff, stages the related files, writes a Conventional Commits message, and runs git commit. Do not use it when the user wants only a commit message and no commit. Do not use it to push, open a pull request, rebase, or change the commit history."
     },
     {
       "filename": "git-flow-branch-creator/SKILL.md",
@@ -3039,7 +3039,22 @@
     {
       "filename": "java-add-graalvm-native-image-support/SKILL.md",
       "name": "java-add-graalvm-native-image-support",
-      "description": "GraalVM Native Image expert that adds native image support to Java applications, builds the project, analyzes build errors, applies fixes, and iterates until successful compilation using Oracle best practices."
+      "description": "GraalVM Native Image skill for Spring Boot, Micronaut and plain Java: detects the build tool and framework, adds native image support, builds the executable, analyzes errors, and iterates until the native build succeeds and the binary runs correctly. For Quarkus projects it only dispatches to the quarkus-native-and-container skill."
+    },
+    {
+      "filename": "java-debugging/SKILL.md",
+      "name": "java-debugging",
+      "description": "Debug Java applications systematically: JDWP remote debugging, jdb, VS Code and IntelliJ attach, debugging Maven/Gradle tests, Spring Boot and Quarkus dev mode, containers, breakpoints/logpoints, and reading stack traces. Use when the user needs to find the cause of a Java bug, exception, wrong behavior, or failing test, or asks how to attach a debugger."
+    },
+    {
+      "filename": "java-development/SKILL.md",
+      "name": "java-development",
+      "description": "Day-to-day plain Java development without a framework: Maven and Gradle usage and wrappers, project layout, dependency and vulnerability management, modern Java idioms by JDK version (records, sealed types, pattern matching, virtual threads), SLF4J logging, error and null handling, immutability, concurrency basics, static analysis and formatting (Spotless, Error Prone, -Xlint), packaging (jar, jlink, jpackage) and GitHub Actions CI. Use when writing, building, reviewing or maintaining ordinary Java code."
+    },
+    {
+      "filename": "java-diagnostics/SKILL.md",
+      "name": "java-diagnostics",
+      "description": "Symptom-first runtime diagnostics for JVM applications using JDK tools: jcmd, jstack, jmap, jstat, JFR, GC logs, async-profiler, Native Memory Tracking, and Eclipse MAT. Use when a Java app has high CPU, memory leaks or OutOfMemoryError, slow startup, deadlocks or thread starvation, long GC pauses, native memory growth, or slow requests. Includes permission tiers for safe use."
     },
     {
       "filename": "java-docs/SKILL.md",
@@ -3052,14 +3067,19 @@
       "description": "Get best practices for developing applications with Helidon 4 (SE and MP). Use when working with Helidon SE or Helidon MP, HttpService routing, Helidon DB Client, MicroProfile Config, Helidon Security, or Helidon testing in Java 21\u002B projects."
     },
     {
+      "filename": "java-hibernate-jpa/SKILL.md",
+      "name": "java-hibernate-jpa",
+      "description": "Diagnose and fix Hibernate ORM / Jakarta Persistence problems in plain Java: N\u002B1 queries, lazy loading errors, identifier generation, entity equals/hashCode, cascades, pagination, batching, locking, caching, Lombok on entities, and Hibernate 6/7 differences. Use when reviewing or writing JPA entities, mappings, and queries. Framework-neutral."
+    },
+    {
       "filename": "java-junit/SKILL.md",
       "name": "java-junit",
-      "description": "Get best practices for JUnit 5 unit testing, including data-driven tests"
+      "description": "Write, review and fix Java unit tests with JUnit 5 and JUnit 6 (Jupiter), AssertJ and Mockito: assertions, parameterized and nested tests, mocking rules, deterministic time and randomness, Surefire vs Failsafe, JaCoCo coverage, optional PIT mutation testing, and guardrails for agents (never skip or delete failing tests). Use when adding, refactoring or debugging tests in Maven or Gradle projects. Framework-neutral."
     },
     {
       "filename": "java-mcp-server-generator/SKILL.md",
       "name": "java-mcp-server-generator",
-      "description": "Use this skill when the user wants to create a Model Context Protocol (MCP) server in Java or in a Spring Boot app. Also use it when the user wants AI agents, such as GitHub Copilot or Claude, to use Java code, an API, or a database. Use it even if the user does not say \u0022MCP\u0022. The skill makes a Maven or Gradle project with the MCP Java SDK 2.x, tools, JUnit tests, and client configuration. Do not use it for an MCP client or for a server in another language."
+      "description": "Use this skill when the user wants to create a Model Context Protocol (MCP) server in Java or in a Spring Boot app. Also use it when the user wants AI agents, such as GitHub Copilot or Claude, to use Java code, an API, or a database. Use it even if the user does not say \u0022MCP\u0022. The skill makes a Maven or Gradle project with the MCP Java SDK 2.x, tools, JUnit tests, and client configuration. Do not use it for Quarkus/Quarkiverse MCP servers (use the \u0060quarkus-mcp-server-sse\u0060 instruction), for an MCP client or for a server in another language."
     },
     {
       "filename": "java-refactoring-extract-method/SKILL.md",
@@ -3075,6 +3095,11 @@
       "filename": "java-springboot/SKILL.md",
       "name": "java-springboot",
       "description": "Get best practices for developing applications with Spring Boot."
+    },
+    {
+      "filename": "java-testcontainers/SKILL.md",
+      "name": "java-testcontainers",
+      "description": "Write reliable integration tests in plain Java with Testcontainers 2.x: JUnit Jupiter lifecycle, singleton containers, reuse, generic containers, wait strategies, networks, init scripts, Docker Compose, CI and Docker/Podman setup. Use when adding or fixing Testcontainers tests, or migrating from 1.x. Framework-neutral."
     },
     {
       "filename": "java-upgrade/SKILL.md",
