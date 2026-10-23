@@ -3349,6 +3349,11 @@
       "description": "Plain-English translation layer for non-technical Copilot CLI users. Translates every approval prompt, error message, and technical output into clear, jargon-free English with color-coded risk indicators."
     },
     {
+      "filename": "npm-trusted-publishing/SKILL.md",
+      "name": "npm-trusted-publishing",
+      "description": "Set up or fix npm trusted publishing (OIDC) in GitHub Actions and remove NPM_TOKEN. Use for ENEEDAUTH, E404 on PUT, E422 repository.url, or migrating off 2FA-bypass tokens before January 2027."
+    },
+    {
       "filename": "nuget-manager/SKILL.md",
       "name": "nuget-manager",
       "description": "Manage NuGet packages in .NET projects/solutions. Use this skill when adding, removing, or updating NuGet package versions. It enforces using \u0060dotnet\u0060 CLI for package management and provides strict procedures for direct file edits only when updating versions."
