@@ -4120,8 +4120,7 @@
     {
       "filename": "webmcpify/SKILL.md",
       "name": "webmcpify",
-      "description": "Make a web app agent-ready \u2014 propose a WebMCP tool manifest, integrate, verify in a real browser, heal; unrelated code stays untouched. Use for \u0022webmcpify\u0022, \u0022add WebMCP\u0022, or \u0022expose app actions to AI agents\u0022.",
-      "argument-hint": "[inventory|integrate|verify|status|full] [scope notes]"
+      "description": "WebMCP agent skill for curated core coverage or route-by-route parity \u2014 inventory an existing web app, integrate approved tools, then inspect, verify and heal them in a real browser. Use for \u0022webmcpify\u0022, \u0022add WebMCP\u0022, or \u0022expose app actions to AI agents\u0022."
     },
     {
       "filename": "what-context-needed/SKILL.md",
