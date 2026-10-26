@@ -3198,6 +3198,12 @@
       "description": "Convert Markdown files to HTML similar to \u0060marked.js\u0060, \u0060pandoc\u0060, \u0060gomarkdown/markdown\u0060, or similar tools; or writing custom script to convert markdown to html and/or working on web template systems like \u0060jekyll/jekyll\u0060, \u0060gohugoio/hugo\u0060, or similar web templating systems that utilize markdown documents, converting them to html. Use when asked to \u0022convert markdown to html\u0022, \u0022transform md to html\u0022, \u0022render markdown\u0022, \u0022generate html from markdown\u0022, or when working with .md files and/or web a templating system that converts markdown to HTML output. Supports CLI and Node.js workflows with GFM, CommonMark, and standard Markdown flavors."
     },
     {
+      "filename": "markdown-to-word-mermaid/SKILL.md",
+      "name": "markdown-to-word-mermaid",
+      "description": "Export Markdown containing Mermaid code fences to Word (.docx) with embedded SVG diagrams and PNG fallbacks. Use when diagram sharpness, Office-compatible labels, or page-aware placement matters. Not for Word-to-Markdown conversion, editable Office shapes, or general slide creation.",
+      "argument-hint": "Markdown input file and optional DOCX output path"
+    },
+    {
       "filename": "markstream-install/SKILL.md",
       "name": "markstream-install",
       "description": "Install and configure Markstream streaming Markdown renderers for Vue, React, Svelte, Angular, Nuxt, and Vue 2 applications. Use for package selection, minimal peer dependencies, CSS order, SSR boundaries, streaming mode, and renderer setup."
