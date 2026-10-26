@@ -1853,6 +1853,10 @@
       "description": "Guidelines for building Spring Boot base applications"
     },
     {
+      "filename": "sql-server-safe-tsql.instructions.md",
+      "description": "SQL Server-specific write-safety rules for T-SQL: XACT_ABORT with THROW, @@TRANCOUNT-aware transactions, fail-closed dry runs, batched OUTPUT...INTO archiving, autocommit-only admin statements, and read-only DMV diagnostics."
+    },
+    {
       "filename": "sql-sp-generation.instructions.md",
       "description": "Guidelines for generating SQL statements and stored procedures"
     },
@@ -2183,6 +2187,11 @@
       "filename": "azure-devops-cli/SKILL.md",
       "name": "azure-devops-cli",
       "description": "Manage Azure DevOps resources via CLI including projects, repos, pipelines, builds, pull requests, work items, artifacts, and service endpoints. Use when working with Azure DevOps, az commands, devops automation, CI/CD, or when user mentions Azure DevOps CLI."
+    },
+    {
+      "filename": "azure-logic-apps-standard-cli/SKILL.md",
+      "name": "azure-logic-apps-standard-cli",
+      "description": "Create, inspect, validate, test, run, debug, package, and deploy Azure Logic Apps Standard projects using the Azure CLI logicapp extension. Use for Standard workflow authoring, optional workspaces, connector discovery, identity-based connections, local runtimes, native workflow tests, and approved cloud lifecycle operations. Not for Consumption-only workflow development."
     },
     {
       "filename": "azure-pricing/SKILL.md",
@@ -2811,6 +2820,11 @@
       "description": "Create and synchronize prompt-based AI agents directly within Azure AI Foundry via REST API, from a local JSON manifest. Unlike scaffolding skills that only generate local code, this skill registers agents in the Foundry service itself \u2014 making them immediately available for invocation. Use when the user asks to create agents in Foundry, sync, deploy, register, or push agents to Foundry, update agent instructions, or scaffold the manifest and sync script for a new repository. Triggers: \u0027create agent in foundry\u0027, \u0027sync foundry agents\u0027, \u0027deploy agents to foundry\u0027, \u0027register agents in foundry\u0027, \u0027push agents\u0027, \u0027create foundry agent manifest\u0027, \u0027scaffold agent sync\u0027."
     },
     {
+      "filename": "foundry-agentic-loop/SKILL.md",
+      "name": "foundry-agentic-loop",
+      "description": "Build agentic solutions on Microsoft Foundry, GitHub and Azure: hosted agents, toolbox tools and skills, Foundry IQ grounding and a React/FastAPI app. Three modes: rapid prototyping in an existing Foundry project; spec-driven development (SDD), where the foundry-agentic-loop-workflow runs Specify, Implement, Verify and Deploy to create the Foundry project and deploy with azd, or one phase runs alone; and Improve, which refines this skill and the workflow from past runs. Use for Agentic Loop requests and canvas actions, or end-to-end agent solutions from architecture to Azure deployment. Not for isolated Azure administration or unrelated UI edits."
+    },
+    {
       "filename": "foundry-hosted-agent-copilotkit/SKILL.md",
       "name": "foundry-hosted-agent-copilotkit",
       "description": "Build and evolve agentic web apps that pair a CopilotKit React frontend with a Microsoft Agent Framework agent running as a Microsoft Foundry hosted agent, connected over the AG-UI protocol. Covers choosing the wiring, using Foundry-native primitives instead of hand-rolled plumbing, agent tools, human-in-the-loop approvals, generative UI and shared state, local run and azd deploy, debugging the event stream, and safe upgrades."
@@ -2930,6 +2944,11 @@
       "filename": "gitmoji/SKILL.md",
       "name": "gitmoji",
       "description": "Generates commit messages following the gitmoji convention (https://gitmoji.dev) \u2014 picks the right emoji for the intent of the change and writes a well-formed message. Use when asked to \u0022write a gitmoji commit\u0022, \u0022add an emoji to my commit message\u0022, \u0022which gitmoji should I use\u0022, \u0022gitmoji this change\u0022, or when a project uses gitmoji-style commit messages. Works from a git diff, staged changes, or a plain description of the change. Generates the message only \u2014 does not run git commands."
+    },
+    {
+      "filename": "globestudio/SKILL.md",
+      "name": "globestudio",
+      "description": "Creates, edits and embeds dotted world maps and animated 3D globes with Globestudio (globestudio.app), a free open source studio with 21 looks. Use when the user wants a dotted map, a dotted or 3D globe, a spinning earth or a stylized world map for a website hero, background, slide, social post or video; when they paste a globestudio.app link or a ?c= config; or when code uses @globestudio/react, @globestudio/element, the globe-studio web component or globestudio.app/embed. Also use it to highlight a country, continent or region, plot points and arcs, match brand colors, or prepare PNG, SVG, GLB, MP4, WebM or GIF exports. Not for interactive tiled maps, routing, geocoding or GIS analysis (Mapbox, MapLibre, deck.gl), or for ordinary charts."
     },
     {
       "filename": "go-mcp-server-generator/SKILL.md",
