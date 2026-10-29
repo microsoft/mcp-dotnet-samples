@@ -3546,6 +3546,11 @@
       "argument-hint": "[PR number or URL] (defaults to current branch\u0027s PR)"
     },
     {
+      "filename": "pr-artifact-explorer/SKILL.md",
+      "name": "pr-artifact-explorer",
+      "description": "Open, share, and inspect GitHub PRs, issues, workflow runs (including scheduled, manual and other runs with no PR), Actions artifacts, and local or HTTP(S) web previews in the Artifact Explorer canvas, with viewport presets, zoom, screenshots, and recoverable download jobs."
+    },
+    {
       "filename": "pr-dashboard/SKILL.md",
       "name": "pr-dashboard",
       "description": "Open a GitHub PR dashboard in the browser. Use when the user asks to see their pull requests, open the PR dashboard, show PRs for a date range, or check PR status. Trigger phrases include \u0022show my PRs\u0022, \u0022open PR dashboard\u0022, \u0022pull request dashboard\u0022."
