@@ -1336,28 +1336,28 @@
     },
     {
       "filename": "copilot-sdk-csharp.instructions.md",
-      "description": "This file provides guidance on building C# applications using GitHub Copilot SDK.",
-      "name": "GitHub Copilot SDK C# Instructions"
+      "description": "This file provides guidance on building C# applications using the Microsoft Copilot SDK.",
+      "name": "Microsoft Copilot SDK C# Instructions"
     },
     {
       "filename": "copilot-sdk-go.instructions.md",
-      "description": "This file provides guidance on building Go applications using GitHub Copilot SDK.",
-      "name": "GitHub Copilot SDK Go Instructions"
+      "description": "This file provides guidance on building Go applications using the Microsoft Copilot SDK.",
+      "name": "Microsoft Copilot SDK Go Instructions"
     },
     {
       "filename": "copilot-sdk-java.instructions.md",
-      "description": "This file provides guidance on building Java applications using GitHub Copilot SDK for Java.",
-      "name": "GitHub Copilot SDK Java Instructions"
+      "description": "This file provides guidance on building Java applications using the Microsoft Copilot SDK.",
+      "name": "Microsoft Copilot SDK Java Instructions"
     },
     {
       "filename": "copilot-sdk-nodejs.instructions.md",
-      "description": "This file provides guidance on building Node.js/TypeScript applications using GitHub Copilot SDK.",
-      "name": "GitHub Copilot SDK Node.js Instructions"
+      "description": "This file provides guidance on building Node.js/TypeScript applications using the Microsoft Copilot SDK.",
+      "name": "Microsoft Copilot SDK Node.js Instructions"
     },
     {
       "filename": "copilot-sdk-python.instructions.md",
-      "description": "This file provides guidance on building Python applications using GitHub Copilot SDK.",
-      "name": "GitHub Copilot SDK Python Instructions"
+      "description": "This file provides guidance on building Python applications using the Microsoft Copilot SDK.",
+      "name": "Microsoft Copilot SDK Python Instructions"
     },
     {
       "filename": "copilot-thought-logging.instructions.md",
@@ -2445,7 +2445,7 @@
     {
       "filename": "copilot-sdk/SKILL.md",
       "name": "copilot-sdk",
-      "description": "Build agentic applications with GitHub Copilot SDK. Use when embedding AI agents in apps, creating custom tools, implementing streaming responses, managing sessions, connecting to MCP servers, or creating custom agents. Triggers on Copilot SDK, GitHub SDK, agentic app, embed Copilot, programmable agent, MCP server, custom agent."
+      "description": "Build agentic applications with the Microsoft Copilot SDK, transitioning from GitHub Copilot SDK. Use when embedding AI agents in apps, creating custom tools, implementing streaming responses, managing sessions, connecting to MCP servers, or creating custom agents. Triggers on Copilot SDK, Microsoft Copilot SDK, GitHub Copilot SDK, agentic app, embed Copilot, programmable agent, MCP server, custom agent."
     },
     {
       "filename": "copilot-spaces/SKILL.md",
