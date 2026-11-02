@@ -1274,6 +1274,10 @@
       "description": "Blazor component and application patterns"
     },
     {
+      "filename": "bulma-v1.instructions.md",
+      "description": "Bulma v1 conventions: Dart Sass modules, CSS variables, themes and dark mode, the smart grid and skeletons"
+    },
+    {
       "filename": "caveman-mode.instructions.md",
       "description": "Terse, low-token responses. Minimal words, no fluff. Full capabilities preserved. Use when: optimize token usage, low-token mode, concise output, caveman mode, reduce verbosity, token-efficient, brief responses."
     },
@@ -2735,6 +2739,11 @@
       "description": "Draft and review professional emails that match your personal writing style. Analyzes your sent emails for tone, greeting, structure, and sign-off patterns via WorkIQ, then generates context-aware drafts for any recipient. USE FOR: draft email, write email, compose email, reply email, follow-up email, analyze email tone, email style."
     },
     {
+      "filename": "embedding-anisotropy-check/SKILL.md",
+      "name": "embedding-anisotropy-check",
+      "description": "Use before reporting any cosine similarity computed over embeddings or transformer hidden states, whether the agent computed the vectors or loaded them. Measures the anisotropy of each side, centres by the population mean, and scores matched pairs against a permuted floor taken from the same comparison. Use when comparing one model\u0027s embeddings across precisions, runtimes or layers, when evaluating retrieval, probes or adapters, or before calling a similarity high, two conditions in agreement, or a small gap a null."
+    },
+    {
       "filename": "entra-agent-user/SKILL.md",
       "name": "entra-agent-user",
       "description": "Create Agent Users in Microsoft Entra ID from Agent Identities, enabling AI agents to act as digital workers with user identity capabilities in Microsoft 365 and Azure environments."
@@ -3251,7 +3260,7 @@
     {
       "filename": "mcp-security-audit/SKILL.md",
       "name": "mcp-security-audit",
-      "description": "Audit MCP (Model Context Protocol) server configurations for security issues. Use this skill when:\n- Reviewing .mcp.json files for security risks\n- Checking MCP server args for hardcoded secrets or shell injection patterns\n- Validating that MCP package-runner dependencies use exact reviewed versions, not bare names, @latest, or ranges\n- Detecting mutable npm/npx, bunx, pnpm dlx, yarn dlx, and npm exec references in MCP configurations\n- Auditing which MCP servers a project registers and whether they\u0027re on an approved list\n- Checking for environment variable usage vs. hardcoded credentials in MCP configs\n- Any request like \u0022is my MCP config secure?\u0022, \u0022audit my MCP servers\u0022, or \u0022check .mcp.json\u0022\nkeywords: [mcp, security, audit, secrets, shell-injection, supply-chain, governance]"
+      "description": "Audit MCP (Model Context Protocol) server configurations for security issues. Use this skill when:\n- Reviewing .mcp.json files for security risks\n- Checking MCP server args for hardcoded secrets or shell injection patterns\n- Validating that MCP package-runner dependencies use exact reviewed versions, not bare names, @latest, or ranges\n- Detecting mutable npm/npx, bunx, pnpm dlx, yarn dlx, npm exec, uvx, uv tool run, and pipx run references in MCP configurations\n- Auditing which MCP servers a project registers and whether they\u0027re on an approved list\n- Checking for environment variable usage vs. hardcoded credentials in MCP configs\n- Any request like \u0022is my MCP config secure?\u0022, \u0022audit my MCP servers\u0022, or \u0022check .mcp.json\u0022\nkeywords: [mcp, security, audit, secrets, shell-injection, supply-chain, governance]"
     },
     {
       "filename": "md-to-docx/SKILL.md",
