@@ -676,6 +676,11 @@
       "name": "one-shot-feature-issue-planner"
     },
     {
+      "filename": "openapi-to-application-java-spring-boot.agent.md",
+      "description": "Expert assistant for generating Spring Boot applications from OpenAPI specifications, spec-first with openapi-generator",
+      "name": "OpenAPI to Application Generator (Spring Boot)"
+    },
+    {
       "filename": "openapi-to-application.agent.md",
       "description": "Expert assistant for generating working applications from OpenAPI specifications",
       "name": "OpenAPI to Application Generator"
@@ -1504,6 +1509,10 @@
       "description": "Instructions for writing Go code following idiomatic Go practices and community standards"
     },
     {
+      "filename": "godot-4-gdscript.instructions.md",
+      "description": "Prevent Godot 3 syntax in Godot 4 projects: GDScript 2.0 annotations, await, setters, @rpc, typed signals and Callables"
+    },
+    {
       "filename": "hooks.instructions.md",
       "description": "Portable guidance for authoring safe, fast, and clear hooks and reusable hook examples"
     },
@@ -1850,7 +1859,7 @@
     },
     {
       "filename": "springboot-4-migration.instructions.md",
-      "description": "Comprehensive guide for migrating Spring Boot applications from 3.x to 4.0, focusing on Gradle Kotlin DSL and version catalogs"
+      "description": "Pointer to the spring-boot-4-migration skill for upgrading Spring Boot 3.x projects to 4.0"
     },
     {
       "filename": "springboot.instructions.md",
@@ -2511,7 +2520,7 @@
     {
       "filename": "create-spring-boot-java-project/SKILL.md",
       "name": "create-spring-boot-java-project",
-      "description": "Create Spring Boot Java Project Skeleton"
+      "description": "Create a new Spring Boot Java project (Maven or Gradle) from start.spring.io with sensible defaults for configuration, PostgreSQL, logging, security, testing and Docker. Use when asked to scaffold, bootstrap or generate a Spring Boot application. Detects existing project versions and never upgrades implicitly."
     },
     {
       "filename": "create-spring-boot-kotlin-project/SKILL.md",
@@ -3127,7 +3136,7 @@
     {
       "filename": "java-springboot/SKILL.md",
       "name": "java-springboot",
-      "description": "Get best practices for developing applications with Spring Boot."
+      "description": "Write and review application code in an existing Spring Boot 3/4 project: controllers, validation and ProblemDetail errors, Spring Data JPA/JDBC, RestClient and HTTP interfaces, configuration properties, Kafka/AMQP, caching, scheduling, virtual threads, AOT and startup tuning. Use when adding or changing features. To scaffold a new project use create-spring-boot-java-project instead."
     },
     {
       "filename": "java-testcontainers/SKILL.md",
@@ -3179,6 +3188,11 @@
       "filename": "legacy-circuit-mockups/SKILL.md",
       "name": "legacy-circuit-mockups",
       "description": "Generate breadboard circuit mockups and visual diagrams using HTML5 Canvas drawing techniques. Use when asked to create circuit layouts, visualize electronic component placements, draw breadboard diagrams, mockup 6502 builds, generate retro computer schematics, or design vintage electronics projects. Supports 555 timers, W65C02S microprocessors, 28C256 EEPROMs, W65C22 VIA chips, 7400-series logic gates, LEDs, resistors, capacitors, switches, buttons, crystals, and wires."
+    },
+    {
+      "filename": "lightweight-charts-react-components/SKILL.md",
+      "name": "lightweight-charts-react-components",
+      "description": "lightweight-charts-react-components recipes for TradingView lightweight-charts in React. Candlestick, line, and area series; volume and indicator panes; realtime WebSocket updates; infinite history on scroll; crosshair OHLC legends and tooltips; trade markers and price lines; synchronized charts; numeric options and yield-curve axes. Use when adding or fixing a financial or trading chart in a React app, or when the user mentions lightweight-charts, TradingView charts in React, or this package."
     },
     {
       "filename": "linkedin-post-formatter/SKILL.md",
@@ -3413,6 +3427,11 @@
       "description": "Generate a complete, production-ready application from an OpenAPI specification"
     },
     {
+      "filename": "openapi-to-application-java-spring-boot/SKILL.md",
+      "name": "openapi-to-application-java-spring-boot",
+      "description": "Generate a Spring Boot (Java) application from an OpenAPI 3 specification using the spec-first approach: openapi-generator (Maven or Gradle) produces API interfaces and DTOs, you implement controllers, services, persistence, security and tests. Use when asked to build, scaffold or implement a Spring Boot API from an OpenAPI/Swagger file."
+    },
+    {
       "filename": "optimize-simplicite-logs/SKILL.md",
       "name": "optimize-simplicite-logs",
       "description": "capability to parse Simplicit\u00E9 logs from a raw \u0060.txt\u0060 file, filter fields to reduce noise, and output the result as structured JSON."
@@ -3497,6 +3516,11 @@
       "filename": "poka-yoke/SKILL.md",
       "name": "poka-yoke",
       "description": "Mistake-proof code so misuse cannot be expressed, rather than warning against it. Use when designing an interface, schema, or state machine and the user wants it hard to get wrong (\u0022make invalid states unrepresentable\u0022, \u0022so callers cannot screw it up\u0022, \u0022type-safe API\u0022, \u0022pit of success\u0022); when auditing existing code for footguns (\u0022what could bite us here\u0022, \u0022what is easy to misuse\u0022, \u0022poka-yoke this repo\u0022, \u0022review this diff for ways to get it wrong\u0022); or when a bug has recurred and the fix must close the class rather than the case (\u0022make sure this never happens again\u0022, \u0022this is the third time\u0022). Especially for money, auth, permissions, deletion, migrations, and pipelines where failure is silent. Classifies every finding by what happens when the mistake occurs and how the device notices, which is what keeps it from collapsing into generic code review."
+    },
+    {
+      "filename": "ponder/SKILL.md",
+      "name": "ponder",
+      "description": "Convergent deliberation loop - repeated grading passes over one subject until the answer stops changing, with coverage enforced so no unit is silently skipped. Use when the user says \u0022ponder \u003Canything\u003E\u0022 (\u0022ponder the UI\u0022, \u0022ponder our error handling\u0022), \u0022think this over properly\u0022, \u0022keep thinking until it converges\u0022, \u0022keep looping until it converges\u0022, \u0022loop on this until it stops changing\u0022, \u0022go through all the screens and grade them\u0022, \u0022audit/rate/grade every X\u0022, or asks for any broad sweep-and-grade across many units where a single pass would miss things. Also use to resume or recover a ponder already in flight - \u0022where were we\u0022, \u0022carry on pondering\u0022, a lost thread mid-loop, or a .ponder/ directory in the project - where the move is to run ponder status rather than start over."
     },
     {
       "filename": "postgresql-code-review/SKILL.md",
@@ -3936,9 +3960,24 @@
       "description": "Find which of a GitHub repository\u0027s dependencies are sponsorable via GitHub Sponsors. Uses deps.dev API for dependency resolution across npm, PyPI, Cargo, Go, RubyGems, Maven, and NuGet. Checks npm funding metadata, FUNDING.yml files, and web search. Verifies every link. Shows direct and transitive dependencies with OSSF Scorecard health data. Invoke with /sponsor followed by a GitHub owner/repo (e.g. \u0022/sponsor expressjs/express\u0022)."
     },
     {
+      "filename": "spring-boot-4-migration/SKILL.md",
+      "name": "spring-boot-4-migration",
+      "description": "Migrate a Spring Boot 3.x application to Spring Boot 4.0 (Spring Framework 7, Jackson 3, modular starters, JSpecify). Use only for an explicit Boot 3.x to 4 migration, or to fix build or test failures caused by it, or to review one. Not for 3.x patch bumps or 4.0 to 4.1 upgrades; follow the target Boot version release notes and upgrade guide for those. Covers Maven and Gradle (Kotlin DSL, version catalogs)."
+    },
+    {
       "filename": "spring-boot-testing/SKILL.md",
       "name": "spring-boot-testing",
-      "description": "Expert Spring Boot 4 testing specialist that selects the best Spring Boot testing techniques for your situation with Junit 6 and AssertJ."
+      "description": "Expert Spring Boot testing specialist that selects the best testing techniques for your situation: test slices, Testcontainers with @ServiceConnection, Failsafe integration tests, MockitoBean, JUnit and AssertJ. Written for Spring Boot 4 with notes for Boot 3."
+    },
+    {
+      "filename": "spring-observability/SKILL.md",
+      "name": "spring-observability",
+      "description": "Add and review observability in Spring Boot 3/4 apps: Actuator exposure and health probes, Micrometer metrics, Observation API, OpenTelemetry tracing and OTLP/Prometheus export, structured logging with correlation ids, and safe use of heapdump/threaddump. Use when instrumenting, monitoring or troubleshooting a Spring Boot service."
+    },
+    {
+      "filename": "spring-security/SKILL.md",
+      "name": "spring-security",
+      "description": "Configure, test and review Spring Security 6/7 in Spring Boot 3/4 apps: SecurityFilterChain lambda DSL, method security, OAuth2 resource server with JWT, OIDC login, CSRF/CORS, password encoding, headers, actuator protection, and MockMvc security tests. Use when adding or auditing authentication and authorization."
     },
     {
       "filename": "sql-code-review/SKILL.md",
