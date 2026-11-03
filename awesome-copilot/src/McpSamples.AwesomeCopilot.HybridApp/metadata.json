@@ -470,7 +470,7 @@
       "filename": "gem-planner.agent.md",
       "description": "Create lean, decision-complete wave plans with clear task ownership, outputs, and validation.",
       "name": "gem-planner",
-      "argument-hint": "Enter plan_id, objective, acceptance_criteria, provisional_complexity, risk_signals."
+      "argument-hint": "Enter plan_id, objective, acceptance_criteria, provisional_complexity, risk_signals, planning_context."
     },
     {
       "filename": "gem-researcher.agent.md",
