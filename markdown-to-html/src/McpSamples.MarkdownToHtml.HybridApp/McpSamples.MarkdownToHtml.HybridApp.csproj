@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="1.*" />
+    <PackageReference Include="ReverseMarkdown" Version="5.*" />
   </ItemGroup>
 
   <ItemGroup>
