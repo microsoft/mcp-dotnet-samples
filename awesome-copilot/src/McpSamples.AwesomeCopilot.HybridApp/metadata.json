@@ -36,6 +36,11 @@
       "name": "Universal PR Comment Addresser"
     },
     {
+      "filename": "adobe-creative-cloud.agent.md",
+      "name": "Adobe Creative Cloud",
+      "description": "Expert technical artist for Adobe Creative Cloud: picks the right app or combination of apps (Illustrator, Photoshop, InDesign, After Effects, and more), knows Creative Cloud storage (cloud documents, Projects, Libraries, Stock, local files), moving work off discontinued apps, and how each app is extended (scripts, CEP extensions, UXP and C\u002B\u002B plug-ins, MCP servers). Leads the adobe-illustrator-scripting and adobe-illustrator-integrations skills for Illustrator scripts, extensions, plug-ins, automation, and asset management."
+    },
+    {
       "filename": "adr-generator.agent.md",
       "name": "ADR Generator",
       "description": "Expert agent for creating comprehensive Architectural Decision Records (ADRs) with structured formatting optimized for AI consumption and human readability."
@@ -1987,6 +1992,11 @@
       "description": "Add educational comments to the file specified, or prompt asking for file to comment if one is not provided."
     },
     {
+      "filename": "adobe-illustrator-integrations/SKILL.md",
+      "name": "adobe-illustrator-integrations",
+      "description": "Build, debug, package, and document Adobe Illustrator integrations: CEP extension panels, C\u002B\u002B SDK plug-ins (.aip), the coming UXP plugins, MCP servers that drive Illustrator, computer-use automation, and OS scripts (batch, PowerShell, bash, AppleScript) that run ExtendScript in Illustrator. Use when creating or fixing an Illustrator extension or plug-in, choosing between a script, extension, or plug-in, connecting an AI tool to Illustrator, automating Illustrator from the command line, or writing install and usage docs for an Illustrator tool someone will publish. Pairs with adobe-illustrator-scripting for the ExtendScript DOM."
+    },
+    {
       "filename": "adobe-illustrator-scripting/SKILL.md",
       "name": "adobe-illustrator-scripting",
       "description": "Write, debug, and optimize Adobe Illustrator automation scripts using ExtendScript (JavaScript/JSX). Use when creating or modifying scripts that manipulate documents, layers, paths, text frames, colors, symbols, artboards, or any Illustrator DOM objects. Covers the complete JavaScript object model, coordinate system, measurement units, export workflows, and scripting best practices."
@@ -2661,6 +2671,11 @@
       "filename": "devops-rollout-plan/SKILL.md",
       "name": "devops-rollout-plan",
       "description": "Generate comprehensive rollout plans with preflight checks, step-by-step deployment, verification signals, rollback procedures, and communication plans for infrastructure and application changes"
+    },
+    {
+      "filename": "diagnose-ci-gate/SKILL.md",
+      "name": "diagnose-ci-gate",
+      "description": "Determine whether a failing CI check was caused by the current change, then recommend exactly one action. Use when a required check fails on a pull request, when asked \u0022is this failure mine?\u0022, when a job passes locally but fails in CI, or before retrying a red build. Covers fetching the real log, reading the first error instead of the tail, classifying bug / flaky / environment / pipeline, comparing against the base branch and recent runs, reproducing with CI versions, and fixing a flaky test rather than re-running it forever."
     },
     {
       "filename": "diagnose/SKILL.md",
