@@ -3215,6 +3215,11 @@
       "description": "Format and draft compelling LinkedIn posts using Unicode bold/italic styling, visual separators, structured sections, and engagement-optimized patterns. USE FOR: draft LinkedIn post, format text for LinkedIn, create social media post, write thought leadership post, convert content to LinkedIn format, LinkedIn carousel text, Unicode bold italic formatting."
     },
     {
+      "filename": "logicapps-custom-code-net10-migration/SKILL.md",
+      "name": "logicapps-custom-code-net10-migration",
+      "description": "Migrate Azure Logic Apps Standard local-function custom-code projects from .NET 8 to .NET 10. Use for legacy Logic Apps custom-code workspace upgrades, project/package configuration, custom-worker settings, publication, and integrated VS Code debugging. Not for ordinary .NET applications, standalone Azure Functions, Consumption workflows, or cloud deployment."
+    },
+    {
       "filename": "lsp-setup/SKILL.md",
       "name": "lsp-setup",
       "description": "Enable code intelligence (go-to-definition, find-references, hover, type info) for any programming language by installing and configuring an LSP server for Copilot CLI. Detects the OS, installs the right server, and generates the JSON configuration (user-level or repo-level). Use when you need deeper code understanding and no LSP server is configured, or when the user asks to set up, install, or configure an LSP server."
