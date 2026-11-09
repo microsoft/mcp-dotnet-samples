@@ -4060,6 +4060,11 @@
       "description": "Suggest relevant GitHub Copilot skills from the awesome-copilot repository based on current repository context and chat history, avoiding duplicates with existing skills in this repository, and identifying outdated skills that need updates."
     },
     {
+      "filename": "supabase-rls-policies/SKILL.md",
+      "name": "supabase-rls-policies",
+      "description": "Write, review, and test Supabase Row Level Security (RLS) policies so that one user cannot read or change another user\u0027s rows. Use when creating or changing tables, policies, views, or security definer functions in a Supabase project, when reviewing a migration that touches RLS, or when asked to prove user isolation with pgTAP tests that sign in as two users."
+    },
+    {
       "filename": "swift-mcp-server-generator/SKILL.md",
       "name": "swift-mcp-server-generator",
       "description": "Generate a complete Model Context Protocol server project in Swift using the official MCP Swift SDK package."
