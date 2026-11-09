@@ -3081,7 +3081,7 @@
     {
       "filename": "incident-postmortem/SKILL.md",
       "name": "incident-postmortem",
-      "description": "Use when an outage, production incident, or significant service degradation has occurred and the team needs to write a structured blameless post-mortem. Triggers on phrases like \u0022write a post-mortem\u0022, \u0022incident review\u0022, \u0022what went wrong\u0022, \u0022outage report\u0022, \u0022root cause analysis\u0022, or \u0022RCA\u0022. Covers timeline reconstruction, contributing factor analysis, impact quantification, and action item generation with owners."
+      "description": "Use when an outage, production incident, or significant service degradation has occurred and the team needs a blameless post-mortem / RCA document in the Google SRE format. Triggers on phrases like \u0022write a post-mortem\u0022, \u0022incident review\u0022, \u0022what went wrong\u0022, \u0022outage report\u0022, \u0022root cause analysis\u0022, \u0022RCA\u0022, or \u0022fishbone\u0022. Collects incident inputs from the user, uses a fishbone (Ishikawa) diagram to surface candidate causes, drills the strongest branches with 5 Whys, and produces typed action items. Outputs Markdown by default, with HTML, DOCX, or PDF on request."
     },
     {
       "filename": "integrate-context-matic/SKILL.md",
@@ -3958,6 +3958,11 @@
       "filename": "signal-write/SKILL.md",
       "name": "signal-write",
       "description": "Emit structured agent signals \u2014 hands-up, blocked, done, checkpoint, partnership. Signals are written as JSON to .signals/ for dashboard consumption and noted in the journal for persistence."
+    },
+    {
+      "filename": "skill-distribution-audit/SKILL.md",
+      "name": "skill-distribution-audit",
+      "description": "Audit a skill collection before release or investigate installer omissions, archived/template leakage, duplicate identities, and manifest drift. Reconcile the intended public source set, distribution manifest, and actual discovery output for a specified consumer version. Includes a deterministic set-comparison helper."
     },
     {
       "filename": "slang-shader-engineer/SKILL.md",
