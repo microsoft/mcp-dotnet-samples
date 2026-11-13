@@ -691,6 +691,16 @@
       "description": "Generate release notes for a release in Octopus Deploy. The tools for this MCP server provide access to the Octopus Deploy APIs."
     },
     {
+      "filename": "on-device-offload.agent.md",
+      "name": "On-Device Offload",
+      "description": "Experimental. Worker on the local MAI Code 1.1 Flash model. Its tokens do not use GitHub AI Credits. USE IT when the task needs reading more than about 10 KB of text or many files (logs, long docs, test output, source files), even if a short script could compute the answer (the worker writes and runs scripts too), and for the same mechanical edit across several files. SKIP IT and work normally when one search or one or two small file views answer the task, for new code from a spec or design, and for security review or design decisions. HOW: in your FIRST response, before reading anything, call task with name \u0022offload\u0022, agent_type \u0022local-coding:on-device-offload\u0022 (the plugin id, or plain \u0022on-device-offload\u0022 if the task tool lists this agent that way because it was copied into an agents folder), model = the on-device model id named in the session\u0027s routing line, exactly (if there is none: \u0022winml-azureml-mai-code-1.1-flash-on-device/MAI-Code-1.1-Flash-On-Device\u0022), mode \u0022sync\u0022, a 3-word description, and prompt = the user\u0027s whole task copied verbatim. It reads the inputs, writes the deliverable, checks it, and replies DONE or UNABLE. Before you accept DONE, verify it cheaply: read the deliverable, then check each fact you will report (every listed item, count, or value) against the source with one targeted grep or a small view of the cited lines, or rerun the worker\u0027s own check. Never re-read the whole input or redo the task. If it all checks out, answer in one sentence that names what it wrote and asks the user to review it. If any fact is wrong or missing, treat the reply as UNABLE. Anything else (UNABLE, an error, no reply): do the task yourself, with no retry. Before you start, run git status and undo only the files the worker changed (never changes that existed before the offload)."
+    },
+    {
+      "filename": "on-device-worker.agent.md",
+      "name": "On-Device Worker",
+      "description": "Bounded worker on the local MAI Code 1.1 Flash model, briefed by the on-device-delegate skill. Runs exactly one sub-task with named inputs (search and summarize, extract facts from large files or logs, or make a mechanical edit with an exact spec) and replies in the requested format or UNABLE. Not for security review, design decisions, or multi-step coding."
+    },
+    {
       "filename": "one-shot-feature-issue-planner.agent.md",
       "description": "Cloud Agent to Turn a single new-feature request into a complete, issue-ready implementation plan without follow-up questions.",
       "name": "one-shot-feature-issue-planner"
@@ -3451,6 +3461,11 @@
       "filename": "nuget-manager/SKILL.md",
       "name": "nuget-manager",
       "description": "Manage NuGet packages in .NET projects/solutions. Use this skill when adding, removing, or updating NuGet package versions. It enforces using \u0060dotnet\u0060 CLI for package management and provides strict procedures for direct file edits only when updating versions."
+    },
+    {
+      "filename": "on-device-delegate/SKILL.md",
+      "name": "on-device-delegate",
+      "description": "Saves cloud-model context by briefing one bounded, read-heavy sub-task (more than about 25 KB of prose, or many files that no single command can answer) to the local-coding plugin\u0027s on-device worker, which runs on the local MAI Code 1.1 Flash model. Use for log and test triage, summarizing many files, or extracting facts from large inputs. When the user names this skill, call the skill tool in the same response as your first other tool call, never as a separate step."
     },
     {
       "filename": "onboard-context-matic/SKILL.md",
