@@ -958,6 +958,12 @@
       "description": "Implement Visualforce pages and controllers following Salesforce MVC architecture and best practices."
     },
     {
+      "filename": "sap-integration-suite-copilot.agent.md",
+      "name": "SAP Integration Suite Copilot",
+      "description": "Design, build, review and troubleshoot SAP BTP Integration Suite work: CPI iFlows, Groovy, XSLT/message mapping, adapters, API Management, Event Mesh, B2B/EDI, MCP and API-to-AI integrations.",
+      "argument-hint": "Describe the integration, paste a Groovy/XSLT snippet, or share an MPL error"
+    },
+    {
       "filename": "sast-sca-security-analyzer.agent.md",
       "description": "Use when you perform SAST or SCA security scans. Identifies code flaws, audits third-party dependencies, checks policy compliance, and generates structured security reports with CWE mappings and file locations.",
       "name": "sast-sca-security-analyzer",
@@ -3918,6 +3924,11 @@
       "filename": "sandbox-npm-install/SKILL.md",
       "name": "sandbox-npm-install",
       "description": "Install npm packages in a Docker sandbox environment. Use this skill whenever you need to install, reinstall, or update node_modules inside a container where the workspace is mounted via virtiofs. Native binaries (esbuild, lightningcss, rollup) crash on virtiofs, so packages must be installed on the local ext4 filesystem and symlinked back."
+    },
+    {
+      "filename": "sap-cloud-integration/SKILL.md",
+      "name": "sap-cloud-integration",
+      "description": "SAP Cloud Integration (CPI, part of SAP Integration Suite) runtime-specific guidance for building and troubleshooting iFlows. Use when writing or reviewing CPI Groovy scripts, choosing headers vs. exchange properties, designing exception subprocesses, JMS retry, idempotency or data store patterns, or diagnosing adapter errors (SFTP, HTTP/OAuth, SOAP, IDoc, OData, AS2, Cloud Connector) from Message Processing Log (MPL) text. Not for SAP PI/PO, ABAP development, or generic Java/Groovy outside CPI."
     },
     {
       "filename": "scaffolding-oracle-to-postgres-migration-test-project/SKILL.md",
