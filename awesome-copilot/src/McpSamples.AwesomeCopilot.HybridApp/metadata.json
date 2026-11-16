@@ -436,12 +436,6 @@
       "argument-hint": "Enter plan_id, task_id, task_definition, and role-scoped config_snapshot."
     },
     {
-      "filename": "gem-designer.agent.md",
-      "description": "UI/UX design specialist: layouts, themes, color schemes, design systems, accessibility.",
-      "name": "gem-designer",
-      "argument-hint": "Enter execution_id, task_id, optional plan_id, task_definition, and role-scoped config_snapshot."
-    },
-    {
       "filename": "gem-devops.agent.md",
       "description": "Infrastructure deployment, CI/CD pipelines, container management.",
       "name": "gem-devops",
@@ -461,7 +455,7 @@
     },
     {
       "filename": "gem-mobile-tester.agent.md",
-      "description": "Mobile E2E testing: Detox, Maestro, iOS/Android simulators.",
+      "description": "Mobile E2E testing: Detox, Maestro, Appium, or e2e on iOS/Android simulators.",
       "name": "gem-mobile-tester",
       "argument-hint": "Enter plan_id, task_id, task_definition, and role-scoped config_snapshot."
     },
