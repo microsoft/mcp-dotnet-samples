@@ -62,21 +62,6 @@
       "argument-hint": "Run a full AI-readiness assessment, optionally with a policy file (e.g. examples/policies/strict.json). Ask about specific pillars (repo health vs AI setup) or extras."
     },
     {
-      "filename": "ai-team-dev.agent.md",
-      "name": "ai-team-dev",
-      "description": "AI development team (Nova, Sage, Milo). Use when implementing features, fixing bugs, writing tests, improving user experience, or preparing a pull request across the project\u0027s actual stack."
-    },
-    {
-      "filename": "ai-team-producer.agent.md",
-      "name": "ai-team-producer",
-      "description": "AI team producer (Remy). Use when planning work, clarifying scope, coordinating Dev and optional QA, triaging issues, maintaining project context, or preparing and merging pull requests. Never writes application code."
-    },
-    {
-      "filename": "ai-team-qa.agent.md",
-      "name": "ai-team-qa",
-      "description": "Optional AI QA engineer (Ivy). Use when testing behavior, running automated or exploratory checks, filing reproducible bugs, verifying fixes, or providing release confidence for changes that warrant dedicated QA."
-    },
-    {
       "filename": "amplitude-experiment-implementation.agent.md",
       "name": "Amplitude Experiment Implementation",
       "description": "This custom agent uses Amplitude\u0027s\u00A0MCP tools to deploy new experiments inside of Amplitude, enabling seamless variant testing capabilities and rollout of product features."
@@ -2065,11 +2050,6 @@
       "filename": "ai-ready/SKILL.md",
       "name": "ai-ready",
       "description": "Make any repo AI-ready \u2014 analyzes your codebase and generates AGENTS.md, copilot-instructions.md, CI workflows, issue templates, and more. Mines your PR review patterns and creates files customized to your stack. USE THIS SKILL when the user asks to \u0022make this repo ai-ready\u0022, \u0022set up AI config\u0022, or \u0022prepare this repo for AI contributions\u0022."
-    },
-    {
-      "filename": "ai-team-orchestration/SKILL.md",
-      "name": "ai-team-orchestration",
-      "description": "Bootstrap and run a lightweight multi-agent development team. Use when starting or adopting a project, planning work, coordinating implementation and optional QA, brainstorming with distinct perspectives, or preserving context across sessions."
     },
     {
       "filename": "anti-ui-slop/SKILL.md",
